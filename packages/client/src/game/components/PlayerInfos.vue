@@ -80,24 +80,24 @@ useFxEvent(GAME_EVENTS.PLAYER_AFTER_MANA_CHANGE, event => {
         </div>
 
         <div class="flex gap-2">
-          <div class="rune might">
-            <span class="dual-text" :data-text="player.runes.might">
-              {{ player.runes.might }}
+          <div class="stat might">
+            <span class="dual-text" :data-text="player.hero?.stats?.might ?? 0">
+              {{ player.hero?.stats?.might ?? 0 }}
             </span>
           </div>
-          <div class="rune wisdom">
-            <span class="dual-text" :data-text="player.runes.wisdom">
-              {{ player.runes.wisdom }}
+          <div class="stat wisdom">
+            <span
+              class="dual-text"
+              :data-text="player.hero?.stats?.wisdom ?? 0"
+            >
+              {{ player.hero?.stats?.wisdom ?? 0 }}
             </span>
           </div>
-          <div class="rune focus">
-            <span class="dual-text" :data-text="player.runes.focus">
-              {{ player.runes.focus }}
-            </span>
-          </div>
-          <div class="rune resonance">
-            <span class="dual-text" :data-text="player.runes.resonance">
-              {{ player.runes.resonance }}
+        </div>
+        <div class="flex gap-2">
+          <div class="stat focus">
+            <span class="dual-text" :data-text="player.hero?.stats?.focus ?? 0">
+              {{ player.hero?.stats?.focus ?? 0 }}
             </span>
           </div>
         </div>
@@ -194,7 +194,7 @@ useFxEvent(GAME_EVENTS.PLAYER_AFTER_MANA_CHANGE, event => {
   filter: drop-shadow(0 0 10px var(--yellow-2)) brightness(125%);
 }
 
-.rune {
+.stat {
   background-position: top center;
   background-size: 29px 30px;
   background-repeat: no-repeat;
@@ -214,9 +214,6 @@ useFxEvent(GAME_EVENTS.PLAYER_AFTER_MANA_CHANGE, event => {
   }
   &.focus {
     background-image: url('@/assets/ui/card/rune-focus-large.png');
-  }
-  &.resonance {
-    background-image: url('@/assets/ui/card/rune-resonance-large.png');
   }
 }
 </style>

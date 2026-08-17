@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { Rune } from '@game/engine/src/player/player.enums';
 import {
   type CardKind,
   type Rarity,
@@ -31,7 +30,6 @@ import CardRarity from './Rarity.vue';
 import Speed from './Speed.vue';
 import { assets } from '@/assets';
 import UiSimpleTooltip from '@/ui/components/UiSimpleTooltip.vue';
-import RuneCost from './RuneCost.vue';
 
 const {
   card,
@@ -48,7 +46,6 @@ const {
     kind: CardKind;
     manaCost?: number | null;
     baseManaCost?: number | null;
-    runeCost?: Rune[] | null;
     rarity: Rarity;
     atk?: number | null;
     hp?: number | null;
@@ -124,7 +121,6 @@ const kindBg = computed(() => {
           :cost="card.manaCost"
           :baseCost="card.baseManaCost ?? card.manaCost"
         />
-        <RuneCost v-if="isDefined(card.runeCost)" :cost="card.runeCost" />
         <CardRarity :rarity="card.rarity" />
         <AffinityFlags :affinities="card.affinities" />
         <CardName :name="card.name" />

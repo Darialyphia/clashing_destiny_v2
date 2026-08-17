@@ -223,8 +223,7 @@ const pointsToWin = computed(() => state.value.config.VICTORY_POINTS_TO_WIN);
                     () => {
                       isResourceActionMenuOpened = false;
                       client.takeResourceAction({
-                        type: 'rune',
-                        rune: RUNES.MIGHT
+                        type: 'gain_might'
                       });
                     }
                   "
@@ -235,8 +234,7 @@ const pointsToWin = computed(() => state.value.config.VICTORY_POINTS_TO_WIN);
                     () => {
                       isResourceActionMenuOpened = false;
                       client.takeResourceAction({
-                        type: 'rune',
-                        rune: RUNES.WISDOM
+                        type: 'gain_wisdom'
                       });
                     }
                   "
@@ -247,20 +245,7 @@ const pointsToWin = computed(() => state.value.config.VICTORY_POINTS_TO_WIN);
                     () => {
                       isResourceActionMenuOpened = false;
                       client.takeResourceAction({
-                        type: 'rune',
-                        rune: RUNES.FOCUS
-                      });
-                    }
-                  "
-                />
-                <button
-                  class="resource-action resonance"
-                  @mouseup="
-                    () => {
-                      isResourceActionMenuOpened = false;
-                      client.takeResourceAction({
-                        type: 'rune',
-                        rune: RUNES.RESONANCE
+                        type: 'gain_focus'
                       });
                     }
                   "
