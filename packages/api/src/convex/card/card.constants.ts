@@ -14,6 +14,7 @@ export const BOOSTER_PACK_STATUS = {
   OPENED: 'opened' as const
 } as const;
 export type BoosterPackStatus = Values<typeof BOOSTER_PACK_STATUS>;
+export type BoosterPackContents = ReturnType<BoosterPack['getContents']>;
 
 export type BoosterPackCatalogEntry = {
   id: string;
@@ -23,8 +24,9 @@ export type BoosterPackCatalogEntry = {
   packGoldCost: number;
   foilChance: number;
   enabled: boolean;
-  getContents: () => ReturnType<BoosterPack['getContents']>;
+  getContents: () => BoosterPackContents;
 };
+
 export const BOOSTER_PACKS_CATALOG = {
   CORE_STANDARD: {
     id: 'CORE_STANDARD',

@@ -14,6 +14,7 @@ import type {
   FunctionReference,
 } from "convex/server";
 import type * as auth from "../auth.js";
+import type * as card_boosterPackPurchase from "../card/boosterPackPurchase.js";
 import type * as card_cardCopies from "../card/cardCopies.js";
 import type * as cards from "../cards.js";
 import type * as currency from "../currency.js";
@@ -48,6 +49,7 @@ import type * as utils_randomString from "../utils/randomString.js";
  */
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
+  "card/boosterPackPurchase": typeof card_boosterPackPurchase;
   "card/cardCopies": typeof card_cardCopies;
   cards: typeof cards;
   currency: typeof currency;

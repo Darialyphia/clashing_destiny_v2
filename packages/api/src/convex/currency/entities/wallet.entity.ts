@@ -4,13 +4,17 @@ import { Entity } from '../../shared/entity';
 import { DomainError } from '../../utils/error';
 import type { UserId } from '../../users/entities/user.entity';
 import { CURRENCY_TYPES, type CurrencyType } from '../currency.constants';
+import { match } from 'ts-pattern';
 
 export type WalletId = Id<'wallets'>;
 export type WalletDoc = Doc<'wallets'>;
 
 export class Wallet extends Entity<WalletId, WalletDoc> {
-  canAfford(amount: number): boolean {
-    return this.data.gold >= amount;
+  canAfford(amount: number, currency: CurrencyType): boolean {
+    return match(currency)
+      .with(CURRENCY_TYPES.GOLD, () => this.data.gold >= amount)
+      .with(CURRENCY_TYPES.CRAFTING_SHARDS, () => this.data.craftingShards >= amount)
+      .exhaustive();
   }
 
   get userId() {
@@ -57,7 +61,10 @@ export class Wallet extends Entity<WalletId, WalletDoc> {
 
   private spendGold(amount: number): void {
     assert(amount > 0, new DomainError('Spend amount must be positive'));
-    assert(this.canAfford(amount), new DomainError('Insufficient gold'));
+    assert(
+      this.canAfford(amount, CURRENCY_TYPES.GOLD),
+      new DomainError('Insufficient gold')
+    );
     this.data.gold -= amount;
     this.data.updatedAt = Date.now();
   }
@@ -65,7 +72,7 @@ export class Wallet extends Entity<WalletId, WalletDoc> {
   private spendCraftingShards(amount: number): void {
     assert(amount > 0, new DomainError('Spend amount must be positive'));
     assert(
-      this.data.craftingShards >= amount,
+      this.canAfford(amount, CURRENCY_TYPES.CRAFTING_SHARDS),
       new DomainError('Insufficient crafting shards')
     );
     this.data.craftingShards -= amount;

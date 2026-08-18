@@ -567,7 +567,8 @@ export const defaultCardArt = (
   default: {
     foil: {
       oil: true,
-      sheen: true
+      sheen: true,
+      glitter: true
     },
     isFullArt,
     bg: `${name}-bg`,

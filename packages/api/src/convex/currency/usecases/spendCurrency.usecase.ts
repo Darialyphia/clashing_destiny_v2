@@ -1,14 +1,9 @@
 import type { UseCase } from '../../usecase';
 import type { AuthSession } from '../../auth/entities/session.entity';
 import type { CurrencyType } from '../currency.constants';
-import { CURRENCY_TYPES, CURRENCY_SOURCES } from '../currency.constants';
-import type { WalletRepository } from '../repositories/wallet.repository';
-import type { TransactionRepository } from '../repositories/transaction.repository';
-import type { EventEmitter } from '../../shared/eventEmitter';
-import { CurrencySpentEvent } from '../events/currencySpent.event';
-import { AppError, DomainError } from '../../utils/error';
 import { ensureAuthenticated } from '../../auth/auth.utils';
-import { assert } from '@game/shared';
+import { SpendingAmount } from '../spendingAmount';
+import type { CurrencyService } from '../services/currency.service';
 
 export interface SpendCurrencyInput {
   amount: number;
@@ -28,9 +23,7 @@ export class SpendCurrencyUseCase
 
   constructor(
     protected ctx: {
-      walletRepo: WalletRepository;
-      transactionRepo: TransactionRepository;
-      eventEmitter: EventEmitter;
+      currencyService: CurrencyService;
       session: AuthSession | null;
     }
   ) {}
@@ -38,49 +31,17 @@ export class SpendCurrencyUseCase
   async execute(input: SpendCurrencyInput): Promise<SpendCurrencyOutput> {
     const session = ensureAuthenticated(this.ctx.session);
 
-    if (input.amount <= 0) {
-      throw new AppError('Spend amount must be positive');
-    }
-
+    const amount = new SpendingAmount(input.amount);
     const userId = session.userId;
 
-    const wallet = await this.ctx.walletRepo.getByUserId(userId);
-    if (!wallet) {
-      throw new AppError('Wallet not found');
-    }
-
-    assert(wallet.canAfford(input.amount), new DomainError('Insufficient funds'));
-
-    const balanceBefore = wallet.gold;
-    wallet.spend(input.amount, input.currencyType);
-    await this.ctx.walletRepo.save(wallet);
-
-    const balanceAfter = balanceBefore - input.amount;
-
-    await this.ctx.transactionRepo.create({
+    const { newBalance } = await this.ctx.currencyService.spend({
       userId,
+      amount,
       currencyType: input.currencyType,
-      amount: -input.amount,
-      balanceBefore,
-      balanceAfter,
-      source: CURRENCY_SOURCES.SPEND,
-      metadata: {
-        purpose: input.purpose,
-        ...input.metadata
-      }
+      purpose: input.purpose,
+      metadata: input.metadata
     });
 
-    await this.ctx.eventEmitter.emit(
-      CurrencySpentEvent.EVENT_NAME,
-      new CurrencySpentEvent({
-        userId,
-        amount: input.amount,
-        currencyType: input.currencyType,
-        purpose: input.purpose,
-        newBalance: balanceAfter
-      })
-    );
-
-    return { newBalance: balanceAfter };
+    return { newBalance };
   }
 }

@@ -55,15 +55,6 @@ export class CraftCardUseCase implements UseCase<CraftCardInput, CraftCardOutput
       new DomainError('This card cannot be crafted (no crafting cost)')
     );
 
-    const wallet = await this.ctx.walletRepo.getByUserId(session.userId);
-    assert(isDefined(wallet), new AppError('User wallet not found'));
-    assert(
-      wallet.craftingShards >= craftingCost,
-      new DomainError(
-        `Insufficient crafting shards. Required: ${craftingCost}, Available: ${wallet.craftingShards}`
-      )
-    );
-
     await this.ctx.spendCurrencyUseCase.execute({
       purpose: `Crafting card ${input.blueprintId}`,
       amount: craftingCost,

@@ -19,23 +19,23 @@ const locationsArray = computed(() => {
     CardLocation | 'battlefield'
   >;
 });
-// const isDisabled = computed(() => {
-//   if (!ctx?.card?.value) return false;
-//   if (alwaysActive) return false;
-//   return !locationsArray.value.some(loc => {
-//     if (loc === 'battlefield') {
-//       return (
-//         ctx.card.value?.location === CARD_LOCATIONS.LEFT_BATTLEFIELD ||
-//         ctx.card.value?.location === CARD_LOCATIONS.RIGHT_BATTLEFIELD
-//       );
-//     }
-//     return ctx.card.value?.location === loc;
-//   });
-// });
+const isDisabled = computed(() => {
+  if (!ctx?.card?.value) return false;
+  if (alwaysActive) return false;
+  return !locationsArray.value.some(loc => {
+    if (loc === 'battlefield') {
+      return (
+        ctx.card.value?.location === CARD_LOCATIONS.LEFT_BATTLEFIELD ||
+        ctx.card.value?.location === CARD_LOCATIONS.RIGHT_BATTLEFIELD
+      );
+    }
+    return ctx.card.value?.location === loc;
+  });
+});
 </script>
 
 <template>
-  <span class="job-bonus">
+  <span class="job-bonus" :class="{ disabled: isDisabled }">
     <UiSimpleTooltip>
       <template #trigger>
         <span class="badge">
@@ -75,8 +75,8 @@ const locationsArray = computed(() => {
 }
 
 .disabled {
-  opacity: 0.6;
   > .badge {
+    opacity: 0.5;
     background: var(--gray-4);
     border-color: var(--gray-6);
   }

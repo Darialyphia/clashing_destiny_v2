@@ -48,14 +48,14 @@
     radial-gradient(
       farthest-corner circle at var(--glare-x) var(--glare-y),
       hsla(0, 0%, 95%, 0.98) 10%,
-      hsla(177, 22%, 80%, 0.1) 30%,
+      hsla(177, 22%, 80%, 0.1) 20%,
       hsla(150, 20%, 10%, 1) 90%
     );
   mix-blend-mode: color-dodge;
   background-size:
     cover,
-    25% 25%,
-    25% 25%,
+    50% 50%,
+    50% 50%,
     cover;
   background-position:
     center center,
@@ -73,7 +73,7 @@
 }
 
 :global(:is(.card-perspective-wrapper, .small-card):hover .foil-glitter) {
-  opacity: 0.35;
+  opacity: 0.25;
   transition-delay: 0.3s;
 }
 </style>
