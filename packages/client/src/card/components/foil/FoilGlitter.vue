@@ -73,7 +73,7 @@
 }
 
 :global(:is(.card-perspective-wrapper, .small-card):hover .foil-glitter) {
-  opacity: 0.25;
+  opacity: 0.3;
   transition-delay: 0.3s;
 }
 </style>

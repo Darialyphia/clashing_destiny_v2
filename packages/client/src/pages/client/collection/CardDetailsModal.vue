@@ -100,7 +100,6 @@ const animateCardIn = async () => {
   await nextTick();
   const modalCardWrapperEl = unrefElement(cardRoot)!;
   const modalCardEl = modalCardWrapperEl.querySelector('.card') as HTMLElement;
-
   const collectionCardRect = collectionCard.getBoundingClientRect();
   const modalCardRect = modalCardWrapperEl.getBoundingClientRect();
   const transforms = {
@@ -112,8 +111,8 @@ const animateCardIn = async () => {
   modalCardWrapperEl.style.transformOrigin = 'top left';
   modalCardWrapperEl.style.transform = `translate(${transforms.x}px, ${transforms.y}px) scale(${transforms.scaleX}, ${transforms.scaleY})`;
   modalCardEl.style.transformOrigin = 'center';
+  console.log(modalCardEl.style.transform);
   modalCardEl.style.transform = `rotateY(360deg)`;
-
   await nextTick();
   modalCardWrapperEl.style.transform = '';
   modalCardWrapperEl.style.transition = 'transform 0.3s var(--ease-in-out-4)';
@@ -129,6 +128,7 @@ const animateCardIn = async () => {
   modalCardEl.addEventListener(
     'transitionend',
     () => {
+      modalCardEl.style.transform = '';
       modalCardEl.style.transition = '';
       modalCardEl.style.transformOrigin = '';
     },
@@ -419,7 +419,7 @@ const animateCardOut = async () => {
 .description {
   padding: var(--size-3);
   background: var(--surface-2);
-  border-radius: var(--radius-3);
+  border-radius: var(--radius-2);
   border: var(--border-size-1) solid var(--border-subtle);
 }
 

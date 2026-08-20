@@ -13,7 +13,6 @@ import PassButton from './PassButton.vue';
 import EffectChain from './EffectChain.vue';
 import BoardCard from './BoardCard.vue';
 import ScoreButton from './ScoreButton.vue';
-import { RUNES } from '@game/engine/src/player/player.enums';
 import {
   DropdownMenuContent,
   DropdownMenuPortal,

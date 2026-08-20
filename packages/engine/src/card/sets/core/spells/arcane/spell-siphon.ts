@@ -28,7 +28,11 @@ export const spellSiphon: SpellBlueprint = {
   manaSupply: 2,
   speed: CARD_SPEED.FAST,
   tags: [],
-  statRequirements: {},
+  statRequirements: {
+    might: 0,
+    focus: 0,
+    wisdom: 0
+  },
   canPlay: (game, card) =>
     effectTargetRules.canPlay(
       game,

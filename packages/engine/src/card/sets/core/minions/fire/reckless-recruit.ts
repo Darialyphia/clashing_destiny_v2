@@ -16,7 +16,7 @@ export const recklessRecruit: MinionBlueprint = {
   id: 'recklessRecruit',
   name: 'Reckless Recruit',
   description: dedent /*html*/ `
-  <rt-keyword>Double Attack</rt-keyword> <rt-keyword><rt-runes runes="might,might,might"></rt-runes> Attacker 2</rt-keyword>
+  <rt-keyword>Attacker 2</rt-keyword>
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -29,7 +29,11 @@ export const recklessRecruit: MinionBlueprint = {
   manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
-  statRequirements: {},
+  statRequirements: {
+    might: 2,
+    focus: 0,
+    wisdom: 0
+  },
   atk: 1,
   maxHp: 3,
   commandment: 1,

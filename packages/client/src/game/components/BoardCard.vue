@@ -158,7 +158,13 @@ useFxEvent(FX_EVENTS.CARD_EXHAUST, async event => {
       :overrides="{ atk: card.atk, hp: card.hp, commandment: card.commandment }"
     />
     <ModifiersList :modifiers="modifiers" class="modifiers" />
-    <AbilityMenu :card="card" actions-side="top" use-portal class="abilities" />
+    <AbilityMenu
+      :card="card"
+      use-portal
+      class="abilities"
+      :class="variant"
+      :actions-side="variant === 'small' ? 'bottom' : 'top'"
+    />
     <UiSimpleTooltip>
       <template #trigger>
         <button
@@ -259,8 +265,14 @@ useFxEvent(FX_EVENTS.CARD_EXHAUST, async event => {
   position: absolute;
   left: 50%;
   translate: -50% 0;
-  bottom: 7px;
   transform: translateZ(2px);
+
+  &.default {
+    top: 7px;
+  }
+  &.small {
+    bottom: 7px;
+  }
 }
 
 .modifiers {

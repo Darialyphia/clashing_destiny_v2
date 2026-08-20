@@ -35,7 +35,11 @@ export const twinFlame: SpellBlueprint<MinionCard> = {
   manaSupply: 2,
   speed: CARD_SPEED.FAST,
   tags: [],
-  statRequirements: {},
+  statRequirements: {
+    might: 0,
+    focus: 0,
+    wisdom: 0
+  },
   canPlay: (game, card) =>
     multipleEnemyTargetRules.canPlay(
       game,

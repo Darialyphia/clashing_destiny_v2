@@ -35,6 +35,8 @@ export type CardArt = {
     noBackground?: boolean;
     noFrame?: boolean;
     brightShine?: boolean;
+    auroraBorder?: boolean;
+    crt?: boolean;
   };
   bg: string;
   main: string;

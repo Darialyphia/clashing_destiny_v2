@@ -7,8 +7,13 @@ import UiSwitch from '@/ui/components/UiSwitch.vue';
 const camera = ref({
   origin: { x: 0, y: 0 },
   scale: 1,
-  angle: { x: 0, y: 0, z: 0 },
+  angle: { x: 45, y: 25, z: -40 },
   offset: { x: 0, y: 0 }
+});
+onMounted(() => {
+  camera.value.angle.x = 0;
+  camera.value.angle.y = 0;
+  camera.value.angle.z = 0;
 });
 
 // useFxEvent(GAME_EVENTS.COMBAT_AFTER_RECEIVE_DAMAGE, async () => {
@@ -98,7 +103,7 @@ const isTilted = computed({
 .options {
   pointer-events: auto;
   position: fixed;
-  top: var(--size-5);
+  bottom: var(--size-11);
   right: var(--size-5);
   z-index: 10;
   label {

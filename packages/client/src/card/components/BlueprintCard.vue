@@ -42,9 +42,22 @@ provideRichTextContext({
       },
       kind: blueprint.kind,
       manaCost: (blueprint as any).manaCost,
+      manaSupply: (blueprint as any).manaSupply,
       rarity: (blueprint as any).rarity,
       atk: (blueprint as any).atk,
       hp: (blueprint as any).maxHp,
+      might:
+        (blueprint as any).stats?.might ??
+        (blueprint as any).statRequirements?.might ??
+        null,
+      focus:
+        (blueprint as any).stats?.focus ??
+        (blueprint as any).statRequirements?.focus ??
+        null,
+      wisdom:
+        (blueprint as any).stats?.wisdom ??
+        (blueprint as any).statRequirements?.wisdom ??
+        null,
       durability: (blueprint as any).durability,
       abilities: (blueprint as any).abilities?.map(formatAbilityText),
       subKind: (blueprint as any).subKind,

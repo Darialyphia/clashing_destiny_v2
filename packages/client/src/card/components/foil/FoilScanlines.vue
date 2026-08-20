@@ -63,6 +63,8 @@
   mask-repeat: no-repeat;
   position: absolute;
   inset: 0;
+  opacity: 0;
+  will-change: opacity;
   &::before {
     content: '';
     position: absolute;
@@ -120,7 +122,20 @@
   }
 }
 
+@keyframes foil-scanlines-pulse {
+  0% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 8;
+  }
+  100% {
+    opacity: 0.64;
+  }
+}
+
 :global(:is(.card-perspective-wrapper, .small-card):hover .foil-scanlines) {
   opacity: 1;
+  animation: foil-scanlines-pulse 2.2s ease-in-out infinite alternate;
 }
 </style>

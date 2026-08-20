@@ -122,7 +122,10 @@ provideRichTextContext({
           subKind: overrides.subKind ?? card.subKind,
           affinities: overrides.affinities ?? card.affinities,
           speed: overrides.speed ?? card.speed,
-          commandment: overrides.commandment ?? card.commandment
+          commandment: overrides.commandment ?? card.commandment,
+          might: overrides.might ?? card.stats?.might,
+          focus: overrides.focus ?? card.stats?.focus,
+          wisdom: overrides.wisdom ?? card.stats?.wisdom
         }"
         :is-foil="card.isFoil"
         class="game-card big"

@@ -42,6 +42,7 @@ const artMainImage = computed(() => {
   height: calc(var(--card-v2-art-frame-height) * var(--pixel-scale) * 2);
   left: calc(2px * var(--pixel-scale));
   top: calc(2px * var(--pixel-scale));
+  overflow: hidden;
 
   &:not(.full-art) {
     mask-image: url('@/assets/ui/card/masks/card-art-v2.png');

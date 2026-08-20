@@ -33,7 +33,11 @@ export const arcaneSpark: SpellBlueprint<MinionCard> = {
   manaSupply: 2,
   speed: CARD_SPEED.FAST,
   tags: [],
-  statRequirements: {},
+  statRequirements: {
+    might: 0,
+    focus: 0,
+    wisdom: 0
+  },
   canPlay: (game, card) =>
     singleMinionTargetRules.canPlay(game, card, c => c.isOnBattlefield),
   getTargets: (game, card) =>

@@ -26,7 +26,11 @@ export const braveCitizen: MinionBlueprint = {
   manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
-  statRequirements: {},
+  statRequirements: {
+    might: 0,
+    focus: 0,
+    wisdom: 0
+  },
   atk: 2,
   maxHp: 3,
   commandment: 2,

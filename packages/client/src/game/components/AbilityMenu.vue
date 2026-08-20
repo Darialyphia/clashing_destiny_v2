@@ -6,7 +6,7 @@ import { isDefined } from '@game/shared';
 import { type PopoverContentProps } from 'reka-ui';
 import { useGameUi } from '../composables/useGameClient';
 
-const { card } = defineProps<{
+const { card, actionsSide = 'bottom' } = defineProps<{
   card: CardViewModel;
   usePortal?: boolean;
   actionsOffset?: number;
@@ -28,7 +28,7 @@ const ui = useGameUi();
     <UiSimpleTooltip
       v-for="ability in abilities"
       :key="ability.id"
-      side="bottom"
+      :side="actionsSide"
       :side-offset="15"
       :delay="0"
       :disabled="isDefined(ui.selectedCard)"
@@ -58,7 +58,7 @@ const ui = useGameUi();
   gap: var(--size-2);
 }
 .ability {
-  width: 16px;
+  width: 24px;
   aspect-ratio: 1;
   background: url('@/assets/ui/card/ability.png') no-repeat center/contain;
   transition: filter 0.2s;

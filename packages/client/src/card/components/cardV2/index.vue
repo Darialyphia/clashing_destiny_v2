@@ -5,8 +5,7 @@ import {
   type JobId,
   type Affinity,
   type CardSpeed,
-  CARD_KINDS,
-  getJobById
+  CARD_KINDS
 } from '@game/engine/src/card/card.enums';
 import { isDefined, uppercaseFirstLetter } from '@game/shared';
 import CardGlare from '../CardGlare.vue';
@@ -29,7 +28,8 @@ import CardArtComponent from './CardArt.vue';
 import CardRarity from './Rarity.vue';
 import Speed from './Speed.vue';
 import { assets } from '@/assets';
-import UiSimpleTooltip from '@/ui/components/UiSimpleTooltip.vue';
+import FoilAuroraBorder from '../foil/FoilAuroraBorder.vue';
+import FoilCRT from '../foil/FoilCRT.vue';
 
 const {
   card,
@@ -45,10 +45,14 @@ const {
     art: CardArt;
     kind: CardKind;
     manaCost?: number | null;
+    manaSupply?: number | null;
     baseManaCost?: number | null;
     rarity: Rarity;
     atk?: number | null;
     hp?: number | null;
+    might?: number | null;
+    focus?: number | null;
+    wisdom?: number | null;
     durability?: number | null;
     abilities?: string[];
     subKind?: string | null;
@@ -113,6 +117,8 @@ const kindBg = computed(() => {
           <FoilGlitter v-if="card.art.foil.glitter" />
           <FoilBrightShine v-if="card.art.foil.brightShine" />
           <FoilScanlines v-if="card.art.foil.scanlines" />
+          <FoilAuroraBorder v-if="card.art.foil.auroraBorder" />
+          <FoilCRT v-if="card.art.foil.crt" />
         </template>
 
         <div class="card-border" />
@@ -120,26 +126,19 @@ const kindBg = computed(() => {
           v-if="isDefined(card.manaCost)"
           :cost="card.manaCost"
           :baseCost="card.baseManaCost ?? card.manaCost"
+          :mana-supply="card.manaSupply"
         />
         <CardRarity :rarity="card.rarity" />
         <AffinityFlags :affinities="card.affinities" />
         <CardName :name="card.name" />
 
         <div class="tags parallax">
-          <UiSimpleTooltip>
-            <template #trigger>
-              <div class="kind" />
-            </template>
-            {{ uppercaseFirstLetter(card.kind.toLocaleLowerCase()) }}
-          </UiSimpleTooltip>
+          <div class="kind" />
+          {{ uppercaseFirstLetter(card.kind.toLocaleLowerCase()) }}
 
           <div>
             <span v-if="isDefined(card.subKind)">
               - {{ uppercaseFirstLetter(card.subKind.toLocaleLowerCase()) }}
-            </span>
-            <span v-if="card.jobs.length" class="jobs">
-              |
-              {{ card.jobs.map(jobId => getJobById(jobId)?.name).join(' | ') }}
             </span>
             <span v-if="isDefined(card.tags)" class="tags">
               <template v-if="card.tags?.length">|</template>
@@ -156,6 +155,9 @@ const kindBg = computed(() => {
           :hp="card.hp ?? null"
           :durability="card.durability ?? null"
           :commandment="card.commandment ?? null"
+          :might="card.might ?? null"
+          :focus="card.focus ?? null"
+          :wisdom="card.wisdom ?? null"
         />
         <Speed
           v-if="

@@ -25,7 +25,6 @@ export const indomitableVindicator: MinionBlueprint = {
   name: 'Indomitable Vindicator',
   description: dedent /*html*/ `
   <rt-keyword>On Score</rt-keyword> Deal 1 damage to all other minions on this battlefield.
-  <rt-runes runes="might,resonance"></rt-runes> <rt-trigger>On Engage</rt-trigger> Give an enemy minion on the same battlefield <rt-keyword>Vulnerable</rt-keyword> this turn.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -38,9 +37,13 @@ export const indomitableVindicator: MinionBlueprint = {
   manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
-  statRequirements: {},
+  statRequirements: {
+    might: 3,
+    focus: 1,
+    wisdom: 0
+  },
   atk: 2,
-  maxHp: 3,
+  maxHp: 4,
   commandment: 2,
   canPlay: () => true,
   abilities: [],
@@ -57,45 +60,6 @@ export const indomitableVindicator: MinionBlueprint = {
 
           for (const target of targets) {
             await target.takeDamage(card, new AbilityDamage(1));
-          }
-        }
-      })
-    );
-
-    await card.modifiers.add(
-      new OnMoveModifier(game, card, {
-        location: 'battlefield',
-        async handler() {
-          const hasTarget = singleEnemyMinionTargetRules.canPlay(
-            game,
-            card,
-            minion => minion.location === card.location
-          );
-          if (!hasTarget) return;
-
-          const result = await singleEnemyMinionTargetRules.getTargets({
-            game,
-            card,
-            label: 'Select an enemy minion to give Vulnerable',
-            canCancel: false,
-            timeoutFallback: singleEnemyMinionTargetRules.defaultTimeoutFallback(
-              game,
-              card,
-              minion => minion.location === card.location
-            ),
-            predicate: minion => minion.location === card.location,
-            aiHints: { shouldPick: () => 1 }
-          });
-
-          if (result.cancelled) return;
-
-          for (const target of result.result.cards) {
-            await target.modifiers.add(
-              new VulnerableModifier(game, card, {
-                amount: 1,
-                mixins: [new UntilEndOfTurnModifierMixin(game)]
-              })
-            );
           }
         }
       })

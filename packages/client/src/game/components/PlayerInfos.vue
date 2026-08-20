@@ -67,7 +67,7 @@ useFxEvent(GAME_EVENTS.PLAYER_AFTER_MANA_CHANGE, event => {
       <div class="bottom">
         <div class="mana-bar">
           <div
-            v-for="i in player.maxMana"
+            v-for="i in player.mana"
             :key="i"
             class="mana"
             :style="{

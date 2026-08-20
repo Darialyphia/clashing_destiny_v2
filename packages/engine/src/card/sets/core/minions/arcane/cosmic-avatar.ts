@@ -25,7 +25,7 @@ export const cosmicAvatar: MinionBlueprint = {
   id: 'cosmicAvatar',
   name: 'Cosmic Avatar',
   description: dedent /*html*/ `
-  <rt-keyword>Flanking</rt-keyword> <rt-keyword>Unique</rt-keyword>
+  <rt-keyword>Flanking</rt-keyword>, <rt-keyword>Unique</rt-keyword>
   Your <rt-card>Astral Ball</rt-card> have +1/+1/+0.
   When an <rt-card>Astral Ball</rt-card> you control deals combat damage, wake up this card.
   `,
@@ -36,11 +36,15 @@ export const cosmicAvatar: MinionBlueprint = {
   rarity: RARITIES.LEGENDARY,
   jobs: [JOBS.MAGE],
   affinities: [AFFINITIES.ARCANE],
-  manaCost: 6,
+  manaCost: 8,
   manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
-  statRequirements: {},
+  statRequirements: {
+    might: 0,
+    focus: 0,
+    wisdom: 0
+  },
   atk: 3,
   maxHp: 6,
   commandment: 3,
@@ -100,5 +104,15 @@ export const cosmicAvatarAlt: MinionBlueprint = {
   ...cosmicAvatar,
   id: 'cosmicAvatarAlt',
   collectable: false,
-  art: defaultCardArt('minions/cosmic-avatar-alt')
+  art: {
+    default: {
+      main: 'minions/cosmic-avatar-alt-main',
+      bg: 'minions/cosmic-avatar-alt-bg',
+      isFullArt: false,
+      foil: {
+        oil: true,
+        scanlines: true
+      }
+    }
+  }
 };

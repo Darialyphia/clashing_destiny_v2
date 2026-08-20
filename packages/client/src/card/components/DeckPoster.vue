@@ -50,7 +50,9 @@ const saveImage = async () => {
   optionsBar.value!.style.display = 'none';
   root.value.style.maxHeight = 'none';
   await nextTick();
+  console.time('deck-poster-download');
   const dataUrl = await domToPng(root.value);
+  console.timeEnd('deck-poster-download');
   const link = document.createElement('a');
   link.href = dataUrl;
   link.download = `${name}-deck-poster.png`;
@@ -177,6 +179,7 @@ const allCards = computed(() =>
   }
   &.condensed {
     --pixel-scale: 1;
+    width: 75%;
   }
 }
 /* the modern-screenshot library seems to not understand the backface-visibility css rule */
@@ -215,6 +218,7 @@ section {
 .content {
   display: grid;
   grid-template-columns: 1fr var(--size-13);
+  gap: var(--size-3);
 }
 
 .listing {

@@ -33,7 +33,11 @@ export const manaFueledGolem: MinionBlueprint = {
   manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
-  statRequirements: {},
+  statRequirements: {
+    might: 0,
+    focus: 0,
+    wisdom: 0
+  },
   atk: 3,
   maxHp: 5,
   commandment: 3,

@@ -34,7 +34,11 @@ export const enjiOneManArmy: MinionBlueprint = {
   manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
-  statRequirements: {},
+  statRequirements: {
+    might: 0,
+    focus: 0,
+    wisdom: 0
+  },
   atk: 3,
   maxHp: 5,
   commandment: 3,
@@ -87,5 +91,17 @@ export const enjiOneManArmyFullArt: MinionBlueprint = {
   ...enjiOneManArmy,
   id: 'enjiOneManArmyFullArt',
   collectable: false,
-  art: defaultCardArt('minions/enji-one-man-army-fullart', true)
+  art: {
+    default: {
+      foil: {
+        sheen: true,
+        oil: true,
+        goldenGlare: true,
+        auroraBorder: true
+      },
+      isFullArt: true,
+      bg: `minions/enji-one-man-army-fullart-bg`,
+      main: `minions/enji-one-man-army-fullart-main`
+    }
+  }
 };
