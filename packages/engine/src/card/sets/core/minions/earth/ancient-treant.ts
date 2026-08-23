@@ -30,7 +30,7 @@ export const ancientTreant: MinionBlueprint = {
   art: defaultCardArt('placeholder'),
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.LEGENDARY,
-  jobs: [JOBS.TAMER],
+  jobs: [],
   affinities: [AFFINITIES.EARTH],
   manaCost: 7,
   manaSupply: 2,

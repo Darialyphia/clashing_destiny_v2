@@ -1,22 +1,42 @@
 <script setup lang="ts">
+import gsap from 'gsap';
 import { useFxEvent, useGameClient } from '../composables/useGameClient';
 import { assets, preloadAsset } from '@/assets';
-import UiSimpleTooltip from '@/ui/components/UiSimpleTooltip.vue';
 import DiscardPileModal from './DiscardPileModal.vue';
 import type { PlayerViewModel } from '@game/engine/src/client/view-models/player.model';
 import { GAME_EVENTS } from '@game/engine/src/game/game.events';
+import BoardCard from './BoardCard.vue';
 
-const { player } = defineProps<{
+const { player, inverted } = defineProps<{
   player: PlayerViewModel;
+  inverted?: boolean;
 }>();
 
 const { client } = useGameClient();
 
 const isDiscardPileOpened = ref(false);
+const displayedMana = ref(player.mana);
 
 const openDiscardPileModal = () => {
   isDiscardPileOpened.value = true;
 };
+
+watch(
+  () => player.mana,
+  (value, previousValue) => {
+    if (value === previousValue) return;
+
+    gsap.to(displayedMana, {
+      value,
+      duration: 0.42,
+      ease: 'power3.out',
+      onUpdate: () => {
+        displayedMana.value = Number(displayedMana.value.toFixed(0));
+      }
+    });
+  },
+  { immediate: true }
+);
 
 onMounted(() => {
   preloadAsset('ui/exp-bar-0');
@@ -39,70 +59,16 @@ useFxEvent(GAME_EVENTS.PLAYER_AFTER_MANA_CHANGE, event => {
 </script>
 
 <template>
-  <div class="player-infos surface">
-    <section class="left-side">
-      <div class="avatar" :class="{ 'has-initiative': hasInitiative }" />
-      <div class="infos-bar">
-        <div class="info-icon" :style="{ '--bg': assets['ui/deck'].css }" />
-        {{ player.remainingCardsInMainDeck }}
-        <UiSimpleTooltip>
-          <template #trigger>
-            <button class="discard-pile-btn" @click="openDiscardPileModal">
-              <div
-                class="info-icon"
-                :style="{ '--bg': assets['ui/discard-pile'].css }"
-              />
-              {{ player.discardPile.length }}
-            </button>
-          </template>
-          Your discard pile
-        </UiSimpleTooltip>
-      </div>
-    </section>
-
-    <section>
-      <div class="name dual-text" :data-text="player.name">
-        {{ player.name }}
-      </div>
-      <div class="bottom">
-        <div class="mana-bar">
-          <div
-            v-for="i in player.mana"
-            :key="i"
-            class="mana"
-            :style="{
-              '--bg':
-                player.mana >= i
-                  ? assets['ui/mana-filled'].css
-                  : assets['ui/mana-empty'].css
-            }"
-          />
-        </div>
-
-        <div class="flex gap-2">
-          <div class="stat might">
-            <span class="dual-text" :data-text="player.hero?.stats?.might ?? 0">
-              {{ player.hero?.stats?.might ?? 0 }}
-            </span>
-          </div>
-          <div class="stat wisdom">
-            <span
-              class="dual-text"
-              :data-text="player.hero?.stats?.wisdom ?? 0"
-            >
-              {{ player.hero?.stats?.wisdom ?? 0 }}
-            </span>
-          </div>
-        </div>
-        <div class="flex gap-2">
-          <div class="stat focus">
-            <span class="dual-text" :data-text="player.hero?.stats?.focus ?? 0">
-              {{ player.hero?.stats?.focus ?? 0 }}
-            </span>
-          </div>
-        </div>
-      </div>
-    </section>
+  <div class="player-infos" :class="{ inverted }">
+    <div class="mana">{{ Math.round(displayedMana) }}</div>
+    <div class="relative" :class="{ 'has-initiative': hasInitiative }">
+      <BoardCard
+        v-if="player.hero"
+        :card="player.hero"
+        variant="default"
+        :pixel-scale="1"
+      />
+    </div>
 
     <DiscardPileModal v-model="isDiscardPileOpened" :player-id="player.id" />
   </div>
@@ -113,107 +79,76 @@ useFxEvent(GAME_EVENTS.PLAYER_AFTER_MANA_CHANGE, event => {
   z-index: 0;
   --drop-shadow: 0 4px #090d18;
   filter: drop-shadow(var(--drop-shadow));
-  display: grid;
-  grid-template-columns: auto 1fr;
-  column-gap: var(--size-1);
-  border-radius: var(--radius-3);
-}
-
-.left-side {
-  grid-column: 1;
-  grid-row: 1 / -1;
-  align-self: start;
-  translate: 0 -6px;
-}
-
-.avatar {
-  width: 94px;
-  aspect-ratio: 1;
-  background: url('@/assets/avatars/erina.png');
-  background-size: cover;
-  margin-block-start: var(--size-3);
-}
-
-.name {
-  --dual-text-stroke: 1px;
-  font-family: 'Lato', sans-serif;
-  font-size: var(--font-size-5);
-  font-weight: var(--font-weight-9);
-  line-height: 1.1;
-}
-
-.mana-bar {
-  display: flex;
-  gap: 4px;
-}
-
-.mana {
-  width: 21px;
-  aspect-ratio: 1;
-  background: var(--bg);
-}
-
-.bottom {
-  margin-block-start: 8px;
   display: flex;
   flex-direction: column;
   gap: var(--size-3);
+  &.inverted {
+    flex-direction: column-reverse;
+  }
 }
 
-.infos-bar {
-  width: 86px;
-  height: 24px;
-  background: url('@/assets/ui/player-info-bar.png');
-  translate: 0 -14px;
-  color: #f8eabb;
-  display: flex;
-  gap: var(--size-1);
-  align-items: center;
-  justify-content: center;
+.mana {
+  --pixel-scale: 2;
+  width: calc(29px * var(--pixel-scale));
+  height: calc(32px * var(--pixel-scale));
+  background: url('@/assets/ui/card/v2/mana-cost-no-label.png');
+  background-size: cover;
+  margin-inline: auto;
+  display: grid;
+  place-items: center;
+  -webkit-text-stroke: calc(3px * var(--pixel-scale)) black;
+  paint-order: stroke fill;
+  color: #e9d8c0;
+  font-size: calc(var(--pixel-scale) * 16px);
+  padding-bottom: calc(6px * var(--pixel-scale));
 }
 
-.info-icon {
-  width: 16px;
-  height: 15px;
-  background: var(--bg);
+@property --initiative-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
 }
 
-.discard-pile-btn {
-  all: unset;
-  display: flex;
-  align-items: center;
-  gap: var(--size-1);
-  cursor: pointer;
-
-  &:hover {
-    filter: brightness(1.3);
+@keyframes initiative-rotate {
+  from {
+    --initiative-angle: 0deg;
+  }
+  to {
+    --initiative-angle: 360deg;
   }
 }
 
 .has-initiative {
-  filter: drop-shadow(0 0 10px var(--yellow-2)) brightness(125%);
-}
-
-.stat {
-  background-position: top center;
-  background-size: 29px 30px;
-  background-repeat: no-repeat;
-  padding-top: 32px;
-  min-width: 29px;
-  text-align: center;
-  font-size: var(--font-size-4);
-  font-weight: var(--font-weight-7);
-  position: relative;
-  z-index: 0;
-  --dual-text-stroke-offset-y: -3px;
-  &.might {
-    background-image: url('@/assets/ui/card/rune-might-large.png');
-  }
-  &.wisdom {
-    background-image: url('@/assets/ui/card/rune-wisdom-large.png');
-  }
-  &.focus {
-    background-image: url('@/assets/ui/card/rune-focus-large.png');
+  &::after {
+    content: '';
+    position: absolute;
+    mix-blend-mode: color-dodge;
+    transition: opacity 0.3s ease-in-out;
+    inset: 0;
+    opacity: 1;
+    background: conic-gradient(
+      from var(--initiative-angle) at center,
+      cyan,
+      transparent,
+      magenta,
+      transparent,
+      yellow,
+      transparent,
+      cyan
+    );
+    animation: initiative-rotate 6s linear infinite;
+    clip-path: polygon(
+      0% 0%,
+      0% 100%,
+      3% 100%,
+      3% 3%,
+      97% 3%,
+      97% 97%,
+      3% 97%,
+      3% 100%,
+      100% 100%,
+      100% 0%
+    );
   }
 }
 </style>

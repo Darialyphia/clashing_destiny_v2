@@ -17,7 +17,7 @@ export const pyromancer: MinionBlueprint = {
   id: 'pyromancer',
   name: 'Pyromancer',
   description: dedent /*html*/ `
-  <rt-trigger>On Score</rt-trigger> Summon a <rt-card>Will-o-Wisp</rt-card> exhausted on the same location as this minion. You may consume <rt-runes runes="colorless"></rt-runes> to Ready it.
+  <rt-trigger>On Score</rt-trigger> Summon a <rt-card>Will-o-Wisp</rt-card> on the same location as this minion.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -26,17 +26,17 @@ export const pyromancer: MinionBlueprint = {
   rarity: RARITIES.COMMON,
   jobs: [JOBS.MAGE],
   affinities: [AFFINITIES.FIRE],
-  manaCost: 3,
+  manaCost: 4,
   manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
   statRequirements: {
-    might: 0,
-    focus: 0,
-    wisdom: 0
+    might: 2,
+    focus: 1,
+    wisdom: 1
   },
   atk: 2,
-  maxHp: 4,
+  maxHp: 3,
   commandment: 2,
   canPlay: () => true,
   abilities: [],
@@ -70,18 +70,6 @@ export const pyromancer: MinionBlueprint = {
           await generatedCard.playImmediatelyAt(result.result.spaces[0], {
             shouldExhaust: false
           });
-          await generatedCard.wakeUp();
-
-          const shouldWakeup = await askMandatoryYesNoQuestion({
-            game,
-            card,
-            questionId: 'pyromancer-summon-wisp',
-            label: 'Consume a rune to ready the Will-o-wisp ?',
-            timeoutFallback: 'no',
-            aiChoice: 'yes'
-          });
-
-          if (!shouldWakeup) return;
 
           await generatedCard.wakeUp();
         }

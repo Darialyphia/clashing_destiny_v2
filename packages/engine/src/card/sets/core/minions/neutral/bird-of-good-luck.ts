@@ -23,7 +23,7 @@ export const birdOfGoodLuck: MinionBlueprint = {
   art: defaultCardArt('placeholder'),
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.EPIC,
-  jobs: [JOBS.TAMER],
+  jobs: [],
   affinities: [AFFINITIES.NEUTRAL],
   manaCost: 2,
   manaSupply: 2,

@@ -30,6 +30,9 @@ import Speed from './Speed.vue';
 import { assets } from '@/assets';
 import FoilAuroraBorder from '../foil/FoilAuroraBorder.vue';
 import FoilCRT from '../foil/FoilCRT.vue';
+import FoilRain from '../foil/FoilRain.vue';
+import JobFlags from './JobFlags.vue';
+import FoilStarfield from '../foil/FoilStarfield.vue';
 
 const {
   card,
@@ -87,6 +90,10 @@ const tint = computed(() => {
 const kindBg = computed(() => {
   return assets[`ui/card/kind-${card.kind.toLowerCase()}`].css;
 });
+
+const artMainImage = computed(() => {
+  return assets[card.art.main].css;
+});
 </script>
 
 <template>
@@ -109,6 +116,8 @@ const kindBg = computed(() => {
       <div class="card-front" :style="{ '--tint': tint }">
         <CardArtComponent :art="card.art" :kind="card.kind" />
         <template v-if="isFoil">
+          <FoilRain v-if="card.art.foil.rain" />
+          <FoilStarfield v-if="card.art.foil.starField" />
           <FoilSheen v-if="card.art.foil.sheen" />
           <FoilOil v-if="card.art.foil.oil" />
           <FoilGradient v-if="card.art.foil.gradient" />
@@ -129,7 +138,10 @@ const kindBg = computed(() => {
           :mana-supply="card.manaSupply"
         />
         <CardRarity :rarity="card.rarity" />
-        <AffinityFlags :affinities="card.affinities" />
+        <div class="flags">
+          <JobFlags :jobs="card.jobs" />
+          <AffinityFlags :affinities="card.affinities" />
+        </div>
         <CardName :name="card.name" />
 
         <div class="tags parallax">
@@ -246,12 +258,17 @@ const kindBg = computed(() => {
 
   --glare-mask: url('@/assets/ui/card/v2/card-front.png');
   --foil-mask: url('@/assets/ui/card/v2/card-front.png');
+  --art-mask: v-bind(artMainImage);
+  --art-mask-size: cover;
+  --art-mask-position: center;
+  --art-mask-position: calc(2px * var(--pixel-scale))
+    calc(2px * var(--pixel-scale));
 
   &::after {
     content: '';
     position: absolute;
     inset: 0;
-    background: var(--tint);
+    /* background: var(--tint); */
     mix-blend-mode: color-dodge;
     opacity: 0.2;
     mask-size: cover;
@@ -344,5 +361,13 @@ const kindBg = computed(() => {
   text-shadow: 0 0 0.75rem black;
   -webkit-text-stroke: 2px black;
   paint-order: stroke fill;
+}
+
+.flags {
+  position: absolute;
+  top: 0;
+  right: calc(5px * var(--pixel-scale));
+  display: flex;
+  gap: calc(4px * var(--pixel-scale));
 }
 </style>

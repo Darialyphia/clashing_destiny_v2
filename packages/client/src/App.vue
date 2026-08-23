@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { TooltipProvider } from 'reka-ui';
 import { provideAuth } from './auth/composables/useAuth';
+import SVGFilters from './game/components/SVGFilters.vue';
 
 // const { loaded } = useAssets();
 provideAuth();
@@ -9,6 +10,8 @@ provideAuth();
 <template>
   <!-- <div v-if="!loaded">Loading...</div> -->
   <div>
+    <SVGFilters />
+
     <TooltipProvider :delay-duration="400">
       <RouterView />
     </TooltipProvider>

@@ -18,9 +18,9 @@ export const astralSage: MinionBlueprint = {
   id: 'astralSage',
   name: 'Astral Sage',
   description: dedent /*html*/ `
-    <rt-trigger>On Enter</rt-trigger> Summon an <rt-card>Astral Ball</rt-card> in your base exhausted.
-    <rt-runes runes="focus,wisdom"></rt-runes> <rt-trigger>On Move</rt-trigger> Repeat this minions's On Enter effect.
-    `,
+  <rt-trigger>On Enter</rt-trigger> Summon an <rt-card>Astral Ball</rt-card> in your base exhausted.
+  <rt-trigger>On Move</rt-trigger> Repeat this minions's On Enter effect.
+  `,
   collectable: true,
   setId: CARD_SETS.CORE,
   art: defaultCardArt('minions/astral-sage'),

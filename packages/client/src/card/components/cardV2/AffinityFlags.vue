@@ -7,7 +7,7 @@ const { affinities } = defineProps<{
 </script>
 
 <template>
-  <div class="affinity-flags">
+  <div class="affinity-flags" v-if="affinities.length > 0">
     <div
       v-for="(affinity, index) in affinities"
       :key="index"
@@ -19,9 +19,6 @@ const { affinities } = defineProps<{
 
 <style scoped lang="postcss">
 .affinity-flags {
-  position: absolute;
-  top: 0;
-  right: calc(5px * var(--pixel-scale));
   display: flex;
   flex-direction: column;
   gap: calc(2px * var(--pixel-scale));

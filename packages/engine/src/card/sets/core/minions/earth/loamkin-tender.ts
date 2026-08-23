@@ -25,7 +25,7 @@ export const loamkinTender: MinionBlueprint = {
   art: defaultCardArt('placeholder'),
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.COMMON,
-  jobs: [JOBS.TAMER],
+  jobs: [],
   affinities: [AFFINITIES.EARTH],
   manaCost: 1,
   manaSupply: 2,

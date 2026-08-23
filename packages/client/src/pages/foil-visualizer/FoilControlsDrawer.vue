@@ -35,27 +35,6 @@ const updateOption = (
       <div class="foil-controls">
         <label class="control-item">
           <UiSwitch
-            :model-value="foilOptions.foilLayer"
-            @update:model-value="updateOption('foilLayer', $event)"
-          />
-          <span>Foil art</span>
-        </label>
-        <label class="control-item">
-          <UiSwitch
-            :model-value="foilOptions.noBackground"
-            @update:model-value="updateOption('noBackground', $event)"
-          />
-          <span>No background</span>
-        </label>
-        <label class="control-item">
-          <UiSwitch
-            :model-value="foilOptions.noFrame"
-            @update:model-value="updateOption('noFrame', $event)"
-          />
-          <span>No frame</span>
-        </label>
-        <label class="control-item">
-          <UiSwitch
             :model-value="foilOptions.sheen"
             @update:model-value="updateOption('sheen', $event)"
           />
@@ -67,6 +46,27 @@ const updateOption = (
             @update:model-value="updateOption('oil', $event)"
           />
           <span>Oil</span>
+        </label>
+        <label class="control-item">
+          <UiSwitch
+            :model-value="foilOptions.brightShine"
+            @update:model-value="updateOption('brightShine', $event)"
+          />
+          <span>Bright Shine</span>
+        </label>
+        <label class="control-item">
+          <UiSwitch
+            :model-value="foilOptions.auroraBorder"
+            @update:model-value="updateOption('auroraBorder', $event)"
+          />
+          <span>Aurora Border</span>
+        </label>
+        <label class="control-item">
+          <UiSwitch
+            :model-value="foilOptions.crt"
+            @update:model-value="updateOption('crt', $event)"
+          />
+          <span>CRT</span>
         </label>
         <label class="control-item">
           <UiSwitch

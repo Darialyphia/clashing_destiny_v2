@@ -278,6 +278,7 @@ const expToGrant = ref(0);
   width: var(--sandbox-tools-width);
   max-height: 80vh;
   overflow-y: auto;
+  z-index: 12;
 }
 
 .accordion-root {

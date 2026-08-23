@@ -100,5 +100,31 @@
         <feComposite in="SourceGraphic" in2="blurredBloom" operator="lighter" />
       </filter>
     </defs>
+
+    <defs>
+      <filter
+        id="foil-rain-distortion"
+        x="-25%"
+        y="-25%"
+        width="150%"
+        height="150%"
+      >
+        <feTurbulence
+          type="fractalNoise"
+          baseFrequency="0.014 0.1"
+          numOctaves="2"
+          seed="9"
+          result="noise"
+        />
+        <feDisplacementMap
+          in="SourceGraphic"
+          in2="noise"
+          scale="12"
+          xChannelSelector="R"
+          yChannelSelector="G"
+        />
+        <feGaussianBlur stdDeviation="0.35" />
+      </filter>
+    </defs>
   </svg>
 </template>

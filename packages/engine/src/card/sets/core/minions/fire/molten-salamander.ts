@@ -26,7 +26,7 @@ export const moltenSalamander: MinionBlueprint = {
   art: defaultCardArt('minions/molten-salamander'),
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.COMMON,
-  jobs: [JOBS.TAMER],
+  jobs: [],
   affinities: [AFFINITIES.FIRE],
   manaCost: 5,
   manaSupply: 2,

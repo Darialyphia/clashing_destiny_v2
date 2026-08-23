@@ -7,7 +7,6 @@ import {
   useOpponentPlayer
 } from '../composables/useGameClient';
 import PlayedCard from './PlayedCard.vue';
-import SVGFilters from './SVGFilters.vue';
 import ChooseCardModal from './ChooseCardModal.vue';
 import { useGameKeyboardControls } from '../composables/useGameKeyboardControls';
 import GameErrorModal from './GameErrorModal.vue';
@@ -21,9 +20,8 @@ import { useKeyboardControl } from '@/shared/composables/useKeyboardControl';
 import { useSettingsStore } from '@/shared/composables/useSettings';
 import { useEventListener, usePageLeave } from '@vueuse/core';
 import { INTERACTION_STATES } from '@game/engine/src/game/game.enums';
-
 import HoveredCardInfos from './HoveredCardnfos.vue';
-import BoardCard from './BoardCard.vue';
+import PlayerInfos from './PlayerInfos.vue';
 import CombatArrows from './CombatArrows.vue';
 import TurnIndicator from './TurnIndicator.vue';
 import RearrangeCardsModal from './RearrangeCardsModal.vue';
@@ -109,7 +107,6 @@ const isScreenDimmed = computed(() => {
     <div>Chain: {{ state.effectChain?.state }}</div>
   </div>
   <div class="game-board-container">
-    <SVGFilters />
     <PlayedCard />
     <ChooseCardModal />
     <CombatArrows />
@@ -142,23 +139,11 @@ const isScreenDimmed = computed(() => {
   </div>
 
   <div class="opponent-player">
-    <!-- <PlayerInfos :player="opponent" /> -->
-    <BoardCard
-      v-if="opponent.hero"
-      :card="opponent.hero"
-      variant="default"
-      :pixel-scale="1"
-    />
+    <PlayerInfos :player="opponent" inverted />
   </div>
 
   <div class="my-player">
-    <BoardCard
-      v-if="myPlayer.hero"
-      :card="myPlayer.hero"
-      variant="default"
-      :pixel-scale="1"
-    />
-    <!-- <PlayerInfos :player="myPlayer" /> -->
+    <PlayerInfos :player="myPlayer" />
   </div>
 
   <button
@@ -192,8 +177,8 @@ const isScreenDimmed = computed(() => {
 }
 .debug {
   position: fixed;
-  top: 0;
-  left: var(--size-12);
+  top: var(--size-13);
+  left: 0;
   color: white;
   font-size: var(--font-size-0);
   z-index: 10;
@@ -277,9 +262,8 @@ const isScreenDimmed = computed(() => {
 
 .my-player {
   position: absolute;
-  left: var(--size-8);
-  bottom: calc(50% - var(--card-height) * 0.75);
-  translate: 0 50%;
+  left: var(--size-6);
+  bottom: var(--size-3);
   display: flex;
   gap: var(--size-2);
   flex-direction: column;
@@ -288,9 +272,8 @@ const isScreenDimmed = computed(() => {
 
 .opponent-player {
   position: absolute;
-  right: var(--size-8);
-  top: calc(50% - var(--card-height) * 0.75);
-  translate: 0 -50%;
+  right: var(--size-6);
+  top: var(--size-3);
   display: flex;
   flex-direction: column;
   gap: var(--size-2);

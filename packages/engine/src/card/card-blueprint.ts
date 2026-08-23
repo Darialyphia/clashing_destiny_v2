@@ -20,7 +20,6 @@ import type { BoardSpace } from '../board/board-space.entity';
 import type { DestinyCard } from './entities/destiny.entity';
 import type { Effect } from '../game/effect-chain';
 import type { Nullable } from '@game/shared';
-import type { Rune } from '../player/player.enums';
 
 export type CardArt = {
   foil: {
@@ -37,6 +36,8 @@ export type CardArt = {
     brightShine?: boolean;
     auroraBorder?: boolean;
     crt?: boolean;
+    rain?: boolean;
+    starField?: boolean;
   };
   bg: string;
   main: string;

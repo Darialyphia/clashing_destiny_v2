@@ -63,17 +63,21 @@
     55% 55%,
     center center;
   background-blend-mode: overlay, soft-light, color-burn;
-  mask: var(--foil-mask);
-  mask-size: var(--foil-mask-size, cover);
-  mask-position: var(--foil-mask-position, center);
-  mask-repeat: no-repeat;
+  mask: var(--art-mask), linear-gradient(#000 0 0);
+  mask-size:
+    calc(var(--card-v2-art-frame-width) * var(--pixel-scale) * 2),
+    calc(var(--card-v2-art-frame-height) * var(--pixel-scale) * 2);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+
   transition: opacity 0.5s;
+  mask-position: var(--art-mask-position, center);
   opacity: 0;
   animation: foil-glitter 2.5s linear infinite;
 }
 
 :global(:is(.card-perspective-wrapper, .small-card):hover .foil-glitter) {
-  opacity: 0.3;
+  opacity: 0.2;
   transition-delay: 0.3s;
 }
 </style>

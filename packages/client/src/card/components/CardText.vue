@@ -14,7 +14,7 @@ const showFullText = useIsKeyboardControlPressed({
 
 <template>
   <div class="card-text" :class="{ 'show-full-text': showFullText }">
-    <RichText :html="text" />
+    <RichText :html="text" :key="text" />
   </div>
 </template>
 
