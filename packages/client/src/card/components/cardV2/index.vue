@@ -260,7 +260,7 @@ const artMainImage = computed(() => {
   --foil-mask: url('@/assets/ui/card/v2/card-front.png');
   --art-mask: v-bind(artMainImage);
   --art-mask-size: cover;
-  --art-mask-position: center;
+
   --art-mask-position: calc(2px * var(--pixel-scale))
     calc(2px * var(--pixel-scale));
 

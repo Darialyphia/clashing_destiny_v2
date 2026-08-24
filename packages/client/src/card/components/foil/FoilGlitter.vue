@@ -69,9 +69,9 @@
     calc(var(--card-v2-art-frame-height) * var(--pixel-scale) * 2);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
-
+  mask-position: var(--art-mask-position, center), center;
+  mask-repeat: no-repeat, repeat;
   transition: opacity 0.5s;
-  mask-position: var(--art-mask-position, center);
   opacity: 0;
   animation: foil-glitter 2.5s linear infinite;
 }
