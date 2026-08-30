@@ -6,7 +6,6 @@ import {
   CARD_LOCATIONS,
   CARD_SETS,
   CARD_SPEED,
-  JOBS,
   RARITIES
 } from '../../../../card.enums';
 import type { MinionCard } from '../../../../entities/minion.entity';
@@ -25,7 +24,7 @@ export const lesserFireSummoning: SpellBlueprint = {
   art: defaultCardArt('spells/lesser-fire-summoning'),
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.COMMON,
-  jobs: [JOBS.MAGE],
+  jobs: [],
   affinities: [AFFINITIES.FIRE],
   manaCost: 2,
   manaSupply: 2,

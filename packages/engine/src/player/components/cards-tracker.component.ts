@@ -61,8 +61,10 @@ export class CardTrackerComponent {
     >;
   }
 
-  getCardsPlayedOnTurn(turn: number) {
-    return this.cardsPlayedByGameTurn.get(turn) ?? [];
+  getCardsPlayedOnTurn(turn: number, predicate?: (card: PlayedCard) => boolean) {
+    const cards = this.cardsPlayedByGameTurn.get(turn) ?? [];
+    if (!predicate) return cards;
+    return cards.filter(predicate);
   }
 
   getCardsPlayedSince(turn: number) {

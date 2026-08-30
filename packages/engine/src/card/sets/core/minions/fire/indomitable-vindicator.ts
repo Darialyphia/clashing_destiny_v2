@@ -16,8 +16,6 @@ import {
 } from '../../../../card.enums';
 import { AbilityDamage } from '../../../../../utils/damage';
 import { OnScoreModifier } from '../../../../../modifier/modifiers/on-score.modifier';
-import { OnMoveModifier } from '../../../../../modifier/modifiers/on-move.modifier';
-import { VulnerableModifier } from '../../../../../modifier/modifiers/vulnerable.modifier';
 import { isDefined } from '@game/shared';
 
 export const indomitableVindicator: MinionBlueprint = {
@@ -32,7 +30,7 @@ export const indomitableVindicator: MinionBlueprint = {
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.RARE,
   jobs: [JOBS.WARRIOR],
-  affinities: [AFFINITIES.FIRE],
+  affinities: [],
   manaCost: 3,
   manaSupply: 2,
   speed: CARD_SPEED.SLOW,

@@ -18,7 +18,6 @@
     content: '';
     position: absolute;
     inset: 0;
-
     background-image:
       conic-gradient(
         from 0deg at var(--foil-oil-x) var(--foil-oil-y),

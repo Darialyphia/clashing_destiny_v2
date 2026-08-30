@@ -1,7 +1,7 @@
 <script setup lang="ts"></script>
 
 <template>
-  <div class="foil foil-rain" aria-hidden="true">
+  <div class="foil foil-starfield" aria-hidden="true">
     <div
       class="back parallax"
       style="--parallax-strength-x: 10; --parallax-strength-y: -3"
@@ -14,7 +14,7 @@
 </template>
 
 <style scoped lang="postcss">
-.foil-rain {
+.foil-starfield {
   --glare-opacity: 0;
   position: absolute;
   inset: 0;
@@ -26,17 +26,8 @@
   .front {
     position: absolute;
     inset: 0;
+    transition: background-size 0.5s ease-in-out;
     background:
-      /* radial-gradient(
-        circle at 13% 18%,
-        rgba(255, 255, 255, 0.95) 0 1px,
-        transparent 2px
-      ),
-      radial-gradient(
-        circle at 31% 72%,
-        rgba(141, 231, 255, 0.9) 0 1px,
-        transparent 1.8px
-      ), */
       radial-gradient(
         circle at 67% 24%,
         rgba(255, 177, 248, 0.9) 0 1px,
@@ -59,12 +50,10 @@
         hsla(150, 20%, 10%, 0.6) 90%
       );
     background-size:
-      /* 71px 83px,
-      97px 109px, */
       127px 101px,
       151px 133px,
       113px 149px,
-      cover;
+      1px 1px;
     background-position:
       /* calc(var(--mxn, 0) * 9px) calc(var(--myn, 0) * 8px),
       calc(var(--mxn, 0) * -13px) calc(var(--myn, 0) * 11px), */
@@ -72,12 +61,25 @@
       calc(var(--mxn, 0) * -8px) calc(var(--myn, 0) * -15px),
       calc(var(--mxn, 0) * 11px) calc(var(--myn, 0) * 13px),
       center center;
-    background-blend-mode: soft-light, soft-light, color-burn;
+    background-repeat: repeat, repeat, repeat, repeat, no-repeat;
   }
 
   .back {
     --mxn: 75;
     --myn: 40;
+  }
+}
+
+:global(:is(.card-perspective-wrapper, .small-card):hover .foil-starfield) {
+  opacity: 0.25;
+
+  .front,
+  .back {
+    background-size:
+      127px 101px,
+      151px 133px,
+      113px 149px,
+      cover;
   }
 }
 </style>

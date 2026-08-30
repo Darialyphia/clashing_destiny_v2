@@ -10,7 +10,6 @@ import {
   CARD_KINDS,
   CARD_SETS,
   CARD_SPEED,
-  JOBS,
   RARITIES
 } from '../../../../card.enums';
 import type { MinionCard } from '../../../../entities/minion.entity';
@@ -28,7 +27,7 @@ export const fireBolt: SpellBlueprint<MinionCard> = {
   art: defaultCardArt('spells/fire-bolt'),
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.COMMON,
-  jobs: [JOBS.MAGE],
+  jobs: [],
   affinities: [AFFINITIES.FIRE],
   manaCost: 1,
   manaSupply: 2,

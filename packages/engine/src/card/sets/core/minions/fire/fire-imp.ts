@@ -13,7 +13,7 @@ import { OnMoveModifier } from '../../../../../modifier/modifiers/on-move.modifi
 
 export const fireImp: MinionBlueprint = {
   id: 'fireImp',
-  name: 'Fire Imp',
+  name: 'Greedy Imp',
   description: dedent /*html*/ `
   <rt-trigger>On Move</rt-trigger> Discard a card, then draw a card.
   `,
@@ -23,7 +23,7 @@ export const fireImp: MinionBlueprint = {
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.COMMON,
   jobs: [],
-  affinities: [AFFINITIES.FIRE],
+  affinities: [],
   manaCost: 1,
   manaSupply: 2,
   speed: CARD_SPEED.SLOW,

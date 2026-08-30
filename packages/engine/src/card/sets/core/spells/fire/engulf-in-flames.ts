@@ -6,7 +6,6 @@ import {
   CARD_KINDS,
   CARD_SETS,
   CARD_SPEED,
-  JOBS,
   RARITIES
 } from '../../../../card.enums';
 import { SpellDamage } from '../../../../../utils/damage';
@@ -22,7 +21,7 @@ export const engulfInFlames: SpellBlueprint = {
   art: defaultCardArt('spells/engulf-in-flames'),
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.RARE,
-  jobs: [JOBS.MAGE],
+  jobs: [],
   affinities: [AFFINITIES.FIRE],
   manaCost: 3,
   manaSupply: 2,

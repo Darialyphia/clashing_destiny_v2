@@ -26,7 +26,7 @@ export const innerFire: SpellBlueprint<MinionCard> = {
   art: defaultCardArt('spells/inner-fire'),
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.COMMON,
-  jobs: [JOBS.WARRIOR],
+  jobs: [],
   affinities: [AFFINITIES.FIRE],
   manaCost: 1,
   manaSupply: 2,

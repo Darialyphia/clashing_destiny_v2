@@ -94,10 +94,10 @@ export const enjiOneManArmyFullArt: MinionBlueprint = {
   art: {
     default: {
       foil: {
-        sheen: true,
-        oil: true,
+        // sheen: true,
         goldenGlare: true,
-        auroraBorder: true
+        starField: true,
+        brightShine: true
       },
       isFullArt: true,
       bg: `minions/enji-one-man-army-fullart-bg`,

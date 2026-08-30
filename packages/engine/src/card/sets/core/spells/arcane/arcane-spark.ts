@@ -13,6 +13,7 @@ import type { MinionCard } from '../../../../entities/minion.entity';
 import { SpellDamage } from '../../../../../utils/damage';
 import { SimpleManacostModifier } from '../../../../../modifier/modifiers/simple-manacost-modifier';
 import { EchoModifier } from '../../../../../modifier/modifiers/echo.modifier';
+import { TogglableModifierMixin } from '../../../../../modifier/mixins/togglable.mixin';
 
 export const arcaneSpark: SpellBlueprint<MinionCard> = {
   id: 'arcaneSpark',
@@ -20,7 +21,7 @@ export const arcaneSpark: SpellBlueprint<MinionCard> = {
   description: dedent /*html*/ `
   <rt-keyword>Echo</rt-keyword>.
   Deal 1 damage to a minion at a battlefield. 
-  <rt-runes runes="focus,wisdom"></rt-runes> This costs 1 less.
+  If you played another spell this turn, this costs <rt-mana>1</rt-mana> less.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -57,7 +58,15 @@ export const arcaneSpark: SpellBlueprint<MinionCard> = {
   async onInit(game, card) {
     await card.modifiers.add(
       new SimpleManacostModifier('arcane-spark-discount', game, card, {
-        amount: -1
+        amount: -1,
+        mixins: [
+          new TogglableModifierMixin(
+            game,
+            () =>
+              card.player.cardTracker.getCardsPlayedThisTurnOfKind(CARD_KINDS.SPELL)
+                .length > 0
+          )
+        ]
       })
     );
     await card.modifiers.add(new EchoModifier(game, card, { mixins: [] }));

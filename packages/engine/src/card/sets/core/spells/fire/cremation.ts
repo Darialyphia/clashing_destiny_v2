@@ -6,7 +6,6 @@ import {
   CARD_KINDS,
   CARD_SETS,
   CARD_SPEED,
-  JOBS,
   RARITIES
 } from '../../../../card.enums';
 
@@ -21,7 +20,7 @@ export const cremation: SpellBlueprint = {
   art: defaultCardArt('spells/ceremonial-cremation'),
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.COMMON,
-  jobs: [JOBS.ACOLYTE],
+  jobs: [],
   affinities: [AFFINITIES.FIRE],
   manaCost: 3,
   manaSupply: 2,

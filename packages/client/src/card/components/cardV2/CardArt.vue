@@ -65,12 +65,24 @@ const artMainImage = computed(() => {
   }
 }
 
+.full-art ::after {
+  content: '';
+  background-image: v-bind(artMainImage), v-bind(artBgImage);
+  background-size: cover;
+  background-position: center;
+  position: absolute;
+  inset: 0;
+  mix-blend-mode: plus-lighter;
+  filter: blur(calc(var(--pixel-scale) * 7px));
+  animation: full-art-glow 2s var(--ease-3) infinite alternate;
+}
+
 @keyframes full-art-glow {
   from {
     opacity: 0.25;
   }
   to {
-    opacity: 1;
+    opacity: 0.75;
   }
 }
 
@@ -89,19 +101,6 @@ const artMainImage = computed(() => {
   width: 100%;
   position: absolute;
   inset: 0;
-  .full-art & {
-    &::after {
-      content: '';
-      background-image: v-bind(artBgImage);
-      background-size: cover;
-      background-position: center;
-      position: absolute;
-      inset: 0;
-      mix-blend-mode: plus-lighter;
-      filter: blur(calc(var(--pixel-scale) * 7px));
-      animation: full-art-glow 2s var(--ease-3) infinite alternate;
-    }
-  }
 }
 
 .art-main-shadow {

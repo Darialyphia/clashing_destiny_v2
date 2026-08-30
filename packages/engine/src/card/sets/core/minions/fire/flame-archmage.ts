@@ -14,7 +14,6 @@ import {
 import type { MinionCard } from '../../../../entities/minion.entity';
 import { askMandatoryYesNoQuestion } from '../../../../card-actions-utils';
 import { AbilityDamage } from '../../../../../utils/damage';
-import { RUNES } from '../../../../../player/player.enums';
 import { WhileOnBattlefieldModifier } from '../../../../../modifier/modifiers/while-on-board.modifier';
 import { CardEffectTriggeredEvent } from '../../../../card.events';
 
@@ -22,7 +21,7 @@ export const flameArchmage: MinionBlueprint = {
   id: 'flameArchmage',
   name: 'Flame Archmage',
   description: dedent /*html*/ `
-  <rt-location locations="battlefield">After you play a Fire spell, you may consume <rt-runes runes="wisdom"></rt-runes> to deal 2 damage to a minion on a battlefield.
+  <rt-location locations="battlefield">After you play a Fire spell, you may pay <rt-mana>2</rt-mana> to deal 2 damage to a minion on a battlefield.
   </rt-location>
   `,
   collectable: true,
@@ -31,15 +30,15 @@ export const flameArchmage: MinionBlueprint = {
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.EPIC,
   jobs: [JOBS.MAGE],
-  affinities: [AFFINITIES.FIRE],
-  manaCost: 5,
+  affinities: [],
+  manaCost: 6,
   manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
   statRequirements: {
-    might: 0,
+    might: 1,
     focus: 0,
-    wisdom: 0
+    wisdom: 2
   },
   atk: 3,
   maxHp: 5,

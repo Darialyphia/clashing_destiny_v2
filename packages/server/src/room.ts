@@ -181,23 +181,23 @@ export class Room {
       this.stopActivePlayerClock();
     });
 
-    this.engine.on(GAME_EVENTS.AFTER_CHANGE_PHASE, event => {
-      const newPhase = event.data.to.state;
-      const previousPhase = event.data.from;
+    // this.engine.on(GAME_EVENTS.AFTER_CHANGE_PHASE, event => {
+    //   const newPhase = event.data.to.state;
+    //   const previousPhase = event.data.from;
 
-      // When entering level up phase, start clocks for all players
-      if (newPhase === GAME_PHASES.LEVEL_UP) {
-        this.clockManager.resetAllClocks();
-        this.clockManager.startAllClocks();
-      }
+    //   // When entering level up phase, start clocks for all players
+    //   if (newPhase === GAME_PHASES.LEVEL_UP) {
+    //     this.clockManager.resetAllClocks();
+    //     this.clockManager.startAllClocks();
+    //   }
 
-      // When exiting level up phase, stop all clocks and resume normal behavior
-      if (previousPhase === GAME_PHASES.LEVEL_UP) {
-        this.clockManager.stopAllClocks();
-        this.clockManager.resetAllClocks();
-        this.startActivePlayerClock();
-      }
-    });
+    //   // When exiting level up phase, stop all clocks and resume normal behavior
+    //   if (previousPhase === GAME_PHASES.LEVEL_UP) {
+    //     this.clockManager.stopAllClocks();
+    //     this.clockManager.resetAllClocks();
+    //     this.startActivePlayerClock();
+    //   }
+    // });
   }
 
   private handleSpectatorSubscription(spectatorSocket: IoSocket) {

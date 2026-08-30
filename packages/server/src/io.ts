@@ -1,6 +1,7 @@
 import { Server, Socket } from 'socket.io';
 import type {
   GameStateSnapshot,
+  PatchBasedSnapshotDiff,
   SerializedOmniscientState,
   SerializedPlayerState,
   SnapshotDiff
@@ -19,7 +20,7 @@ export type EmittedEvents = {
     snapshot: GameStateSnapshot<SerializedPlayerState | SerializedOmniscientState>;
     history: SerializedInput[];
   }) => void;
-  gameSnapshot: (snapshot: GameStateSnapshot<SnapshotDiff>) => void;
+  gameSnapshot: (snapshot: GameStateSnapshot<PatchBasedSnapshotDiff>) => void;
   clockUpdate: (
     clocks: Record<
       UserId,
