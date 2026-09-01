@@ -33,6 +33,7 @@ import FoilCRT from '../foil/FoilCRT.vue';
 import FoilRain from '../foil/FoilRain.vue';
 import JobFlags from './JobFlags.vue';
 import FoilStarfield from '../foil/FoilStarfield.vue';
+import FoilEmboss from '../foil/FoilEmboss.vue';
 
 const {
   card,
@@ -124,6 +125,7 @@ const artMainImage = computed(() => {
           <FoilLightGradient v-if="card.art.foil.lightGradient" />
           <FoilGoldenGlare v-if="card.art.foil.goldenGlare" />
           <FoilGlitter v-if="card.art.foil.glitter" />
+          <FoilEmboss v-if="card.art.foil.emboss" />
           <FoilBrightShine v-if="card.art.foil.brightShine" />
           <FoilScanlines v-if="card.art.foil.scanlines" />
           <FoilAuroraBorder v-if="card.art.foil.auroraBorder" />

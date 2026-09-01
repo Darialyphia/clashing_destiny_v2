@@ -38,6 +38,7 @@ export type CardArt = {
     crt?: boolean;
     rain?: boolean;
     starField?: boolean;
+    emboss?: boolean;
   };
   bg: string;
   main: string;

@@ -14,6 +14,15 @@
 </template>
 
 <style scoped lang="postcss">
+@keyframes foil-starfield-glow {
+  from {
+    opacity: 0.15;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 .foil-starfield {
   --glare-opacity: 0;
   position: absolute;
@@ -21,11 +30,10 @@
   overflow: hidden;
   mix-blend-mode: color-dodge;
   filter: drop-shadow(0 0 2px rgba(190, 220, 255, 0.8));
-
   .back,
   .front {
     position: absolute;
-    inset: 0;
+    inset: -50px;
     transition: background-size 0.5s ease-in-out;
     background:
       radial-gradient(
@@ -62,6 +70,7 @@
       calc(var(--mxn, 0) * 11px) calc(var(--myn, 0) * 13px),
       center center;
     background-repeat: repeat, repeat, repeat, repeat, no-repeat;
+    animation: foil-starfield-glow 2.5s linear infinite alternate;
   }
 
   .back {
@@ -71,8 +80,6 @@
 }
 
 :global(:is(.card-perspective-wrapper, .small-card):hover .foil-starfield) {
-  opacity: 0.25;
-
   .front,
   .back {
     background-size:

@@ -200,6 +200,10 @@ const updateFoilOption = (key: string, value: boolean | undefined) => {
               <UiSwitch v-model="foilOptions.starField" />
               <span>Star Field</span>
             </label>
+            <label class="control-item">
+              <UiSwitch v-model="foilOptions.emboss" />
+              <span>Emboss</span>
+            </label>
           </div>
         </div>
       </main>
