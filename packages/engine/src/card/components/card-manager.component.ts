@@ -7,6 +7,7 @@ import { CARD_KINDS, CARD_LOCATIONS, type CardLocation } from '../card.enums';
 import { GAME_EVENTS } from '../../game/game.events';
 import { PlayerDrawEvent } from '../../player/player.events';
 import type { DestinyCard } from '../entities/destiny.entity';
+import type { RuneCard } from '../entities/rune.entity';
 
 export type CardManagerComponentOptions = {
   maxHandSize: number;
@@ -21,11 +22,15 @@ export class CardManagerComponent {
 
   readonly destinyDeck: Deck<DestinyCard>;
 
+  readonly runeDeck: Deck<RuneCard>;
+
   readonly hand: AnyCard[] = [];
 
   readonly discardPile = new Set<AnyCard>();
 
   readonly banishPile = new Set<AnyCard>();
+
+  readonly runeZone = new Set<RuneCard>();
 
   constructor(
     game: Game,
@@ -35,6 +40,7 @@ export class CardManagerComponent {
     this.game = game;
     this.mainDeck = new Deck(this.game, player);
     this.destinyDeck = new Deck(this.game, player);
+    this.runeDeck = new Deck(this.game, player);
   }
 
   private async buildCards<T extends AnyCard>(
@@ -51,14 +57,18 @@ export class CardManagerComponent {
 
   async init() {
     const cards = await this.buildCards<AnyCard>(this.options.deck);
-    this.mainDeck.populate(cards.filter(c => c.kind !== CARD_KINDS.DESTINY));
+    this.mainDeck.populate(
+      cards.filter(c => c.kind !== CARD_KINDS.DESTINY && c.kind !== CARD_KINDS.RUNE)
+    );
     this.destinyDeck.populate(
       cards.filter(c => c.kind === CARD_KINDS.DESTINY) as DestinyCard[]
     );
+    this.runeDeck.populate(cards.filter(c => c.kind === CARD_KINDS.RUNE) as RuneCard[]);
 
     if (this.options.shouldShuffleDeck) {
       this.mainDeck.shuffle();
       this.destinyDeck.shuffle();
+      this.runeDeck.shuffle();
     }
 
     this.hand.push(...this.mainDeck.draw(this.game.config.INITIAL_HAND_SIZE));
@@ -183,6 +193,10 @@ export class CardManagerComponent {
     );
 
     return cards;
+  }
+
+  removeFromRuneZone(card: RuneCard) {
+    this.runeZone.delete(card);
   }
 
   removeFromHand(card: AnyCard) {

@@ -14,7 +14,6 @@ import { match } from 'ts-pattern';
 import { BoardSide, type SerializedBoardSide } from '../board/board-side.entity';
 import { GAME_EVENTS } from '../game/game.events';
 import { PlayerGainVictoryPointEvent } from './player.events';
-import { RuneManagerComponent } from './components/rune-manager.component';
 
 export type PlayerOptions = {
   id: string;
@@ -65,8 +64,6 @@ export class Player
     maxMana: this.interceptors.maxMana
   });
 
-  readonly runeManager: RuneManagerComponent;
-
   readonly boardSide: BoardSide;
 
   private options: PlayerOptions;
@@ -87,7 +84,6 @@ export class Player
       shouldShuffleDeck: true,
       deck: options.deck.cards
     });
-    this.runeManager = new RuneManagerComponent(game, this);
   }
 
   async init() {

@@ -33,6 +33,7 @@ import { EntityWithModifiers } from '../../modifier/entity-with-modifiers';
 import { COMBAT_STEPS, EFFECT_TYPE, INTERACTION_STATES } from '../../game/game.enums';
 import { nanoid } from 'nanoid';
 import type { BoardSpace } from '../../board/board-space.entity';
+import type { RuneCard } from './rune.entity';
 
 export type CardOptions<T extends CardBlueprint = CardBlueprint> = {
   id: string;
@@ -246,6 +247,9 @@ export abstract class Card<
       .with(CARD_KINDS.DESTINY, async () => {
         await this.sendToBanishPile();
       })
+      .with(CARD_KINDS.RUNE, async () => {
+        await this.sendToBanishPile();
+      })
       .exhaustive();
 
     await this.game.emit(
@@ -346,6 +350,12 @@ export abstract class Card<
           this.player.boardSide.remove(this);
         }
       )
+      .with(CARD_LOCATIONS.RUNE_ZONE, () => {
+        this.player.cardManager.removeFromRuneZone(this as any);
+      })
+      .with(CARD_LOCATIONS.RUNE_DECK, () => {
+        this.player.cardManager.runeDeck.pluck(this as any);
+      })
       .exhaustive();
   }
 

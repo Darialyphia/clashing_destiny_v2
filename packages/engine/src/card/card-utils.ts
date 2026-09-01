@@ -1,5 +1,6 @@
 import type { Game } from '../game/game';
 import type { InteractionResult } from '../game/systems/game-interaction.system';
+import type { RuneCard } from './entities/rune.entity';
 import type { Player } from '../player/player.entity';
 import type { CardBlueprint, Targets } from './card-blueprint';
 import { CARD_KINDS, CARD_LOCATIONS } from './card.enums';
@@ -28,6 +29,10 @@ export const isArtifact = (card: AnyCard): card is ArtifactCard => {
 
 export const isDestiny = (card: AnyCard): card is DestinyCard => {
   return card.kind === CARD_KINDS.DESTINY;
+};
+
+export const isRune = (card: AnyCard): card is RuneCard => {
+  return card.kind === CARD_KINDS.RUNE;
 };
 
 export const minionTargetRules = {

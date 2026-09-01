@@ -18,6 +18,7 @@ import type { BoardSpace } from '../board/board-space.entity';
 import type { DestinyCard } from './entities/destiny.entity';
 import type { Effect } from '../game/effect-chain';
 import type { Nullable } from '@game/shared';
+import type { RuneCard } from './entities/rune.entity';
 
 export type CardArt = {
   foil: {
@@ -177,8 +178,15 @@ export type DestinyBlueprint = CardBlueprintBase & {
   onPlay: (game: Game, card: DestinyCard) => Promise<void>;
 };
 
+export type RuneBlueprint = CardBlueprintBase & {
+  kind: Extract<CardKind, typeof CARD_KINDS.RUNE>;
+  onInit: (game: Game, card: RuneCard) => Promise<void>;
+  onPlay: (game: Game, card: RuneCard) => Promise<void>;
+};
+
 export type CardBlueprint =
   | SpellBlueprint<any>
   | MinionBlueprint
   | ArtifactBlueprint
-  | DestinyBlueprint;
+  | DestinyBlueprint
+  | RuneBlueprint;

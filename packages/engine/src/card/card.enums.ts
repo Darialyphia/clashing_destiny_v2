@@ -33,7 +33,8 @@ export const CARD_KINDS = {
   MINION: 'MINION',
   SPELL: 'SPELL',
   ARTIFACT: 'ARTIFACT',
-  DESTINY: 'DESTINY'
+  DESTINY: 'DESTINY',
+  RUNE: 'RUNE'
 } as const;
 export type CardKind = Values<typeof CARD_KINDS>;
 
@@ -92,6 +93,8 @@ export const CARD_LOCATIONS = {
   HAND: 'hand',
   MAIN_DECK: 'mainDeck',
   DESTINY_DECK: 'destinyDeck',
+  RUNE_DECK: 'runeDeck',
+  RUNE_ZONE: 'runeZone',
   DISCARD_PILE: 'discardPile',
   BANISH_PILE: 'banishPile',
   BASE: 'base',
