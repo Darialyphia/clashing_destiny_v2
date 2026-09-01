@@ -5,7 +5,6 @@ import {
   CARD_SETS,
   CARD_KINDS,
   RARITIES,
-  JOBS,
   AFFINITIES,
   CARD_SPEED
 } from '../../../../card.enums';
@@ -26,17 +25,11 @@ export const moltenSalamander: MinionBlueprint = {
   art: defaultCardArt('minions/molten-salamander'),
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.COMMON,
-  jobs: [],
   affinities: [AFFINITIES.FIRE],
   manaCost: 5,
   manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
-  statRequirements: {
-    might: 2,
-    focus: 2,
-    wisdom: 0
-  },
   atk: 3,
   maxHp: 4,
   commandment: 2,

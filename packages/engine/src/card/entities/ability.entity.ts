@@ -7,7 +7,6 @@ import {
   type Targets
 } from '../card-blueprint';
 import { EFFECT_TYPE, GAME_PHASES, type GamePhase } from '../../game/game.enums';
-import type { HeroCard } from './hero.entity';
 import type { MinionCard } from './minion.entity';
 import { Entity } from '../../entity';
 import { Interceptable } from '../../utils/interceptable';
@@ -19,7 +18,7 @@ import {
 import { nanoid } from 'nanoid';
 import type { ArtifactCard } from './artifact.entity';
 
-export type AbilityOwner = MinionCard | HeroCard | ArtifactCard;
+export type AbilityOwner = MinionCard | ArtifactCard;
 
 export type AbilityInterceptors<T extends AbilityOwner> = {
   manaCost: Interceptable<number, Ability<T>>;
@@ -109,7 +108,7 @@ export class Ability<T extends AbilityOwner>
         handler: async () => {
           await this.resolveEffect();
         },
-        shouldHideTargetArrows: this.blueprint.shouldHideTargetarrows ?? false
+        shouldHideTargetArrows: this.blueprint.shouldHideTargetArrows ?? false
       };
 
       if (this.game.effectChainSystem.currentChain) {

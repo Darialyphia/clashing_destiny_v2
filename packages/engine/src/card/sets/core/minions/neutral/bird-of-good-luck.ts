@@ -6,8 +6,7 @@ import {
   CARD_KINDS,
   RARITIES,
   AFFINITIES,
-  CARD_SPEED,
-  JOBS
+  CARD_SPEED
 } from '../../../../card.enums';
 import { OnEnterModifier } from '../../../../../modifier/modifiers/on-enter.modifier';
 
@@ -23,17 +22,11 @@ export const birdOfGoodLuck: MinionBlueprint = {
   art: defaultCardArt('placeholder'),
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.EPIC,
-  jobs: [],
   affinities: [AFFINITIES.NEUTRAL],
   manaCost: 2,
   manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
-  statRequirements: {
-    might: 0,
-    focus: 0,
-    wisdom: 0
-  },
   atk: 1,
   maxHp: 3,
   commandment: 1,

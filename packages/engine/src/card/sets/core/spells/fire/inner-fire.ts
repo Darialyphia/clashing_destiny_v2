@@ -6,7 +6,6 @@ import {
   CARD_KINDS,
   CARD_SETS,
   CARD_SPEED,
-  JOBS,
   RARITIES
 } from '../../../../card.enums';
 import type { MinionCard } from '../../../../entities/minion.entity';
@@ -26,17 +25,11 @@ export const innerFire: SpellBlueprint<MinionCard> = {
   art: defaultCardArt('spells/inner-fire'),
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.COMMON,
-  jobs: [],
   affinities: [AFFINITIES.FIRE],
   manaCost: 1,
   manaSupply: 2,
   speed: CARD_SPEED.FAST,
   tags: [],
-  statRequirements: {
-    might: 0,
-    focus: 0,
-    wisdom: 0
-  },
   canPlay: () => true,
   getTargets: (game, card) =>
     singleAllyMinionTargetRules.getTargets({

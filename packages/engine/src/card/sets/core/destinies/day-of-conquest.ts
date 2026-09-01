@@ -12,8 +12,6 @@ import { CardAuraModifierMixin } from '../../../../modifier/mixins/aura.mixin';
 import type { DestinyCard } from '../../../entities/destiny.entity';
 import { WhileOnBattlefieldModifier } from '../../../../modifier/modifiers/while-on-board.modifier';
 import { isDefined } from '@game/shared';
-import { TogglableModifierMixin } from '../../../../modifier/mixins/togglable.mixin';
-import { SimpleAttackBuffModifier } from '../../../../modifier/modifiers/simple-attack-buff.modifier';
 import { AttackerModifier } from '../../../../modifier/modifiers/attacker.modifier';
 
 export const dayOfConquest: DestinyBlueprint = {
@@ -28,7 +26,6 @@ export const dayOfConquest: DestinyBlueprint = {
   rarity: RARITIES.COMMON,
   art: defaultCardArt('placeholder'),
   speed: CARD_SPEED.SLOW,
-  jobs: [],
   affinities: [AFFINITIES.NEUTRAL],
   tags: [],
   async onInit(game, card) {

@@ -8,9 +8,6 @@ import {
   AFFINITIES,
   CARD_SPEED
 } from '../../../../card.enums';
-import { RUNES } from '../../../../../player/player.enums';
-import { GAME_EVENTS } from '../../../../../game/game.events';
-import { discardFromHand } from '../../../../card-actions-utils';
 import { InstantModifier } from '../../../../../modifier/modifiers/instant.modifier';
 
 export const conjureResonance: SpellBlueprint = {
@@ -25,18 +22,12 @@ export const conjureResonance: SpellBlueprint = {
   art: defaultCardArt('spells/conjure-resonance'),
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.RARE,
-  jobs: [],
   affinities: [AFFINITIES.NEUTRAL],
   manaCost: 1,
   manaSupply: 2,
   speed: CARD_SPEED.FAST,
   tags: [],
-  statRequirements: {
-    might: 0,
-    focus: 0,
-    wisdom: 0
-  },
-  shouldHideTargetarrows: true,
+  shouldHideTargetArrows: true,
   canPlay: (game, card) => card.player.cardManager.hand.length > 0,
   getTargets: (game, card) => anywhereTargetRules.getTargets({ game, card }),
   async onInit(game, card) {

@@ -6,11 +6,9 @@ import {
   CARD_KINDS,
   RARITIES,
   AFFINITIES,
-  CARD_SPEED,
-  JOBS
+  CARD_SPEED
 } from '../../../../card.enums';
 import { UniqueModifier } from '../../../../../modifier/modifiers/unique.modifier';
-import { RUNES } from '../../../../../player/player.enums';
 import { OverwhelmModifier } from '../../../../../modifier/modifiers/overwhelm.modifier';
 import { TogglableModifierMixin } from '../../../../../modifier/mixins/togglable.mixin';
 import { AttackerModifier } from '../../../../../modifier/modifiers/attacker.modifier';
@@ -28,17 +26,11 @@ export const enjiOneManArmy: MinionBlueprint = {
   art: defaultCardArt('minions/enji-one-man-army'),
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.LEGENDARY,
-  jobs: [JOBS.WARRIOR],
   affinities: [AFFINITIES.FIRE],
   manaCost: 6,
   manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
-  statRequirements: {
-    might: 0,
-    focus: 0,
-    wisdom: 0
-  },
   atk: 3,
   maxHp: 5,
   commandment: 3,

@@ -1,5 +1,4 @@
 import { type Values } from '@game/shared';
-import { JOBS, type JobId } from './card.enums';
 
 export type Keyword = {
   id: string;
@@ -316,18 +315,7 @@ export const KEYWORDS = {
     name: 'Wither X',
     description: 'At the start of the turn, this unit loses X Attack and X Health.',
     aliases: [/wither [0-9]+/]
-  },
-  ...Object.fromEntries(
-    Object.values(JOBS).map(job => [
-      `${job.id.toUpperCase()}_BONUS` as `${Uppercase<JobId>}_BONUS`,
-      {
-        id: `${job.id}_mastery`,
-        name: `${job.name} Bonus`,
-        description: `This card has a bonus effect if its owner is playing a ${job.name} hero.`,
-        aliases: []
-      }
-    ]) as [`${Uppercase<JobId>}_BONUS`, Keyword][]
-  )
+  }
 };
 
 export type KeywordName = Values<typeof KEYWORDS>['name'];

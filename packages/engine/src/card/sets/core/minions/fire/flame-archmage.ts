@@ -7,7 +7,6 @@ import {
   CARD_SETS,
   CARD_KINDS,
   RARITIES,
-  JOBS,
   AFFINITIES,
   CARD_SPEED
 } from '../../../../card.enums';
@@ -29,17 +28,11 @@ export const flameArchmage: MinionBlueprint = {
   art: defaultCardArt('minions/flame-archmage'),
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.EPIC,
-  jobs: [JOBS.MAGE],
   affinities: [],
   manaCost: 6,
   manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
-  statRequirements: {
-    might: 1,
-    focus: 0,
-    wisdom: 2
-  },
   atk: 3,
   maxHp: 5,
   commandment: 2,

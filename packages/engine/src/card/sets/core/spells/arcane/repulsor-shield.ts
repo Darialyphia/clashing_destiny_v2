@@ -6,7 +6,6 @@ import {
   singleMinionTargetRules
 } from '../../../../card-utils';
 import {
-  JOBS,
   CARD_SETS,
   CARD_KINDS,
   RARITIES,
@@ -28,17 +27,11 @@ export const repulsorShield: SpellBlueprint<MinionCard> = {
   art: defaultCardArt('placeholder-spell'),
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.COMMON,
-  jobs: [JOBS.WARRIOR],
   affinities: [AFFINITIES.ARCANE],
   manaCost: 2,
   manaSupply: 2,
   speed: CARD_SPEED.FAST,
   tags: [],
-  statRequirements: {
-    might: 0,
-    focus: 0,
-    wisdom: 0
-  },
   canPlay: (game, card) => {
     const minionCondition = singleMinionTargetRules.canPlay(
       game,

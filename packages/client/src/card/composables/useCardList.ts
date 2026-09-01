@@ -6,7 +6,6 @@ import {
   CARD_KINDS,
   type Affinity,
   type CardKind,
-  type JobId,
   type Rarity
 } from '@game/engine/src/card/card.enums';
 import { CARD_SET_DICTIONARY } from '@game/engine/src/card/sets';
@@ -34,10 +33,6 @@ export type CardListContext = {
   toggleKindFilter(kind: CardKind): void;
   clearKindFilter(): void;
 
-  hasJobFilter(job: JobId): boolean;
-  toggleJobFilter(job: JobId): void;
-  clearJobFilter(): void;
-
   hasRarityFilter(rarity: Rarity): boolean;
   toggleRarityFilter(rarity: Rarity): void;
   clearRarityFilter(): void;
@@ -60,7 +55,6 @@ export const provideCardList = () => {
   );
 
   const KIND_ORDER = {
-    [CARD_KINDS.HERO]: 1,
     [CARD_KINDS.MINION]: 2,
     [CARD_KINDS.SPELL]: 3,
     [CARD_KINDS.ARTIFACT]: 4,
@@ -79,7 +73,6 @@ export const provideCardList = () => {
   };
 
   const kindFilter = ref(new Set<CardKind>());
-  const jobFilter = ref(new Set<JobId>());
   const rarityFilter = ref(new Set<Rarity>());
   const affinityFilter = ref(new Set<Affinity>());
   const manaCostFilter = ref<{ min: number; max: number } | null>(null);
@@ -120,13 +113,6 @@ export const provideCardList = () => {
       .filter(({ card }) => {
         if (kindFilter.value.size > 0 && !kindFilter.value.has(card.kind)) {
           return false;
-        }
-
-        if (jobFilter.value.size > 0) {
-          const isMatch = card.jobs.some(job =>
-            jobFilter.value.has(job.id as JobId)
-          );
-          return isMatch;
         }
 
         if (
@@ -192,19 +178,6 @@ export const provideCardList = () => {
         return true;
       })
       .sort((a, b) => {
-        if (
-          a.card.kind === CARD_KINDS.HERO &&
-          b.card.kind !== CARD_KINDS.HERO
-        ) {
-          return -1;
-        }
-        if (
-          a.card.kind !== CARD_KINDS.HERO &&
-          b.card.kind === CARD_KINDS.HERO
-        ) {
-          return 1;
-        }
-
         if (a.card.affinities.length !== b.card.affinities.length) {
           return a.card.affinities.length - b.card.affinities.length;
         }
@@ -252,20 +225,6 @@ export const provideCardList = () => {
     },
     clearKindFilter: () => {
       kindFilter.value.clear();
-    },
-
-    hasJobFilter(job: JobId) {
-      return jobFilter.value.has(job);
-    },
-    toggleJobFilter(job: JobId) {
-      if (jobFilter.value.has(job)) {
-        jobFilter.value.delete(job);
-      } else {
-        jobFilter.value.add(job);
-      }
-    },
-    clearJobFilter: () => {
-      jobFilter.value.clear();
     },
 
     hasRarityFilter(rarity: Rarity) {

@@ -4,7 +4,6 @@ import type { Player } from '../player/player.entity';
 import type { CardBlueprint, Targets } from './card-blueprint';
 import { CARD_KINDS, CARD_LOCATIONS } from './card.enums';
 import type { AnyCard } from './entities/card.entity';
-import type { HeroCard } from './entities/hero.entity';
 import type { MinionCard } from './entities/minion.entity';
 import type { SpellCard } from './entities/spell.entity';
 import type { ArtifactCard } from './entities/artifact.entity';
@@ -14,10 +13,6 @@ import { AOE_TARGETING_TYPE } from '../aoe/aoe-shape';
 import { isFunction } from '@game/shared';
 import type { DestinyCard } from './entities/destiny.entity';
 import type { Effect } from '../game/effect-chain';
-
-export const isHero = (card: AnyCard): card is HeroCard => {
-  return card.kind === CARD_KINDS.HERO;
-};
 
 export const isMinion = (card: AnyCard): card is MinionCard => {
   return card.kind === CARD_KINDS.MINION;
@@ -31,27 +26,20 @@ export const isArtifact = (card: AnyCard): card is ArtifactCard => {
   return card.kind === CARD_KINDS.ARTIFACT;
 };
 
-export const isMinionOrHero = (card: AnyCard): card is MinionCard | HeroCard => {
-  return isMinion(card) || isHero(card);
-};
-
 export const isDestiny = (card: AnyCard): card is DestinyCard => {
   return card.kind === CARD_KINDS.DESTINY;
 };
 
-export const minionOrHeroTargetRules = {
+export const minionTargetRules = {
   canPlay: (
     game: Game,
     card: AnyCard,
-    { predicate, min }: { predicate: (c: MinionCard | HeroCard) => boolean; min: number }
+    { predicate, min }: { predicate: (c: MinionCard) => boolean; min: number }
   ) => {
     return (
-      [
-        ...card.player.minions,
-        card.player.hero,
-        ...card.player.enemyMinions,
-        card.player.enemyHero
-      ].filter(c => c.canBeTargeted(card) && predicate(c)).length >= min
+      [...card.player.minions, ...card.player.enemyMinions].filter(
+        c => c.canBeTargeted(card) && predicate(c)
+      ).length >= min
     );
   },
   getTargets: async ({
@@ -69,7 +57,7 @@ export const minionOrHeroTargetRules = {
     game: Game;
     card: AnyCard;
     timeoutFallback: AnyCard[];
-    predicate: (c: MinionCard | HeroCard) => boolean;
+    predicate: (c: MinionCard) => boolean;
     min: number;
     max: number;
     allowRepeat: boolean;
@@ -78,8 +66,8 @@ export const minionOrHeroTargetRules = {
     aiHints: {
       shouldPick: (game: Game, player: Player, selectedCards: AnyCard[]) => number;
     };
-  }): Promise<InteractionResult<Targets<MinionCard | HeroCard>>> => {
-    const result = await game.interaction.selectCardsOnBoard<MinionCard | HeroCard>({
+  }): Promise<InteractionResult<Targets<MinionCard>>> => {
+    const result = await game.interaction.selectCardsOnBoard<MinionCard>({
       player: card.player,
       label,
       source: card,
@@ -87,7 +75,7 @@ export const minionOrHeroTargetRules = {
       canCancel,
       aiHints,
       isElligible(candidate, selectedCards) {
-        if (!isMinionOrHero(candidate)) {
+        if (!isMinion(candidate)) {
           return false;
         }
 
@@ -110,7 +98,7 @@ export const minionOrHeroTargetRules = {
     return {
       cancelled: false as const,
       result: {
-        cards: result.result as (MinionCard | HeroCard)[],
+        cards: result.result as MinionCard[],
         spaces: [],
         effect: null
       }
@@ -122,9 +110,9 @@ export const singleEnemyTargetRules = {
   canPlay: (
     game: Game,
     card: AnyCard,
-    predicate: (c: MinionCard | HeroCard) => boolean = () => true
+    predicate: (c: MinionCard) => boolean = () => true
   ) =>
-    minionOrHeroTargetRules.canPlay(game, card, {
+    minionTargetRules.canPlay(game, card, {
       predicate: c => {
         return !c.player.equals(card.player) && predicate(c);
       },
@@ -144,12 +132,12 @@ export const singleEnemyTargetRules = {
     label?: string;
     timeoutFallback: AnyCard[];
     canCancel?: boolean;
-    predicate?: (c: MinionCard | HeroCard) => boolean;
+    predicate?: (c: MinionCard) => boolean;
     aiHints: {
       shouldPick: (game: Game, player: Player, selectedCards: AnyCard[]) => number;
     };
   }) =>
-    await minionOrHeroTargetRules.getTargets({
+    await minionTargetRules.getTargets({
       game,
       card,
       predicate: c => {
@@ -167,10 +155,10 @@ export const singleEnemyTargetRules = {
   defaultTimeoutFallback: (
     game: Game,
     card: AnyCard,
-    predicate?: (c: MinionCard | HeroCard) => boolean
+    predicate?: (c: MinionCard) => boolean
   ) => {
     const elligible = game.cardSystem.getAllCardsInPlay().filter(candidate => {
-      if (!isMinion(candidate) && !isHero(candidate)) return false;
+      if (!isMinion(candidate)) return false;
 
       return (
         candidate.isEnemy(card.player) &&
@@ -187,9 +175,9 @@ export const singleAllyTargetRules = {
   canPlay: (
     game: Game,
     card: AnyCard,
-    predicate: (c: MinionCard | HeroCard) => boolean = () => true
+    predicate: (c: MinionCard) => boolean = () => true
   ) =>
-    minionOrHeroTargetRules.canPlay(game, card, {
+    minionTargetRules.canPlay(game, card, {
       predicate: c => c.player.equals(card.player) && predicate(c),
       min: 1
     }),
@@ -207,12 +195,12 @@ export const singleAllyTargetRules = {
     label?: string;
     timeoutFallback: AnyCard[];
     canCancel?: boolean;
-    predicate?: (c: MinionCard | HeroCard) => boolean;
+    predicate?: (c: MinionCard) => boolean;
     aiHints: {
       shouldPick: (game: Game, player: Player, selectedCards: AnyCard[]) => number;
     };
   }) =>
-    await minionOrHeroTargetRules.getTargets({
+    await minionTargetRules.getTargets({
       game,
       card,
       min: 1,
@@ -227,10 +215,10 @@ export const singleAllyTargetRules = {
   defaultTimeoutFallback: (
     game: Game,
     card: AnyCard,
-    predicate?: (c: MinionCard | HeroCard) => boolean
+    predicate?: (c: MinionCard) => boolean
   ) => {
     const elligible = game.cardSystem.getAllCardsInPlay().filter(candidate => {
-      if (!isMinion(candidate) && !isHero(candidate)) return false;
+      if (!isMinion(candidate)) return false;
 
       return (
         candidate.isAlly(card.player) &&
@@ -362,7 +350,7 @@ export const singleAllyMinionTargetRules = {
 
 export const singleMinionTargetRules = {
   canPlay(game: Game, card: AnyCard, predicate: (c: MinionCard) => boolean = () => true) {
-    return minionOrHeroTargetRules.canPlay(game, card, {
+    return minionTargetRules.canPlay(game, card, {
       predicate: c => isMinion(c) && predicate(c),
       min: 1
     });
@@ -386,7 +374,7 @@ export const singleMinionTargetRules = {
       shouldPick: (game: Game, player: Player, selectedCards: AnyCard[]) => number;
     };
   }) {
-    const result = await minionOrHeroTargetRules.getTargets({
+    const result = await minionTargetRules.getTargets({
       min: 1,
       max: 1,
       label,
@@ -424,9 +412,9 @@ export const multipleEnemyTargetRules = {
     game: Game,
     card: AnyCard,
     min: number,
-    predicate: (c: MinionCard | HeroCard) => boolean = () => true
+    predicate: (c: MinionCard) => boolean = () => true
   ) {
-    return minionOrHeroTargetRules.canPlay(game, card, {
+    return minionTargetRules.canPlay(game, card, {
       predicate: c => !c.player.equals(card.player) && predicate(c),
       min
     });
@@ -439,14 +427,14 @@ export const multipleEnemyTargetRules = {
       max: number;
       allowRepeat?: boolean;
       label: string;
-      predicate?: (c: MinionCard | HeroCard) => boolean;
+      predicate?: (c: MinionCard) => boolean;
       timeoutFallback: AnyCard[];
       aiHints: {
         shouldPick: (game: Game, player: Player, selectedCards: AnyCard[]) => number;
       };
     }
   ) {
-    return await minionOrHeroTargetRules.getTargets({
+    return await minionTargetRules.getTargets({
       min: options.min,
       max: options.max,
       label: options.label,

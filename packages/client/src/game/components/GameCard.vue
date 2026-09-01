@@ -118,7 +118,6 @@ provideRichTextContext({
           abilities: card.abilities
             .filter(ability => !ability.isHiddenOnCard)
             .map(a => formatAbilityText(a)),
-          jobs: overrides.jobs ?? card.jobs,
           subKind: overrides.subKind ?? card.subKind,
           affinities: overrides.affinities ?? card.affinities,
           speed: overrides.speed ?? card.speed,

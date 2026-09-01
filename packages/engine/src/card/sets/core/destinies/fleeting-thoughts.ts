@@ -29,7 +29,6 @@ export const fleetingThought: DestinyBlueprint = {
   rarity: RARITIES.RARE,
   art: defaultCardArt('placeholder'),
   speed: CARD_SPEED.SLOW,
-  jobs: [],
   affinities: [AFFINITIES.NEUTRAL],
   tags: [],
   async onInit(game, card) {

@@ -8,15 +8,10 @@ import {
   AFFINITIES,
   CARD_SPEED
 } from '../../../card.enums';
-import { CardAuraModifierMixin } from '../../../../modifier/mixins/aura.mixin';
 import type { DestinyCard } from '../../../entities/destiny.entity';
 import { WhileOnBattlefieldModifier } from '../../../../modifier/modifiers/while-on-board.modifier';
-import { isDefined } from '@game/shared';
-import { TogglableModifierMixin } from '../../../../modifier/mixins/togglable.mixin';
 import { GAME_EVENTS } from '../../../../game/game.events';
 import { GameEventModifierMixin } from '../../../../modifier/mixins/game-event.mixin';
-import { SimpleCommandmentBuffModifier } from '../../../../modifier/modifiers/simple-commandment-modifier';
-import { SimpleAttackBuffModifier } from '../../../../modifier/modifiers/simple-attack-buff.modifier';
 
 export const restrainTheBeast: DestinyBlueprint = {
   id: 'restrain-the-beast',
@@ -30,7 +25,6 @@ export const restrainTheBeast: DestinyBlueprint = {
   rarity: RARITIES.COMMON,
   art: defaultCardArt('placeholder'),
   speed: CARD_SPEED.SLOW,
-  jobs: [],
   affinities: [AFFINITIES.NEUTRAL],
   tags: [],
   async onInit(game, card) {

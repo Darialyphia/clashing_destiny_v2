@@ -6,7 +6,6 @@ import {
   emptyBoardSpaceTargetRules
 } from '../../../../card-utils';
 import {
-  JOBS,
   CARD_SETS,
   CARD_KINDS,
   RARITIES,
@@ -26,18 +25,12 @@ export const starConvergence: SpellBlueprint = {
   art: defaultCardArt('placeholder-spell'),
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.RARE,
-  jobs: [JOBS.MAGE],
   affinities: [AFFINITIES.ARCANE],
   manaCost: 1,
   manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
-  statRequirements: {
-    might: 0,
-    focus: 0,
-    wisdom: 0
-  },
-  shouldHideTargetarrows: true,
+  shouldHideTargetArrows: true,
   canPlay: () => true,
   getTargets: (game, card) => anywhereTargetRules.getTargets({ game, card }),
   async onInit() {},

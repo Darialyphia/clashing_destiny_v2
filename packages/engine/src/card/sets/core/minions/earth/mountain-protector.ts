@@ -5,7 +5,6 @@ import {
   CARD_SETS,
   CARD_KINDS,
   RARITIES,
-  JOBS,
   AFFINITIES,
   CARD_SPEED
 } from '../../../../card.enums';
@@ -25,17 +24,11 @@ export const mountainProtector: MinionBlueprint = {
   art: defaultCardArt('placeholder'),
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.COMMON,
-  jobs: [JOBS.WARRIOR],
   affinities: [AFFINITIES.EARTH],
   manaCost: 4,
   manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
-  statRequirements: {
-    might: 0,
-    focus: 0,
-    wisdom: 0
-  },
   atk: 2,
   maxHp: 5,
   commandment: 2,

@@ -6,8 +6,7 @@ import {
   CARD_KINDS,
   RARITIES,
   AFFINITIES,
-  CARD_SPEED,
-  JOBS
+  CARD_SPEED
 } from '../../../../card.enums';
 import { SimpleManacostModifier } from '../../../../../modifier/modifiers/simple-manacost-modifier';
 import { BlastModifier } from '../../../../../modifier/modifiers/blast.modifier';
@@ -24,17 +23,11 @@ export const blastSorcerer: MinionBlueprint = {
   art: defaultCardArt('minions/blast-sorcerer'),
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.COMMON,
-  jobs: [JOBS.MAGE],
   affinities: [AFFINITIES.FIRE],
   manaCost: 5,
   manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
-  statRequirements: {
-    might: 0,
-    focus: 0,
-    wisdom: 0
-  },
   atk: 2,
   maxHp: 5,
   commandment: 2,

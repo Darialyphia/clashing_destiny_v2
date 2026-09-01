@@ -186,7 +186,7 @@ export class BoardSide
 
   remove(card: AnyCard) {
     match(card.kind)
-      .with(CARD_KINDS.HERO, CARD_KINDS.SPELL, () => {})
+      .with(CARD_KINDS.SPELL, () => {})
       .with(CARD_KINDS.ARTIFACT, () => {
         this.removeFromBase(card);
       })

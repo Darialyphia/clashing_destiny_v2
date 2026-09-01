@@ -26,7 +26,6 @@ export const crowdsFavor: DestinyBlueprint = {
   rarity: RARITIES.COMMON,
   art: defaultCardArt('placeholder'),
   speed: CARD_SPEED.SLOW,
-  jobs: [],
   affinities: [AFFINITIES.NEUTRAL],
   tags: [],
   async onInit(game, card) {

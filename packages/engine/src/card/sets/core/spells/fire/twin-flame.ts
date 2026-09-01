@@ -10,7 +10,6 @@ import {
   CARD_KINDS,
   CARD_SETS,
   CARD_SPEED,
-  JOBS,
   RARITIES
 } from '../../../../card.enums';
 import type { MinionCard } from '../../../../entities/minion.entity';
@@ -29,17 +28,11 @@ export const twinFlame: SpellBlueprint<MinionCard> = {
   art: defaultCardArt('spells/twin-flames'),
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.RARE,
-  jobs: [JOBS.MAGE],
   affinities: [AFFINITIES.FIRE],
   manaCost: 5,
   manaSupply: 2,
   speed: CARD_SPEED.FAST,
   tags: [],
-  statRequirements: {
-    might: 0,
-    focus: 0,
-    wisdom: 0
-  },
   canPlay: (game, card) =>
     multipleEnemyTargetRules.canPlay(
       game,

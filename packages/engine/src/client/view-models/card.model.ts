@@ -1,5 +1,4 @@
 import type { SerializedCard } from '../../card/entities/card.entity';
-import type { SerializedHeroCard } from '../../card/entities/hero.entity';
 import type { SerializedMinionCard } from '../../card/entities/minion.entity';
 import type { SerializedSpellCard } from '../../card/entities/spell.entity';
 import type { GameClient, GameStateEntities } from '../client';
@@ -11,8 +10,7 @@ import {
   CARD_KINDS,
   type Affinity,
   type CardKind,
-  type CardSpeed,
-  type JobId
+  type CardSpeed
 } from '../../card/card.enums';
 import { UseAbilityAction } from '../actions/use-ability';
 import { INTERACTION_STATES, COMBAT_STEPS } from '../../game/game.enums';
@@ -25,11 +23,7 @@ import { SelectCardOnBoardAction } from '../actions/select-card-on-board';
 import { AttackAction } from '../actions/attack';
 import { DeclareRetaliationAction } from '../actions/retaliate';
 
-type CardData =
-  | SerializedSpellCard
-  | SerializedHeroCard
-  | SerializedMinionCard
-  | SerializedArtifactCard;
+type CardData = SerializedSpellCard | SerializedMinionCard | SerializedArtifactCard;
 
 export type CardActionRule = {
   id: string;
@@ -165,13 +159,6 @@ export class CardViewModel {
       return this.data.stats as { might: number; focus: number; wisdom: number };
     }
     return null;
-  }
-
-  get jobs() {
-    if ('jobs' in this.data) {
-      return this.data.jobs as JobId[];
-    }
-    return [];
   }
 
   get affinities() {

@@ -2,7 +2,6 @@
 import {
   type CardKind,
   type Rarity,
-  type JobId,
   type Affinity,
   type CardSpeed,
   CARD_KINDS
@@ -31,7 +30,6 @@ import { assets } from '@/assets';
 import FoilAuroraBorder from '../foil/FoilAuroraBorder.vue';
 import FoilCRT from '../foil/FoilCRT.vue';
 import FoilRain from '../foil/FoilRain.vue';
-import JobFlags from './JobFlags.vue';
 import FoilStarfield from '../foil/FoilStarfield.vue';
 import FoilEmboss from '../foil/FoilEmboss.vue';
 
@@ -61,7 +59,6 @@ const {
     abilities?: string[];
     subKind?: string | null;
     tags?: string[];
-    jobs: JobId[];
     affinities: Affinity[];
     speed?: CardSpeed;
     commandment?: number | null;
@@ -115,7 +112,7 @@ const artMainImage = computed(() => {
       :data-flip-id="`card_${card.id}`"
     >
       <div class="card-front" :style="{ '--tint': tint }">
-        <CardArtComponent :art="card.art" :kind="card.kind" />
+        <CardArtComponent :art="card.art" />
         <template v-if="isFoil">
           <FoilRain v-if="card.art.foil.rain" />
           <FoilStarfield v-if="card.art.foil.starField" />
@@ -141,7 +138,6 @@ const artMainImage = computed(() => {
         />
         <CardRarity :rarity="card.rarity" />
         <div class="flags">
-          <JobFlags :jobs="card.jobs" />
           <AffinityFlags :affinities="card.affinities" />
         </div>
         <CardName :name="card.name" />
@@ -174,11 +170,7 @@ const artMainImage = computed(() => {
           :wisdom="card.wisdom ?? null"
         />
         <Speed
-          v-if="
-            isDefined(card.speed) &&
-            card.kind !== CARD_KINDS.HERO &&
-            card.kind !== CARD_KINDS.DESTINY
-          "
+          v-if="isDefined(card.speed) && card.kind !== CARD_KINDS.DESTINY"
           :speed="card.speed"
         />
         <CardGlare />

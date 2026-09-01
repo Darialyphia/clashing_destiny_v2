@@ -6,7 +6,6 @@ import {
   CARD_SETS,
   CARD_KINDS,
   RARITIES,
-  JOBS,
   AFFINITIES,
   CARD_SPEED
 } from '../../../../card.enums';
@@ -26,18 +25,12 @@ export const runicCatalyst: ArtifactBlueprint = {
   art: defaultCardArt('placeholder'),
   kind: CARD_KINDS.ARTIFACT,
   rarity: RARITIES.COMMON,
-  jobs: [JOBS.ACOLYTE],
   affinities: [AFFINITIES.ARCANE],
   manaCost: 2,
   manaSupply: 2,
   durability: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
-  statRequirements: {
-    might: 0,
-    focus: 0,
-    wisdom: 0
-  },
   abilities: [],
   canPlay: () => true,
   async onInit(game, card) {

@@ -27,17 +27,11 @@ export const fireBolt: SpellBlueprint<MinionCard> = {
   art: defaultCardArt('spells/fire-bolt'),
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.COMMON,
-  jobs: [],
   affinities: [AFFINITIES.FIRE],
   manaCost: 1,
   manaSupply: 2,
   speed: CARD_SPEED.FAST,
   tags: [],
-  statRequirements: {
-    might: 0,
-    focus: 0,
-    wisdom: 0
-  },
   canPlay: (game, card) =>
     singleEnemyMinionTargetRules.canPlay(game, card, minion => minion.isOnBattlefield),
   getTargets: (game, card) =>

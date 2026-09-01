@@ -2,7 +2,6 @@ import dedent from 'dedent';
 import type { SpellBlueprint } from '../../../../card-blueprint';
 import { defaultCardArt, effectTargetRules, isSpell } from '../../../../card-utils';
 import {
-  JOBS,
   CARD_SETS,
   CARD_KINDS,
   RARITIES,
@@ -22,17 +21,11 @@ export const spellSiphon: SpellBlueprint = {
   art: defaultCardArt('placeholder-spell'),
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.RARE,
-  jobs: [JOBS.MAGE],
   affinities: [AFFINITIES.ARCANE],
   manaCost: 1,
   manaSupply: 2,
   speed: CARD_SPEED.FAST,
   tags: [],
-  statRequirements: {
-    might: 0,
-    focus: 0,
-    wisdom: 0
-  },
   canPlay: (game, card) =>
     effectTargetRules.canPlay(
       game,

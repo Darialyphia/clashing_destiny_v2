@@ -14,7 +14,7 @@ import {
   type CardOptions,
   type SerializedCard
 } from './card.entity';
-import { CARD_EVENTS, type CardSpeed, type JobId } from '../card.enums';
+import { CARD_EVENTS, type CardSpeed } from '../card.enums';
 import { CardPlayEvent } from '../card.events';
 import { GAME_PHASES } from '../../game/game.enums';
 
@@ -22,7 +22,6 @@ export type SerializedSpellCard = SerializedCard & {
   manaCost: number;
   baseManaCost: number;
   targets: SerializedTargets | null;
-  jobs: JobId[];
   speed: CardSpeed;
 };
 export type SpellCardInterceptors = CardInterceptors & {
@@ -48,10 +47,6 @@ export class SpellCard extends Card<
       },
       options
     );
-  }
-
-  get jobs() {
-    return this.blueprint.jobs;
   }
 
   isValidMovementPosition() {
@@ -109,7 +104,6 @@ export class SpellCard extends Card<
       manaCost: this.manaCost,
       baseManaCost: this.manaCost,
       targets: this.targets ? serializeTargets(this.targets) : null,
-      jobs: this.jobs.map(job => job.id) as JobId[],
       speed: this.speed
     };
   }

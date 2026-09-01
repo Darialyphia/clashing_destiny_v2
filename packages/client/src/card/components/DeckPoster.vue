@@ -10,7 +10,6 @@ import {
   CRAFTING_COST_PER_RARITY,
   FOIL_CRAFTING_COST_MULTIPLIER
 } from '@game/api';
-import { isDefined } from '@game/shared';
 
 const { mainDeck, name } = defineProps<{
   mainDeck: Array<{
@@ -21,9 +20,6 @@ const { mainDeck, name } = defineProps<{
   name: string;
 }>();
 
-const hero = computed(() =>
-  mainDeck.find(item => item.blueprint.kind === CARD_KINDS.HERO)
-);
 const minions = computed(() =>
   mainDeck.filter(item => item.blueprint.kind === CARD_KINDS.MINION)
 );
@@ -77,12 +73,6 @@ const craftingCost = computed(() => {
     return sum + cost * item.copies;
   }, 0);
 });
-
-const allCards = computed(() =>
-  [hero.value, ...minions.value, ...spells.value, ...artifacts.value].filter(
-    isDefined
-  )
-);
 </script>
 
 <template>
@@ -133,7 +123,7 @@ const allCards = computed(() =>
       <div>
         <section>
           <div
-            v-for="item in allCards"
+            v-for="item in mainDeck"
             :key="item.blueprint.id"
             class="card-wrapper"
           >

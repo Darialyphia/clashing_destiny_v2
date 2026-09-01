@@ -133,20 +133,11 @@ export class PlayerViewModel {
     };
   }
 
-  get hero() {
-    if (!this.data.hero) return null;
-    return this.getEntities()[this.data.hero] as CardViewModel;
-  }
-
   get mana() {
     return this.data.currentMana;
   }
 
   get maxMana() {
     return this.data.maxMana;
-  }
-
-  get canTakeResourceAction() {
-    return this.data.canTakeResourceAction;
   }
 }

@@ -1,16 +1,13 @@
 import { isFunction } from '@game/shared';
+import { MinionInterceptorModifierMixin } from '../mixins/interceptor.mixin';
 import type { AnyCard } from '../../card/entities/card.entity';
-import type { HeroCard } from '../../card/entities/hero.entity';
 import type { MinionCard } from '../../card/entities/minion.entity';
 import type { Game } from '../../game/game';
-import { UnitInterceptorModifierMixin } from '../mixins/interceptor.mixin';
 import { RemoveOnDestroyedMixin } from '../mixins/remove-on-destroyed';
 import type { ModifierMixin } from '../modifier-mixin';
 import { Modifier } from '../modifier.entity';
 
-export class SimpleAttackBuffModifier<
-  T extends MinionCard | HeroCard
-> extends Modifier<T> {
+export class SimpleAttackBuffModifier<T extends MinionCard> extends Modifier<T> {
   constructor(
     modifierType: string,
     game: Game,
@@ -41,7 +38,7 @@ export class SimpleAttackBuffModifier<
       },
       mixins: [
         new RemoveOnDestroyedMixin(game),
-        new UnitInterceptorModifierMixin(game, {
+        new MinionInterceptorModifierMixin(game, {
           key: 'atk',
           interceptor: value => {
             const amount = isFunction(options.amount) ? options.amount() : options.amount;

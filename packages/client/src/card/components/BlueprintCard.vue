@@ -3,7 +3,6 @@ import type { CardBlueprint } from '@game/engine/src/card/card-blueprint';
 import { formatAbilityText } from '@/utils/formatters';
 import Card from './cardV2/index.vue';
 import { isFunction } from '@game/shared';
-import { type JobId } from '@game/engine/src/card/card.enums';
 import { provideRichTextContext } from '@/game/composables/useRichText';
 
 const {
@@ -61,7 +60,6 @@ provideRichTextContext({
       durability: (blueprint as any).durability,
       abilities: (blueprint as any).abilities?.map(formatAbilityText),
       subKind: (blueprint as any).subKind,
-      jobs: blueprint.jobs.map(job => job.id as JobId),
       tags: blueprint.tags,
       affinities: blueprint.affinities,
       speed: (blueprint as any).speed,

@@ -22,17 +22,11 @@ export const astralBall: MinionBlueprint = {
   art: defaultCardArt('placeholder'),
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.TOKEN,
-  jobs: [],
   affinities: [AFFINITIES.ARCANE],
   manaCost: 1,
   manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
-  statRequirements: {
-    might: 0,
-    focus: 0,
-    wisdom: 0
-  },
   atk: 0,
   maxHp: 1,
   commandment: 1,

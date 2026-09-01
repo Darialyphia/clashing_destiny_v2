@@ -4,7 +4,6 @@ import { System } from '../system';
 import type { AnyCard, CardOptions } from './entities/card.entity';
 import type {
   CardBlueprint,
-  HeroBlueprint,
   MinionBlueprint,
   SpellBlueprint,
   ArtifactBlueprint,
@@ -12,12 +11,10 @@ import type {
 } from './card-blueprint';
 import { SpellCard } from './entities/spell.entity';
 import { MinionCard } from './entities/minion.entity';
-import { HeroCard } from './entities/hero.entity';
 import { match } from 'ts-pattern';
 import { CARD_KINDS, CARD_LOCATIONS, type CardKind } from './card.enums';
 import { GAME_EVENTS } from '../game/game.events';
 import { ArtifactCard } from './entities/artifact.entity';
-import { isHero } from './card-utils';
 import { DestinyCard } from './entities/destiny.entity';
 
 export type CardSystemOptions = {
@@ -57,8 +54,7 @@ export class CardSystem extends System<CardSystemOptions> {
       card =>
         card.location === CARD_LOCATIONS.BASE ||
         card.location === CARD_LOCATIONS.LEFT_BATTLEFIELD ||
-        card.location === CARD_LOCATIONS.RIGHT_BATTLEFIELD ||
-        isHero(card)
+        card.location === CARD_LOCATIONS.RIGHT_BATTLEFIELD
     );
   }
 
@@ -92,15 +88,6 @@ export class CardSystem extends System<CardSystemOptions> {
             blueprint,
             isFoil
           } as CardOptions<MinionBlueprint>)
-      )
-      .with(
-        CARD_KINDS.HERO,
-        () =>
-          new HeroCard(this.game, player, {
-            id,
-            blueprint,
-            isFoil
-          } as CardOptions<HeroBlueprint>)
       )
       .with(
         CARD_KINDS.ARTIFACT,

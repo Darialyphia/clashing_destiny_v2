@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import {
-  useGameClient,
   useGameState,
   useGameUi,
   useMyPlayer,
@@ -13,13 +12,6 @@ import PassButton from './PassButton.vue';
 import EffectChain from './EffectChain.vue';
 import BoardCard from './BoardCard.vue';
 import ScoreButton from './ScoreButton.vue';
-import {
-  DropdownMenuContent,
-  DropdownMenuPortal,
-  DropdownMenuRoot,
-  DropdownMenuTrigger
-} from 'reka-ui';
-import { INTERACTION_STATES } from '@game/engine/src/game/game.enums';
 
 const { clocks } = defineProps<{
   clocks?: {
@@ -35,7 +27,6 @@ const ui = useGameUi();
 const state = useGameState();
 const myPlayer = useMyPlayer();
 const opponent = useOpponentPlayer();
-const { client } = useGameClient();
 const { height } = useWindowSize();
 const boardScale = computed(() => {
   return 1;
@@ -52,14 +43,6 @@ const boardMargin = computed(() => {
     x: 0,
     y: (height.value - scaledBoardHeight) / 2
   };
-});
-
-const isResourceActionMenuOpened = ref(false);
-const canSelectHero = computed(() => {
-  if (!ui.value.isInteractivePlayer) return false;
-  if (state.value.interaction.state !== INTERACTION_STATES.IDLE) return false;
-  if (!myPlayer.value.canTakeResourceAction) return false;
-  return true;
 });
 
 const pointsToWin = computed(() => state.value.config.VICTORY_POINTS_TO_WIN);
@@ -200,69 +183,6 @@ const pointsToWin = computed(() => state.value.config.VICTORY_POINTS_TO_WIN);
         </div>
 
         <PassButton />
-
-        <DropdownMenuRoot
-          v-model:open="isResourceActionMenuOpened"
-          :side="'top'"
-          :align="'center'"
-        >
-          <DropdownMenuTrigger
-            :disabled="!canSelectHero"
-            class="resource-action-indicator"
-          />
-          <DropdownMenuPortal>
-            <DropdownMenuContent>
-              <div
-                class="resource-actions-menu"
-                v-if="isResourceActionMenuOpened"
-              >
-                <button
-                  class="resource-action might"
-                  @mouseup="
-                    () => {
-                      isResourceActionMenuOpened = false;
-                      client.takeResourceAction({
-                        type: 'gain_might'
-                      });
-                    }
-                  "
-                />
-                <button
-                  class="resource-action wisdom"
-                  @mouseup="
-                    () => {
-                      isResourceActionMenuOpened = false;
-                      client.takeResourceAction({
-                        type: 'gain_wisdom'
-                      });
-                    }
-                  "
-                />
-                <button
-                  class="resource-action focus"
-                  @mouseup="
-                    () => {
-                      isResourceActionMenuOpened = false;
-                      client.takeResourceAction({
-                        type: 'gain_focus'
-                      });
-                    }
-                  "
-                />
-                <button
-                  class="resource-action draw"
-                  @mouseup="
-                    () => {
-                      client.takeResourceAction({
-                        type: 'draw'
-                      });
-                    }
-                  "
-                />
-              </div>
-            </DropdownMenuContent>
-          </DropdownMenuPortal>
-        </DropdownMenuRoot>
       </div>
     </div>
 
@@ -513,74 +433,5 @@ const pointsToWin = computed(() => state.value.config.VICTORY_POINTS_TO_WIN);
   align-items: center;
   gap: var(--size-2);
   width: 350px;
-}
-
-.resource-action-indicator {
-  width: 40px;
-  height: 40px;
-  background: url('@/assets/ui/action-rune-colorless.png') no-repeat center
-    center;
-  background-size: contain;
-  z-index: 1;
-  filter: drop-shadow(0 0 10px var(--yellow-4));
-  cursor: pointer;
-  transition: filter 0.2s ease-in-out;
-  &:disabled {
-    filter: drop-shadow(0 0 10px var(--yellow-4)) brightness(0.5);
-    cursor: not-allowed;
-  }
-  &:not(:disabled) {
-    animation: resource-action-indicator-float 2s infinite ease-in-out;
-    &:hover {
-      filter: drop-shadow(0 0 15px var(--yellow-3)) brightness(1.2);
-    }
-  }
-}
-
-@keyframes resource-action-indicator-float {
-  0%,
-  100% {
-    translate: 0 0;
-  }
-  50% {
-    translate: 0 -10px;
-  }
-}
-
-.resource-actions-menu {
-  position: absolute;
-  bottom: calc(100% + var(--size-7));
-  left: 50%;
-  translate: -50% 0;
-  display: flex;
-  gap: var(--size-4);
-  padding: var(--size-4);
-  background-color: var(--color-bg-2);
-  border-radius: var(--size-1);
-  box-shadow: var(--shadow-2);
-  background-color: hsl(0 0% 0% / 0.5);
-  backdrop-filter: blur(4px);
-}
-.resource-action {
-  width: 38px;
-  height: 42px;
-  background: transparent;
-}
-
-.might {
-  background: url('@/assets/ui/action-rune-might.png') no-repeat center center;
-}
-.wisdom {
-  background: url('@/assets/ui/action-rune-wisdom.png') no-repeat center center;
-}
-.focus {
-  background: url('@/assets/ui/action-rune-focus.png') no-repeat center center;
-}
-.resonance {
-  background: url('@/assets/ui/action-rune-resonance.png') no-repeat center
-    center;
-}
-.draw {
-  background: url('@/assets/ui/action-draw.png') no-repeat center center;
 }
 </style>

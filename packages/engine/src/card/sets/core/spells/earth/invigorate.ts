@@ -2,7 +2,6 @@ import dedent from 'dedent';
 import type { SpellBlueprint } from '../../../../card-blueprint';
 import { anywhereTargetRules, defaultCardArt } from '../../../../card-utils';
 import {
-  JOBS,
   CARD_SETS,
   CARD_KINDS,
   RARITIES,
@@ -22,17 +21,11 @@ export const invigorate: SpellBlueprint = {
   art: defaultCardArt('placeholder-spell'),
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.COMMON,
-  jobs: [JOBS.ACOLYTE],
   affinities: [AFFINITIES.EARTH],
   manaCost: 2,
   manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
-  statRequirements: {
-    might: 0,
-    focus: 0,
-    wisdom: 0
-  },
   canPlay: () => true,
   getTargets: (game, card) => anywhereTargetRules.getTargets({ game, card }),
   async onInit(game, card) {},

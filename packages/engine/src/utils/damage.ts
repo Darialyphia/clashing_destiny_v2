@@ -66,7 +66,7 @@ export class SpellDamage extends Damage {
   getFinalAmount(target: AttackTarget): number {
     const finalAmount = super.getFinalAmount(target);
     if (this._isPrevented) return 0;
-    return finalAmount + this.source.player.hero.spellPower;
+    return finalAmount;
   }
 }
 

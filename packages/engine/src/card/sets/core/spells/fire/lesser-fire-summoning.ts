@@ -24,17 +24,11 @@ export const lesserFireSummoning: SpellBlueprint = {
   art: defaultCardArt('spells/lesser-fire-summoning'),
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.COMMON,
-  jobs: [],
   affinities: [AFFINITIES.FIRE],
   manaCost: 2,
   manaSupply: 2,
   speed: CARD_SPEED.FAST,
   tags: [],
-  statRequirements: {
-    might: 0,
-    focus: 0,
-    wisdom: 0
-  },
   canPlay: (game, card) =>
     emptyBoardSpaceTargetRules.canPlay(
       game,

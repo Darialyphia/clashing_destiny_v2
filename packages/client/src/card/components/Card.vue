@@ -3,7 +3,6 @@ import {
   RARITIES,
   type CardKind,
   type Rarity,
-  type JobId,
   type Affinity,
   type CardSpeed
 } from '@game/engine/src/card/card.enums';
@@ -22,7 +21,6 @@ import FoilGlitter from './foil/FoilGlitter.vue';
 import { assets } from '@/assets';
 import type { CardArt } from '@game/engine/src/card/card-blueprint';
 import FoilBrightShine from './foil/FoilBrightShine.vue';
-import { getJobById } from '@game/engine/src/card/card.enums';
 
 const {
   card,
@@ -50,7 +48,6 @@ const {
     abilities?: string[];
     subKind?: string | null;
     tags?: string[];
-    jobs: JobId[];
     affinities: Affinity[];
     speed?: CardSpeed;
   };
@@ -295,10 +292,7 @@ const tint = computed(() => {
             <span v-if="isDefined(card.subKind)">
               - {{ uppercaseFirstLetter(card.subKind.toLocaleLowerCase()) }}
             </span>
-            <span v-if="card.jobs.length" class="jobs">
-              |
-              {{ card.jobs.map(jobId => getJobById(jobId)?.name).join(' | ') }}
-            </span>
+
             <span v-if="isDefined(card.tags)" class="tags">
               <template v-if="card.tags?.length">|</template>
               {{ card.tags.join('| ') }}

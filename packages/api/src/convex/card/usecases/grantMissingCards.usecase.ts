@@ -29,7 +29,6 @@ export class GrantMissingCardsUseCase
       MINION: 3,
       SPELL: 3,
       ARTIFACT: 3,
-      HERO: 1,
       DESTINY: 1
     };
     const cardsToGift: Array<{ blueprintId: string; copies: number }> = [];

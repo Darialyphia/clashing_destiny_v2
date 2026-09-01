@@ -21,17 +21,11 @@ export const engulfInFlames: SpellBlueprint = {
   art: defaultCardArt('spells/engulf-in-flames'),
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.RARE,
-  jobs: [],
   affinities: [AFFINITIES.FIRE],
   manaCost: 3,
   manaSupply: 2,
   speed: CARD_SPEED.FAST,
   tags: [],
-  statRequirements: {
-    might: 0,
-    focus: 0,
-    wisdom: 0
-  },
   canPlay: () => true,
   getTargets: (game, card) =>
     battlefieldTargetRules.getTargets({

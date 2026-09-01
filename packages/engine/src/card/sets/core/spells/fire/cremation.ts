@@ -1,5 +1,5 @@
-import dedent from 'dedent';
 import type { SpellBlueprint } from '../../../../card-blueprint';
+import dedent from 'dedent';
 import { anywhereTargetRules, defaultCardArt } from '../../../../card-utils';
 import {
   AFFINITIES,
@@ -20,18 +20,12 @@ export const cremation: SpellBlueprint = {
   art: defaultCardArt('spells/ceremonial-cremation'),
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.COMMON,
-  jobs: [],
   affinities: [AFFINITIES.FIRE],
   manaCost: 3,
   manaSupply: 2,
   speed: CARD_SPEED.FAST,
   tags: [],
-  statRequirements: {
-    might: 0,
-    focus: 0,
-    wisdom: 0
-  },
-  shouldHideTargetarrows: true,
+  shouldHideTargetArrows: true,
   canPlay: (game, card) =>
     [...card.player.cardManager.discardPile].filter(c =>
       c.affinities.includes(AFFINITIES.FIRE)

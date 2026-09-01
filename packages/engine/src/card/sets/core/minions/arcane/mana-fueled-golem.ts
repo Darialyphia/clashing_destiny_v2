@@ -12,7 +12,6 @@ import { askMandatoryYesNoQuestion } from '../../../../card-actions-utils';
 import { GAME_EVENTS } from '../../../../../game/game.events';
 import { GameEventModifierMixin } from '../../../../../modifier/mixins/game-event.mixin';
 import type { MinionCard } from '../../../../entities/minion.entity';
-import { Modifier } from '../../../../../modifier/modifier.entity';
 import { WhileOnBoardModifier } from '../../../../../modifier/modifiers/while-on-board.modifier';
 import { CardEffectTriggeredEvent } from '../../../../card.events';
 
@@ -27,17 +26,11 @@ export const manaFueledGolem: MinionBlueprint = {
   art: defaultCardArt('placeholder'),
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.RARE,
-  jobs: [],
   affinities: [AFFINITIES.ARCANE],
   manaCost: 3,
   manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
-  statRequirements: {
-    might: 0,
-    focus: 0,
-    wisdom: 0
-  },
   atk: 3,
   maxHp: 5,
   commandment: 3,

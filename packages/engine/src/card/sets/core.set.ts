@@ -17,13 +17,11 @@ import { dayOfFortitude } from './core/destinies/day-of-fortitude';
 import { engulfInFlames } from './core/spells/fire/engulf-in-flames';
 import { enigmaticWizard } from './core/minions/arcane/enigmatic-wizard';
 import { erinasApprentice } from './core/minions/arcane/erinas-apprentice';
-import { erinaVioletWitch } from './core/heroes/erina-violet-witch';
 import { fallingStar } from './core/spells/arcane/falling-star';
 import { fireBall } from './core/spells/fire/fire-ball';
 import { fireBolt } from './core/spells/fire/fire-bolt';
 import { fireImp } from './core/minions/fire/fire-imp';
 import { flameArchmage } from './core/minions/fire/flame-archmage';
-import { haroldVowedCrusader } from './core/heroes/harold-vowed-crusader';
 import { impassibleMonk } from './core/minions/earth/impassible-monk';
 import { indomitableVindicator } from './core/minions/fire/indomitable-vindicator';
 import { innerFire } from './core/spells/fire/inner-fire';
@@ -85,13 +83,11 @@ export const coreSet: CardSet = {
     engulfInFlames,
     enigmaticWizard,
     erinasApprentice,
-    erinaVioletWitch,
     fallingStar,
     fireBall,
     fireBolt,
     fireImp,
     flameArchmage,
-    haroldVowedCrusader,
     impassibleMonk,
     indomitableVindicator,
     innerFire,

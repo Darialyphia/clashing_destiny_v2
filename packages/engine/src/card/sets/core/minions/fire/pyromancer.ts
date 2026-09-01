@@ -1,16 +1,8 @@
 import dedent from 'dedent';
 import type { MinionBlueprint } from '../../../../card-blueprint';
 import { defaultCardArt, emptyBoardSpaceTargetRules } from '../../../../card-utils';
-import {
-  CARD_SETS,
-  CARD_KINDS,
-  RARITIES,
-  JOBS,
-  AFFINITIES,
-  CARD_SPEED
-} from '../../../../card.enums';
+import { CARD_SETS, CARD_KINDS, RARITIES, CARD_SPEED } from '../../../../card.enums';
 import type { MinionCard } from '../../../../entities/minion.entity';
-import { askMandatoryYesNoQuestion } from '../../../../card-actions-utils';
 import { OnScoreModifier } from '../../../../../modifier/modifiers/on-score.modifier';
 
 export const pyromancer: MinionBlueprint = {
@@ -24,17 +16,11 @@ export const pyromancer: MinionBlueprint = {
   art: defaultCardArt('minions/pyromancer'),
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.COMMON,
-  jobs: [JOBS.MAGE],
   affinities: [],
   manaCost: 4,
   manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
-  statRequirements: {
-    might: 2,
-    focus: 1,
-    wisdom: 1
-  },
   atk: 2,
   maxHp: 3,
   commandment: 2,

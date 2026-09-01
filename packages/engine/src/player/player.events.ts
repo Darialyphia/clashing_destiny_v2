@@ -1,5 +1,5 @@
 import type { BetterExtract } from '@game/shared';
-import type { CardLocation } from '../card/card.enums';
+import type { Affinity, CardLocation } from '../card/card.enums';
 import { TypedSerializableEvent } from '../utils/typed-emitter';
 import type { Player } from './player.entity';
 import type { PLAYER_EVENTS, Rune } from './player.enums';
@@ -29,8 +29,8 @@ export class PlayerManaChangeEvent extends TypedSerializableEvent<
 }
 
 export class PlayerRuneChangeEvent extends TypedSerializableEvent<
-  { player: Player; gainedRunes: Rune[]; lostRunes: Rune[] },
-  { player: string; gainedRunes: string[]; lostRunes: string[] }
+  { player: Player; gainedRunes: Affinity[]; lostRunes: Affinity[] },
+  { player: string; gainedRunes: Affinity[]; lostRunes: Affinity[] }
 > {
   serialize() {
     return {

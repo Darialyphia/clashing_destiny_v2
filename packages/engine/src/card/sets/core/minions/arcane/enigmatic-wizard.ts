@@ -5,7 +5,6 @@ import {
   CARD_SETS,
   CARD_KINDS,
   RARITIES,
-  JOBS,
   AFFINITIES,
   CARD_SPEED
 } from '../../../../card.enums';
@@ -26,17 +25,11 @@ export const enigmaticWizard: MinionBlueprint = {
   art: defaultCardArt('minions/enigmatic-wizard'),
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.EPIC,
-  jobs: [JOBS.MAGE],
   affinities: [AFFINITIES.ARCANE],
   manaCost: 4,
   manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
-  statRequirements: {
-    might: 0,
-    focus: 0,
-    wisdom: 0
-  },
   atk: 2,
   maxHp: 4,
   commandment: 2,

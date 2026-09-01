@@ -1,13 +1,7 @@
 import dedent from 'dedent';
 import type { MinionBlueprint } from '../../../../card-blueprint';
 import { defaultCardArt } from '../../../../card-utils';
-import {
-  CARD_SETS,
-  CARD_KINDS,
-  RARITIES,
-  AFFINITIES,
-  CARD_SPEED
-} from '../../../../card.enums';
+import { CARD_SETS, CARD_KINDS, RARITIES, CARD_SPEED } from '../../../../card.enums';
 import { discardFromHand } from '../../../../card-actions-utils';
 import { OnMoveModifier } from '../../../../../modifier/modifiers/on-move.modifier';
 
@@ -22,17 +16,11 @@ export const fireImp: MinionBlueprint = {
   art: defaultCardArt('minions/fire-imp'),
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.COMMON,
-  jobs: [],
   affinities: [],
   manaCost: 1,
   manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
-  statRequirements: {
-    might: 0,
-    focus: 0,
-    wisdom: 0
-  },
   atk: 1,
   maxHp: 1,
   commandment: 1,

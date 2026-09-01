@@ -10,7 +10,6 @@ import {
   CARD_KINDS,
   CARD_SETS,
   CARD_SPEED,
-  JOBS,
   RARITIES
 } from '../../../../card.enums';
 import type { MinionCard } from '../../../../entities/minion.entity';
@@ -27,17 +26,11 @@ export const fireBall: SpellBlueprint<MinionCard> = {
   art: defaultCardArt('spells/fireball'),
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.RARE,
-  jobs: [],
   affinities: [AFFINITIES.FIRE],
   manaCost: 3,
   manaSupply: 2,
   speed: CARD_SPEED.FAST,
   tags: [],
-  statRequirements: {
-    might: 0,
-    focus: 0,
-    wisdom: 0
-  },
   canPlay: (game, card) => singleEnemyMinionTargetRules.canPlay(game, card),
   getTargets: (game, card) =>
     singleEnemyMinionTargetRules.getTargets({

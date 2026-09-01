@@ -20,11 +20,10 @@ type DeckBuilderCardMeta = {
 };
 
 const KIND_ORDER = {
-  [CARD_KINDS.HERO]: 0,
-  [CARD_KINDS.DESTINY]: 1,
-  [CARD_KINDS.MINION]: 2,
+  [CARD_KINDS.DESTINY]: 0,
+  [CARD_KINDS.MINION]: 1,
   [CARD_KINDS.SPELL]: 2,
-  [CARD_KINDS.ARTIFACT]: 2
+  [CARD_KINDS.ARTIFACT]: 3
 };
 
 export type DeckBuilderDeck = ValidatableDeck<DeckBuilderCardMeta>;
@@ -159,13 +158,6 @@ export class DeckBuilderViewModel {
       .sort((a, b) => {
         if (KIND_ORDER[a.blueprint.kind] !== KIND_ORDER[b.blueprint.kind]) {
           return KIND_ORDER[a.blueprint.kind] - KIND_ORDER[b.blueprint.kind];
-        }
-
-        if (
-          a.blueprint.kind === CARD_KINDS.HERO &&
-          b.blueprint.kind === CARD_KINDS.HERO
-        ) {
-          return a.blueprint.name.localeCompare(b.blueprint.name);
         }
 
         if (

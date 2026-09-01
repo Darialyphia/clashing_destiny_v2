@@ -11,8 +11,6 @@ import {
   type CardLocation,
   CARD_KINDS,
   type Affinity,
-  AFFINITIES,
-  type JobId,
   type CardSpeed,
   CARD_SPEED
 } from '../card.enums';
@@ -92,11 +90,6 @@ export type SerializedCard = {
   affinities: Affinity[];
   position: string | null;
   speed: CardSpeed;
-  stats: {
-    might: number;
-    focus: number;
-    wisdom: number;
-  };
   isFoil: boolean;
 };
 
@@ -154,14 +147,6 @@ export abstract class Card<
     return this.blueprint.kind;
   }
 
-  get jobs() {
-    return this.blueprint.jobs;
-  }
-
-  hasJob(jobId: JobId) {
-    return this.jobs.map(j => j.id).includes(jobId);
-  }
-
   get keywords() {
     return this.keywordManager.keywords;
   }
@@ -216,30 +201,6 @@ export abstract class Card<
     return this.blueprint.tags ?? [];
   }
 
-  get statRequirements() {
-    if ('statRequirements' in this.blueprint) {
-      return {
-        might: this.blueprint.statRequirements.might ?? 0,
-        focus: this.blueprint.statRequirements.focus ?? 0,
-        wisdom: this.blueprint.statRequirements.wisdom ?? 0
-      };
-    }
-    return {
-      might: 0,
-      focus: 0,
-      wisdom: 0
-    };
-  }
-
-  get fullfillsStatRequirements() {
-    const { might, focus, wisdom } = this.statRequirements;
-    return (
-      this.player.hero.might >= might &&
-      this.player.hero.focus >= focus &&
-      this.player.hero.wisdom >= wisdom
-    );
-  }
-
   get manaCost(): number {
     if ('manaCost' in this.blueprint) {
       const base = this.blueprint.manaCost;
@@ -277,21 +238,12 @@ export abstract class Card<
     );
   }
 
-  get hasUnlockedAffinity() {
-    if (this.affinities[0] === AFFINITIES.NEUTRAL) {
-      return true;
-    }
-    return this.affinities.some(affinity =>
-      this.player.unlockedAffinities.includes(affinity)
-    );
-  }
-
   protected async dispose() {
     await match(this.kind)
       .with(CARD_KINDS.MINION, CARD_KINDS.SPELL, CARD_KINDS.ARTIFACT, async () => {
         await this.sendToDiscardPile();
       })
-      .with(CARD_KINDS.HERO, CARD_KINDS.DESTINY, async () => {
+      .with(CARD_KINDS.DESTINY, async () => {
         await this.sendToBanishPile();
       })
       .exhaustive();
@@ -322,7 +274,7 @@ export abstract class Card<
         await this.resolve(handler);
         this.isPlayedFromHand = false;
       },
-      shouldHideTargetArrows: this.blueprint.shouldHideTargetarrows ?? false
+      shouldHideTargetArrows: this.blueprint.shouldHideTargetArrows ?? false
     };
 
     await this.payManaCost();
@@ -475,10 +427,6 @@ export abstract class Card<
       return false;
     }
 
-    if (!this.fullfillsStatRequirements) {
-      return false;
-    }
-
     return this.location === CARD_LOCATIONS.HAND && this.canPayManaCost;
   }
 
@@ -507,10 +455,6 @@ export abstract class Card<
 
     if (!this.canPayManaCost) {
       return 'Cannot pay mana cost.';
-    }
-
-    if (!this.fullfillsStatRequirements) {
-      return 'Your hero does not meet the stat requirements to play this card.';
     }
 
     return 'You cannot play this card';
@@ -549,12 +493,7 @@ export abstract class Card<
       isRevealed: this.isRevealed,
       affinities: this.affinities,
       position: this.position?.id ?? null,
-      speed: this.speed,
-      stats: {
-        might: this.statRequirements.might,
-        focus: this.statRequirements.focus,
-        wisdom: this.statRequirements.wisdom
-      }
+      speed: this.speed
     };
   }
 

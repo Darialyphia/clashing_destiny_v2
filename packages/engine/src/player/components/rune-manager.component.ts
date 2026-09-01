@@ -1,16 +1,22 @@
+import type { BetterExclude } from '@game/shared';
+import { AFFINITIES, type Affinity } from '../../card/card.enums';
 import type { Game } from '../../game/game';
 import type { Player } from '../player.entity';
-import { PLAYER_EVENTS, RUNES, type Rune } from '../player.enums';
+import { PLAYER_EVENTS } from '../player.enums';
 import { PlayerRuneChangeEvent } from '../player.events';
 
-export type RuneCost = Partial<Record<Rune, number>>;
+export type AffinityCost = Affinity[];
+export type NonNeutralAffinity = BetterExclude<Affinity, 'Neutral'>;
 
 export class RuneManagerComponent {
-  private _runes: Record<Rune, number> = {
-    [RUNES.MIGHT]: 0,
-    [RUNES.WISDOM]: 0,
-    [RUNES.FOCUS]: 0,
-    [RUNES.RESONANCE]: 0
+  private _runes: Record<NonNeutralAffinity, number> = {
+    Air: 0,
+    Arcane: 0,
+    Dark: 0,
+    Earth: 0,
+    Fire: 0,
+    Light: 0,
+    Water: 0
   };
 
   constructor(
@@ -18,14 +24,27 @@ export class RuneManagerComponent {
     private player: Player
   ) {}
 
-  has(cost: RuneCost) {
-    return Object.entries(cost).every(([rune, amount]) => {
-      return this._runes[rune as Rune] >= (amount ?? 0);
-    });
+  has(cost: AffinityCost) {
+    const available = { ...this._runes };
+    const nonNeutralCost = cost.filter(rune => rune !== AFFINITIES.NEUTRAL);
+    const neutralCost = cost.filter(rune => rune === AFFINITIES.NEUTRAL);
+
+    // try to pay non neutral cost first
+    for (const rune of nonNeutralCost) {
+      if (available[rune] > 0) {
+        available[rune]--;
+      } else {
+        return false;
+      }
+    }
+
+    const remaining = Object.values(available).reduce((sum, count) => sum + count, 0);
+
+    return remaining >= neutralCost.length;
   }
 
-  async add(runes: Rune[]) {
-    const gainedRunes: Rune[] = [];
+  async add(runes: NonNeutralAffinity[]) {
+    const gainedRunes: NonNeutralAffinity[] = [];
     runes.forEach(rune => {
       this._runes[rune]++;
       gainedRunes.push(rune);
@@ -40,8 +59,8 @@ export class RuneManagerComponent {
     );
   }
 
-  async remove(runes: Rune[]) {
-    const lostRunes: Rune[] = [];
+  async remove(runes: NonNeutralAffinity[]) {
+    const lostRunes: NonNeutralAffinity[] = [];
     runes.forEach(rune => {
       if (this._runes[rune] > 0) {
         this._runes[rune] = Math.max(0, this._runes[rune] - 1);

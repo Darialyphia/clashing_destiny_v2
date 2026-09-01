@@ -5,7 +5,6 @@ import {
   CARD_SETS,
   CARD_KINDS,
   RARITIES,
-  JOBS,
   AFFINITIES,
   CARD_SPEED
 } from '../../../../card.enums';
@@ -34,17 +33,11 @@ export const cosmicAvatar: MinionBlueprint = {
   art: defaultCardArt('minions/cosmic-avatar'),
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.LEGENDARY,
-  jobs: [JOBS.MAGE],
   affinities: [AFFINITIES.ARCANE],
   manaCost: 8,
   manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
-  statRequirements: {
-    might: 0,
-    focus: 0,
-    wisdom: 0
-  },
   atk: 3,
   maxHp: 6,
   commandment: 3,

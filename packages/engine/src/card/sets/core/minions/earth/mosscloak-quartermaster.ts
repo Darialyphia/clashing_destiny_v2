@@ -9,7 +9,6 @@ import {
   CARD_SETS,
   CARD_KINDS,
   RARITIES,
-  JOBS,
   AFFINITIES,
   CARD_SPEED,
   CARD_LOCATIONS
@@ -32,17 +31,11 @@ export const mosscloakQuartermaster: MinionBlueprint = {
   art: defaultCardArt('placeholder'),
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.COMMON,
-  jobs: [JOBS.WARRIOR],
   affinities: [AFFINITIES.EARTH],
   manaCost: 2,
   manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
-  statRequirements: {
-    might: 0,
-    focus: 0,
-    wisdom: 0
-  },
   atk: 1,
   maxHp: 4,
   commandment: 2,

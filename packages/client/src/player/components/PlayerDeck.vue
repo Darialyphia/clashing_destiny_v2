@@ -7,10 +7,7 @@ import {
   HoverCardRoot,
   HoverCardTrigger
 } from 'reka-ui';
-import { assets } from '@/assets';
-import type { HeroBlueprint } from '@game/engine/src/card/card-blueprint';
 import FancyButton from '@/ui/components/FancyButton.vue';
-import type { Nullable } from '@game/shared';
 import type { DeckValidationResult } from '@game/engine/src/card/validators/deck.validator';
 
 export type DisplayedDeck = {
@@ -28,17 +25,6 @@ const mainDeck = computed(() =>
     blueprint: CARDS_DICTIONARY[card.blueprintId]
   }))
 );
-
-const hero = computed(() => {
-  return deck.cards
-    .map(c => CARDS_DICTIONARY[c.blueprintId])
-    .find(c => c.kind === CARD_KINDS.HERO) as Nullable<HeroBlueprint>;
-});
-
-const affinities = computed(() => {
-  return hero.value?.affinities ?? [];
-});
-
 const minions = computed(() =>
   mainDeck.value.filter(item => item.blueprint.kind === CARD_KINDS.MINION)
 );
@@ -60,23 +46,21 @@ const artifacts = computed(() =>
         :class="{
           invalid: deck.isValid.result === 'failure'
         }"
-        :style="{
-          '--bg': assets[`cards/${hero?.art.default.main}`]?.css
-        }"
+        :style="{}"
       >
         <div class="deck-name">
           {{ deck.name }}
           <div v-if="deck.isValid.result === 'failure'" class="invalid-label">
             Invalid Deck
           </div>
-          <div v-else class="flex gap-2">
+          <!-- <div v-else class="flex gap-2">
             <img
               v-for="aff in affinities"
               :key="aff"
               :src="assets[`ui/card/affinity-${aff.toLocaleLowerCase()}`].path"
               :alt="aff"
             />
-          </div>
+          </div> -->
         </div>
 
         <HoverCardTrigger as-child>
@@ -88,9 +72,6 @@ const artifacts = computed(() =>
         <HoverCardContent side="right" align="center" :side-offset="8">
           <div class="deck-details">
             <ul>
-              <li v-if="hero" :class="hero.rarity.toLocaleLowerCase()">
-                1 x {{ hero.name }}
-              </li>
               <li v-for="item in minions" :key="item.blueprint.id">
                 {{ item.copies }}x
                 <span :class="item.blueprint.rarity.toLocaleLowerCase()">

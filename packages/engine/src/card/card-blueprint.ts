@@ -5,12 +5,10 @@ import type {
   CardSetId,
   Rarity,
   Tag,
-  Job,
   Affinity,
   CardSpeed
 } from './card.enums';
 import { type AnyCard } from './entities/card.entity';
-import type { HeroCard } from './entities/hero.entity';
 import type { MinionCard } from './entities/minion.entity';
 import type { SpellCard } from './entities/spell.entity';
 import type { Ability, AbilityOwner } from './entities/ability.entity';
@@ -61,7 +59,7 @@ export type CardBlueprintBase = {
   // eslint-disable-next-line @typescript-eslint/ban-types
   tags: (Tag | (string & {}))[];
   affinities: Affinity[];
-  shouldHideTargetarrows?: boolean;
+  shouldHideTargetArrows?: boolean;
 };
 
 export type AbilityBlueprint<TCard extends AbilityOwner, TCardTarget extends AnyCard> = {
@@ -72,7 +70,7 @@ export type AbilityBlueprint<TCard extends AbilityOwner, TCardTarget extends Any
   label: string;
   isHiddenOnCard?: boolean;
   shouldExhaust?: boolean;
-  shouldHideTargetarrows?: boolean;
+  shouldHideTargetArrows?: boolean;
   getTargets: (
     game: Game,
     card: TCard
@@ -130,16 +128,10 @@ export type MinionBlueprint = CardBlueprintBase & {
   kind: Extract<CardKind, typeof CARD_KINDS.MINION>;
   manaCost: number;
   manaSupply: number;
-  statRequirements: {
-    might?: number;
-    focus?: number;
-    wisdom?: number;
-  };
   maxHp: number;
   atk: number;
   commandment: number;
   abilities: AbilityBlueprint<MinionCard, any>[];
-  jobs: Job[];
   canPlay: (game: Game, card: MinionCard) => boolean;
   onInit: (game: Game, card: MinionCard) => Promise<void>;
   onPlay: (game: Game, card: MinionCard) => Promise<void>;
@@ -156,12 +148,6 @@ export type SpellBlueprint<T extends AnyCard = AnyCard> = CardBlueprintBase & {
   manaCost: number;
   manaSupply: number;
   speed: CardSpeed;
-  jobs: Job[];
-  statRequirements: {
-    might?: number;
-    focus?: number;
-    wisdom?: number;
-  };
   onInit: (game: Game, card: SpellCard) => Promise<void>;
   onPlay: (game: Game, card: SpellCard, targets: Targets<T>) => Promise<void>;
   canPlay: (game: Game, card: SpellCard) => boolean;
@@ -171,34 +157,12 @@ export type SpellBlueprint<T extends AnyCard = AnyCard> = CardBlueprintBase & {
   };
 };
 
-export type HeroBlueprint = CardBlueprintBase & {
-  kind: Extract<CardKind, typeof CARD_KINDS.HERO>;
-  jobs: Job[];
-  stats: {
-    might: number;
-    focus: number;
-    wisdom: number;
-  };
-  onInit: (game: Game, card: HeroCard) => Promise<void>;
-  onPlay: (game: Game, card: HeroCard, originalCard: HeroCard) => Promise<void>;
-  abilities: AbilityBlueprint<HeroCard, any>[];
-  aiHints: {
-    shouldPlay: (game: Game, card: HeroCard) => number;
-  };
-};
-
 export type ArtifactBlueprint = CardBlueprintBase & {
   manaCost: number;
   manaSupply: number;
   kind: Extract<CardKind, typeof CARD_KINDS.ARTIFACT>;
-  jobs: Job[];
   durability: number;
   abilities: AbilityBlueprint<ArtifactCard, any>[];
-  statRequirements: {
-    might?: number;
-    focus?: number;
-    wisdom?: number;
-  };
   onInit: (game: Game, card: ArtifactCard) => Promise<void>;
   canPlay: (game: Game, card: ArtifactCard) => boolean;
   onPlay: (game: Game, card: ArtifactCard) => Promise<void>;
@@ -209,7 +173,6 @@ export type ArtifactBlueprint = CardBlueprintBase & {
 
 export type DestinyBlueprint = CardBlueprintBase & {
   kind: Extract<CardKind, typeof CARD_KINDS.DESTINY>;
-  jobs: Job[];
   onInit: (game: Game, card: DestinyCard) => Promise<void>;
   onPlay: (game: Game, card: DestinyCard) => Promise<void>;
 };
@@ -217,6 +180,5 @@ export type DestinyBlueprint = CardBlueprintBase & {
 export type CardBlueprint =
   | SpellBlueprint<any>
   | MinionBlueprint
-  | HeroBlueprint
   | ArtifactBlueprint
   | DestinyBlueprint;

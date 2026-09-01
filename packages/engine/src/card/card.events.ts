@@ -6,7 +6,6 @@ import { TypedSerializableEvent } from '../utils/typed-emitter';
 import type { CARD_EVENTS, CardLocation } from './card.enums';
 import type { AnyCard, SerializedCard } from './entities/card.entity';
 import type { DestinyCard } from './entities/destiny.entity';
-import type { HeroCard, SerializedHeroCard } from './entities/hero.entity';
 import type { MinionCard, SerializedMinionCard } from './entities/minion.entity';
 
 export class CardExhaustEvent extends TypedSerializableEvent<
@@ -159,9 +158,9 @@ export class CardEffectTriggeredEvent extends TypedSerializableEvent<
 
 export class CardBeforeDealCombatDamageEvent extends TypedSerializableEvent<
   {
-    card: MinionCard | HeroCard;
+    card: MinionCard;
     target: AttackTarget;
-    affectedCards: Array<MinionCard | HeroCard>;
+    affectedCards: MinionCard[];
     damage: CombatDamage;
   },
   { card: string; target: string; damage: number; affectedCards: string[] }
@@ -178,10 +177,10 @@ export class CardBeforeDealCombatDamageEvent extends TypedSerializableEvent<
 
 export class CardAfterDealCombatDamageEvent extends TypedSerializableEvent<
   {
-    card: MinionCard | HeroCard;
+    card: MinionCard;
     target: AttackTarget;
     damage: CombatDamage;
-    affectedCards: Array<MinionCard | HeroCard>;
+    affectedCards: MinionCard[];
   },
   {
     card: string;
@@ -246,7 +245,7 @@ export class CardAfterTakeDamageEvent extends TypedSerializableEvent<
     amount: number;
   },
   {
-    card: SerializedMinionCard | SerializedHeroCard;
+    card: SerializedMinionCard;
     source: string;
     damage: { type: DamageType; amount: number };
     isFatal: boolean;

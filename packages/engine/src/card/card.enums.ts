@@ -31,7 +31,6 @@ export type CardEvent = Values<typeof CARD_EVENTS>;
 
 export const CARD_KINDS = {
   MINION: 'MINION',
-  HERO: 'HERO',
   SPELL: 'SPELL',
   ARTIFACT: 'ARTIFACT',
   DESTINY: 'DESTINY'
@@ -87,48 +86,6 @@ export type CardTint = {
       };
   blendMode: 'multiply' | 'screen' | 'overlay' | 'hard-light' | 'soft-light' | 'color';
   opacity: number;
-};
-
-export type Job = {
-  id: string;
-  name: string;
-  shortName: string;
-};
-
-export const JOBS = {
-  WARRIOR: {
-    id: 'warrior',
-    name: 'Warrior',
-    shortName: 'Warrior'
-  },
-  MAGE: {
-    id: 'mage',
-    name: 'Mage',
-    shortName: 'Mage'
-  },
-  ROGUE: {
-    id: 'rogue',
-    name: 'Rogue',
-    shortName: 'Rogue'
-  },
-  ACOLYTE: {
-    id: 'acolyte',
-    name: 'Acolyte',
-    shortName: 'Acolyte'
-  },
-  RANGER: {
-    id: 'ranger',
-    name: 'Ranger',
-    shortName: 'Ranger'
-  }
-} as const satisfies Record<string, Job>;
-export type JobId = Values<typeof JOBS>['id'];
-export const getJobById = (id: JobId): Job => {
-  const job = Object.values(JOBS).find(job => job.id === id);
-  if (!job) {
-    throw new Error(`Invalid job id: ${id}`);
-  }
-  return job;
 };
 
 export const CARD_LOCATIONS = {

@@ -12,8 +12,6 @@ import { CardAuraModifierMixin } from '../../../../modifier/mixins/aura.mixin';
 import type { DestinyCard } from '../../../entities/destiny.entity';
 import { WhileOnBattlefieldModifier } from '../../../../modifier/modifiers/while-on-board.modifier';
 import { isDefined } from '@game/shared';
-import { Modifier } from '../../../../modifier/modifier.entity';
-import { MinionInterceptorModifierMixin } from '../../../../modifier/mixins/interceptor.mixin';
 import { SimpleCommandmentBuffModifier } from '../../../../modifier/modifiers/simple-commandment-modifier';
 
 export const austerity: DestinyBlueprint = {
@@ -28,7 +26,6 @@ export const austerity: DestinyBlueprint = {
   rarity: RARITIES.EPIC,
   art: defaultCardArt('placeholder'),
   speed: CARD_SPEED.SLOW,
-  jobs: [],
   affinities: [AFFINITIES.NEUTRAL],
   tags: [],
   async onInit(game, card) {

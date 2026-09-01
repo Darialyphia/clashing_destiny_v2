@@ -3,12 +3,7 @@ import type { Player } from '../../player/player.entity';
 import { CombatDamage, DAMAGE_TYPES, type Damage } from '../../utils/damage';
 import { Interceptable } from '../../utils/interceptable';
 import { type AbilityBlueprint, type MinionBlueprint } from '../card-blueprint';
-import {
-  CARD_EVENTS,
-  CARD_LOCATIONS,
-  type CardLocation,
-  type JobId
-} from '../card.enums';
+import { CARD_EVENTS, CARD_LOCATIONS } from '../card.enums';
 import {
   CardAfterDealCombatDamageEvent,
   CardAfterTakeDamageEvent,
@@ -44,8 +39,7 @@ import { GAME_EVENTS } from '../../game/game.events';
 import { PointAOEShape } from '../../aoe/point.aoe-shape';
 import { AOE_TARGETING_TYPE } from '../../aoe/aoe-shape';
 import { match } from 'ts-pattern';
-import { isHero } from '../card-utils';
-import { isDefined, type BetterExtract } from '@game/shared';
+import { isDefined } from '@game/shared';
 
 export type SerializedMinionCard = SerializedCard & {
   potentialAttackTargets: string[];
@@ -61,7 +55,6 @@ export type SerializedMinionCard = SerializedCard & {
   baseCommandment: number;
   abilities: string[];
   canMove: boolean;
-  jobs: JobId[];
   hasSummoningSickness: boolean;
   canRetaliate: boolean;
   canScore: boolean;
@@ -200,10 +193,6 @@ export class MinionCard extends Card<
     return this.interceptors.maxHp.getValue(this.blueprint.maxHp, this);
   }
 
-  get jobs() {
-    return this.blueprint.jobs;
-  }
-
   get remainingHp(): number {
     return Math.max(this.maxHp - this.damageTracker.damageTaken, 0);
   }
@@ -246,33 +235,14 @@ export class MinionCard extends Card<
     });
   }
 
-  get canAttackEnemyHero(): boolean {
-    if (!this.isOnBattlefield) return false;
-    const location = this.location as BetterExtract<
-      CardLocation,
-      'left_battlefield' | 'right_battlefield'
-    >;
-    const blockers = (
-      location === CARD_LOCATIONS.LEFT_BATTLEFIELD
-        ? this.player.opponent.minionsInLeftBattlefield
-        : this.player.opponent.minionsInRightBattlefield
-    ).filter(minion => !minion.isExhausted);
-
-    return blockers.length === 0;
-  }
-
   canAttack(target: AttackTarget) {
-    let base =
+    const base =
       this.isOnBattlefield &&
       !this._isExhausted &&
       target.canBeAttacked(this) &&
       this.game.combatSystem.state === COMBAT_STEPS.DECLARE_ATTACKER &&
       this.game.scoringSystem.state === SCORING_STEPS.DECLARE_SCORING &&
       !this.game.effectChainSystem.currentChain;
-
-    if (isHero(target) && !this.canAttackEnemyHero) {
-      base = false;
-    }
 
     return this.interceptors.canAttack.getValue(base, {
       target
@@ -655,7 +625,6 @@ export class MinionCard extends Card<
       baseCommandment: this.blueprint.commandment,
       abilities: this.abilityManager.serialize(),
       canMove: this.canMoveManually,
-      jobs: this.jobs.map(job => job.id) as JobId[],
       hasSummoningSickness: this.hasSummoningSickness,
       canRetaliate: this.canRetaliate(this.game.combatSystem.attacker!),
       canScore: this.canScore

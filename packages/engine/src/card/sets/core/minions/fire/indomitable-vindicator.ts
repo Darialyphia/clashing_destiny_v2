@@ -1,19 +1,7 @@
 import dedent from 'dedent';
-import { UntilEndOfTurnModifierMixin } from '../../../../../modifier/mixins/until-end-of-turn.mixin';
 import type { MinionBlueprint } from '../../../../card-blueprint';
-import {
-  defaultCardArt,
-  isMinion,
-  singleEnemyMinionTargetRules
-} from '../../../../card-utils';
-import {
-  CARD_SETS,
-  CARD_KINDS,
-  RARITIES,
-  JOBS,
-  AFFINITIES,
-  CARD_SPEED
-} from '../../../../card.enums';
+import { defaultCardArt, isMinion } from '../../../../card-utils';
+import { CARD_SETS, CARD_KINDS, RARITIES, CARD_SPEED } from '../../../../card.enums';
 import { AbilityDamage } from '../../../../../utils/damage';
 import { OnScoreModifier } from '../../../../../modifier/modifiers/on-score.modifier';
 import { isDefined } from '@game/shared';
@@ -29,17 +17,11 @@ export const indomitableVindicator: MinionBlueprint = {
   art: defaultCardArt('minions/indomitable-vindicator'),
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.RARE,
-  jobs: [JOBS.WARRIOR],
   affinities: [],
   manaCost: 3,
   manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
-  statRequirements: {
-    might: 3,
-    focus: 1,
-    wisdom: 0
-  },
   atk: 2,
   maxHp: 4,
   commandment: 2,

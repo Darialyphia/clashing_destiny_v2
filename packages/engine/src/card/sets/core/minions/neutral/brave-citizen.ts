@@ -20,17 +20,11 @@ export const braveCitizen: MinionBlueprint = {
   art: defaultCardArt('placeholder'),
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.COMMON,
-  jobs: [],
   affinities: [AFFINITIES.NEUTRAL],
   manaCost: 2,
   manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
-  statRequirements: {
-    might: 0,
-    focus: 0,
-    wisdom: 0
-  },
   atk: 2,
   maxHp: 3,
   commandment: 2,

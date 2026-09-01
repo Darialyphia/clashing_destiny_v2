@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import gsap from 'gsap';
 import { useFxEvent, useGameClient } from '../composables/useGameClient';
-import { assets, preloadAsset } from '@/assets';
+import { preloadAsset } from '@/assets';
 import DiscardPileModal from './DiscardPileModal.vue';
 import type { PlayerViewModel } from '@game/engine/src/client/view-models/player.model';
 import { GAME_EVENTS } from '@game/engine/src/game/game.events';
-import BoardCard from './BoardCard.vue';
 
 const { player, inverted } = defineProps<{
   player: PlayerViewModel;
@@ -62,12 +61,7 @@ useFxEvent(GAME_EVENTS.PLAYER_AFTER_MANA_CHANGE, event => {
   <div class="player-infos" :class="{ inverted }">
     <div class="mana">{{ Math.round(displayedMana) }}</div>
     <div class="relative" :class="{ 'has-initiative': hasInitiative }">
-      <BoardCard
-        v-if="player.hero"
-        :card="player.hero"
-        variant="default"
-        :pixel-scale="1"
-      />
+      <div>Todo player infos</div>
     </div>
 
     <DiscardPileModal v-model="isDiscardPileOpened" :player-id="player.id" />

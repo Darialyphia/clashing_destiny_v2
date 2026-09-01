@@ -34,7 +34,6 @@ import { MoveInput } from './inputs/move.input';
 import { CommitSpaceSelectionInput } from './inputs/commit-space-selection.input';
 import { CancelInteractionInput } from './inputs/cancel-interaction';
 import { SelectSpaceOnBoardInput } from './inputs/select-space-on-board.input';
-import { TakeResourceActionInput } from './inputs/take-resource-action.input';
 import { ChooseChainEffectsInput } from './inputs/choose-chain-effect';
 import { DeclareRetaliationInput } from './inputs/declare-retaliation.input';
 import { ScoreInput } from './inputs/score.input';
@@ -67,7 +66,6 @@ const inputMap = validateinputMap({
   commitSpaceSelection: CommitSpaceSelectionInput,
   cancelInteraction: CancelInteractionInput,
   selectSpaceOnBoard: SelectSpaceOnBoardInput,
-  takeResourceAction: TakeResourceActionInput,
   chooseChainEffects: ChooseChainEffectsInput,
   declareRetaliation: DeclareRetaliationInput,
   score: ScoreInput
