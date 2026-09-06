@@ -1,8 +1,6 @@
-import { isDefined } from '@game/shared';
 import type { Game } from '../../game/game';
 import type { Player } from '../../player/player.entity';
 import { type RuneBlueprint } from '../card-blueprint';
-import { CARD_LOCATIONS } from '../card.enums';
 import {
   Card,
   makeCardInterceptors,
@@ -10,7 +8,6 @@ import {
   type CardOptions,
   type SerializedCard
 } from './card.entity';
-import type { MinionCard } from './minion.entity';
 
 export type SerializedRuneCard = SerializedCard;
 export type RuneCardInterceptors = CardInterceptors;

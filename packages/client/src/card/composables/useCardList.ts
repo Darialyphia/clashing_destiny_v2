@@ -55,10 +55,11 @@ export const provideCardList = () => {
   );
 
   const KIND_ORDER = {
-    [CARD_KINDS.MINION]: 2,
-    [CARD_KINDS.SPELL]: 3,
-    [CARD_KINDS.ARTIFACT]: 4,
-    [CARD_KINDS.DESTINY]: 5
+    [CARD_KINDS.MINION]: 1,
+    [CARD_KINDS.SPELL]: 2,
+    [CARD_KINDS.ARTIFACT]: 3,
+    [CARD_KINDS.DESTINY]: 4,
+    [CARD_KINDS.RUNE]: 5
   };
 
   const AFFINITY_ORDER = {
