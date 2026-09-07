@@ -299,7 +299,7 @@ export class GameClient {
   cancelInteraction() {
     this.dispatch({
       type: 'cancelInteraction',
-      payload: { playerId: this.state.currentPlayer }
+      payload: { playerId: this.playerId }
     });
   }
 

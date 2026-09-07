@@ -44,7 +44,6 @@ export type SerializedOmniscientState = {
   phase: SerializedGamePhaseContext;
   interaction: SerializedInteractionContext;
   players: string[];
-  currentPlayer: string;
   turnCount: number;
   combat: SerializedCombatState;
   scoring: SerializedScoringState;
@@ -59,7 +58,6 @@ export type SnapshotDiff = {
   phase: SerializedGamePhaseContext;
   interaction: SerializedInteractionContext;
   turnCount: number;
-  currentPlayer: string;
   players: string[];
   combat: SerializedCombatState;
   scoring: SerializedScoringState;
@@ -141,7 +139,6 @@ export class GameSerializer {
       phase: state.phase,
       interaction: state.interaction,
       turnCount: state.turnCount,
-      currentPlayer: state.currentPlayer,
       players: state.players,
       config: this.getObjectDiff(state.config, prevState.config),
       combat: state.combat,
@@ -186,7 +183,6 @@ export class GameSerializer {
       phase: this.game.gamePhaseSystem.serialize(),
       interaction: this.game.interaction.serialize(),
       players: this.game.playerSystem.players.map(player => player.id),
-      currentPlayer: this.game.interaction.interactivePlayer.id,
       turnCount: this.game.turnSystem.elapsedTurns,
       combat: this.game.combatSystem.serialize(),
       scoring: this.game.scoringSystem.serialize(),
@@ -311,7 +307,6 @@ export class GameSerializer {
       phase: state.phase,
       interaction: state.interaction,
       turnCount: state.turnCount,
-      currentPlayer: state.currentPlayer,
       players: state.players,
       combat: state.combat,
       scoring: state.scoring,

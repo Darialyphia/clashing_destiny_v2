@@ -319,10 +319,7 @@ export class CardViewModel {
   }
 
   get canAttack() {
-    return (
-      this.player.id === this.getClient().state.currentPlayer &&
-      this.potentialAttackTargets.length > 0
-    );
+    return this.potentialAttackTargets.length > 0;
   }
 
   canAttackAt(card: CardViewModel) {

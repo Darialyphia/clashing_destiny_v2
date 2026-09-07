@@ -51,7 +51,6 @@ export type PatchBasedSnapshotDiff = {
   phase: SerializedGamePhaseContext;
   interaction: SerializedInteractionContext;
   turnCount: number;
-  currentPlayer: string;
   players: string[];
   config: Partial<Config>;
   combat: SerializedCombatState;
