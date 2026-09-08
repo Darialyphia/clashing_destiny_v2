@@ -26,7 +26,7 @@ export class PassGlobalAction implements GlobalActionRule {
     return (
       state.phase.state === GAME_PHASES.MAIN &&
       state.interaction.state === INTERACTION_STATES.IDLE &&
-      this.client.playerId === state.interaction.ctx.player
+      this.client.isActive()
     );
   }
 

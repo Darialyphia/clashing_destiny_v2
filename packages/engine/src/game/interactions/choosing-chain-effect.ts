@@ -32,7 +32,7 @@ export class ChooseChainEffectContext<T extends boolean = boolean> {
 
   private isElligible: (effect: Effect) => boolean;
 
-  readonly player: Player;
+  private _player: Player;
 
   private label: string;
 
@@ -43,16 +43,20 @@ export class ChooseChainEffectContext<T extends boolean = boolean> {
     private options: ChoosingChainEffectContextOptions
   ) {
     this.isElligible = options.isElligible;
-    this.player = options.player;
+    this._player = options.player;
     this.label = options.label;
     this.timeoutFallback = options.timeoutFallback;
   }
 
   async init() {}
 
+  get players() {
+    return [this._player];
+  }
+
   serialize() {
     return {
-      player: this.player.id,
+      players: this.players.map(player => player.id),
       elligibleEffectsIds:
         this.game.effectChainSystem.currentChain?.stack.map(effect => effect.id) ?? [],
       label: this.label,
@@ -62,7 +66,7 @@ export class ChooseChainEffectContext<T extends boolean = boolean> {
   }
 
   commit(player: Player, id: string | null) {
-    assert(player.equals(this.player), new InvalidPlayerError());
+    assert(player.equals(this._player), new InvalidPlayerError());
 
     this.selectedEffect = isDefined(id)
       ? this.game.effectChainSystem.currentChain!.getEffectById(id)!
@@ -76,7 +80,7 @@ export class ChooseChainEffectContext<T extends boolean = boolean> {
   }
 
   async cancel(player: Player) {
-    assert(player.equals(this.player), new InvalidPlayerError());
+    assert(player.equals(this._player), new InvalidPlayerError());
     assert(this.options.canCancel, new UnableToCommitError());
 
     await this.game.interaction.sendTransition(

@@ -18,7 +18,7 @@ export class CommitCardSelectionGlobalAction implements GlobalActionRule {
     return (
       this.client.isActive() &&
       state.interaction.state === INTERACTION_STATES.SELECTING_CARDS_ON_BOARD &&
-      state.interaction.ctx.player === this.client.playerId &&
+      this.client.isActive() &&
       state.interaction.ctx.canCommit
     );
   }

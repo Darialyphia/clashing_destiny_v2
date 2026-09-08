@@ -257,10 +257,6 @@ export class UiController {
     this._draggedCard = null;
   }
 
-  get isInteractivePlayer() {
-    return this.client.playerId === this.client.getActivePlayerId();
-  }
-
   clearOptimisticState() {
     this.optimisticState.playedCardId = null;
   }
@@ -339,10 +335,10 @@ export class UiController {
   }
 
   get explainerMessage() {
-    const activePlayerId = this.client.getActivePlayerId();
+    const activePlayerIds = this.client.getActivePlayerIds();
     const state = this.client.state;
 
-    if (activePlayerId !== this.client.playerId) {
+    if (!activePlayerIds.includes(this.client.playerId)) {
       return 'Waiting for opponent...';
     }
 
@@ -352,14 +348,6 @@ export class UiController {
     ) {
       const card = state.entities[state.phase.ctx.card] as CardViewModel;
       return `Put cards in the Destiny Zone (${this.selectedManaCostIndices.length} / ${card?.manaCost})`;
-    }
-
-    if (
-      state.interaction.state === INTERACTION_STATES.USING_ABILITY &&
-      state.interaction.ctx.player === this.client.playerId
-    ) {
-      const ability = state.entities[state.interaction.ctx.ability] as AbilityViewModel;
-      return `Put cards in the Destiny Zone (${this.selectedManaCostIndices.length} / ${ability?.manaCost})`;
     }
 
     if (state.interaction.state === INTERACTION_STATES.SELECTING_CARDS_ON_BOARD) {

@@ -21,7 +21,7 @@ export class AISystem {
   }
 
   get isActive() {
-    return this.game.activePlayer.id === this.playerId;
+    return this.game.activePlayers.map(p => p.id).includes(this.playerId);
   }
 
   initialize() {
@@ -63,8 +63,11 @@ export class AISystem {
         });
       })
       .with({ state: INTERACTION_STATES.CHOOSING_CARDS }, ctx => {
-        const choices = ctx.ctx.getChoices();
-        const cardsToChoose = Math.min(ctx.ctx.maxChoiceCount, choices.length);
+        const choices = ctx.ctx.getChoices(this.player);
+        const cardsToChoose = Math.min(
+          ctx.ctx.getPlayerConfig(this.player).maxChoiceCount,
+          choices.length
+        );
         const sortedChoices = choices.sort(
           (a, b) =>
             b.aiHints.shouldPick(this.game, this.player) -

@@ -116,14 +116,18 @@ export class Room {
     return this.engineInitPromise;
   }
 
-  private startActivePlayerClock() {
-    const activePlayerId = this.engine.activePlayer.id;
-    this.clockManager.startClockForPlayer(activePlayerId);
+  private startActivePlayerClocks() {
+    const activePlayerIds = this.engine.activePlayers.map(p => p.id);
+    for (const activePlayerId of activePlayerIds) {
+      this.clockManager.startClockForPlayer(activePlayerId);
+    }
   }
 
-  private stopActivePlayerClock() {
-    const activePlayerId = this.engine.activePlayer.id;
-    this.clockManager.stopClockForPlayer(activePlayerId);
+  private stopActivePlayerClocks() {
+    const activePlayerIds = this.engine.activePlayers.map(p => p.id);
+    for (const activePlayerId of activePlayerIds) {
+      this.clockManager.stopClockForPlayer(activePlayerId);
+    }
   }
 
   async start() {
@@ -149,7 +153,7 @@ export class Room {
     });
 
     this.initializeClocks();
-    this.startActivePlayerClock();
+    this.startActivePlayerClocks();
   }
 
   private initializeClocks() {
@@ -168,17 +172,14 @@ export class Room {
 
     this.engine.onActivePlayerChange(() => {
       this.clockManager.resetAllClocks();
-      this.stopActivePlayerClock();
-      this.startActivePlayerClock();
+      this.stopActivePlayerClocks();
+      this.startActivePlayerClocks();
     });
 
     this.engine.on(GAME_EVENTS.TURN_START, () => {
-      this.stopActivePlayerClock();
-      this.startActivePlayerClock();
-    });
-
-    this.engine.on(GAME_EVENTS.INPUT_START, () => {
-      this.stopActivePlayerClock();
+      this.clockManager.resetAllClocks();
+      this.stopActivePlayerClocks();
+      this.startActivePlayerClocks();
     });
 
     // this.engine.on(GAME_EVENTS.AFTER_CHANGE_PHASE, event => {

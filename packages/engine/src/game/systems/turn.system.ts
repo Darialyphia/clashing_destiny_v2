@@ -3,6 +3,7 @@ import { TypedSerializableEvent } from '../../utils/typed-emitter';
 import { TURN_EVENTS } from '../game.enums';
 import { System } from '../../system';
 import { GAME_EVENTS } from '../game.events';
+import type { Serializable } from '@game/shared';
 
 export type TurnEventMap = {
   [TURN_EVENTS.TURN_START]: TurnEvent;
@@ -11,10 +12,19 @@ export type TurnEventMap = {
   [TURN_EVENTS.TURN_PASS]: TurnPassEvent;
 };
 
+export type SerializedTurnState = {
+  elapsedTurns: number;
+  initiativePlayer: string;
+  nextInitiativePlayer: string;
+};
+
 // Input types that do NOT reset consecutive pass count in non-definitive pass mode
 const PASS_RESET_EXEMPT_INPUTS = new Set(['pass', 'declarePlayCard', 'surrender']);
 
-export class TurnSystem extends System<never> {
+export class TurnSystem
+  extends System<never>
+  implements Serializable<SerializedTurnState>
+{
   private _elapsedTurns = 0;
 
   // the initiative player is the one that can take an action
@@ -80,9 +90,10 @@ export class TurnSystem extends System<never> {
     }
   }
 
+  get isFirstTurn() {
+    return this._elapsedTurns === 0;
+  }
   async startTurn() {
-    await this.rotateDestinyCards();
-
     for (const player of this.game.playerSystem.players) {
       await player.startTurn();
     }
@@ -92,6 +103,13 @@ export class TurnSystem extends System<never> {
       new TurnEvent({ turnCount: this.elapsedTurns })
     );
 
+    if (!this.isFirstTurn) {
+      await this.rotateDestinyCards();
+      await this.resetInitiative();
+    }
+  }
+
+  private async resetInitiative() {
     if (this.game.config.DEFINITIVE_PASSES) {
       // The first player to pass last turn gets initiative this turn
       this._initiativePlayer = this.firstPlayerToPassThisRound ?? this._initiativePlayer;
@@ -171,6 +189,14 @@ export class TurnSystem extends System<never> {
       TURN_EVENTS.TURN_INITATIVE_CHANGE,
       new TurnInitiativeChangeEvent({ newInitiativePlayer: this._initiativePlayer })
     );
+  }
+
+  serialize(): SerializedTurnState {
+    return {
+      elapsedTurns: this._elapsedTurns,
+      initiativePlayer: this._initiativePlayer.id,
+      nextInitiativePlayer: this._initiativePlayer.opponent.id
+    };
   }
 }
 

@@ -53,30 +53,31 @@ export const discover = async <T extends AnyCard>(
     choices.push(...choicePool.splice(index, 1));
   }
   const result = await game.interaction.chooseCards<T, false>({
-    player: card.player,
-    minChoiceCount: 1,
-    maxChoiceCount: 1,
-    canCancel: false,
-    choices: choices.map(c => ({
-      card: c,
-      aiHints: {
-        shouldPick() {
-          return 1;
-        }
+    players: {
+      [card.player.id]: {
+        minChoiceCount: 1,
+        maxChoiceCount: 1,
+        label: 'Choose a card to add to your hand',
+        choices: choices.map(c => ({
+          card: c,
+          aiHints: { shouldPick: () => 1 }
+        })),
+        timeoutFallback: [choicePool[0]]
       }
-    })),
-    timeoutFallback: [choicePool[0]],
-    label: 'Choose a card to add to your hand'
+    },
+    canCancel: false
   });
 
   if (result.cancelled) {
     return { cancelled: true };
   }
 
-  const [selectedCard] = result.result;
-  await selectedCard.addToHand();
+  const playerResult = result.result[card.player.id];
+  for (const selectedCard of playerResult.cards) {
+    await selectedCard.addToHand();
+  }
 
-  return { cancelled: false, selectedCard, choices };
+  return { cancelled: false, cards: playerResult.cards, choices };
 };
 
 export const predict = async (game: Game, card: AnyCard) => {
@@ -89,30 +90,31 @@ export const predict = async (game: Game, card: AnyCard) => {
     choices.push(...choicePool.splice(index, 1));
   }
   const result = await game.interaction.chooseCards<AnyCard, false>({
-    player: card.player,
-    minChoiceCount: 1,
-    maxChoiceCount: 1,
-    canCancel: false,
-    choices: choices.map(c => ({
-      card: c,
-      aiHints: {
-        shouldPick() {
-          return 1;
-        }
+    players: {
+      [card.player.id]: {
+        minChoiceCount: 1,
+        maxChoiceCount: 1,
+        choices: choices.map(c => ({
+          card: c,
+          aiHints: { shouldPick: () => 1 }
+        })),
+        timeoutFallback: [choicePool[0]],
+        label: 'Choose a card to put on top of your deck'
       }
-    })),
-    timeoutFallback: [choicePool[0]],
-    label: 'Choose a card to put on top of your deck'
+    },
+    canCancel: false
   });
 
   if (result.cancelled) {
     return { cancelled: true };
   }
 
-  const [selectedCard] = result.result;
-  await selectedCard.sendToTopOfDeck();
+  const playerResult = result.result[card.player.id];
+  for (const selectedCard of playerResult.cards) {
+    await selectedCard.sendToTopOfDeck();
+  }
 
-  return { cancelled: false, selectedCard };
+  return { cancelled: false, cards: playerResult.cards };
 };
 
 export const discardFromHand = async (
@@ -128,34 +130,37 @@ export const discardFromHand = async (
   }
 
   const result = await game.interaction.chooseCards<AnyCard, false>({
-    player: card.player,
-    minChoiceCount: options.min,
-    maxChoiceCount: options.max,
-    canCancel: false,
-    choices: cards.map(c => ({
-      card: c,
-      aiHints: {
-        shouldPick() {
-          return 1;
-        }
+    players: {
+      [card.player.id]: {
+        minChoiceCount: options.min,
+        maxChoiceCount: options.max,
+        choices: cards.map(c => ({
+          card: c,
+          aiHints: { shouldPick: () => 1 }
+        })),
+        timeoutFallback: cards.slice(0, options.min),
+        label:
+          options.min === options.max
+            ? `Choose ${options.max} cards to discard`
+            : `Choose up to ${options.max} cards to discard`
       }
-    })),
-    timeoutFallback: cards.slice(0, options.min),
-    label:
-      options.min === options.max
-        ? `Choose ${options.max} cards to discard`
-        : `Choose up to ${options.max} cards to discard`
+    },
+    canCancel: false
   });
 
   if (result.cancelled) {
     return { cancelled: true };
   }
 
-  for (const card of result.result) {
-    await card.discard();
+  const playerResult = result.result[card.player.id];
+  for (const discardedCard of playerResult.cards) {
+    await discardedCard.discard();
   }
 
-  return { cancelled: false, discardedCards: result.result };
+  return {
+    cancelled: false,
+    discardedCards: playerResult.cards
+  };
 };
 
 export const askMandatoryYesNoQuestion = async ({

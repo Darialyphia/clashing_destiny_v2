@@ -173,6 +173,7 @@ export class Game implements Serializable<SerializedGame> {
     if (this.options.history) {
       await this.inputSystem.applyHistory(this.options.history);
     }
+
     await this.snapshotSystem.takeSnapshot();
     console.log(
       `%cGame ${this.id} initialized in ${(performance.now() - start).toFixed(0)}ms`,
@@ -202,16 +203,27 @@ export class Game implements Serializable<SerializedGame> {
     return this.emitter.off.bind(this.emitter);
   }
 
-  get activePlayer() {
-    return this.interaction.getContext().ctx.player;
+  get activePlayers() {
+    if (this.effectChainSystem.currentChain) {
+      return [this.effectChainSystem.currentChain.currentPlayer];
+    }
+    return this.interaction.getContext().ctx.players;
   }
 
-  onActivePlayerChange(cb: (player: Player) => void) {
-    let current = this.activePlayer;
+  onActivePlayerChange(cb: (players: Player[]) => void) {
+    let currentIds = this.activePlayers.map(p => p.id);
     this.on(GAME_EVENTS.NEW_SNAPSHOT, () => {
-      if (this.activePlayer.equals(current)) return;
-      current = this.activePlayer;
-      cb(this.activePlayer);
+      const newActivePlayers = this.activePlayers;
+      const newIds = newActivePlayers.map(p => p.id);
+
+      const hasChanged =
+        currentIds.length !== newIds.length ||
+        currentIds.some((id, index) => id !== newIds[index]);
+
+      if (hasChanged) {
+        cb(newActivePlayers);
+        currentIds = newIds;
+      }
     });
   }
 

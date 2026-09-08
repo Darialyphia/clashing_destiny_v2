@@ -37,21 +37,24 @@ export const cremation: SpellBlueprint = {
       c.affinities.includes(AFFINITIES.FIRE)
     );
     const cardsToBanish = await game.interaction.chooseCards({
-      player: card.player,
-      canCancel: false,
-      minChoiceCount: 3,
-      maxChoiceCount: 3,
-      label: 'Choose 3 Fire cards to banish',
-      choices: choices.map(c => ({
-        card: c,
-        aiHints: {
-          shouldPick: () => (card.canPlay() ? 1 : 0.5)
+      players: {
+        [card.player.id]: {
+          minChoiceCount: 3,
+          maxChoiceCount: 3,
+          label: 'Choose 3 Fire cards to banish',
+          choices: choices.map(c => ({
+            card: c,
+            aiHints: {
+              shouldPick: () => (card.canPlay() ? 1 : 0.5)
+            }
+          })),
+          timeoutFallback: choices.slice(0, 3)
         }
-      })),
-      timeoutFallback: choices.slice(0, 3)
+      },
+      canCancel: false
     });
 
-    for (const cardToBanish of cardsToBanish.result) {
+    for (const cardToBanish of cardsToBanish.result[card.player.id].cards) {
       await cardToBanish.sendToBanishPile();
     }
 

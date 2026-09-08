@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
-import { useGameState, useGameUi } from '../composables/useGameClient';
+import {
+  useGameClient,
+  useGameState,
+  useGameUi
+} from '../composables/useGameClient';
 import GameCard from './GameCard.vue';
 import { GAME_PHASES } from '@game/engine/src/game/game.enums';
 import CardBack from '@/card/components/CardBack.vue';
@@ -18,6 +22,7 @@ const {
 
 const ui = useGameUi();
 const state = useGameState();
+const { client } = useGameClient();
 
 const DRAG_THRESHOLD_PX = 60;
 
@@ -48,7 +53,7 @@ const onMousemove = (e: MouseEvent) => {
 
 const onMouseDown = (e: MouseEvent) => {
   if (!card) return;
-  if (!ui.value.isInteractivePlayer) return;
+  if (!client.value.isActive()) return;
 
   if (!card.canPlay) return playViolationAnimation();
 

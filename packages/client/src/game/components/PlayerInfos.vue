@@ -47,7 +47,7 @@ onMounted(() => {
 });
 
 const hasInitiative = computed(() => {
-  return player.id === client.value.getActivePlayerId();
+  return client.value.getActivePlayerIds().includes(player.id);
 });
 
 useFxEvent(GAME_EVENTS.PLAYER_AFTER_MANA_CHANGE, event => {

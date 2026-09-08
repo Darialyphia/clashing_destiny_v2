@@ -23,23 +23,27 @@ export class UseAbilityContext {
 
   private _ability: Ability<AbilityOwner>;
 
-  readonly player: Player;
+  private _player: Player;
 
   private constructor(
     private game: Game,
     private options: UseAbilityContextOptions
   ) {
-    this.player = options.player;
+    this._player = options.player;
     this._ability = options.ability;
   }
 
   async init() {}
 
+  get players() {
+    return [this._player];
+  }
+
   serialize() {
     return {
       ability: this._ability.id,
       card: this._ability.card.id,
-      player: this.player.id,
+      players: this.players.map(player => player.id),
       canCancel: this.options.canCancel
     };
   }
@@ -49,20 +53,20 @@ export class UseAbilityContext {
   }
 
   async commit(player: Player) {
-    assert(player.equals(this.player), new InvalidPlayerError());
+    assert(player.equals(this._player), new InvalidPlayerError());
     await this.game.interaction.sendTransition(
       INTERACTION_STATE_TRANSITIONS.COMMIT_USING_ABILITY,
       {}
     );
 
-    await this.player.useAbility(this._ability, async () => {
+    await this._player.useAbility(this._ability, async () => {
       console.log('Ability resolved');
       await this.game.turnSystem.switchInitiative();
     });
   }
 
   async cancel(player: Player) {
-    assert(player.equals(this.player), new InvalidPlayerError());
+    assert(player.equals(this._player), new InvalidPlayerError());
     await this.game.interaction.sendTransition(
       INTERACTION_STATE_TRANSITIONS.CANCEL_USING_ABILITY,
       {}

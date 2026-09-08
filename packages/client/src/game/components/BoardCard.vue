@@ -28,7 +28,7 @@ const {
 }>();
 
 const ui = useGameUi();
-const { playerId } = useGameClient();
+const { client } = useGameClient();
 const element = ref<HTMLElement>();
 onMounted(() => {
   element.value = ui.value.DOMSelectors.cardOnBoard(card.id).element!;
@@ -96,7 +96,7 @@ const isTargetable = computed(() => {
   ) {
     return false;
   }
-  if (state.value.interaction.ctx.player !== playerId.value) {
+  if (!client.value.isActive()) {
     return false;
   }
 

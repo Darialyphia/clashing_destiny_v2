@@ -353,13 +353,13 @@ export class CardViewModel {
     const canSelect =
       state.interaction.state === INTERACTION_STATES.SELECTING_CARDS_ON_BOARD &&
       state.interaction.ctx.elligibleCards.some(id => id === this.id) &&
-      client.getActivePlayerId() === client.playerId;
+      client.getActivePlayerIds().includes(client.playerId);
 
     const canAttack =
       state.interaction.state === INTERACTION_STATES.IDLE &&
       state.combat.step === COMBAT_STEPS.DECLARE_TARGET &&
       state.combat.potentialTargets.some(id => id === this.id) &&
-      client.getActivePlayerId() === client.playerId;
+      client.getActivePlayerIds().includes(client.playerId);
 
     return canSelect || canAttack;
   }

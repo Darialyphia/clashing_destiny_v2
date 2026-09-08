@@ -247,7 +247,7 @@ export class GameSnapshotSystem extends System<{ enabled: boolean }> {
           removedEntities: [],
           phase: latestSnapshot.state.phase,
           interaction: latestSnapshot.state.interaction,
-          turnCount: latestSnapshot.state.turnCount,
+          turn: latestSnapshot.state.turn,
           players: latestSnapshot.state.players,
           config: latestSnapshot.state.config,
           combat: latestSnapshot.state.combat,
@@ -269,7 +269,7 @@ export class GameSnapshotSystem extends System<{ enabled: boolean }> {
               removedEntities: [],
               phase: latestSnapshot.state.phase,
               interaction: latestSnapshot.state.interaction,
-              turnCount: latestSnapshot.state.turnCount,
+              turn: latestSnapshot.state.turn,
               players: latestSnapshot.state.players,
               config: latestSnapshot.state.config,
               combat: latestSnapshot.state.combat,
@@ -303,7 +303,7 @@ export class GameSnapshotSystem extends System<{ enabled: boolean }> {
           removedEntities: [],
           phase: latestSnapshot.state.phase,
           interaction: latestSnapshot.state.interaction,
-          turnCount: latestSnapshot.state.turnCount,
+          turn: latestSnapshot.state.turn,
           players: latestSnapshot.state.players,
           config: latestSnapshot.state.config,
           combat: latestSnapshot.state.combat,
@@ -325,7 +325,7 @@ export class GameSnapshotSystem extends System<{ enabled: boolean }> {
               removedEntities: [],
               phase: latestSnapshot.state.phase,
               interaction: latestSnapshot.state.interaction,
-              turnCount: latestSnapshot.state.turnCount,
+              turn: latestSnapshot.state.turn,
               players: latestSnapshot.state.players,
               config: latestSnapshot.state.config,
               combat: latestSnapshot.state.combat,
@@ -359,7 +359,7 @@ export class GameSnapshotSystem extends System<{ enabled: boolean }> {
           removedEntities: [],
           phase: latestSnapshot.state.phase,
           interaction: latestSnapshot.state.interaction,
-          turnCount: latestSnapshot.state.turnCount,
+          turn: latestSnapshot.state.turn,
           players: latestSnapshot.state.players,
           config: latestSnapshot.state.config,
           combat: latestSnapshot.state.combat,
@@ -381,7 +381,7 @@ export class GameSnapshotSystem extends System<{ enabled: boolean }> {
               removedEntities: [],
               phase: latestSnapshot.state.phase,
               interaction: latestSnapshot.state.interaction,
-              turnCount: latestSnapshot.state.turnCount,
+              turn: latestSnapshot.state.turn,
               players: latestSnapshot.state.players,
               config: latestSnapshot.state.config,
               combat: latestSnapshot.state.combat,
@@ -416,7 +416,7 @@ export class GameSnapshotSystem extends System<{ enabled: boolean }> {
           removedEntities: [],
           phase: latestSnapshot.state.phase,
           interaction: latestSnapshot.state.interaction,
-          turnCount: latestSnapshot.state.turnCount,
+          turn: latestSnapshot.state.turn,
           players: latestSnapshot.state.players,
           config: latestSnapshot.state.config,
           combat: latestSnapshot.state.combat,
@@ -438,7 +438,7 @@ export class GameSnapshotSystem extends System<{ enabled: boolean }> {
               removedEntities: [],
               phase: latestSnapshot.state.phase,
               interaction: latestSnapshot.state.interaction,
-              turnCount: latestSnapshot.state.turnCount,
+              turn: latestSnapshot.state.turn,
               players: latestSnapshot.state.players,
               config: latestSnapshot.state.config,
               combat: latestSnapshot.state.combat,
@@ -462,6 +462,7 @@ export class GameSnapshotSystem extends System<{ enabled: boolean }> {
         .map((event: GameStarEvent) => event.serialize());
       const previousId = this.nextId - 1;
       const id = this.nextId++;
+
       const omnisicientState = this.serializer.serializeOmniscientState();
 
       if (events.length === 0 && previousId > 0) {

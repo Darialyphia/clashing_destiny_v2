@@ -1,6 +1,12 @@
-import { GAME_PHASES, type InteractionStateDict } from '../../game/game.enums';
+import {
+  GAME_PHASES,
+  INTERACTION_STATES,
+  type InteractionStateDict
+} from '../../game/game.enums';
 import { defaultInputSchema, Input } from '../input';
 import { z } from 'zod';
+import { InvalidInteractionStateError } from '../input-errors';
+import { assert } from '@game/shared';
 
 const schema = defaultInputSchema.extend({
   id: z.string()
@@ -14,6 +20,10 @@ export class AnswerQuestionInput extends Input<typeof schema> {
   protected payloadSchema = schema;
 
   async impl() {
+    assert(
+      this.game.interaction.getState() === INTERACTION_STATES.ASK_QUESTION,
+      new InvalidInteractionStateError()
+    );
     const interactionContext =
       this.game.interaction.getContext<InteractionStateDict['ASK_QUESTION']>();
 

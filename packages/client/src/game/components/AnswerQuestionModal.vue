@@ -1,9 +1,14 @@
 <script setup lang="ts">
 import UiModal from '@/ui/components/UiModal.vue';
 import FancyButton from '@/ui/components/FancyButton.vue';
-import { useGameClient, useGameState } from '../composables/useGameClient';
+import {
+  useFxEvent,
+  useGameClient,
+  useGameState
+} from '../composables/useGameClient';
 import GameCard from './GameCard.vue';
 import { INTERACTION_STATES } from '@game/engine/src/game/game.enums';
+import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
 
 const { client, playerId } = useGameClient();
 const _isOpened = ref(false);
@@ -20,30 +25,31 @@ const isOpened = computed({
 
 const currentQuestion = ref<string | null>(null);
 
-watch(
-  [() => state.value.interaction, playerId],
-  ([, playerId], [, oldPlayerId]) => {
-    const interactionState = state.value.interaction.state;
-    if (interactionState !== INTERACTION_STATES.ASK_QUESTION) {
-      _isOpened.value = false;
-      currentQuestion.value = null;
-      return;
-    }
+useFxEvent(FX_EVENTS.INTERACTION_AFTER_CHANGE_STATE, event => {
+  const newInteraction = event.to;
 
-    if (
-      currentQuestion.value === state.value.interaction.ctx.questionId &&
-      playerId === oldPlayerId
-    ) {
-      return;
-    }
-
-    currentQuestion.value = state.value.interaction.ctx.questionId;
-
-    _isOpened.value =
-      state.value.interaction.ctx.player === playerId &&
-      playerId === client.value.getActivePlayerId();
+  if (newInteraction.state !== INTERACTION_STATES.ASK_QUESTION) {
+    _isOpened.value = false;
+    currentQuestion.value = null;
+    return;
   }
-);
+
+  if (
+    newInteraction.ctx.questionId !== currentQuestion.value &&
+    newInteraction.ctx.players.includes(playerId.value)
+  ) {
+    _isOpened.value = true;
+    currentQuestion.value = newInteraction.ctx.questionId;
+  }
+});
+
+watchEffect(() => {
+  if (!client.value.isActive()) {
+    _isOpened.value = false;
+    currentQuestion.value = null;
+  }
+});
+
 const isShowingBoard = ref(false);
 
 const label = computed(() => {

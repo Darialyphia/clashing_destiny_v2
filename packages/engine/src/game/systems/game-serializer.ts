@@ -1,5 +1,6 @@
 import type { Game } from '../game';
 import type { Config } from '../../config';
+import type { SerializedTurnState } from './turn.system';
 import { GAME_EVENTS, type GameStarEvent } from '../game.events';
 import type {
   CardPlayEvent,
@@ -44,7 +45,7 @@ export type SerializedOmniscientState = {
   phase: SerializedGamePhaseContext;
   interaction: SerializedInteractionContext;
   players: string[];
-  turnCount: number;
+  turn: SerializedTurnState;
   combat: SerializedCombatState;
   scoring: SerializedScoringState;
   effectChain: SerializedEffectChain | null;
@@ -57,7 +58,7 @@ export type SnapshotDiff = {
   removedEntities: string[];
   phase: SerializedGamePhaseContext;
   interaction: SerializedInteractionContext;
-  turnCount: number;
+  turn: SerializedTurnState;
   players: string[];
   combat: SerializedCombatState;
   scoring: SerializedScoringState;
@@ -138,7 +139,7 @@ export class GameSerializer {
       removedEntities: removedEntityIds,
       phase: state.phase,
       interaction: state.interaction,
-      turnCount: state.turnCount,
+      turn: state.turn,
       players: state.players,
       config: this.getObjectDiff(state.config, prevState.config),
       combat: state.combat,
@@ -183,7 +184,7 @@ export class GameSerializer {
       phase: this.game.gamePhaseSystem.serialize(),
       interaction: this.game.interaction.serialize(),
       players: this.game.playerSystem.players.map(player => player.id),
-      turnCount: this.game.turnSystem.elapsedTurns,
+      turn: this.game.turnSystem.serialize(),
       combat: this.game.combatSystem.serialize(),
       scoring: this.game.scoringSystem.serialize(),
       effectChain: this.game.effectChainSystem.serialize()
@@ -198,7 +199,17 @@ export class GameSerializer {
 
     // Remove entities that the player shouldn't have access to in order to prevent cheating
     const shouldBeSeen = (cardId: string) => {
-      if (state.interaction.ctx.player === playerId) {
+      const isChoosingCards =
+        state.interaction.state === INTERACTION_STATES.CHOOSING_CARDS;
+      const interactionContext = state.interaction.ctx;
+      const isActivePlayer = true; // temporary while we migrate all ineraction contexts to accomodate multiple players
+      // const isActivePlayer = isChoosingCards
+      //   ? 'players' in interactionContext &&
+      //     interactionContext.players.includes(playerId) &&
+      //     !interactionContext.committedPlayers.includes(playerId)
+      //   : 'player' in interactionContext &&
+      //     interactionContext.player === playerId;
+      if (isActivePlayer) {
         // add card from buckets when rearrangign cards since they could come from a hidden source (like deck or opponent's hand)
         if (state.interaction.state === INTERACTION_STATES.REARRANGING_CARDS) {
           const buckets = state.interaction.ctx.buckets;
@@ -210,7 +221,8 @@ export class GameSerializer {
         }
         // same thing
         if (state.interaction.state === INTERACTION_STATES.CHOOSING_CARDS) {
-          const choices = state.interaction.ctx.choices;
+          if (!('playerConfig' in interactionContext)) return false;
+          const choices = interactionContext.playerConfig[playerId].choices;
           if (choices.includes(cardId)) {
             return true;
           }
@@ -306,7 +318,7 @@ export class GameSerializer {
       ),
       phase: state.phase,
       interaction: state.interaction,
-      turnCount: state.turnCount,
+      turn: state.turn,
       players: state.players,
       combat: state.combat,
       scoring: state.scoring,

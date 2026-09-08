@@ -37,7 +37,7 @@ export class SelectingCardOnBoardContext {
 
   private isDone: (selectedCards: AnyCard[]) => boolean;
 
-  readonly player: Player;
+  private _player: Player;
 
   readonly label: string;
 
@@ -45,7 +45,7 @@ export class SelectingCardOnBoardContext {
     private game: Game,
     private options: SelectingCardOnBoardContextOptions
   ) {
-    this.player = options.player;
+    this._player = options.player;
     this.isElligible = options.isElligible;
     this.canCommit = options.canCommit;
     this.isDone = options.isDone;
@@ -53,9 +53,12 @@ export class SelectingCardOnBoardContext {
     this.timeoutFallback = options.timeoutFallback;
   }
 
+  get players() {
+    return [this._player];
+  }
   serialize() {
     return {
-      player: this.player.id,
+      players: this.players.map(player => player.id),
       selectedCards: this.selectedCards.map(card => card.id),
       elligibleCards: this.game.cardSystem
         .getAllCardsInPlay()
@@ -74,14 +77,14 @@ export class SelectingCardOnBoardContext {
     const isDone = this.isDone(this.selectedCards);
     const canCommit = this.canCommit(this.selectedCards);
     if (isDone && canCommit) {
-      await this.commit(this.player);
+      await this.commit(this._player);
     } else {
       await this.game.inputSystem.askForPlayerInput();
     }
   }
 
   async selectCard(player: Player, card: AnyCard) {
-    assert(player.equals(this.player), new InvalidPlayerError());
+    assert(player.equals(this._player), new InvalidPlayerError());
     assert(this.isElligible(card, this.selectedCards), new IllegalTargetError());
     this.selectedCards.push(card);
     await this.autoCommitIfAble();
@@ -92,7 +95,7 @@ export class SelectingCardOnBoardContext {
       this.selectedCards = [...this.timeoutFallback];
     }
     assert(this.canCommit(this.selectedCards), new UnableToCommitError());
-    assert(player.equals(this.player), new InvalidPlayerError());
+    assert(player.equals(this._player), new InvalidPlayerError());
 
     await this.game.interaction.sendTransition(
       INTERACTION_STATE_TRANSITIONS.COMMIT_SELECTING_CARDS_ON_BOARD,
@@ -103,7 +106,7 @@ export class SelectingCardOnBoardContext {
   }
 
   async cancel(player: Player) {
-    assert(player.equals(this.player), new InvalidPlayerError());
+    assert(player.equals(this._player), new InvalidPlayerError());
     await this.game.interaction.sendTransition(
       INTERACTION_STATE_TRANSITIONS.CANCEL_SELECTING_CARDS_ON_BOARD,
       {}

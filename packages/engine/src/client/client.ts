@@ -158,18 +158,18 @@ export class GameClient {
     this._processingUpdate = false;
   }
 
-  getActivePlayerId() {
+  getActivePlayerIds() {
     if (
       this.stateManager.state.effectChain &&
       this.stateManager.state.effectChain.state === EFFECT_CHAIN_STATES.BUILDING
     ) {
-      return this.stateManager.state.effectChain.player;
+      return [this.stateManager.state.effectChain.player];
     }
-    return this.stateManager.state.interaction.ctx.player;
+    return this.stateManager.state.interaction.ctx.players;
   }
 
   isActive() {
-    return this.getActivePlayerId() === this.playerId;
+    return this.getActivePlayerIds().includes(this.playerId);
   }
 
   async initialize(
@@ -285,6 +285,7 @@ export class GameClient {
   }
 
   declarePlayCard(card: CardViewModel) {
+    console.log('declare play card');
     this.ui.optimisticState.playedCardId = card.id;
 
     this.dispatch({

@@ -37,7 +37,7 @@ export class SelectingSpaceOnBoardContext {
 
   private isDone: (selectedSpaces: BoardSpace[]) => boolean;
 
-  readonly player: Player;
+  private _player: Player;
 
   private timeoutFallback: BoardSpace[];
 
@@ -45,11 +45,15 @@ export class SelectingSpaceOnBoardContext {
     private game: Game,
     private options: SelectingSpaceOnBoardContextOptions
   ) {
-    this.player = options.player;
+    this._player = options.player;
     this.isElligible = options.isElligible;
     this._canCommit = options.canCommit;
     this.isDone = options.isDone;
     this.timeoutFallback = options.timeoutFallback;
+  }
+
+  get players() {
+    return [this._player];
   }
 
   get AOEForNextSpace() {
@@ -66,7 +70,7 @@ export class SelectingSpaceOnBoardContext {
 
   serialize() {
     return {
-      player: this.player.id,
+      players: this.players.map(player => player.id),
       source: this.options.source.id,
       label: this.options.getLabel(this.selectedSpaces),
       selectedSpaces: this.selectedSpaces.map(space => space.serialize()),
@@ -95,14 +99,14 @@ export class SelectingSpaceOnBoardContext {
     const isDone = this.isDone(this.selectedSpaces);
     const canCommit = this.canCommit(this.selectedSpaces);
     if (isDone && canCommit) {
-      await this.commit(this.player);
+      await this.commit(this._player);
     } else {
       await this.game.inputSystem.askForPlayerInput();
     }
   }
 
   async selectSpace(player: Player, id: string) {
-    assert(player.equals(this.player), new InvalidPlayerError());
+    assert(player.equals(this._player), new InvalidPlayerError());
     const space = this.game.boardSystem.getBoardSpaceById(id);
     assert(isDefined(space), new IllegalTargetError());
     assert(this.isElligible(space, this.selectedSpaces), new IllegalTargetError());
@@ -116,7 +120,7 @@ export class SelectingSpaceOnBoardContext {
     } else {
       assert(this.canCommit, new UnableToCommitError());
     }
-    assert(player.equals(this.player), new InvalidPlayerError());
+    assert(player.equals(this._player), new InvalidPlayerError());
     await this.game.interaction.sendTransition(
       INTERACTION_STATE_TRANSITIONS.COMMIT_SELECTING_SPACE_ON_BOARD,
       {}
@@ -125,7 +129,7 @@ export class SelectingSpaceOnBoardContext {
   }
 
   async cancel(player: Player) {
-    assert(player.equals(this.player), new InvalidPlayerError());
+    assert(player.equals(this._player), new InvalidPlayerError());
     assert(this.options.canCancel, new UnableToCommitError());
     await this.game.interaction.sendTransition(
       INTERACTION_STATE_TRANSITIONS.CANCEL_SELECTING_SPACE_ON_BOARD,

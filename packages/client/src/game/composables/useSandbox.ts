@@ -62,8 +62,10 @@ export const useSandbox = (
   });
 
   client.value.onUpdateCompleted(() => {
-    if (autoSwitchPlayer.value) {
-      playerId.value = client.value.getActivePlayerId();
+    if (!autoSwitchPlayer.value) return;
+    const activePlayers = client.value.getActivePlayerIds();
+    if (!activePlayers.includes(playerId.value)) {
+      playerId.value = activePlayers[0];
     }
   });
 
@@ -73,7 +75,8 @@ export const useSandbox = (
         event.data.payload.snapshot,
         event.data.payload.history
       );
-      playerId.value = client.value.getActivePlayerId();
+      const activePlayers = client.value.getActivePlayerIds();
+      playerId.value = activePlayers[0];
     }
   });
 
@@ -90,31 +93,31 @@ export const useSandbox = (
     addCardToHand(blueprintId: string) {
       worker.postMessage({
         type: 'addCardtoHand',
-        payload: { blueprintId, playerId: client.value.getActivePlayerId() }
+        payload: { blueprintId, playerId: client.value.getActivePlayerIds() }
       });
     },
     addCardToTopOfDeck(blueprintId: string) {
       worker.postMessage({
         type: 'addCardToTopOfDeck',
-        payload: { blueprintId, playerId: client.value.getActivePlayerId() }
+        payload: { blueprintId, playerId: client.value.getActivePlayerIds() }
       });
     },
     addCardToDiscardPile(blueprintId: string) {
       worker.postMessage({
         type: 'addCardToDiscardPile',
-        payload: { blueprintId, playerId: client.value.getActivePlayerId() }
+        payload: { blueprintId, playerId: client.value.getActivePlayerIds() }
       });
     },
     draw() {
       worker.postMessage({
         type: 'draw',
-        payload: { playerId: client.value.getActivePlayerId() }
+        payload: { playerId: client.value.getActivePlayerIds() }
       });
     },
     refillMana() {
       worker.postMessage({
         type: 'refillMana',
-        payload: { playerId: client.value.getActivePlayerId() }
+        payload: { playerId: client.value.getActivePlayerIds() }
       });
     },
     moveUnit(
@@ -154,7 +157,7 @@ export const useSandbox = (
     grantExp(amount: number) {
       worker.postMessage({
         type: 'grantExp',
-        payload: { amount, playerId: client.value.getActivePlayerId() }
+        payload: { amount, playerId: client.value.getActivePlayerIds() }
       });
     }
   };

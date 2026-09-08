@@ -5,6 +5,7 @@ import type { SerializedEntity } from './game-serializer';
 import type { SerializedEffectChain } from '../effect-chain';
 import type { SerializedCombatState } from './combat.system';
 import type { SerializedScoringState } from './scoring.system';
+import type { SerializedTurnState } from './turn.system';
 
 /**
  * JSON Patch operations (RFC 6902 inspired)
@@ -50,7 +51,7 @@ export type PatchBasedSnapshotDiff = {
   // Top-level state changes (these are infrequent, so keep as partial)
   phase: SerializedGamePhaseContext;
   interaction: SerializedInteractionContext;
-  turnCount: number;
+  turn: SerializedTurnState;
   players: string[];
   config: Partial<Config>;
   combat: SerializedCombatState;

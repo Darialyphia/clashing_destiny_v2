@@ -7,8 +7,8 @@ export class IdleContext {
   }
   constructor(private game: Game) {}
 
-  get player() {
-    return this.game.interaction.interactivePlayer;
+  get players() {
+    return [this.game.turnSystem.initiativePlayer];
   }
 
   cancel() {
@@ -16,7 +16,7 @@ export class IdleContext {
   }
   serialize() {
     return {
-      player: this.player.id,
+      players: this.players.map(p => p.id),
       canCancel: false
     };
   }

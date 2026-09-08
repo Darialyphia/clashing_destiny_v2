@@ -1,9 +1,14 @@
 <script setup lang="ts">
 import UiModal from '@/ui/components/UiModal.vue';
 import FancyButton from '@/ui/components/FancyButton.vue';
-import { useGameClient, useGameState } from '../composables/useGameClient';
+import {
+  useFxEvent,
+  useGameClient,
+  useGameState
+} from '../composables/useGameClient';
 import GameCard from './GameCard.vue';
 import { INTERACTION_STATES } from '@game/engine/src/game/game.enums';
+import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
 
 const { client, playerId } = useGameClient();
 const _isOpened = ref(false);
@@ -17,18 +22,28 @@ const isOpened = computed({
     _isOpened.value = value;
   }
 });
-watchEffect(() => {
-  _isOpened.value =
-    state.value.interaction.state === INTERACTION_STATES.CHOOSING_CARDS &&
-    playerId.value === client.value.getActivePlayerId();
+
+useFxEvent(FX_EVENTS.INTERACTION_AFTER_CHANGE_STATE, event => {
+  const { to } = event;
+  if (to.state !== INTERACTION_STATES.CHOOSING_CARDS) {
+    _isOpened.value = false;
+    return;
+  }
+
+  if (to.ctx.initialPlayers?.includes(playerId.value)) {
+    _isOpened.value = true;
+  }
 });
+
 const isShowingBoard = ref(false);
 
 const displayedCards = computed(() => {
   if (state.value.interaction.state !== INTERACTION_STATES.CHOOSING_CARDS)
     return [];
 
-  return state.value.interaction.ctx.choices;
+  return (
+    state.value.interaction.ctx.playerConfig[playerId.value]?.choices ?? []
+  );
 });
 
 const selectedIndices = ref<number[]>([]);
@@ -39,27 +54,41 @@ watch(_isOpened, () => {
 const label = computed(() => {
   if (state.value.interaction.state !== INTERACTION_STATES.CHOOSING_CARDS)
     return '';
-  return state.value.interaction.ctx.label;
+  return state.value.interaction.ctx.playerConfig[playerId.value]?.label ?? '';
 });
 
 const minChoices = computed(() => {
   if (state.value.interaction.state !== INTERACTION_STATES.CHOOSING_CARDS)
     return 0;
-  return state.value.interaction.ctx.minChoiceCount;
+  return (
+    state.value.interaction.ctx.playerConfig[playerId.value]?.minChoiceCount ??
+    0
+  );
 });
 
 const maxChoices = computed(() => {
   if (state.value.interaction.state !== INTERACTION_STATES.CHOOSING_CARDS)
     return 0;
-  return state.value.interaction.ctx.maxChoiceCount;
+  return (
+    state.value.interaction.ctx.playerConfig[playerId.value]?.maxChoiceCount ??
+    0
+  );
+});
+
+const isWaiting = computed(() => {
+  return (
+    state.value.interaction.state === INTERACTION_STATES.CHOOSING_CARDS &&
+    state.value.interaction.ctx.initialPlayers?.includes(playerId.value) &&
+    !state.value.interaction.ctx.players.includes(playerId.value)
+  );
 });
 </script>
 
 <template>
   <UiModal
     v-model:is-opened="isOpened"
-    title="Destiny Phase"
-    description="You may choose to play one Destiny card"
+    :title="label"
+    :description="`Select up to ${maxChoices} cards`"
     :closable="false"
     :style="{
       '--ui-modal-size': 'var(--size-lg)'
@@ -78,8 +107,9 @@ const maxChoices = computed(() => {
             :value="index"
             v-model="selectedIndices"
             :disabled="
-              selectedIndices.length >= maxChoices &&
-              !selectedIndices.includes(index)
+              isWaiting ||
+              (selectedIndices.length >= maxChoices &&
+                !selectedIndices.includes(index))
             "
           />
         </label>
@@ -89,12 +119,17 @@ const maxChoices = computed(() => {
           v-if="!isShowingBoard"
           variant="info"
           text="Confirm"
-          :disabled="selectedIndices.length < minChoices"
+          :disabled="selectedIndices.length < minChoices || isWaiting"
           @click="
-            _isOpened = false;
-            client.chooseCards(selectedIndices);
+            () => {
+              client.chooseCards(selectedIndices);
+              selectedIndices = [];
+            }
           "
         />
+        <p v-if="isWaiting">
+          Waiting for other players to make their choices...
+        </p>
       </footer>
     </div>
   </UiModal>

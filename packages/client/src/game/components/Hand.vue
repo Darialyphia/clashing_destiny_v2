@@ -24,30 +24,8 @@ const { client } = useGameClient();
 
 const myPlayer = useMyPlayer();
 
-const isExpanded = computed({
-  get() {
-    return playerId === myPlayer.value?.id
-      ? ui.value.isHandExpanded
-      : ui.value.isOpponentHandExpanded;
-  },
-  set(v) {
-    if (playerId === myPlayer.value?.id) {
-      ui.value.isHandExpanded = v;
-    } else {
-      ui.value.isOpponentHandExpanded = v;
-    }
-  }
-});
-
 const isMyHand = computed(() => {
   return playerId === myPlayer.value?.id;
-});
-
-onMounted(() => {
-  if (!isMyHand.value) return;
-  if (playerId === client.value.getActivePlayerId()) {
-    isExpanded.value = true;
-  }
 });
 
 useFxEvent(FX_EVENTS.CARD_ADD_TO_HAND, async () => {
@@ -162,7 +140,6 @@ watch(width, v => {
   <OnClickOutside
     class="hand-wrapper"
     :options="{ ignore: [`${ui.DOMSelectors.globalActionButtons.selector} *`] }"
-    @trigger="isExpanded = false"
   >
     <section
       :id="`hand-${player.id}`"
