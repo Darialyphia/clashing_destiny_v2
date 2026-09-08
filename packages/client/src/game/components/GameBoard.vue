@@ -12,15 +12,10 @@ import PassButton from './PassButton.vue';
 import EffectChain from './EffectChain.vue';
 import BoardCard from './BoardCard.vue';
 import ScoreButton from './ScoreButton.vue';
+import type { PlayerClockState } from '../composables/useGameSocket';
 
 const { clocks } = defineProps<{
-  clocks?: {
-    [playerId: string]: {
-      max: number;
-      remaining: number;
-      isActive: boolean;
-    };
-  };
+  clocks?: Record<string, PlayerClockState>;
 }>();
 
 const ui = useGameUi();
@@ -151,14 +146,22 @@ const pointsToWin = computed(() => state.value.config.VICTORY_POINTS_TO_WIN);
           <div
             v-for="(clock, userId) of clocks"
             :key="userId"
-            class="action-clock"
-            :class="{
-              active: clock.isActive,
-              warning: clock.remaining < 15
-            }"
-            :style="{ '--max': clock.max, '--remaining': clock.remaining }"
-            :data-count="clock.remaining"
-          ></div>
+            class="player-clocks"
+            :class="{ penalized: clock.isPenalized }"
+          >
+            <div
+              v-for="(stage, stageName) of [clock.primary, clock.secondary]"
+              :key="stageName"
+              class="action-clock"
+              :class="{
+                active: stage.isActive,
+                warning: stage.remaining < 15
+              }"
+              :style="{ '--max': stage.max, '--remaining': stage.remaining }"
+              :data-count="stage.remaining"
+              :data-label="stageName === 0 ? 'turn' : 'grace'"
+            ></div>
+          </div>
         </div>
         .
       </div>

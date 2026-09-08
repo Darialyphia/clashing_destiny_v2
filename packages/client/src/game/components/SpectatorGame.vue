@@ -6,6 +6,7 @@ import GameScene from './GameScene.vue';
 import FancyButton from '@/ui/components/FancyButton.vue';
 import type { GameInfos } from '@game/api';
 import { useSpectatorSocket } from '../composables/useSpectatorSocket';
+import type { PlayerClockState } from '../composables/useGameSocket';
 
 const { game } = defineProps<{ game: GameInfos }>();
 
@@ -36,11 +37,7 @@ socket.value.on('gameInitialState', async state => {
 });
 
 const clocks = ref<{
-  [playerId: string]: {
-    max: number;
-    remaining: number;
-    isActive: boolean;
-  };
+  [playerId: string]: PlayerClockState;
 }>({});
 
 socket.value.on('clockUpdate', updatedClocks => {

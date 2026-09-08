@@ -30,15 +30,10 @@ import GameBoard from './GameBoard.vue';
 import OpponentHand from './OpponentHand.vue';
 import ScoringArrow from './ScoringArrow.vue';
 import InteractionArrows from './InteractionArrows.vue';
+import type { PlayerClockState } from '../composables/useGameSocket';
 
 const { clocks } = defineProps<{
-  clocks?: {
-    [playerId: string]: {
-      max: number;
-      remaining: number;
-      isActive: boolean;
-    };
-  };
+  clocks?: Record<string, PlayerClockState>;
   options: {
     teachingMode: boolean;
   };

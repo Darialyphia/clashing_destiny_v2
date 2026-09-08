@@ -53,6 +53,10 @@ export class Clock extends EventEmitter {
     return Math.max(this.remainingTime, 0);
   }
 
+  get maxDuration() {
+    return this.maxTime;
+  }
+
   get isFinished() {
     return this.getRemainingTime() <= 0;
   }

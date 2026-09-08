@@ -1,4 +1,4 @@
-import { GAME_STATUS, type UserId, type GameId, type GameStatus } from '@game/api';
+import { GAME_STATUS, type GameId, type GameStatus } from '@game/api';
 import { Game, type GameOptions } from '@game/engine/src/game/game';
 import type { Ioserver, IoSocket } from './io';
 import { TypedEventEmitter } from '@game/engine/src/utils/typed-emitter';
@@ -6,7 +6,7 @@ import type { AnyFunction, EmptyObject } from '@game/shared';
 import type { SerializedInput } from '@game/engine/src/input/input-system';
 import { GAME_EVENTS } from '@game/engine/src/game/game.events';
 import { GAME_PHASES } from '@game/engine/src/game/game.enums';
-import { ClockManager, CLOCK_MANAGER_EVENTS } from './clock-manager';
+import { ClockManager, CLOCK_MANAGER_EVENTS, type ClockState } from './clock-manager';
 
 export type RoomOptions = {
   game: {
@@ -32,14 +32,7 @@ type RoomEventMap = {
   [ROOM_EVENTS.ALL_PLAYERS_JOINED]: EmptyObject;
   [ROOM_EVENTS.INPUT_END]: SerializedInput[];
   [ROOM_EVENTS.GAME_OVER]: { winnerId: string | null };
-  [ROOM_EVENTS.CLOCK_TICK]: Record<
-    UserId,
-    {
-      max: number;
-      remaining: number;
-      isActive: boolean;
-    }
-  >;
+  [ROOM_EVENTS.CLOCK_TICK]: ClockState;
 };
 
 type RoomPlayer = {
@@ -54,6 +47,7 @@ export class Room {
 
   private clockManager: ClockManager;
   private players = new Map<string, RoomPlayer>();
+  private activePlayerIds = new Set<string>();
 
   private spectators = new Set<IoSocket>();
 
@@ -116,18 +110,25 @@ export class Room {
     return this.engineInitPromise;
   }
 
-  private startActivePlayerClocks() {
-    const activePlayerIds = this.engine.activePlayers.map(p => p.id);
-    for (const activePlayerId of activePlayerIds) {
-      this.clockManager.startClockForPlayer(activePlayerId);
-    }
-  }
+  private syncActivePlayerClocks(resetSecondary = false) {
+    const nextActivePlayerIds = new Set(
+      this.engine.activePlayers.map(player => player.id)
+    );
 
-  private stopActivePlayerClocks() {
-    const activePlayerIds = this.engine.activePlayers.map(p => p.id);
-    for (const activePlayerId of activePlayerIds) {
-      this.clockManager.stopClockForPlayer(activePlayerId);
+    for (const playerId of this.activePlayerIds) {
+      if (!nextActivePlayerIds.has(playerId)) {
+        this.clockManager.stopClockForPlayer(playerId);
+      }
     }
+
+    for (const playerId of nextActivePlayerIds) {
+      if (resetSecondary && !this.activePlayerIds.has(playerId)) {
+        this.clockManager.resetSecondaryClockForPlayer(playerId);
+      }
+      this.clockManager.startClockForPlayer(playerId);
+    }
+
+    this.activePlayerIds = nextActivePlayerIds;
   }
 
   async start() {
@@ -153,7 +154,7 @@ export class Room {
     });
 
     this.initializeClocks();
-    this.startActivePlayerClocks();
+    this.syncActivePlayerClocks();
   }
 
   private initializeClocks() {
@@ -171,34 +172,13 @@ export class Room {
     });
 
     this.engine.onActivePlayerChange(() => {
-      this.clockManager.resetAllClocks();
-      this.stopActivePlayerClocks();
-      this.startActivePlayerClocks();
+      this.syncActivePlayerClocks(true);
     });
 
     this.engine.on(GAME_EVENTS.TURN_START, () => {
       this.clockManager.resetAllClocks();
-      this.stopActivePlayerClocks();
-      this.startActivePlayerClocks();
+      this.syncActivePlayerClocks();
     });
-
-    // this.engine.on(GAME_EVENTS.AFTER_CHANGE_PHASE, event => {
-    //   const newPhase = event.data.to.state;
-    //   const previousPhase = event.data.from;
-
-    //   // When entering level up phase, start clocks for all players
-    //   if (newPhase === GAME_PHASES.LEVEL_UP) {
-    //     this.clockManager.resetAllClocks();
-    //     this.clockManager.startAllClocks();
-    //   }
-
-    //   // When exiting level up phase, stop all clocks and resume normal behavior
-    //   if (previousPhase === GAME_PHASES.LEVEL_UP) {
-    //     this.clockManager.stopAllClocks();
-    //     this.clockManager.resetAllClocks();
-    //     this.startActivePlayerClock();
-    //   }
-    // });
   }
 
   private handleSpectatorSubscription(spectatorSocket: IoSocket) {
@@ -241,7 +221,7 @@ export class Room {
       this.callbackSubscriptionsBysocket.set(playerSocket, []);
     }
     const onInput = async (input: SerializedInput) => {
-      console.log(input);
+      this.clockManager.recordPlayerInput(playerSocket.data.user.id);
       input.payload.playerId = playerSocket.data.user.id; // Ensure playerId is set correctly to prevent cheating
       await this.engine.inputSystem.dispatch(input);
     };
