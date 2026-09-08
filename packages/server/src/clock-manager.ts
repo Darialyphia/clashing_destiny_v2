@@ -33,12 +33,14 @@ export type ClockManagerOptions = {
   clockTime: number;
   secondaryClockTime?: number;
   penaltyClockTime?: number;
+  initiativeChangeBonusTime?: number;
   disabled: boolean;
 };
 
-const DEFAULT_CLOCK_TIME = 60 * 1000;
+const DEFAULT_CLOCK_TIME = 45 * 1000;
 const DEFAULT_SECONDARY_CLOCK_TIME = 15 * 1000;
 const DEFAULT_PENALTY_CLOCK_TIME = 5 * 1000;
+const DEFAULT_INITIATIVE_CHANGE_BONUS_TIME = 5 * 1000;
 const CONSECUTIVE_TIMEOUT_THRESHOLD = 2;
 
 type PlayerClocks = {
@@ -54,12 +56,15 @@ export class ClockManager {
   private clockTime: number;
   private secondaryClockTime: number;
   private penaltyClockTime: number;
+  private initiativeChangeBonusTime: number;
   private disabled: boolean;
 
   constructor(private options: ClockManagerOptions) {
     this.clockTime = options.clockTime ?? DEFAULT_CLOCK_TIME;
     this.secondaryClockTime = options.secondaryClockTime ?? DEFAULT_SECONDARY_CLOCK_TIME;
     this.penaltyClockTime = options.penaltyClockTime ?? DEFAULT_PENALTY_CLOCK_TIME;
+    this.initiativeChangeBonusTime =
+      options.initiativeChangeBonusTime ?? DEFAULT_INITIATIVE_CHANGE_BONUS_TIME;
     this.disabled = options.disabled;
   }
 
@@ -139,6 +144,11 @@ export class ClockManager {
     this.playerClocks.get(playerId)?.secondary.reset();
   }
 
+  addInitiativeChangeBonus(playerId: string) {
+    if (this.disabled) return;
+    this.playerClocks.get(playerId)?.primary.addTime(this.initiativeChangeBonusTime);
+  }
+
   recordPlayerInput(playerId: string) {
     if (this.disabled) return;
     const clocks = this.playerClocks.get(playerId);
@@ -215,9 +225,10 @@ export class ClockManager {
   }
 
   private serializeClock(clock: Clock): ClockStageState {
+    const remaining = Math.round(clock.getRemainingTime() / 1000);
     return {
-      max: clock.maxDuration / 1000,
-      remaining: Math.round(clock.getRemainingTime() / 1000),
+      max: Math.max(clock.maxDuration / 1000, remaining),
+      remaining,
       isActive: clock.isRunning()
     };
   }

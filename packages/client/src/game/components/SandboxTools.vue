@@ -21,32 +21,18 @@ import {
 import { CARDS_DICTIONARY } from '@game/engine/src/card/sets';
 import { Icon } from '@iconify/vue';
 import { ref } from 'vue';
-import type { SerializedInput } from '@game/engine/src/input/input-system';
 import { usePlayer1 } from '../composables/useGameClient';
-import { isDefined } from '@game/shared';
+import { useSandbox } from '../composables/useSandbox';
+import type { SerializedInput } from '@game/engine/src/input/input-system';
 
 const { players } = defineProps<{
   players: Array<{ id: string }>;
-  history: SerializedInput[];
 }>();
 
-const emit = defineEmits<{
-  rewindOneStep: [];
-  rewindTo: [index: number];
-  restart: [];
-  refillMana: [];
-  addToHand: [cardId: string];
-  draw: [];
-  grantExp: [amount: number];
-}>();
+const sandbox = useSandbox();
 
 const isSandboxPopoverOpened = ref(false);
 const card = ref<string | null>(null);
-
-const playerId = defineModel<string>('playerId', { required: true });
-const autoSwitchPlayer = defineModel<boolean>('autoSwitch', {
-  required: true
-});
 
 const allCards = Object.values(CARDS_DICTIONARY).sort((a, b) =>
   a.name.localeCompare(b.name)
@@ -54,7 +40,26 @@ const allCards = Object.values(CARDS_DICTIONARY).sort((a, b) =>
 
 const p1 = usePlayer1();
 
-const expToGrant = ref(0);
+const inputLabels: Record<SerializedInput['type'], string> = {
+  answerQuestion: 'Answer Question',
+  cancelInteraction: 'Cancel Interaction',
+  chooseCards: 'Choose Cards',
+  chooseChainEffects: 'Choose Chain Effects',
+  commitCardSelection: 'Commit Card Selection',
+  commitRearrangeCards: 'Commit Rearrange Cards',
+  commitSpaceSelection: 'Commit Space Selection',
+  declareAttack: 'Declare Attack',
+  declarePlayCard: 'Declare Play Card',
+  declareRetaliation: 'Declare Retaliation',
+  declareUseCardAbility: 'Declare Use Card Ability',
+  interactionTimeout: 'Interaction Timeout',
+  move: 'Move',
+  pass: 'Pass',
+  score: 'Score',
+  selectCardOnBoard: 'Select Card On Board',
+  selectSpaceOnBoard: 'Select Space On Board',
+  surrender: 'Surrender'
+};
 </script>
 
 <template>
@@ -81,7 +86,7 @@ const expToGrant = ref(0);
                   :key="player.id"
                   class="btn"
                   :class="{ p1: player.id === p1.id, p2: player.id !== p1.id }"
-                  @click="playerId = player.id"
+                  @click="sandbox.playerId.value = player.id"
                 >
                   Switch to Player {{ index + 1 }}
                 </button>
@@ -89,7 +94,7 @@ const expToGrant = ref(0);
               <label class="checkbox-label">
                 <input
                   type="checkbox"
-                  v-model="autoSwitchPlayer"
+                  v-model="sandbox.autoSwitchPlayer.value"
                   class="checkbox"
                 />
                 <span>Auto Switch to Active Player</span>
@@ -109,29 +114,34 @@ const expToGrant = ref(0);
             </AccordionHeader>
             <AccordionContent class="accordion-content">
               <div class="button-group">
-                <button @click="emit('restart')" class="btn">
+                <button @click="sandbox.restart()" class="btn">
                   Restart Game
                 </button>
-                <button @click="emit('rewindOneStep')" class="btn">
+                <button @click="sandbox.rewindOneStep()" class="btn">
                   Rewind One Step
                 </button>
               </div>
               <h3 class="section-title mt-3">Rewind to :</h3>
               <div class="history-list fancy-scrollbar">
-                <span v-if="history.length === 0" class="history-item italic">
+                <span
+                  v-if="sandbox.client.value.history.length === 0"
+                  class="history-item italic"
+                >
                   No history.
                 </span>
                 <div
-                  v-for="(input, index) in history.toReversed()"
+                  v-for="(
+                    input, index
+                  ) in sandbox.client.value.history.toReversed()"
                   :key="index"
                   class="history-item"
                   :class="{
                     p1: input.payload.playerId === p1.id,
                     p2: input.payload.playerId !== p1.id
                   }"
-                  @click="emit('rewindTo', index)"
+                  @click="sandbox.rewindTo(index)"
                 >
-                  {{ input.type }}
+                  {{ inputLabels[input.type] }}
                 </div>
               </div>
             </AccordionContent>
@@ -148,27 +158,9 @@ const expToGrant = ref(0);
               </AccordionTrigger>
             </AccordionHeader>
             <AccordionContent class="accordion-content">
-              <button @click="emit('refillMana')" class="btn mt-2">
+              <button @click="sandbox.refillMana()" class="btn mt-2">
                 Refill Mana
               </button>
-              <div class="input-group mt-2">
-                <input
-                  id="exp"
-                  type="number"
-                  min="0"
-                  step="1"
-                  placeholder="EXP to grant"
-                  class="number-input flex-1"
-                  v-model.number="expToGrant"
-                />
-                <button
-                  :disabled="!isDefined(expToGrant)"
-                  @click="emit('grantExp', expToGrant!)"
-                  class="btn"
-                >
-                  Grant EXP
-                </button>
-              </div>
             </AccordionContent>
           </AccordionItem>
 
@@ -183,7 +175,9 @@ const expToGrant = ref(0);
               </AccordionTrigger>
             </AccordionHeader>
             <AccordionContent class="accordion-content">
-              <button @click="emit('draw')" class="btn mb-2">Draw card</button>
+              <button @click="sandbox.draw()" class="btn mb-2">
+                Draw card
+              </button>
               <ComboboxRoot class="relative" v-model="card">
                 <ComboboxAnchor class="combobox-anchor">
                   <ComboboxInput
@@ -226,7 +220,7 @@ const expToGrant = ref(0);
                 :disabled="!card"
                 @click="
                   () => {
-                    emit('addToHand', card!);
+                    sandbox.addCardToHand(card!);
                     card = null;
                   }
                 "

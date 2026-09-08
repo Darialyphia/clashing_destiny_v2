@@ -117,6 +117,7 @@ export class CardManagerComponent {
 
     return null;
   }
+
   getCardInHandAt(index: number) {
     return [...this.hand][index];
   }
@@ -251,5 +252,9 @@ export class CardManagerComponent {
       return;
     }
     this.hand.push(card);
+  }
+
+  placeInRuneZone(card: RuneCard) {
+    this.runeZone.add(card);
   }
 }

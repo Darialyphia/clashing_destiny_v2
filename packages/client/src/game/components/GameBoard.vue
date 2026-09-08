@@ -206,7 +206,7 @@ const pointsToWin = computed(() => state.value.config.VICTORY_POINTS_TO_WIN);
   height: 100%;
   /* width: var(--board-width);
   height: var(--board-height); */
-  background: url(@/assets/backgrounds/battle-background-2-hirez.png);
+  background: url(@/assets/backgrounds/battle-background2.png);
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

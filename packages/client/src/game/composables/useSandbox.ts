@@ -1,10 +1,43 @@
-import type { NetworkAdapter } from '@game/engine/src/client/client';
+import type {
+  GameClient,
+  NetworkAdapter
+} from '@game/engine/src/client/client';
 import { type GameOptions } from '@game/engine/src/game/game';
 import { provideGameClient } from './useGameClient';
 import { useFxAdapter } from './useFxAdapter';
 import SandboxWorker from '../sandbox-worker?worker';
+import type { InjectionKey, Ref } from 'vue';
+import { useSafeInject } from '@/shared/composables/useSafeInject';
 
-export const useSandbox = (
+type SandboxContext = {
+  client: Ref<GameClient, GameClient>;
+  playerId: Ref<string, string>;
+  autoSwitchPlayer: Ref<boolean, boolean>;
+  rewindOneStep: () => void;
+  rewindTo: (step: number) => void;
+  restart: () => void;
+  addCardToHand(blueprintId: string): void;
+  addCardToTopOfDeck(blueprintId: string): void;
+  addCardToDiscardPile(blueprintId: string): void;
+  draw(): void;
+  refillMana(): void;
+  moveUnit(
+    unitId: string,
+    position: {
+      x: number;
+      y: number;
+    },
+    silent: boolean
+  ): void;
+  activateUnit(unitId: string): void;
+  destroyUnit(unitId: string, silent: boolean): void;
+  bounceUnit(unitId: string, silent: boolean): void;
+  dealDamageToUnit(unitId: string, amount: number, silent: boolean): void;
+};
+
+const SANDBOX_INJECTION_KEY = Symbol('sandbox') as InjectionKey<SandboxContext>;
+
+export const provideSandbox = (
   options: Pick<GameOptions, 'players' | 'rngSeed'>
 ) => {
   const worker = new SandboxWorker();
@@ -83,7 +116,7 @@ export const useSandbox = (
   const rewindTo = (step: number) => {
     worker.postMessage({ type: 'rewind', payload: { step } });
   };
-  return {
+  const ctx = {
     client,
     playerId,
     autoSwitchPlayer,
@@ -153,12 +186,12 @@ export const useSandbox = (
         type: 'dealDamage',
         payload: { unitId, amount, silent }
       });
-    },
-    grantExp(amount: number) {
-      worker.postMessage({
-        type: 'grantExp',
-        payload: { amount, playerId: client.value.getActivePlayerIds() }
-      });
     }
   };
+
+  provide(SANDBOX_INJECTION_KEY, ctx);
+
+  return ctx;
 };
+
+export const useSandbox = () => useSafeInject(SANDBOX_INJECTION_KEY);

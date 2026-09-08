@@ -123,7 +123,10 @@ export class TurnSystem
 
     await this.game.emit(
       TURN_EVENTS.TURN_INITATIVE_CHANGE,
-      new TurnInitiativeChangeEvent({ newInitiativePlayer: this._initiativePlayer })
+      new TurnInitiativeChangeEvent({
+        oldInitiativePlayer: this._initiativePlayer.opponent,
+        newInitiativePlayer: this._initiativePlayer
+      })
     );
   }
 
@@ -158,7 +161,10 @@ export class TurnSystem
         this._initiativePlayer = this._initiativePlayer.opponent;
         await this.game.emit(
           TURN_EVENTS.TURN_INITATIVE_CHANGE,
-          new TurnInitiativeChangeEvent({ newInitiativePlayer: this._initiativePlayer })
+          new TurnInitiativeChangeEvent({
+            newInitiativePlayer: this._initiativePlayer,
+            oldInitiativePlayer: this._initiativePlayer.opponent
+          })
         );
       }
     } else {
@@ -171,7 +177,10 @@ export class TurnSystem
         this._initiativePlayer = this._initiativePlayer.opponent;
         await this.game.emit(
           TURN_EVENTS.TURN_INITATIVE_CHANGE,
-          new TurnInitiativeChangeEvent({ newInitiativePlayer: this._initiativePlayer })
+          new TurnInitiativeChangeEvent({
+            newInitiativePlayer: this._initiativePlayer,
+            oldInitiativePlayer: this._initiativePlayer.opponent
+          })
         );
       }
     }
@@ -187,7 +196,10 @@ export class TurnSystem
 
     await this.game.emit(
       TURN_EVENTS.TURN_INITATIVE_CHANGE,
-      new TurnInitiativeChangeEvent({ newInitiativePlayer: this._initiativePlayer })
+      new TurnInitiativeChangeEvent({
+        newInitiativePlayer: this._initiativePlayer,
+        oldInitiativePlayer: this._initiativePlayer.opponent
+      })
     );
   }
 
@@ -212,12 +224,13 @@ export class TurnEvent extends TypedSerializableEvent<
 }
 
 export class TurnInitiativeChangeEvent extends TypedSerializableEvent<
-  { newInitiativePlayer: Player },
-  { newInitiativePlayer: string }
+  { oldInitiativePlayer: Player; newInitiativePlayer: Player },
+  { oldInitiativePlayer: string; newInitiativePlayer: string }
 > {
   serialize() {
     return {
-      newInitiativePlayer: this.data.newInitiativePlayer.id
+      newInitiativePlayer: this.data.newInitiativePlayer.id,
+      oldInitiativePlayer: this.data.oldInitiativePlayer.id
     };
   }
 }

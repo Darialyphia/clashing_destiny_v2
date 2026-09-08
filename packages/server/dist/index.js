@@ -56678,7 +56678,10 @@ var TurnSystem = class extends System {
     }
     await this.game.emit(
       TURN_EVENTS.TURN_INITATIVE_CHANGE,
-      new TurnInitiativeChangeEvent({ newInitiativePlayer: this._initiativePlayer })
+      new TurnInitiativeChangeEvent({
+        oldInitiativePlayer: this._initiativePlayer.opponent,
+        newInitiativePlayer: this._initiativePlayer
+      })
     );
   }
   endTurn() {
@@ -56709,7 +56712,10 @@ var TurnSystem = class extends System {
         this._initiativePlayer = this._initiativePlayer.opponent;
         await this.game.emit(
           TURN_EVENTS.TURN_INITATIVE_CHANGE,
-          new TurnInitiativeChangeEvent({ newInitiativePlayer: this._initiativePlayer })
+          new TurnInitiativeChangeEvent({
+            newInitiativePlayer: this._initiativePlayer,
+            oldInitiativePlayer: this._initiativePlayer.opponent
+          })
         );
       }
     } else {
@@ -56721,7 +56727,10 @@ var TurnSystem = class extends System {
         this._initiativePlayer = this._initiativePlayer.opponent;
         await this.game.emit(
           TURN_EVENTS.TURN_INITATIVE_CHANGE,
-          new TurnInitiativeChangeEvent({ newInitiativePlayer: this._initiativePlayer })
+          new TurnInitiativeChangeEvent({
+            newInitiativePlayer: this._initiativePlayer,
+            oldInitiativePlayer: this._initiativePlayer.opponent
+          })
         );
       }
     }
@@ -56734,7 +56743,10 @@ var TurnSystem = class extends System {
     this._initiativePlayer = this._initiativePlayer.opponent;
     await this.game.emit(
       TURN_EVENTS.TURN_INITATIVE_CHANGE,
-      new TurnInitiativeChangeEvent({ newInitiativePlayer: this._initiativePlayer })
+      new TurnInitiativeChangeEvent({
+        newInitiativePlayer: this._initiativePlayer,
+        oldInitiativePlayer: this._initiativePlayer.opponent
+      })
     );
   }
   serialize() {
@@ -56755,7 +56767,8 @@ var TurnEvent = class extends TypedSerializableEvent {
 var TurnInitiativeChangeEvent = class extends TypedSerializableEvent {
   serialize() {
     return {
-      newInitiativePlayer: this.data.newInitiativePlayer.id
+      newInitiativePlayer: this.data.newInitiativePlayer.id,
+      oldInitiativePlayer: this.data.oldInitiativePlayer.id
     };
   }
 };
@@ -63124,6 +63137,17 @@ var Clock = class extends import_events.EventEmitter {
   get maxDuration() {
     return this.maxTime;
   }
+  addTime(duration) {
+    if (this.isFinished)
+      return false;
+    if (this.isRunning()) {
+      this.remainingTime = this.getRemainingTime();
+      this.startTime = performance.now();
+    }
+    this.remainingTime += duration;
+    this.emit("tick", this.getRemainingTime());
+    return true;
+  }
   get isFinished() {
     return this.getRemainingTime() <= 0;
   }
@@ -63171,6 +63195,7 @@ var CLOCK_MANAGER_EVENTS = {
 var DEFAULT_CLOCK_TIME = 60 * 1e3;
 var DEFAULT_SECONDARY_CLOCK_TIME = 15 * 1e3;
 var DEFAULT_PENALTY_CLOCK_TIME = 5 * 1e3;
+var DEFAULT_INITIATIVE_CHANGE_BONUS_TIME = 5 * 1e3;
 var CONSECUTIVE_TIMEOUT_THRESHOLD = 2;
 var ClockManager = class {
   constructor(options) {
@@ -63180,6 +63205,7 @@ var ClockManager = class {
     this.clockTime = options.clockTime ?? DEFAULT_CLOCK_TIME;
     this.secondaryClockTime = options.secondaryClockTime ?? DEFAULT_SECONDARY_CLOCK_TIME;
     this.penaltyClockTime = options.penaltyClockTime ?? DEFAULT_PENALTY_CLOCK_TIME;
+    this.initiativeChangeBonusTime = options.initiativeChangeBonusTime ?? DEFAULT_INITIATIVE_CHANGE_BONUS_TIME;
     this.disabled = options.disabled;
   }
   get on() {
@@ -63254,6 +63280,11 @@ var ClockManager = class {
       return;
     this.playerClocks.get(playerId)?.secondary.reset();
   }
+  addInitiativeChangeBonus(playerId) {
+    if (this.disabled)
+      return;
+    this.playerClocks.get(playerId)?.primary.addTime(this.initiativeChangeBonusTime);
+  }
   recordPlayerInput(playerId) {
     if (this.disabled)
       return;
@@ -63323,9 +63354,10 @@ var ClockManager = class {
       replacement.secondary.start();
   }
   serializeClock(clock) {
+    const remaining = Math.round(clock.getRemainingTime() / 1e3);
     return {
-      max: clock.maxDuration / 1e3,
-      remaining: Math.round(clock.getRemainingTime() / 1e3),
+      max: Math.max(clock.maxDuration / 1e3, remaining),
+      remaining,
       isActive: clock.isRunning()
     };
   }
@@ -63440,6 +63472,11 @@ var Room = class {
     this.engine.onActivePlayerChange(() => {
       this.syncActivePlayerClocks(true);
     });
+    this.engine.on(GAME_EVENTS.TURN_INITATIVE_CHANGE, (event) => {
+      this.clockManager.addInitiativeChangeBonus(
+        event.data.oldInitiativePlayer.id
+      );
+    });
     this.engine.on(GAME_EVENTS.TURN_START, () => {
       this.clockManager.resetAllClocks();
       this.syncActivePlayerClocks();
@@ -63481,7 +63518,6 @@ var Room = class {
       this.callbackSubscriptionsBysocket.set(playerSocket, []);
     }
     const onInput = async (input) => {
-      console.log(input);
       this.clockManager.recordPlayerInput(playerSocket.data.user.id);
       input.payload.playerId = playerSocket.data.user.id;
       await this.engine.inputSystem.dispatch(input);

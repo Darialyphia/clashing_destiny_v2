@@ -11,8 +11,7 @@ import ChooseCardModal from './ChooseCardModal.vue';
 import { useGameKeyboardControls } from '../composables/useGameKeyboardControls';
 import GameErrorModal from './GameErrorModal.vue';
 import AnswerQuestionModal from './AnswerQuestionModal.vue';
-import UiModal from '@/ui/components/UiModal.vue';
-import FancyButton from '@/ui/components/FancyButton.vue';
+import GameMenu from './GameMenu.vue';
 import Camera from './Camera.vue';
 import Hand from './Hand.vue';
 import DraggedCard from './DraggedCard.vue';
@@ -91,16 +90,19 @@ const isScreenDimmed = computed(() => {
   if (state.value.effectChain?.state === 'BUILDING') return true;
   return false;
 });
+
+const isDev = import.meta.env.DEV;
 </script>
 
 <template>
-  <div class="debug">
+  <div v-if="isDev" class="debug">
     <div>You are: {{ playerId }}</div>
     <div>Game Phase: {{ state.phase.state }}</div>
     <div>Selected Card: {{ ui.selectedCard?.id }}</div>
     <div>Interaction State: {{ state.interaction.state }}</div>
     <div>Chain: {{ state.effectChain?.state }}</div>
   </div>
+
   <div class="game-board-container">
     <PlayedCard />
     <ChooseCardModal />
@@ -133,34 +135,15 @@ const isScreenDimmed = computed(() => {
     />
   </div>
 
-  <div class="opponent-player">
-    <PlayerInfos :player="opponent" inverted />
-  </div>
-
-  <div class="my-player">
-    <PlayerInfos :player="myPlayer" />
-  </div>
-
-  <button
-    aria-label="Settings"
-    class="settings-button"
-    @click="isGameSettingsOpened = true"
-  />
-
-  <!-- <GamePhaseIndicator /> -->
+  <PlayerInfos class="opponent-player" :player="opponent" inverted />
+  <PlayerInfos class="my-player" :player="myPlayer" />
+  <GameMenu>
+    <template #menu>
+      <slot name="menu" />
+    </template>
+  </GameMenu>
   <TurnIndicator />
 
-  <UiModal
-    v-model:is-opened="isGameSettingsOpened"
-    title="Menu"
-    description="Game settings"
-    :style="{ '--ui-modal-size': 'var(--size-xs)' }"
-  >
-    <div class="game-board-menu">
-      <FancyButton text="Close" @click="isGameSettingsOpened = false" />
-      <slot name="menu" />
-    </div>
-  </UiModal>
   <slot name="board-additional" />
 
   <GameErrorModal />
@@ -199,38 +182,11 @@ const isScreenDimmed = computed(() => {
   left: 0;
 }
 
-:global(.my-hand:has(.hand-card:hover)) {
-  z-index: 10;
-}
-
 .opponent-hand {
   position: fixed;
   width: 100%;
   top: 3%;
   left: 0;
-}
-
-.settings-button {
-  --pixel-scale: 2;
-  position: fixed;
-  right: var(--size-8);
-  bottom: var(--size-6);
-  width: calc(32px * var(--pixel-scale));
-  aspect-ratio: 1;
-  background: url('@/assets/ui/settings-icon.png');
-  background-size: cover;
-  z-index: 2;
-  &:hover {
-    filter: brightness(1.2);
-  }
-}
-
-.game-board-menu {
-  display: grid;
-  gap: var(--size-2);
-  > * {
-    width: 100%;
-  }
 }
 
 .vignette {
@@ -259,20 +215,12 @@ const isScreenDimmed = computed(() => {
   position: absolute;
   left: var(--size-6);
   bottom: var(--size-3);
-  display: flex;
-  gap: var(--size-2);
-  flex-direction: column;
-  align-items: center;
 }
 
 .opponent-player {
   position: absolute;
   right: var(--size-6);
   top: var(--size-3);
-  display: flex;
-  flex-direction: column;
-  gap: var(--size-2);
-  align-items: center;
 }
 
 .hovered-cell-infos {

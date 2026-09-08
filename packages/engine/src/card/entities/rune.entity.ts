@@ -26,6 +26,8 @@ export class RuneCard extends Card<
   }
 
   async play() {
+    this.removeFromCurrentLocation();
+    this.player.cardManager.placeInRuneZone(this);
     await this.blueprint.onPlay(this.game, this);
 
     return { cancelled: false };

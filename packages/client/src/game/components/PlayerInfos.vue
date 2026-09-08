@@ -37,15 +37,6 @@ watch(
   { immediate: true }
 );
 
-onMounted(() => {
-  preloadAsset('ui/exp-bar-0');
-  preloadAsset('ui/exp-bar-1');
-  preloadAsset('ui/exp-bar-2');
-  preloadAsset('ui/exp-bar-3');
-  preloadAsset('ui/exp-bar-4');
-  preloadAsset('ui/exp-bar-5');
-});
-
 const hasInitiative = computed(() => {
   return client.value.getActivePlayerIds().includes(player.id);
 });

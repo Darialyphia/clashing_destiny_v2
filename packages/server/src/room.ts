@@ -175,6 +175,10 @@ export class Room {
       this.syncActivePlayerClocks(true);
     });
 
+    this.engine.on(GAME_EVENTS.TURN_INITATIVE_CHANGE, event => {
+      this.clockManager.addInitiativeChangeBonus(event.data.oldInitiativePlayer.id);
+    });
+
     this.engine.on(GAME_EVENTS.TURN_START, () => {
       this.clockManager.resetAllClocks();
       this.syncActivePlayerClocks();

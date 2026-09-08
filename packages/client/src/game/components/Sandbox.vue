@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import SandboxTools from './SandboxTools.vue';
-import { useSandbox } from '../composables/useSandbox';
+import { provideSandbox } from '../composables/useSandbox';
 import GameScene from './GameScene.vue';
 import FancyButton from '@/ui/components/FancyButton.vue';
 
 const { players } = defineProps<{
-  players: Parameters<typeof useSandbox>[0]['players'];
+  players: Parameters<typeof provideSandbox>[0]['players'];
 }>();
 
-const sandbox = useSandbox({
+const sandbox = provideSandbox({
   rngSeed: `sandbox-${Math.random().toString(36).substring(2, 15)}`,
   players
 });
@@ -37,24 +37,7 @@ const sandbox = useSandbox({
       </RouterLink>
     </template>
   </GameScene>
-  <SandboxTools
-    v-model:auto-switch="sandbox.autoSwitchPlayer.value"
-    v-model:player-id="sandbox.playerId.value"
-    :players="players"
-    :history="sandbox.client.value.history"
-    @rewindOneStep="sandbox.rewindOneStep"
-    @rewindTo="sandbox.rewindTo"
-    @restart="sandbox.restart"
-    @refillMana="sandbox.refillMana"
-    @addToHand="sandbox.addCardToHand"
-    @move="sandbox.moveUnit"
-    @activate-unit="sandbox.activateUnit"
-    @destroy-unit="sandbox.destroyUnit"
-    @draw="sandbox.draw"
-    @bounce-unit="sandbox.bounceUnit"
-    @deal-damage-to-unit="sandbox.dealDamageToUnit"
-    @grant-exp="sandbox.grantExp"
-  />
+  <SandboxTools :players="players" />
 </template>
 
 <style scoped lang="postcss"></style>

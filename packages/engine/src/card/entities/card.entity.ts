@@ -372,15 +372,27 @@ export abstract class Card<
   }
 
   async sendToTopOfDeck() {
-    await this.changeLocation(CARD_LOCATIONS.MAIN_DECK, () =>
-      this.player.cardManager.mainDeck.addToTop(this)
-    );
+    if (this.kind === CARD_KINDS.RUNE) {
+      await this.changeLocation(CARD_LOCATIONS.RUNE_DECK, () =>
+        this.player.cardManager.runeDeck.addToTop(this as any)
+      );
+    } else {
+      await this.changeLocation(CARD_LOCATIONS.MAIN_DECK, () =>
+        this.player.cardManager.mainDeck.addToTop(this)
+      );
+    }
   }
 
   async sendToBottomOfDeck() {
-    await this.changeLocation(CARD_LOCATIONS.MAIN_DECK, () =>
-      this.player.cardManager.mainDeck.addToBottom(this)
-    );
+    if (this.kind === CARD_KINDS.RUNE) {
+      await this.changeLocation(CARD_LOCATIONS.RUNE_DECK, () =>
+        this.player.cardManager.runeDeck.addToBottom(this as any)
+      );
+    } else {
+      await this.changeLocation(CARD_LOCATIONS.MAIN_DECK, () =>
+        this.player.cardManager.mainDeck.addToBottom(this)
+      );
+    }
   }
 
   async shuffleIntoDeck() {
