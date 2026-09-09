@@ -3,7 +3,7 @@ import {
   type CardListContext
 } from '@/card/composables/useCardList';
 import { DeckBuilderViewModel } from '@/card/deck-builder.model';
-import { StandardDeckValidator } from '@game/engine/src/card/validators/deck.validator';
+import { StandardDeckValidator } from '@game/engine/src/card/validators/standard.validator';
 import type { Ref, InjectionKey } from 'vue';
 import { keyBy } from 'lodash-es';
 import { useSafeInject } from '@/shared/composables/useSafeInject';
@@ -60,7 +60,7 @@ export const provideCollectionPage = () => {
   const deckBuilder = ref(
     new DeckBuilderViewModel(
       cardPool,
-      new StandardDeckValidator(keyBy(cardPool, 'id'))
+      new StandardDeckValidator({ cardPool: keyBy(cardPool, 'id') })
     )
   ) as Ref<DeckBuilderViewModel>;
 

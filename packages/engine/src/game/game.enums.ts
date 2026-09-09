@@ -2,6 +2,7 @@ import type { Values } from '@game/shared';
 
 export const GAME_PHASES = {
   DRAW: 'draw_phase',
+  SUPPLY: 'supply_phase',
   MAIN: 'main_phase',
   PLAY_CARD: 'play_card_phase',
   END: 'end_phase',
@@ -26,6 +27,7 @@ export type TurnEventName = Values<typeof TURN_EVENTS>;
 
 export const GAME_PHASE_TRANSITIONS = {
   DRAWN_FOR_TURN: 'drawn_for_turn',
+  SUPPLIED_MANA: 'supplied_mana',
   END_TURN: 'end_turn',
   START_TURN: 'start_turn',
   PLAYER_WON: 'player_won',

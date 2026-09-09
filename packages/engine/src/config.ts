@@ -1,7 +1,7 @@
 export type Config = {
   MAX_MAIN_DECK_SIZE: number;
-  MAX_HERO_CARDS: number;
   MAX_DESTINY_CARDS: number;
+  MAX_RUNE_CARDS: number;
   MAX_MAIN_DECK_CARD_COPIES: number;
 
   INITIAL_HAND_SIZE: number;
@@ -37,10 +37,10 @@ export type Config = {
 };
 
 export const defaultConfig: Config = {
-  MAX_MAIN_DECK_SIZE: 39,
-  MAX_HERO_CARDS: 1,
+  MAX_MAIN_DECK_SIZE: 40,
   MAX_DESTINY_CARDS: 4,
   MAX_MAIN_DECK_CARD_COPIES: 3,
+  MAX_RUNE_CARDS: 10,
 
   INITIAL_HAND_SIZE: 0,
   MAX_HAND_SIZE: 8,

@@ -1,7 +1,7 @@
 import { useAuthedMutation, useAuthedQuery } from '@/auth/composables/useAuth';
 import { api } from '@game/api';
 import { CARD_SET_DICTIONARY } from '@game/engine/src/card/sets';
-import { StandardDeckValidator } from '@game/engine/src/card/validators/deck.validator';
+import { StandardDeckValidator } from '@game/engine/src/card/validators/standard.validator';
 import { isDefined, type AnyFunction } from '@game/shared';
 import { keyBy } from 'lodash-es';
 
@@ -9,7 +9,9 @@ export const useDecks = () => {
   const query = useAuthedQuery(api.decks.list, {});
 
   const cardPool = Object.values(CARD_SET_DICTIONARY).flatMap(set => set.cards);
-  const validator = new StandardDeckValidator(keyBy(cardPool, 'id'));
+  const validator = new StandardDeckValidator({
+    cardPool: keyBy(cardPool, 'id')
+  });
 
   return {
     ...query,
