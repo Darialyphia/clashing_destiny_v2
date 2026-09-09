@@ -39,7 +39,7 @@ export type CardArt = {
     starField?: boolean;
     emboss?: boolean;
   };
-  bg: string;
+  bg?: string;
   main: string;
   foilBg?: string;
   foilMain?: string;

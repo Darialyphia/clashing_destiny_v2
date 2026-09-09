@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { CardBlueprint } from '@game/engine/src/card/card-blueprint';
 import { formatAbilityText } from '@/utils/formatters';
-import Card from './cardV2/index.vue';
+import Card from './cardV3/index.vue';
 import { isFunction } from '@game/shared';
 import { provideRichTextContext } from '@/game/composables/useRichText';
 

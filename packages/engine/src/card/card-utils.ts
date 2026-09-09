@@ -535,26 +535,26 @@ export const cardsInEnemyDiscardPile = {
     }
   ) {
     return await game.interaction.chooseCards<T, TCancellable>({
-        players: {
-          [options.player.id]: {
-            choices: Array.from(card.player.opponent.cardManager.discardPile)
-              .filter(c => {
-                return options.predicate ? options.predicate(c) : true;
-              })
-              .map(c => ({
-                card: c,
-                aiHints: {
-                  shouldPick: (game: Game, player: Player) =>
-                    options.aiHints.shouldPick(game, player, c)
-                }
-              })),
-            timeoutFallback: options.timeoutFallback,
-            minChoiceCount: options.minChoiceCount ?? 1,
-            maxChoiceCount: options.maxChoiceCount ?? 1,
-            label: options.label
-          }
-        },
-        canCancel: (options.canCancel ?? true) as TCancellable
+      players: {
+        [options.player.id]: {
+          choices: Array.from(card.player.opponent.cardManager.discardPile)
+            .filter(c => {
+              return options.predicate ? options.predicate(c) : true;
+            })
+            .map(c => ({
+              card: c,
+              aiHints: {
+                shouldPick: (game: Game, player: Player) =>
+                  options.aiHints.shouldPick(game, player, c)
+              }
+            })),
+          timeoutFallback: options.timeoutFallback,
+          minChoiceCount: options.minChoiceCount ?? 1,
+          maxChoiceCount: options.maxChoiceCount ?? 1,
+          label: options.label
+        }
+      },
+      canCancel: (options.canCancel ?? true) as TCancellable
     });
   }
 };
@@ -570,7 +570,6 @@ export const defaultCardArt = (
       glitter: true
     },
     isFullArt,
-    bg: `${name}-bg`,
     main: `${name}-main`
   }
 });

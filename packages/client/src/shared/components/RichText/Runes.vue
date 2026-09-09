@@ -47,14 +47,14 @@ const tooltip = computed(() => {
   display: inline-flex;
   gap: calc(1px * var(--pixel-scale));
   padding-right: 0.5ch;
-  translate: 0 calc(4px * var(--pixel-scale));
+  translate: 0 calc(2px * var(--pixel-scale));
 }
 .rune {
   background: var(--bg) no-repeat center center;
   background-size: cover;
   font-weight: var(--font-weight-5);
   border-radius: var(--radius-round);
-  width: calc(17px * var(--pixel-scale));
-  height: calc(18px * var(--pixel-scale));
+  width: calc(8.5px * var(--pixel-scale));
+  height: calc(9px * var(--pixel-scale));
 }
 </style>

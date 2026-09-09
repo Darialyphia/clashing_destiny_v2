@@ -60,7 +60,7 @@ const keyword = computed(() => {
     var(--top-color) 50%,
     var(--bottom-color) 50%
   );
-  color: white;
+  color: #f8eabb;
   padding-inline: calc(6px * var(--pixel-scale));
   padding-block: calc(0.5px * var(--pixel-scale)) calc(1px * var(--pixel-scale));
   font-size: 0.9em;
@@ -81,23 +81,23 @@ const keyword = computed(() => {
 }
 
 .red {
-  --top-color: var(--red-7);
-  --bottom-color: var(--red-10);
+  --top-color: hsl(var(--red-9-hsl) / 0.6);
+  --bottom-color: hsl(var(--red-12-hsl) / 0.6);
 }
 
 .blue {
-  --top-color: var(--blue-7);
-  --bottom-color: var(--blue-10);
+  --top-color: hsl(var(--blue-9-hsl) / 0.6);
+  --bottom-color: hsl(var(--blue-12-hsl) / 0.6);
 }
 
 .green {
-  --top-color: var(--green-7);
-  --bottom-color: var(--green-10);
+  --top-color: hsl(var(--green-9-hsl) / 0.6);
+  --bottom-color: hsl(var(--green-12-hsl) / 0.6);
 }
 
 .yellow {
-  --top-color: var(--yellow-5);
-  --bottom-color: var(--yellow-8);
+  --top-color: hsl(var(--yellow-7-hsl) / 0.6);
+  --bottom-color: hsl(var(--yellow-10-hsl) / 0.6);
   color: black;
 }
 

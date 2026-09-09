@@ -15,7 +15,7 @@ export const arcaneSight: SpellBlueprint = {
   id: 'arcaneSight',
   name: 'Arcane Sight',
   description: dedent /*html*/ `
-    <rt-keyword>Instant</rt-keyword> <rt-keyword>Predict</rt-keyword>
+    <rt-keyword>Instant</rt-keyword>, <rt-keyword>Predict</rt-keyword>
     <br/>
     <rt-runes runes="wisdom,resonance"></rt-runes>draw a card.
   `,

@@ -54,9 +54,8 @@ const keyword = computed(() => {
 .keyword-card {
   max-width: 30ch;
   padding: var(--size-3);
-  color: var(--text-1);
   background-color: black;
-  color: #efef9f;
+  color: #f8eabb;
   padding: var(--size-2) var(--size-3);
   font-family: var(--font-system-ui);
   font-size: 14px;
