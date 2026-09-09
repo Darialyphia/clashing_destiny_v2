@@ -40,8 +40,8 @@ export const useDecks = () => {
   };
 };
 
-type UseDecksMutation = ReturnType<typeof useDecks>;
-export type UserDeck = UseDecksMutation['data']['value'][number];
+type UseDecksResult = ReturnType<typeof useDecks>;
+export type UserDeck = UseDecksResult['data']['value'][number];
 
 export const useCreateDeck = (
   onSuccess?: (data: { deckId: string }) => void

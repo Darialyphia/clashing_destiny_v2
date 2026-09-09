@@ -61,6 +61,8 @@ import { loamkinTender } from './core/minions/earth/loamkin-tender';
 import { mosscloakQuartermaster } from './core/minions/earth/mosscloak-quartermaster';
 import { invigorate } from './core/spells/earth/invigorate';
 import { landSlide } from './core/spells/earth/land-slide';
+import { lightAffinity } from './core/runes/light-affinity';
+import { fireAffinity } from './core/runes/fire-affinity';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -125,6 +127,8 @@ export const coreSet: CardSet = {
     loamkinTender,
     mosscloakQuartermaster,
     invigorate,
-    landSlide
+    landSlide,
+    lightAffinity,
+    fireAffinity
   ]
 };

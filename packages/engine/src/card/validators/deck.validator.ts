@@ -128,30 +128,6 @@ export class DeckValidator<TMeta> implements DeckValidator<TMeta> {
     return this.config.MAX_RUNE_CARDS;
   }
 
-  getMaxCopiesFor(card: ValidatableCard<TMeta>): number {
-    const blueprint = this.cardPool[card.blueprintId] as CardBlueprint;
-    if (blueprint.kind === CARD_KINDS.DESTINY) {
-      return 1;
-    }
-    return this.config.MAX_MAIN_DECK_CARD_COPIES;
-  }
-
-  private validateCard(card: {
-    blueprint: CardBlueprint;
-    copies: number;
-  }): DeckViolation[] {
-    const violations: DeckViolation[] = [];
-
-    if (card.copies > defaultConfig.MAX_MAIN_DECK_CARD_COPIES) {
-      violations.push({
-        type: 'too_many_copies',
-        reason: `Card ${card.blueprint.name} has too many copies.`
-      });
-    }
-
-    return violations;
-  }
-
   getSize(cards: Array<{ copies: number }>) {
     return cards.reduce((acc, card) => acc + card.copies, 0);
   }
@@ -161,6 +137,17 @@ export class DeckValidator<TMeta> implements DeckValidator<TMeta> {
       ...card,
       blueprint: this.cardPool[card.blueprintId] as CardBlueprint
     }));
+  }
+
+  private validateCard(card: ValidatableCard<TMeta>): DeckViolation[] {
+    const violations: DeckViolation[] = [];
+    for (const rule of this.cardRules) {
+      const violation = rule.validate(card, this);
+      if (violation) {
+        violations.push(violation);
+      }
+    }
+    return violations;
   }
 
   validate(deck: ValidatableDeck<TMeta>): DeckValidationResult {
@@ -174,12 +161,8 @@ export class DeckValidator<TMeta> implements DeckValidator<TMeta> {
     }
 
     for (const card of deck.cards) {
-      for (const rule of this.cardRules) {
-        const violation = rule.validate(card, this);
-        if (violation) {
-          violations.push(violation);
-        }
-      }
+      const cardViolations = this.validateCard(card);
+      violations.push(...cardViolations);
     }
 
     if (violations.length > 0) {
@@ -199,11 +182,8 @@ export class DeckValidator<TMeta> implements DeckValidator<TMeta> {
       return false;
     }
 
-    const existing = deckCards.find(c => deck.isEqual(c, card));
-    if (existing && existing.copies >= this.getMaxCopiesFor(card)) {
-      return false;
-    }
+    const violations = this.validateCard({ ...card, copies: card.copies + 1 });
 
-    return true;
+    return violations.length === 0;
   }
 }

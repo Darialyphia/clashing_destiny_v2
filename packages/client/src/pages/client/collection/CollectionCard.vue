@@ -20,16 +20,20 @@ const canAddCard = computed(() => {
   if (!isEditingDeck.value) return false;
   if (card.copiesOwned === 0) return false;
 
-  return (
-    deckBuilder.value.canAdd({
+  const existing = deckBuilder.value.getCard(card.card.id);
+  if (existing && card.copiesOwned <= existing.copies) {
+    return false;
+  }
+
+  return deckBuilder.value.canAdd(
+    existing ?? {
       blueprintId: card.card.id,
-      copies: card.copiesOwned,
+      copies: 0,
       meta: {
         cardId: card.id as CardId,
         isFoil: card.isFoil
       }
-    }) &&
-    card.copiesOwned > (deckBuilder.value.getCard(card.card.id)?.copies ?? 0)
+    }
   );
 });
 

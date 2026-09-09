@@ -12,7 +12,8 @@ import {
   CARD_KINDS,
   type Affinity,
   type CardSpeed,
-  CARD_SPEED
+  CARD_SPEED,
+  AFFINITIES
 } from '../card.enums';
 import {
   CardAddToHandevent,
@@ -209,6 +210,36 @@ export abstract class Card<
       return Math.max(0, this.interceptors.manaCost.getValue(base ?? null, {}) ?? 0);
     }
     return 0;
+  }
+
+  get fulfillsAffinities() {
+    const available = Object.fromEntries(
+      Object.values(AFFINITIES).map(affinity => [affinity, 0])
+    ) as Record<Affinity, number>;
+    this.player.cardManager.runeZone.forEach(card => {
+      card.affinities.forEach(affinity => {
+        available[affinity]++;
+      });
+    });
+    const nonNeutralCost = this.affinities.filter(
+      affinity => affinity !== AFFINITIES.NEUTRAL
+    );
+    const neutralCost = this.affinities.filter(
+      affinity => affinity === AFFINITIES.NEUTRAL
+    );
+
+    // try to pay non neutral cost first
+    for (const rune of nonNeutralCost) {
+      if (available[rune] > 0) {
+        available[rune]--;
+      } else {
+        return false;
+      }
+    }
+
+    const remaining = Object.values(available).reduce((sum, count) => sum + count, 0);
+
+    return remaining >= neutralCost.length;
   }
 
   get canPayManaCost() {
@@ -449,7 +480,11 @@ export abstract class Card<
       return false;
     }
 
-    return this.location === CARD_LOCATIONS.HAND && this.canPayManaCost;
+    return (
+      this.location === CARD_LOCATIONS.HAND &&
+      this.canPayManaCost &&
+      this.fulfillsAffinities
+    );
   }
 
   abstract canPlay(): boolean;
@@ -477,6 +512,10 @@ export abstract class Card<
 
     if (!this.canPayManaCost) {
       return 'Cannot pay mana cost.';
+    }
+
+    if (!this.fulfillsAffinities) {
+      return 'You do not have the required affinities to play this card.';
     }
 
     return 'You cannot play this card';

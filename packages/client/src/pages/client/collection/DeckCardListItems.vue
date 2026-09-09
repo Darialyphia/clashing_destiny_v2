@@ -57,7 +57,7 @@ const { cards, deckBuilder } = defineProps<{
       </HoverCardTrigger>
       <HoverCardPortal>
         <HoverCardContent side="left" :side-offset="10">
-          <BlueprintCard :blueprint="card.blueprint" />
+          <BlueprintCard :blueprint="card.blueprint" style="--pixel-scale: 1" />
         </HoverCardContent>
       </HoverCardPortal>
     </HoverCardRoot>

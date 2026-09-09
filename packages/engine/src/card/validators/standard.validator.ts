@@ -11,7 +11,7 @@ class InvalidDeckSizeRule<TMeta> extends DeckValidationRule<TMeta> {
   constructor() {
     super({
       rule: (deck, validator) => {
-        return validator.getSize(deck.cards) !== validator.size;
+        return validator.getSize(deck.cards) === validator.size;
       },
       violation: (deck, validator) => ({
         type: 'invalid_deck_size',
@@ -38,8 +38,8 @@ class InvalidCardcountForKindRule<TMeta> extends DeckValidationRule<TMeta> {
         type: 'invalid_cardcount_for_kind',
         reason:
           minCount === maxCount
-            ? `Deck must include exactly ${minCount} cards of kind ${kind}.`
-            : `Deck must include between ${minCount} and ${maxCount} cards of kind ${kind}.`
+            ? `Deck must include exactly ${minCount} ${kind} cards.`
+            : `Deck must include between ${minCount} and ${maxCount} ${kind} cards.`
       })
     });
   }
@@ -100,7 +100,7 @@ export class StandardDeckValidator<TMeta> extends DeckValidator<TMeta> {
           MINION: defaultConfig.MAX_MAIN_DECK_CARD_COPIES,
           SPELL: defaultConfig.MAX_MAIN_DECK_CARD_COPIES,
           DESTINY: 1,
-          RUNE: Infinity
+          RUNE: defaultConfig.MAX_RUNE_CARDS
         })
       ]
     });

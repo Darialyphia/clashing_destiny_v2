@@ -166,7 +166,7 @@ watch(width, v => {
           '--z': card.z,
           '--keyboard-shortcut-right': '50%'
         }"
-        :hover-scale="1.25"
+        :hover-scale="2"
       />
     </section>
   </OnClickOutside>

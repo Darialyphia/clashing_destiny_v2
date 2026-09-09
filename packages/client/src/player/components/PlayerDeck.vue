@@ -36,11 +36,15 @@ const spells = computed(() =>
 const artifacts = computed(() =>
   mainDeck.value.filter(item => item.blueprint.kind === CARD_KINDS.ARTIFACT)
 );
+
+const violations = computed(() =>
+  deck.isValid.result === 'failure' ? deck.isValid.violations : []
+);
 </script>
 
 <template>
   <div>
-    <HoverCardRoot :open-delay="200">
+    <HoverCardRoot :open-delay="200" :close-delay="0">
       <button
         class="player-deck"
         :class="{
@@ -71,6 +75,11 @@ const artifacts = computed(() =>
       <HoverCardPortal>
         <HoverCardContent side="right" align="center" :side-offset="8">
           <div class="deck-details">
+            <ul>
+              <li v-for="(violation, index) in violations" :key="index">
+                <span class="invalid-label">{{ violation.reason }}</span>
+              </li>
+            </ul>
             <ul>
               <li v-for="item in minions" :key="item.blueprint.id">
                 {{ item.copies }}x
@@ -154,8 +163,6 @@ const artifacts = computed(() =>
   border-radius: var(--radius-2);
   box-shadow: var(--shadow-3);
   color: white;
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .rare {
@@ -171,6 +178,7 @@ const artifacts = computed(() =>
 }
 
 .invalid-label {
-  color: var(--red-8);
+  color: var(--red-6);
+  font-weight: var(--font-weight-7);
 }
 </style>

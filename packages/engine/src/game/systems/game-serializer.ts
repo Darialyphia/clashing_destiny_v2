@@ -199,16 +199,10 @@ export class GameSerializer {
 
     // Remove entities that the player shouldn't have access to in order to prevent cheating
     const shouldBeSeen = (cardId: string) => {
-      const isChoosingCards =
-        state.interaction.state === INTERACTION_STATES.CHOOSING_CARDS;
       const interactionContext = state.interaction.ctx;
-      const isActivePlayer = true; // temporary while we migrate all ineraction contexts to accomodate multiple players
-      // const isActivePlayer = isChoosingCards
-      //   ? 'players' in interactionContext &&
-      //     interactionContext.players.includes(playerId) &&
-      //     !interactionContext.committedPlayers.includes(playerId)
-      //   : 'player' in interactionContext &&
-      //     interactionContext.player === playerId;
+      const isActivePlayer = this.game.activePlayers.some(
+        player => player.id === playerId
+      );
       if (isActivePlayer) {
         // add card from buckets when rearrangign cards since they could come from a hidden source (like deck or opponent's hand)
         if (state.interaction.state === INTERACTION_STATES.REARRANGING_CARDS) {
@@ -222,7 +216,7 @@ export class GameSerializer {
         // same thing
         if (state.interaction.state === INTERACTION_STATES.CHOOSING_CARDS) {
           if (!('playerConfig' in interactionContext)) return false;
-          const choices = interactionContext.playerConfig[playerId].choices;
+          const choices = interactionContext.playerConfig[playerId]?.choices ?? [];
           if (choices.includes(cardId)) {
             return true;
           }

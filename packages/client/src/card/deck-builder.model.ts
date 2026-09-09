@@ -20,10 +20,10 @@ type DeckBuilderCardMeta = {
 };
 
 const KIND_ORDER = {
-  [CARD_KINDS.DESTINY]: 0,
-  [CARD_KINDS.MINION]: 1,
-  [CARD_KINDS.SPELL]: 2,
+  [CARD_KINDS.MINION]: 0,
+  [CARD_KINDS.SPELL]: 1,
   [CARD_KINDS.ARTIFACT]: 3,
+  [CARD_KINDS.DESTINY]: 3,
   [CARD_KINDS.RUNE]: 4
 };
 

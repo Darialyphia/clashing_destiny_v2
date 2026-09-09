@@ -65,7 +65,9 @@ export const cards = {
 "loamkinTender": "loamkinTender",
 "mosscloakQuartermaster": "mosscloakQuartermaster",
 "invigorate": "invigorate",
-"landSlide": "landSlide"
+"landSlide": "landSlide",
+"light-affinity": "light-affinity",
+"fire-affinity": "fire-affinity"
 } as const;
 
 export const collectableCards = {
@@ -123,7 +125,9 @@ export const collectableCards = {
 "loamkinTender": "loamkinTender",
 "mosscloakQuartermaster": "mosscloakQuartermaster",
 "invigorate": "invigorate",
-"landSlide": "landSlide"
+"landSlide": "landSlide",
+"light-affinity": "light-affinity",
+"fire-affinity": "fire-affinity"
 } as const;
 
 type CardSet = Array<{id: string; collectable: boolean; rarity: Rarity, kind: CardKind}>;
@@ -488,6 +492,18 @@ export const cardsBySet: Record<string, CardSet> = {
     "collectable": true,
     "rarity": "common",
     "kind": "SPELL"
+  },
+  {
+    "id": "light-affinity",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "RUNE"
+  },
+  {
+    "id": "fire-affinity",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "RUNE"
   }
 ]
 };
@@ -552,7 +568,9 @@ export const cardShortIds: Record<string, number> = {
 "loamkinTender": 59,
 "mosscloakQuartermaster": 60,
 "invigorate": 62,
-"landSlide": 61
+"landSlide": 61,
+"light-affinity": 64,
+"fire-affinity": 65
 } as const;
 
 export const cardIdByShortId: Record<number, string> = {
@@ -615,5 +633,7 @@ export const cardIdByShortId: Record<number, string> = {
 "59": "loamkinTender",
 "60": "mosscloakQuartermaster",
 "61": "landSlide",
-"62": "invigorate"
+"62": "invigorate",
+"64": "light-affinity",
+"65": "fire-affinity"
 } as const;

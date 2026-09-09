@@ -12,7 +12,7 @@ const {
   card,
   isInteractive,
   hoverYOffset = 0,
-  hoverScale = 1.5
+  hoverScale = 2
 } = defineProps<{
   card?: CardViewModel;
   isInteractive: boolean;

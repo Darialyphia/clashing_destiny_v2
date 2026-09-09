@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import UiModal from '@/ui/components/UiModal.vue';
+import FancyButton from '@/ui/components/FancyButton.vue';
+
 const isOpened = ref(false);
 </script>
 

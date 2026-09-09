@@ -59,13 +59,17 @@ export class DrawPhase implements GamePhaseController, Serializable<EmptyObject>
       setTimeout(async () => {
         await this.mulligan(this.game.config.START_OF_GAME_MULLIGANED_CARDS, true);
         await this.game.snapshotSystem.takeSnapshot();
+        await this.game.gamePhaseSystem.sendTransition(
+          GAME_PHASE_TRANSITIONS.DRAWN_FOR_TURN
+        );
       });
     } else {
       await this.mulligan(this.game.config.CARDS_MULLIGANED_PER_TURN, false);
       await this.drawForTurn();
+      await this.game.gamePhaseSystem.sendTransition(
+        GAME_PHASE_TRANSITIONS.DRAWN_FOR_TURN
+      );
     }
-
-    await this.game.gamePhaseSystem.sendTransition(GAME_PHASE_TRANSITIONS.DRAWN_FOR_TURN);
   }
 
   async onExit() {}
