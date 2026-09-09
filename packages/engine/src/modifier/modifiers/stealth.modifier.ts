@@ -11,7 +11,7 @@ export class StealthModifier extends Modifier<MinionCard> {
   constructor(
     game: Game,
     source: AnyCard,
-    options: { mixins?: ModifierMixin<MinionCard>[] }
+    options?: { mixins: ModifierMixin<MinionCard>[] }
   ) {
     super(KEYWORDS.STEALTH.id, game, source, {
       name: KEYWORDS.STEALTH.name,
@@ -27,7 +27,7 @@ export class StealthModifier extends Modifier<MinionCard> {
             return this.target.isExhausted && this.target.isOnBoard;
           }
         }),
-        ...(options.mixins || [])
+        ...(options?.mixins || [])
       ]
     });
   }

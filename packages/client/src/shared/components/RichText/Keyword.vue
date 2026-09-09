@@ -46,9 +46,9 @@ const keyword = computed(() => {
 
 <style scoped lang="postcss">
 .keyword {
-  font-weight: 900;
-  font-style: italic;
+  font-weight: var(--font-weight-7);
   color: hsl(from currentColor h s calc(l - 20));
+  color: #f8eabb;
 }
 
 .keyword-card {

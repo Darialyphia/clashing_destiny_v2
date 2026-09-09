@@ -77,7 +77,7 @@ useResizeObserver(descriptionBox, resizeDescription);
   --card-text-color: #d1b07d;
   height: calc(70px * var(--pixel-scale));
   position: absolute;
-  top: calc(108px * var(--pixel-scale));
+  top: calc(110px * var(--pixel-scale));
   left: calc(10px * var(--pixel-scale));
   width: calc(100% - (20px * var(--pixel-scale)));
   font-size: calc(1px * var(--pixel-scale) * v-bind(descriptionFontSize));
@@ -86,7 +86,7 @@ useResizeObserver(descriptionBox, resizeDescription);
   text-shadow: 0 0 0.75rem black;
   -webkit-text-stroke: calc(2px * var(--pixel-scale)) black;
   paint-order: stroke fill;
-
+  padding-inline: calc(2px * var(--pixel-scale));
   &.is-multi-line {
     text-align: left;
   }

@@ -30,8 +30,9 @@ const isFoilControlsDrawerOpen = ref(false);
 
 const hasPlaceholderArt = (card: CardBlueprint) => {
   const art = card.art.default;
+
   return Boolean(
-    art.bg.includes('placeholder') || art.main.includes('placeholder')
+    art.bg?.includes('placeholder') || art.main.includes('placeholder')
   );
 };
 

@@ -46,6 +46,9 @@ const { pointerStyle } = useCardTilt(root, {
 });
 
 const artBgImage = computed(() => {
+  if (!card.art.bg) {
+    return null;
+  }
   if (card.art.isFullArt || card.art.bg.includes('-alt')) {
     return assets[card.art.bg].css;
   }
@@ -67,7 +70,7 @@ const artMainImage = computed(() => {
   >
     <div class="card-front">
       <div class="image">
-        <div class="art-bg" />
+        <div v-if="artBgImage" class="art-bg" />
         <FoilScanlines v-if="isFoil && card.art.foil.scanlines" />
         <FoilGlitter v-if="isFoil && card.art.foil.glitter" />
         <div class="art-main" />

@@ -135,7 +135,7 @@ export class MinionCard extends Card<
     this.damageTracker = new DamageTrackerComponent(game, this);
     this.abilityManager = new AbilityManagerComponent<MinionCard>(game, this);
     this.game.on(GAME_EVENTS.TURN_START, () => {
-      this.hasMovedManuallyThisTurn = false;
+      this.resetManualMovement();
     });
     this.game.on(GAME_EVENTS.CARD_AFTER_CHANGE_LOCATION, async ({ data }) => {
       if (!data.card.equals(this)) return;
@@ -400,6 +400,10 @@ export class MinionCard extends Card<
       this.canMove && !this.hasMovedManuallyThisTurn,
       this
     );
+  }
+
+  resetManualMovement() {
+    this.hasMovedManuallyThisTurn = false;
   }
 
   get shouldSwitchInitiativeAfterMovingManually(): boolean {

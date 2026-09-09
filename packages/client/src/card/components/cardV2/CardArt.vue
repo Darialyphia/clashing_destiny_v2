@@ -7,8 +7,8 @@ const { art } = defineProps<{
 }>();
 
 const artBgImage = computed(() => {
-  if (art.isFullArt || art.bg.includes('-alt')) {
-    return assets[art.bg].css;
+  if (art.isFullArt || art.bg?.includes('-alt')) {
+    return assets[art.bg!].css;
   }
 
   return assets['cards/placeholder-spell-bg'].css;

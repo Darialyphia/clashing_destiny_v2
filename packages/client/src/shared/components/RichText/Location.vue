@@ -58,10 +58,10 @@ const isDisabled = computed(() => {
 .badge {
   background: linear-gradient(
     to bottom,
-    var(--yellow-5) 50%,
-    var(--yellow-7) 50%
+    hsl(var(--yellow-5-hsl) / 0.6) 50%,
+    hsl(var(--yellow-7-hsl) / 0.6) 50%
   );
-  border: solid calc(0.5px * var(--pixel-scale)) var(--yellow-9);
+  border: solid calc(0.5px * var(--pixel-scale)) hsl(var(--yellow-9-hsl) / 0.6);
   color: white;
   font-size: 0.95em;
   padding-inline: calc(4px * var(--pixel-scale));

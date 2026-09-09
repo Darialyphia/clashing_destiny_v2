@@ -24,6 +24,7 @@ import Location from './shared/components/RichText/Location.vue';
 import Dynamic from './shared/components/RichText/Dynamic.vue';
 import Runes from './shared/components/RichText/Runes.vue';
 import Exhaust from './shared/components/RichText/Exhaust.vue';
+import Timing from './shared/components/RichText/Timing.vue';
 
 gsap.install(window);
 gsap.registerPlugin(MotionPathPlugin);
@@ -54,14 +55,7 @@ app.component('rt-location', Location);
 app.component('rt-dynamic', Dynamic);
 app.component('rt-runes', Runes);
 app.component('rt-exhaust', Exhaust);
-// app.component('HoverCard', HoverCardRoot);
-// app.use({
-//   install(app) {
-//     // We are registering global providers here so they can be automatically passed to the vue-pixi renderer which inherits the vue app provides.
-//     const assets = useAssetsProvider(app);
-//     // assets.load();
-//   }
-// });
+app.component('rt-timing', Timing);
 app.mount('#app');
 
 if (import.meta.hot) {

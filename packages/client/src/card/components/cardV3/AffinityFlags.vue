@@ -7,7 +7,7 @@ const { affinities } = defineProps<{
 </script>
 
 <template>
-  <div class="affinity-flags" v-if="affinities.length > 0">
+  <div class="affinity-flags parallax" v-if="affinities.length > 0">
     <div
       v-for="(affinity, index) in affinities"
       :key="index"

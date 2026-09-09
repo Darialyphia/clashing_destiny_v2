@@ -11,7 +11,7 @@ const {} = defineProps<{
 
 <template>
   <div
-    class="stats"
+    class="stats parallax"
     style="--dual-text-stroke-offset-y: calc(-2px * var(--pixel-scale))"
   >
     <div class="stat commandment" v-if="isDefined(commandment)">

@@ -229,12 +229,6 @@ export const KEYWORDS = {
     description: 'This cards loses all abilities.',
     aliases: ['silence']
   },
-  SLOW: {
-    id: 'slow',
-    name: 'Slow',
-    description: 'This unit gives initiative to the opponent after moving',
-    aliases: []
-  },
   SPELL_GUARD: {
     id: 'spell_guard',
     name: 'Spell Guard (x)',
@@ -254,17 +248,11 @@ export const KEYWORDS = {
     description: 'Increase the damage of your spells by X.',
     aliases: [/spellpower [0-9]+/, 'spellpower']
   },
-  SPLASH_ATTACK: {
-    id: 'splash_attack',
-    name: 'Splash Attack',
-    description: 'When this unit attacks, it damages all enemies on that battlefield.',
-    aliases: []
-  },
   STEALTH: {
     id: 'stealth',
     name: 'Stealth',
     description:
-      'This unit cannot be targeted by attacks as long as it is not exhausted.',
+      'This unit cannot be attacked or targeted  as long as it is not exhausted.',
     aliases: []
   },
   STUNNED: {

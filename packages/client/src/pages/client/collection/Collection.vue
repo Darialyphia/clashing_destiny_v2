@@ -87,7 +87,7 @@ useIntersectionObserver(
   display: grid;
   grid-template-columns: repeat(
     auto-fill,
-    minmax(calc(var(--card-v2-width) * var(--card-scale)), 1fr)
+    minmax(calc(var(--card-v3-width) * var(--card-scale)), 1fr)
   );
   justify-items: center;
   overflow-x: hidden;

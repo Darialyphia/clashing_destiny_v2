@@ -4,6 +4,7 @@ import { formatAbilityText } from '@/utils/formatters';
 import Card from './cardV3/index.vue';
 import { isFunction } from '@game/shared';
 import { provideRichTextContext } from '@/game/composables/useRichText';
+import { sprites } from '@/assets';
 
 const {
   blueprint,
@@ -23,6 +24,10 @@ const mergedFoilOptions = computed(() => ({
 provideRichTextContext({
   card: ref(null)
 });
+
+const sprite = computed(() => {
+  return sprites[`cards/${blueprint.art.default.sprite}`];
+});
 </script>
 
 <template>
@@ -37,6 +42,7 @@ provideRichTextContext({
         foil: mergedFoilOptions,
         bg: `cards/${blueprint.art.default.bg}`,
         main: `cards/${blueprint.art.default.main}`,
+        sprite: `cards/${blueprint.art.default.sprite}`,
         isFullArt: blueprint.art.default.isFullArt
       },
       kind: blueprint.kind,
@@ -66,6 +72,7 @@ provideRichTextContext({
       commandment: (blueprint as any).commandment
     }"
     :is-tilt-enabled="isTiltEnabled"
+    :sprite="sprite"
   />
 </template>
 

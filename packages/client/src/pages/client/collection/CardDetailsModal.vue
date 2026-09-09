@@ -321,12 +321,12 @@ const animateCardOut = async () => {
 }
 
 .card-preview {
-  --pixel-scale: 2;
+  --pixel-scale: 3;
   display: flex;
   align-items: flex-start;
   flex-shrink: 0;
-  min-height: calc(var(--card-v2-height) * var(--pixel-scale));
-  aspect-ratio: var(--card-v2-ratio);
+  min-height: calc(var(--card-v3-height) * var(--pixel-scale));
+  aspect-ratio: var(--card-v3-ratio);
 }
 
 .card-info {

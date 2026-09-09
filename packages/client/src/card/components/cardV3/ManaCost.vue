@@ -15,7 +15,7 @@ const costStatus = computed(() => {
 </script>
 
 <template>
-  <div class="mana-cost" :class="costStatus">
+  <div class="mana-cost parallax" :class="costStatus">
     <div
       class="dual-text"
       :data-text="cost"
@@ -24,7 +24,7 @@ const costStatus = computed(() => {
       {{ cost }}
     </div>
   </div>
-  <div class="supply">
+  <div class="supply parallax">
     <div
       v-if="isDefined(manaSupply)"
       class="dual-text"

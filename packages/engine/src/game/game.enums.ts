@@ -131,3 +131,20 @@ export const INTERACTION_EVENTS = {
   INTERACTION_BEFORE_CHANGE_STATE: 'interaction_before_change_state',
   INTERACTION_AFTER_CHANGE_STATE: 'interaction_after_change_state'
 } as const;
+
+export const ANIMATIONS_NAMES = {
+  IDLE: 'idle',
+  BREATHING: 'breathing',
+  ATTACK: 'attack',
+  DEATH: 'death',
+  RUN: 'run',
+  HIT: 'hit',
+  DEFAULT: 'default',
+  ACTIVE: 'active',
+  CAST_START: 'caststart',
+  CAST: 'cast',
+  CAST_LOOP: 'castloop',
+  CAST_END: 'castend',
+  PROJECTILE: 'projectile'
+} as const;
+export type AnimationName = Values<typeof ANIMATIONS_NAMES>;

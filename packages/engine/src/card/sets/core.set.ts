@@ -63,6 +63,7 @@ import { invigorate } from './core/spells/earth/invigorate';
 import { landSlide } from './core/spells/earth/land-slide';
 import { lightAffinity } from './core/runes/light-affinity';
 import { fireAffinity } from './core/runes/fire-affinity';
+import { kaleosXaan } from './core/minions/fire/kaleos-xaan';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -129,6 +130,7 @@ export const coreSet: CardSet = {
     invigorate,
     landSlide,
     lightAffinity,
-    fireAffinity
+    fireAffinity,
+    kaleosXaan
   ]
 };

@@ -67,7 +67,8 @@ export const cards = {
 "invigorate": "invigorate",
 "landSlide": "landSlide",
 "light-affinity": "light-affinity",
-"fire-affinity": "fire-affinity"
+"fire-affinity": "fire-affinity",
+"kaleos-xaan": "kaleos-xaan"
 } as const;
 
 export const collectableCards = {
@@ -127,7 +128,8 @@ export const collectableCards = {
 "invigorate": "invigorate",
 "landSlide": "landSlide",
 "light-affinity": "light-affinity",
-"fire-affinity": "fire-affinity"
+"fire-affinity": "fire-affinity",
+"kaleos-xaan": "kaleos-xaan"
 } as const;
 
 type CardSet = Array<{id: string; collectable: boolean; rarity: Rarity, kind: CardKind}>;
@@ -504,6 +506,12 @@ export const cardsBySet: Record<string, CardSet> = {
     "collectable": true,
     "rarity": "common",
     "kind": "RUNE"
+  },
+  {
+    "id": "kaleos-xaan",
+    "collectable": true,
+    "rarity": "legendary",
+    "kind": "MINION"
   }
 ]
 };
@@ -570,7 +578,8 @@ export const cardShortIds: Record<string, number> = {
 "invigorate": 62,
 "landSlide": 61,
 "light-affinity": 64,
-"fire-affinity": 65
+"fire-affinity": 65,
+"kaleos-xaan": 66
 } as const;
 
 export const cardIdByShortId: Record<number, string> = {
@@ -635,5 +644,6 @@ export const cardIdByShortId: Record<number, string> = {
 "61": "landSlide",
 "62": "invigorate",
 "64": "light-affinity",
-"65": "fire-affinity"
+"65": "fire-affinity",
+"66": "kaleos-xaan"
 } as const;

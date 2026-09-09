@@ -6,7 +6,7 @@ import {
   type CardSpeed,
   CARD_KINDS
 } from '@game/engine/src/card/card.enums';
-import { isDefined, uppercaseFirstLetter } from '@game/shared';
+import { isDefined, type Nullable } from '@game/shared';
 import CardGlare from '../CardGlare.vue';
 import { useCardTilt } from '../../composables/useCardtilt';
 import FoilSheen from '../foil/FoilSheen.vue';
@@ -25,20 +25,23 @@ import CardName from './CardName.vue';
 import Description from './Description.vue';
 import CardArtComponent from './CardArt.vue';
 import CardRarity from './Rarity.vue';
-import Speed from './Speed.vue';
-import { assets } from '@/assets';
+import { assets, type SpriteData } from '@/assets';
 import FoilAuroraBorder from '../foil/FoilAuroraBorder.vue';
 import FoilCRT from '../foil/FoilCRT.vue';
 import FoilRain from '../foil/FoilRain.vue';
 import FoilStarfield from '../foil/FoilStarfield.vue';
 import FoilEmboss from '../foil/FoilEmboss.vue';
+import { match } from 'ts-pattern';
+import { ANIMATIONS_NAMES } from '@game/engine/src/game/game.enums.js';
 
 const {
   card,
+  sprite,
   isFoil,
   isAnimated = true,
   maxTiltAngle = 30,
-  isTiltEnabled = true
+  isTiltEnabled = true,
+  animationSequence
 } = defineProps<{
   card: {
     id: string;
@@ -63,10 +66,12 @@ const {
     speed?: CardSpeed;
     commandment?: number | null;
   };
+  sprite: Nullable<SpriteData>;
   isFoil?: boolean;
   isAnimated?: boolean;
   maxTiltAngle?: number;
   isTiltEnabled?: boolean;
+  animationSequence?: string[];
 }>();
 
 const root = useTemplateRef('card');
@@ -89,17 +94,44 @@ const kindBg = computed(() => {
   return assets[`ui/card/kind-${card.kind.toLowerCase()}`].css;
 });
 
-const artMainImage = computed(() => {
-  return assets[card.art.main].css;
+const spriteImage = computed(() => {
+  return (assets[card.art.sprite] ?? assets[card.art.main]).css;
+});
+
+const isHovered = ref(false);
+const handleMousemove = (e: MouseEvent) => {
+  isHovered.value = true;
+  onMousemove(e);
+};
+const handleMouseleave = () => {
+  isHovered.value = false;
+  onMouseleave();
+};
+
+const _animationSequence = computed(() => {
+  if (!isAnimated) return undefined;
+  if (animationSequence) return animationSequence;
+
+  return match(card.kind)
+    .with(CARD_KINDS.MINION, () =>
+      isHovered.value
+        ? [ANIMATIONS_NAMES.ATTACK, ANIMATIONS_NAMES.IDLE]
+        : [ANIMATIONS_NAMES.BREATHING]
+    )
+    .with(CARD_KINDS.SPELL, CARD_KINDS.ARTIFACT, () =>
+      isHovered.value ? [ANIMATIONS_NAMES.ACTIVE] : [ANIMATIONS_NAMES.DEFAULT]
+    )
+    .with(CARD_KINDS.DESTINY, CARD_KINDS.RUNE, () => [ANIMATIONS_NAMES.DEFAULT])
+    .exhaustive();
 });
 </script>
 
 <template>
   <div
     class="card-perspective-wrapper card-v3"
-    @mousemove="onMousemove"
+    @mousemove="handleMousemove"
     @mouseenter="onMouseEnter"
-    @mouseleave="onMouseleave"
+    @mouseleave="handleMouseleave"
   >
     <div
       ref="card"
@@ -112,7 +144,13 @@ const artMainImage = computed(() => {
       :data-flip-id="`card_${card.id}`"
     >
       <div class="card-front" :style="{ '--tint': tint }">
-        <!-- <CardArtComponent :art="card.art" /> -->
+        <CardArtComponent
+          v-if="sprite"
+          :art="card.art"
+          :sprite="sprite"
+          :kind="card.kind"
+          :animation-sequence="_animationSequence"
+        />
         <template v-if="isFoil">
           <FoilRain v-if="card.art.foil.rain" />
           <FoilStarfield v-if="card.art.foil.starField" />
@@ -140,8 +178,8 @@ const artMainImage = computed(() => {
         <AffinityFlags :affinities="card.affinities" />
         <CardName :name="card.name" />
 
+        <div class="kind parallax" />
         <!-- <div class="tags parallax">
-          <div class="kind" />
           {{ uppercaseFirstLetter(card.kind.toLocaleLowerCase()) }}
 
           <div>
@@ -236,6 +274,10 @@ const artMainImage = computed(() => {
 .card-front {
   backface-visibility: hidden;
   background: url('@/assets/ui/card/v3/card-front.png');
+  .card:has(.foil) & {
+    background: url('@/assets/ui/card/v3/card-front-foil.png');
+    background-size: cover;
+  }
   background-size: cover;
   color: #fcfcfc;
   font-size: calc(var(--pixel-scale) * 8px);
@@ -248,9 +290,9 @@ const artMainImage = computed(() => {
     background: none;
   }
 
-  --glare-mask: url('@/assets/ui/card/v2/card-front.png');
-  --foil-mask: url('@/assets/ui/card/v2/card-front.png');
-  --art-mask: v-bind(artMainImage);
+  --glare-mask: url('@/assets/ui/card/masks/card-v3.png');
+  --foil-mask: url('@/assets/ui/card/masks/card-v3.png');
+  --art-mask: v-bind(spriteImage);
   --art-mask-size: cover;
   --art-mask-position: center;
   --art-mask-position: calc(2px * var(--pixel-scale))
@@ -326,6 +368,9 @@ const artMainImage = computed(() => {
 }
 
 .kind {
+  position: absolute;
+  bottom: 0;
+  right: 0;
   width: calc(16px * var(--pixel-scale));
   aspect-ratio: 1;
   background: v-bind(kindBg);

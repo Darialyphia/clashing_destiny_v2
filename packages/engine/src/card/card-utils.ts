@@ -567,9 +567,10 @@ export const defaultCardArt = (
     foil: {
       oil: true,
       sheen: true,
-      glitter: true
+      emboss: true
     },
     isFullArt,
+    sprite: name,
     main: `${name}-main`
   }
 });
