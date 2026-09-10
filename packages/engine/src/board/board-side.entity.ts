@@ -250,6 +250,13 @@ export class BoardSide
     return this.isInLeftBattlefield(cardId) || this.isInRightBattlefield(cardId);
   }
 
+  get hasEmptySpaceInBattlefield() {
+    return (
+      this.leftBattlefield.spaces.some(space => space.isEmpty) ||
+      this.rightBattlefield.spaces.some(space => space.isEmpty)
+    );
+  }
+
   private async moveToBattlefield(
     card: MinionCard,
     battleField: BetterExtract<BoardRow, 'left_battlefield' | 'right_battlefield'>,

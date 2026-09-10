@@ -1,10 +1,11 @@
 import type { Game } from '../game/game';
+import { GAME_PHASES } from '../game/game.enums';
+import { GAME_EVENTS } from '../game/game.events';
 import type { ModifierMixin } from '../modifier/modifier-mixin';
 import { SimpleAttackBuffModifier } from '../modifier/modifiers/simple-attack-buff.modifier';
 import { SimpleCommandmentBuffModifier } from '../modifier/modifiers/simple-commandment-modifier';
 import { SimpleHealthBuffModifier } from '../modifier/modifiers/simple-health-buff.modifier';
-import { RUNES } from '../player/player.enums';
-import type { AnyCard, Card } from './entities/card.entity';
+import type { AnyCard } from './entities/card.entity';
 import type { MinionCard } from './entities/minion.entity';
 
 export const scry = async (game: Game, card: AnyCard, amount: number) => {
@@ -239,4 +240,18 @@ export const statBuff = async (
       mixins: options.mixins?.() ?? []
     })
   );
+};
+
+export const reserve = async (game: Game, cards: AnyCard[]) => {
+  for (const card of cards) {
+    await card.removeFromCurrentLocation();
+  }
+
+  game.once(GAME_EVENTS.BEFORE_CHANGE_PHASE, async event => {
+    if (event.data.to === GAME_PHASES.SUPPLY) {
+      for (const card of cards) {
+        await card.addToHand();
+      }
+    }
+  });
 };

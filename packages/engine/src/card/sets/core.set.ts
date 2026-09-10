@@ -63,7 +63,15 @@ import { invigorate } from './core/spells/earth/invigorate';
 import { landSlide } from './core/spells/earth/land-slide';
 import { lightAffinity } from './core/runes/light-affinity';
 import { fireAffinity } from './core/runes/fire-affinity';
-import { kaleosXaan } from './core/minions/fire/kaleos-xaan';
+import { kaleosXaan } from './core/minions/kaleos-xaan';
+import { flamewreath } from './core/minions/flamewreath';
+import { rythmweaver } from './core/minions/rythmweaver';
+import { fourWindsMagi } from './core/minions/four-windw-magi';
+import { ghostLightning } from './core/spells/ghost-lightning';
+import { gorehorn } from './core/minions/gorehorn';
+import { chakriAvatar } from './core/minions/chakri-avatar';
+import { flutterCrane } from './core/minions/fluttercrane';
+import { mistDragonSeal } from './core/spells/mist-dragon-seal';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -131,6 +139,14 @@ export const coreSet: CardSet = {
     landSlide,
     lightAffinity,
     fireAffinity,
-    kaleosXaan
+    kaleosXaan,
+    flamewreath,
+    rythmweaver,
+    fourWindsMagi,
+    ghostLightning,
+    gorehorn,
+    chakriAvatar,
+    flutterCrane,
+    mistDragonSeal
   ]
 };

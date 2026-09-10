@@ -8,11 +8,21 @@ import {
 import BlueprintCard from '@/card/components/BlueprintCard.vue';
 import { assets } from '@/assets';
 import type { DeckBuilderViewModel } from '@/card/deck-builder.model';
+import type { CardBlueprint } from '@game/engine/src/card/card-blueprint';
 
 const { cards, deckBuilder } = defineProps<{
   cards: DeckBuilderViewModel['mainDeckCards'];
   deckBuilder: DeckBuilderViewModel;
 }>();
+
+const getCardBg = (card: CardBlueprint) => {
+  const main = assets[`cards/${card.art.default.main}`];
+  if (main) return main.css;
+  const sprite = assets[`cards/${card.art.default.sprite}`];
+  if (sprite) return sprite.css;
+
+  return '';
+};
 </script>
 
 <template>
@@ -26,38 +36,36 @@ const { cards, deckBuilder } = defineProps<{
       <HoverCardTrigger v-bind="$attrs" as-child>
         <li
           :style="{
-            '--bg': assets[`cards/${card.blueprint.art.default.main}`].css
+            '--bg': getCardBg(card.blueprint)
           }"
           :class="card.blueprint.kind.toLocaleLowerCase()"
           class="deck-item"
           @click="deckBuilder.removeCard(card.meta!.cardId)"
         >
-          <div class="flex gap-1 items-center">
+          <div class="mana-cost" v-if="'manaCost' in card.blueprint">
+            {{ card.blueprint.manaCost }}
+          </div>
+          <span class="card-name">
+            <template v-if="'copies' in card">X {{ card.copies }}</template>
+            {{ card.blueprint.name }}
+          </span>
+          <div class="flex gap-1 items-center ml-auto">
             <div
               v-for="affinity in card.blueprint.affinities"
               :key="affinity"
               class="affinity"
               :style="{
                 '--bg':
-                  assets[`ui/card/affinity-${affinity.toLocaleLowerCase()}`].css
+                  assets[`ui/card/v3/affinity-${affinity.toLocaleLowerCase()}`]
+                    .css
               }"
             />
           </div>
-          <div class="mana-cost" v-if="'manaCost' in card.blueprint">
-            {{ card.blueprint.manaCost }}
-          </div>
-          <div class="exp-cost" v-if="'expCost' in card.blueprint">
-            {{ card.blueprint.expCost }}
-          </div>
-          <span class="card-name">
-            <template v-if="'copies' in card">X {{ card.copies }}</template>
-            {{ card.blueprint.name }}
-          </span>
         </li>
       </HoverCardTrigger>
       <HoverCardPortal>
         <HoverCardContent side="left" :side-offset="10">
-          <BlueprintCard :blueprint="card.blueprint" style="--pixel-scale: 1" />
+          <BlueprintCard :blueprint="card.blueprint" style="--pixel-scale: 2" />
         </HoverCardContent>
       </HoverCardPortal>
     </HoverCardRoot>
@@ -88,11 +96,11 @@ const { cards, deckBuilder } = defineProps<{
 }
 
 .mana-cost {
-  background: url(@/assets/ui/card/mana-cost.png) no-repeat center center;
+  background: url(@/assets/ui/card/v3/mana-cost.png) no-repeat center center;
   background-size: contain;
   font-size: var(--size-3);
   font-weight: var(--font-weight-5);
-  width: 24px;
+  width: 29px;
   aspect-ratio: 1;
   display: grid;
   place-content: center;
@@ -124,7 +132,7 @@ const { cards, deckBuilder } = defineProps<{
 }
 
 .affinity {
-  width: 30px;
+  width: 13px;
   aspect-ratio: 1;
   background: var(--bg);
   background-size: cover;

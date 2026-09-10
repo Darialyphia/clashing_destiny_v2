@@ -38,7 +38,7 @@ const { activeFrameRect, bgPosition, imageBg } = useSprite({
 <template>
   <div
     class="card-art"
-    :class="{ 'full-art': art.isFullArt }"
+    :class="[{ 'full-art': art.isFullArt }, kind.toLocaleLowerCase()]"
     :style="{
       '--bg-position': bgPosition,
       '--width': `${activeFrameRect.width}px`,
@@ -72,6 +72,13 @@ const { activeFrameRect, bgPosition, imageBg } = useSprite({
   transform: translateX(-50%);
   bottom: calc(100px * var(--pixel-scale));
   overflow: hidden;
+  pointer-events: none;
+
+  &.spell,
+  &.rune,
+  &.artifact {
+    translate: 0 calc(var(--pixel-scale) * -15px);
+  }
 
   &.full-art {
     width: calc(var(--card-v2-width) * var(--pixel-scale));

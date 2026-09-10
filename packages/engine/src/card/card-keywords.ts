@@ -186,6 +186,12 @@ export const KEYWORDS = {
       'Enemies on the same battlefield as this can only attack this unit if able.',
     aliases: []
   },
+  RESERVE: {
+    id: 'reserve',
+    name: 'Reserve',
+    description: 'Draw a card at the start of next turn, before the Supply phase.',
+    aliases: []
+  },
   REGENERATION: {
     id: 'regeneration',
     name: 'Regeneration X',

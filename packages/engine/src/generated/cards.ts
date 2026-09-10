@@ -68,7 +68,15 @@ export const cards = {
 "landSlide": "landSlide",
 "light-affinity": "light-affinity",
 "fire-affinity": "fire-affinity",
-"kaleos-xaan": "kaleos-xaan"
+"kaleos-xaan": "kaleos-xaan",
+"flamewreath": "flamewreath",
+"rythmweaver": "rythmweaver",
+"four-winds-magi": "four-winds-magi",
+"ghostLightning": "ghostLightning",
+"gorehorn": "gorehorn",
+"chakri-avatar": "chakri-avatar",
+"flutter-crane": "flutter-crane",
+"mistDragonSeal": "mistDragonSeal"
 } as const;
 
 export const collectableCards = {
@@ -129,7 +137,15 @@ export const collectableCards = {
 "landSlide": "landSlide",
 "light-affinity": "light-affinity",
 "fire-affinity": "fire-affinity",
-"kaleos-xaan": "kaleos-xaan"
+"kaleos-xaan": "kaleos-xaan",
+"flamewreath": "flamewreath",
+"rythmweaver": "rythmweaver",
+"four-winds-magi": "four-winds-magi",
+"ghostLightning": "ghostLightning",
+"gorehorn": "gorehorn",
+"chakri-avatar": "chakri-avatar",
+"flutter-crane": "flutter-crane",
+"mistDragonSeal": "mistDragonSeal"
 } as const;
 
 type CardSet = Array<{id: string; collectable: boolean; rarity: Rarity, kind: CardKind}>;
@@ -512,6 +528,54 @@ export const cardsBySet: Record<string, CardSet> = {
     "collectable": true,
     "rarity": "legendary",
     "kind": "MINION"
+  },
+  {
+    "id": "flamewreath",
+    "collectable": true,
+    "rarity": "rare",
+    "kind": "MINION"
+  },
+  {
+    "id": "rythmweaver",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "MINION"
+  },
+  {
+    "id": "four-winds-magi",
+    "collectable": true,
+    "rarity": "rare",
+    "kind": "MINION"
+  },
+  {
+    "id": "ghostLightning",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "SPELL"
+  },
+  {
+    "id": "gorehorn",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "MINION"
+  },
+  {
+    "id": "chakri-avatar",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "MINION"
+  },
+  {
+    "id": "flutter-crane",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "MINION"
+  },
+  {
+    "id": "mistDragonSeal",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "SPELL"
   }
 ]
 };
@@ -579,7 +643,15 @@ export const cardShortIds: Record<string, number> = {
 "landSlide": 61,
 "light-affinity": 64,
 "fire-affinity": 65,
-"kaleos-xaan": 66
+"kaleos-xaan": 66,
+"flamewreath": 67,
+"rythmweaver": 68,
+"four-winds-magi": 69,
+"ghostLightning": 70,
+"gorehorn": 71,
+"chakri-avatar": 72,
+"flutter-crane": 73,
+"mistDragonSeal": 74
 } as const;
 
 export const cardIdByShortId: Record<number, string> = {
@@ -645,5 +717,13 @@ export const cardIdByShortId: Record<number, string> = {
 "62": "invigorate",
 "64": "light-affinity",
 "65": "fire-affinity",
-"66": "kaleos-xaan"
+"66": "kaleos-xaan",
+"67": "flamewreath",
+"68": "rythmweaver",
+"69": "four-winds-magi",
+"70": "ghostLightning",
+"71": "gorehorn",
+"72": "chakri-avatar",
+"73": "flutter-crane",
+"74": "mistDragonSeal"
 } as const;

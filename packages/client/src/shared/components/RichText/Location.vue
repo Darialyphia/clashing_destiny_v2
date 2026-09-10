@@ -1,36 +1,31 @@
 <script setup lang="ts">
-import { useRichTextContext } from '@/game/composables/useRichText';
 import UiSimpleTooltip from '@/ui/components/UiSimpleTooltip.vue';
-import {
-  CARD_LOCATIONS,
-  type CardLocation
-} from '@game/engine/src/card/card.enums';
 import { uppercaseFirstLetter } from '@game/shared';
 
-const { locations, alwaysActive } = defineProps<{
+const { locations } = defineProps<{
   locations: string;
-  alwaysActive?: boolean;
 }>();
 
-const ctx = useRichTextContext();
+// const ctx = useRichTextContext();
 
-const locationsArray = computed(() => {
-  return locations.split(',').map(r => r.trim()) as Array<
-    CardLocation | 'battlefield'
-  >;
-});
+// const locationsArray = computed(() => {
+//   return locations.split(',').map(r => r.trim()) as Array<
+//     CardLocation | 'battlefield'
+//   >;
+// });
 const isDisabled = computed(() => {
-  if (!ctx?.card?.value) return false;
-  if (alwaysActive) return false;
-  return !locationsArray.value.some(loc => {
-    if (loc === 'battlefield') {
-      return (
-        ctx.card.value?.location === CARD_LOCATIONS.LEFT_BATTLEFIELD ||
-        ctx.card.value?.location === CARD_LOCATIONS.RIGHT_BATTLEFIELD
-      );
-    }
-    return ctx.card.value?.location === loc;
-  });
+  return false;
+  // if (!ctx?.card?.value) return false;
+  // if (alwaysActive) return false;
+  // return !locationsArray.value.some(loc => {
+  //   if (loc === 'battlefield') {
+  //     return (
+  //       ctx.card.value?.location === CARD_LOCATIONS.LEFT_BATTLEFIELD ||
+  //       ctx.card.value?.location === CARD_LOCATIONS.RIGHT_BATTLEFIELD
+  //     );
+  //   }
+  //   return ctx.card.value?.location === loc;
+  // });
 });
 </script>
 

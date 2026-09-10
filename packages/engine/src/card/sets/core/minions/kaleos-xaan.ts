@@ -1,20 +1,20 @@
 import dedent from 'dedent';
-import type { MinionBlueprint } from '../../../../card-blueprint';
-import { defaultCardArt, isSpell } from '../../../../card-utils';
+import type { MinionBlueprint } from '../../../card-blueprint';
+import { defaultCardArt, isSpell } from '../../../card-utils';
 import {
   CARD_SETS,
   CARD_KINDS,
   RARITIES,
   CARD_SPEED,
   AFFINITIES
-} from '../../../../card.enums';
-import { StealthModifier } from '../../../../../modifier/modifiers/stealth.modifier';
-import { FlankingModifier } from '../../../../../modifier/modifiers/flanking.modifier';
-import { GameEventModifierMixin } from '../../../../../modifier/mixins/game-event.mixin';
-import { GAME_EVENTS } from '../../../../../game/game.events';
-import type { MinionCard } from '../../../../entities/minion.entity';
-import { WhileOnBoardModifier } from '../../../../../modifier/modifiers/while-on-board.modifier';
-import { CardEffectTriggeredEvent } from '../../../../card.events';
+} from '../../../card.enums';
+import { StealthModifier } from '../../../../modifier/modifiers/stealth.modifier';
+import { FlankingModifier } from '../../../../modifier/modifiers/flanking.modifier';
+import { GameEventModifierMixin } from '../../../../modifier/mixins/game-event.mixin';
+import { GAME_EVENTS } from '../../../../game/game.events';
+import type { MinionCard } from '../../../entities/minion.entity';
+import { WhileOnBoardModifier } from '../../../../modifier/modifiers/while-on-board.modifier';
+import { CardEffectTriggeredEvent } from '../../../card.events';
 
 export const kaleosXaan: MinionBlueprint = {
   id: 'kaleos-xaan',
