@@ -206,6 +206,10 @@ const sprite = computed(() => {
 .game-card-container {
   position: relative;
   transform: translateZ(1px);
+
+  &:deep(> div) {
+    transform-style: preserve-3d;
+  }
 }
 
 .game-card {

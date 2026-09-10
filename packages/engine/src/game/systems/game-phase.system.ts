@@ -215,7 +215,7 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
     assert(this.can(GAME_PHASE_TRANSITIONS.PLAYER_WON), new WrongGamePhaseError());
     this._winners = players;
     await this.sendTransition(GAME_PHASE_TRANSITIONS.PLAYER_WON);
-    await this.game.inputSystem.askForPlayerInput();
+    await this.game.snapshotSystem.takeSnapshot();
   }
 
   async playCard(id: string, player: Player) {

@@ -45,7 +45,6 @@ const keywords = computed(() => {
   const keywords = rawKeywordsInDescription
     .map(id => getKeywordByIdOrAlias(id))
     .filter(isDefined);
-  console.log(rawKeywordsInDescription, keywords);
   return keywords;
 });
 

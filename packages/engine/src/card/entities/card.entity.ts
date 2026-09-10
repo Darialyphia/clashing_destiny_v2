@@ -290,7 +290,10 @@ export abstract class Card<
   }
 
   get shouldCreateChainWhenPlayed(): boolean {
-    return this.interceptors.shouldCreateChainWhenPlayed.getValue(true, this);
+    return this.interceptors.shouldCreateChainWhenPlayed.getValue(
+      this.game.config.EFFECT_CHAIN,
+      this
+    );
   }
 
   protected async insertInChainOrExecute(
@@ -316,7 +319,7 @@ export abstract class Card<
 
     if (!this.shouldCreateChainWhenPlayed) {
       await effect.handler();
-      return this.game.inputSystem.askForPlayerInput();
+      return await this.game.snapshotSystem.takeSnapshot();
     }
 
     if (this.game.effectChainSystem.currentChain) {
@@ -326,7 +329,7 @@ export abstract class Card<
         // this can happen if a card is played as part of an other card effect
         // the card wiill be played while the current chain is resolving, so let's just execute it immediately
         await effect.handler();
-        return this.game.inputSystem.askForPlayerInput();
+        return await this.game.snapshotSystem.takeSnapshot();
       }
     } else {
       await this.game.effectChainSystem.createChain({

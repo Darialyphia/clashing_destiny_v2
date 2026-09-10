@@ -124,6 +124,8 @@ const confirm = () => {
             :card-id="card"
             :interactive="false"
             :pixel-scale="2"
+            class="choose-card-item"
+            :style="{ '--animation-delay': `${index * 75}ms` }"
           />
           <input
             type="checkbox"
@@ -183,6 +185,7 @@ const confirm = () => {
   gap: var(--size-4) var(--size-5);
   max-height: 60dvh;
   overflow-y: auto;
+  padding-block: var(--size-4);
   > * {
     transition: all 0.2s var(--ease-2);
   }
@@ -216,5 +219,23 @@ const confirm = () => {
   font-size: var(--font-size-5);
   font-weight: var(--font-weight-7);
   color: transparent;
+}
+
+@keyframes choose-card-reveal {
+  0% {
+    transform: rotateY(180deg);
+  }
+  100% {
+    transform: rotateY(0deg);
+  }
+}
+
+.choose-card-item {
+  perspective: 1000px;
+}
+.choose-card-item:deep(.game-card) {
+  transform: rotateY(180deg);
+  animation: choose-card-reveal 0.3s ease-in-out forwards;
+  animation-delay: var(--animation-delay);
 }
 </style>

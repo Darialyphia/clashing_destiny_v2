@@ -104,7 +104,7 @@ export class EffectChain
   ) {
     super(EFFECT_CHAIN_STATES.BUILDING);
     this.resolveCallbacks.push(async () => {
-      await this.game.inputSystem.askForPlayerInput();
+      await this.game.snapshotSystem.takeSnapshot();
     });
     this.resolveCallbacks.push(onResolved);
     this._currentPlayer = startingPlayer;

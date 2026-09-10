@@ -205,7 +205,7 @@ useFxEvent(FX_EVENTS.CARD_EXHAUST, async event => {
       content: '';
       position: absolute;
       inset: 0;
-      background-color: #00000070;
+      backdrop-filter: grayscale(100%);
       pointer-events: none;
       transform: translateZ(2px);
     }
@@ -287,8 +287,8 @@ useFxEvent(FX_EVENTS.CARD_EXHAUST, async event => {
   top: calc(-28px * var(--pixel-scale));
   left: calc(-3px * var(--pixel-scale));
   transform: translateZ(2px);
-  translate: 0 5px;
-  opacity: 0;
+  /* translate: 0 5px; */
+  /* opacity: 0; */
   transition:
     opacity 0.2s var(--ease-2),
     translate 0.2s var(--ease-2);

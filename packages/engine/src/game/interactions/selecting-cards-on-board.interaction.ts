@@ -79,7 +79,7 @@ export class SelectingCardOnBoardContext {
     if (isDone && canCommit) {
       await this.commit(this._player);
     } else {
-      await this.game.inputSystem.askForPlayerInput();
+      await this.game.snapshotSystem.takeSnapshot();
     }
   }
 

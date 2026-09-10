@@ -415,9 +415,12 @@ export class MinionCard extends Card<
   }
 
   shouldCreateChainOnAttack(attackTarget: AttackTarget): boolean {
-    return this.interceptors.shouldCreateChainOnAttack.getValue(true, {
-      target: attackTarget
-    });
+    return this.interceptors.shouldCreateChainOnAttack.getValue(
+      this.game.config.EFFECT_CHAIN,
+      {
+        target: attackTarget
+      }
+    );
   }
 
   async moveManually(zone: BoardRow, index: number) {

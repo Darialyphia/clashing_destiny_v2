@@ -332,10 +332,10 @@ const _animationSequence = computed(() => {
 .card-back {
   transform: rotateY(0.5turn);
   backface-visibility: hidden;
-  background: url('@/assets/ui/card/v2/card-back.png');
+  background: url('@/assets/ui/card/v3/card-back.png');
   background-size: cover;
-  --glare-mask: url('@/assets/ui/card/v2/card-back.png');
-  --foil-mask: url('@/assets/ui/card/v2/card-back.png');
+  --glare-mask: url('@/assets/ui/card/v3/card-back.png');
+  --foil-mask: url('@/assets/ui/card/v3/card-back.png');
 }
 
 @property --foil-image-shadow-hue {

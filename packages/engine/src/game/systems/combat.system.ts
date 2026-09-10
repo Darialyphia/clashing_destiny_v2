@@ -125,6 +125,14 @@ export class CombatSystem
     );
   }
 
+  get canDefenderRetaliate() {
+    return (
+      !!this.defender &&
+      this.attacker!.canBeRetaliatedBy(this.defender) &&
+      this.defender.canRetaliate(this.attacker!)
+    );
+  }
+
   async declareAttackTarget(target: AttackTarget) {
     assert(
       this.stateMachine.can(COMBAT_STEP_TRANSITIONS.ATTACKER_TARGET_DECLARED),
@@ -148,25 +156,24 @@ export class CombatSystem
     this.stateMachine.dispatch(COMBAT_STEP_TRANSITIONS.ATTACKER_TARGET_DECLARED);
 
     if (!this.attacker.isAlive || !this.defender!.isAlive) {
-      await this.resolveCombat();
-      return;
-    }
-
-    if (!this.attacker.shouldCreateChainOnAttack(this.defender!)) {
       await this.abortCombat();
       return;
     }
 
-    if (!this.game.effectChainSystem.currentChain) {
-      await this.game.effectChainSystem.createChain({
+    const hadExistingChain = !!this.game.effectChainSystem.currentChain;
+
+    if (!hadExistingChain && this.attacker.shouldCreateChainOnAttack(this.defender!)) {
+      return await this.game.effectChainSystem.createChain({
         initialPlayer: this.attacker.player.opponent,
         onResolved: async () => this.resolveCombat()
       });
-
-      await this.game.inputSystem.askForPlayerInput();
-    } else {
-      await this.resolveCombat();
     }
+
+    if (this.game.config.AUTO_RETALIATE && this.canDefenderRetaliate) {
+      await this.declareRetaliation();
+    }
+
+    await this.resolveCombat();
   }
 
   async declareRetaliation() {
@@ -179,18 +186,24 @@ export class CombatSystem
     ) {
       throw new InvalidCounterattackError();
     }
-    await this.defender.exhaust();
+
     this.isDefenderRetaliating = true;
-    await this.game.effectChainSystem.currentChain?.addEffect(
-      {
-        id: nanoid(),
-        source: this.defender,
-        type: EFFECT_TYPE.RETALIATION,
-        targets: { cards: [this.attacker!], spaces: [], effect: null },
-        handler: async () => {}
-      },
-      this.defender.player
-    );
+    if (this.game.config.SHOULD_EXHAUST_MINION_ON_RETALIATION) {
+      await this.defender.exhaust();
+    }
+
+    if (this.game.config.EFFECT_CHAIN) {
+      await this.game.effectChainSystem.currentChain?.addEffect(
+        {
+          id: nanoid(),
+          source: this.defender,
+          type: EFFECT_TYPE.RETALIATION,
+          targets: { cards: [this.attacker!], spaces: [], effect: null },
+          handler: async () => {}
+        },
+        this.defender.player
+      );
+    }
   }
 
   changeTarget(newTarget: AttackTarget) {

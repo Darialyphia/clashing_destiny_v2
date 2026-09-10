@@ -55,7 +55,10 @@ export class Ability<T extends AbilityOwner>
   }
 
   get shouldCreateChain(): boolean {
-    return this.interceptors.shouldCreateChain.getValue(true, this);
+    return this.interceptors.shouldCreateChain.getValue(
+      this.game.config.EFFECT_CHAIN,
+      this
+    );
   }
 
   get canUseDuringChain(): boolean {

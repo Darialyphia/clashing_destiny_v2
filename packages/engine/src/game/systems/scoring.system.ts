@@ -99,7 +99,7 @@ export class ScoringSystem
 
     this.stateMachine.dispatch(SCORING_STEP_TRANSITIONS.SCORING_DECLARED);
 
-    if (this.game.config.SHOULD_CREATE_CHAIN_ON_SCORE) {
+    if (this.game.config.EFFECT_CHAIN && this.game.config.SHOULD_CREATE_CHAIN_ON_SCORE) {
       await this.game.effectChainSystem.createChain({
         initialPlayer: this.scoringCard!.player.opponent,
         onResolved: async () => this.resolveScoring()

@@ -150,7 +150,7 @@ export class InputSystem extends System<never> {
         resolve(data);
       };
 
-      void this.askForPlayerInput();
+      void this.game.snapshotSystem.takeSnapshot();
     });
   }
 
@@ -252,10 +252,6 @@ export class InputSystem extends System<never> {
 
   getHistory() {
     return [...this.history];
-  }
-
-  async askForPlayerInput() {
-    await this.game.snapshotSystem.takeSnapshot();
   }
 
   serialize() {
