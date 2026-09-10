@@ -9,6 +9,7 @@ import {
 import GameCard from './GameCard.vue';
 import { INTERACTION_STATES } from '@game/engine/src/game/game.enums';
 import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
+import { isDefined } from '@game/shared';
 
 const { client, playerId } = useGameClient();
 const _isOpened = ref(false);
@@ -51,37 +52,50 @@ watch(_isOpened, () => {
   selectedIndices.value = [];
 });
 
-const label = computed(() => {
+const ctx = computed(() => {
   if (state.value.interaction.state !== INTERACTION_STATES.CHOOSING_CARDS)
-    return '';
-  return state.value.interaction.ctx.playerConfig[playerId.value]?.label ?? '';
+    return null;
+  return state.value.interaction.ctx;
+});
+const label = computed(() => {
+  if (!ctx.value) return '';
+  return ctx.value.playerConfig[playerId.value]?.label ?? '';
 });
 
 const minChoices = computed(() => {
-  if (state.value.interaction.state !== INTERACTION_STATES.CHOOSING_CARDS)
-    return 0;
-  return (
-    state.value.interaction.ctx.playerConfig[playerId.value]?.minChoiceCount ??
-    0
-  );
+  if (!ctx.value) return 0;
+  return ctx.value.playerConfig[playerId.value]?.minChoiceCount ?? 0;
 });
 
 const maxChoices = computed(() => {
-  if (state.value.interaction.state !== INTERACTION_STATES.CHOOSING_CARDS)
-    return 0;
-  return (
-    state.value.interaction.ctx.playerConfig[playerId.value]?.maxChoiceCount ??
-    0
-  );
+  if (!ctx.value) return 0;
+  return ctx.value.playerConfig[playerId.value]?.maxChoiceCount ?? 0;
 });
 
 const isWaiting = computed(() => {
+  if (!ctx.value) {
+    return false;
+  }
+  if (!ctx.value.initialPlayers.includes(playerId.value)) {
+    return false;
+  }
   return (
-    state.value.interaction.state === INTERACTION_STATES.CHOOSING_CARDS &&
-    state.value.interaction.ctx.initialPlayers?.includes(playerId.value) &&
-    !state.value.interaction.ctx.players.includes(playerId.value)
+    !ctx.value.players.includes(playerId.value) ||
+    isDefined(
+      client.value.optimisticStateManager.state.chooseCardSelection[
+        playerId.value
+      ]
+    )
   );
 });
+const confirm = () => {
+  client.value.chooseCards(selectedIndices.value);
+  selectedIndices.value = [];
+  // If only one player needed to choose cards, close immediately
+  if (ctx.value?.initialPlayers.length === 1) {
+    _isOpened.value = false;
+  }
+};
 </script>
 
 <template>
@@ -130,12 +144,7 @@ const isWaiting = computed(() => {
           variant="info"
           text="Confirm"
           :disabled="selectedIndices.length < minChoices || isWaiting"
-          @click="
-            () => {
-              client.chooseCards(selectedIndices);
-              selectedIndices = [];
-            }
-          "
+          @click="confirm"
         />
         <p
           v-if="isWaiting"

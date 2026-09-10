@@ -66,7 +66,7 @@ const rotationAnimation = useRafFn(() => {
 const state = useGameState();
 const isPinned = ref(false);
 const isPinning = ref(false);
-const { client } = useGameClient();
+const { client, playerId } = useGameClient();
 
 const container = useTemplateRef<HTMLDivElement>('container');
 watchEffect(() => {
@@ -123,15 +123,21 @@ onBeforeUnmount(() => {
 });
 
 const draggedCard = computed(() => {
-  if (state.value.phase.state !== GAME_PHASES.PLAY_CARD) return null;
+  let card: CardViewModel | null = null;
+  if (client.value.optimisticStateManager.state.playedCardId) {
+    card = state.value.entities[
+      client.value.optimisticStateManager.state.playedCardId
+    ] as CardViewModel;
+  } else if (state.value.phase.state == GAME_PHASES.PLAY_CARD) {
+    card = state.value.entities[state.value.phase.ctx.card] as CardViewModel;
+  }
 
-  const card = state.value.entities[
-    state.value.phase.ctx.card
-  ] as CardViewModel;
-
-  if (!card) return null;
+  if (card?.player.id !== playerId.value) card = null;
 
   return card;
+});
+watchEffect(() => {
+  console.log(draggedCard.value?.id, isHidden.value);
 });
 </script>
 

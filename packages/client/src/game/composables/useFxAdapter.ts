@@ -3,19 +3,7 @@ import { Flip } from 'gsap/Flip';
 
 export const useFxAdapter = (): FxAdapter => {
   return {
-    onDeclarePlayCard() {
-      //   const flipState = Flip.getState(
-      //     client.ui.DOMSelectors.cardInHand(card.id, card.player.id).selector
-      //   );
-      //   window.requestAnimationFrame(() => {
-      //     Flip.from(flipState, {
-      //       targets: client.ui.DOMSelectors.anyCardOnPlayCardZone.selector,
-      //       duration: 0.4,
-      //       absolute: true,
-      //       ease: Power3.easeOut
-      //     });
-      //   });
-    },
+    onDeclarePlayCard() {},
 
     async onCancelPlayCard(card, client) {
       const el = document.querySelector(
@@ -23,7 +11,7 @@ export const useFxAdapter = (): FxAdapter => {
       );
       if (!el) return;
       const flipState = Flip.getState(el);
-      client.ui.optimisticState.isCancellingPlayCard = true;
+      client.optimisticStateManager.cancelPlayingCard();
 
       const handEl = client.ui.DOMSelectors.hand(card.player.id).element;
       const observer = new MutationObserver(() => {
@@ -31,7 +19,7 @@ export const useFxAdapter = (): FxAdapter => {
           client.ui.DOMSelectors.cardInHand(card.id, card.player.id).selector
         );
         if (!target) {
-          client.ui.optimisticState.isCancellingPlayCard = false;
+          client.optimisticStateManager.resetCancellingPlayCard();
           return;
         }
 
@@ -42,7 +30,7 @@ export const useFxAdapter = (): FxAdapter => {
           absolute: true,
           ease: Power1.easeIn,
           onComplete: () => {
-            client.ui.optimisticState.isCancellingPlayCard = false;
+            client.optimisticStateManager.resetCancellingPlayCard();
           }
         });
       });

@@ -49,7 +49,7 @@ export const manaWeaverApprentice: MinionBlueprint = {
       })
     );
 
-    await card.modifiers.add(new StealthModifier(game, card, {}));
+    await card.modifiers.add(new StealthModifier(game, card));
   },
   async onPlay() {},
   aiHints: {

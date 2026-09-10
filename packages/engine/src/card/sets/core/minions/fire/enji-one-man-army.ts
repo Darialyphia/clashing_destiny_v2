@@ -93,7 +93,8 @@ export const enjiOneManArmyFullArt: MinionBlueprint = {
       },
       isFullArt: true,
       bg: `minions/enji-one-man-army-fullart-bg`,
-      main: `minions/enji-one-man-army-fullart-main`
+      main: `minions/enji-one-man-army-fullart-main`,
+      sprite: `minions/enji-one-man-army-fullart`
     }
   }
 };

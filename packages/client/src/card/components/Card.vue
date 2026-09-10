@@ -71,7 +71,8 @@ const rarityBg = computed(() => {
 });
 
 const artBgImage = computed(() => {
-  return assets[card.art.bg].css;
+  // return assets[card.art.bg].css;
+  return null;
 });
 
 const artMainImage = computed(() => {

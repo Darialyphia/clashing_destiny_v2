@@ -121,13 +121,13 @@ const isDev = import.meta.env.DEV;
     <div class="my-deck">
       <Deck
         :size="myPlayer.remainingCardsInMainDeck"
-        :offset="{ x: -0.75, y: 0, z: 1 }"
+        :offset="{ x: -0.25, y: -0.5, z: 0.5 }"
       />
     </div>
     <div class="opponent-deck">
       <Deck
         :size="opponent.remainingCardsInMainDeck"
-        :offset="{ x: -0.75, y: 0, z: 0.5 }"
+        :offset="{ x: -0.25, y: -0.5, z: 0.25 }"
       />
     </div>
   </div>
@@ -264,7 +264,7 @@ const isDev = import.meta.env.DEV;
 }
 
 .my-deck {
-  --pixel-scale: 1.5;
+  --pixel-scale: 1.25;
   perspective: 1500px;
   perspective-origin: -2000px 2000px;
   position: absolute;
@@ -279,7 +279,7 @@ const isDev = import.meta.env.DEV;
   }
 }
 .opponent-deck {
-  --pixel-scale: 1.5;
+  --pixel-scale: 1.25;
   perspective: 1500px;
   perspective-origin: 3000px 2000px;
   position: absolute;

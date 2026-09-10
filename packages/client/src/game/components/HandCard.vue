@@ -24,7 +24,7 @@ const ui = useGameUi();
 const state = useGameState();
 const { client } = useGameClient();
 
-const DRAG_THRESHOLD_PX = 60;
+const DRAG_THRESHOLD_PX = 30;
 
 const isShaking = ref(false);
 const violationWarning = ref('');
@@ -69,7 +69,8 @@ const isDisabled = computed(() => {
 
 const isVisible = computed(() => {
   if (state.value.phase.state !== GAME_PHASES.PLAY_CARD) return true;
-  if (ui.value.optimisticState.isCancellingPlayCard) return true;
+  if (client.value.optimisticStateManager.state.isCancellingPlayCard)
+    return true;
   return state.value.phase.ctx.card !== card?.id;
 });
 </script>

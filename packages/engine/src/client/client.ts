@@ -22,6 +22,7 @@ import type { AbilityViewModel } from './view-models/ability.model';
 import type { BoardSpaceViewModel } from './view-models/board-space.model';
 import { EFFECT_CHAIN_STATES } from '../game/effect-chain';
 import type { Rune } from '../player/player.enums';
+import { OptimisticStateManager } from './controllers/optimistic-state.controller';
 
 export const GAME_TYPES = {
   LOCAL: 'local',
@@ -69,6 +70,8 @@ export class GameClient {
 
   readonly stateManager: ClientStateController;
 
+  readonly optimisticStateManager: OptimisticStateManager;
+
   readonly ui: UiController;
 
   readonly networkAdapter: NetworkAdapter;
@@ -106,6 +109,7 @@ export class GameClient {
     this.networkAdapter = options.networkAdapter;
     this.fxAdapter = options.fxAdapter;
     this.stateManager = new ClientStateController(this);
+    this.optimisticStateManager = new OptimisticStateManager(this);
     this.ui = new UiController(this);
     this.gameType = options.gameType;
     this.playerId = options.playerId;
@@ -238,6 +242,7 @@ export class GameClient {
 
       if (isStateSnapshot) {
         this.stateManager.update(snapshot.state);
+        this.optimisticStateManager.onUpdate();
       }
 
       this.ui.update();
@@ -285,8 +290,7 @@ export class GameClient {
   }
 
   declarePlayCard(card: CardViewModel) {
-    console.log('declare play card');
-    this.ui.optimisticState.playedCardId = card.id;
+    this.optimisticStateManager.startPlayingCard(card.id);
 
     this.dispatch({
       type: 'declarePlayCard',
@@ -333,6 +337,7 @@ export class GameClient {
   }
 
   chooseCards(indices: number[]) {
+    this.optimisticStateManager.chooseCards(this.playerId, indices);
     this.dispatch({
       type: 'chooseCards',
       payload: {

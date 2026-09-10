@@ -4,7 +4,6 @@ import type { CardViewModel } from '../view-models/card.model';
 import type { GameClientState } from './state-controller';
 import { CommitCardSelectionGlobalAction } from '../actions/commit-card-selection';
 import { PassGlobalAction } from '../actions/pass';
-import type { AbilityViewModel } from '../view-models/ability.model';
 import { GAME_EVENTS, type SerializedStarEvent } from '../../game/game.events';
 import type { BoardSpaceViewModel } from '../view-models/board-space.model';
 import { SelectSpaceOnBoardAction } from '../actions/select-space-on-board';
@@ -22,11 +21,6 @@ export type GlobalActionRule = {
   onClick: () => void;
   getLabel(state: GameClientState): string;
   variant: 'primary' | 'error' | 'info';
-};
-
-export type UiOptimisticState = {
-  playedCardId: string | null;
-  isCancellingPlayCard: boolean;
 };
 
 export class DOMSelector {
@@ -73,11 +67,6 @@ export class UiController {
   private hoverTimeout: ReturnType<typeof setTimeout> | null = null;
 
   private onResetCallbacks: Array<() => void> = [];
-
-  optimisticState: UiOptimisticState = {
-    playedCardId: null,
-    isCancellingPlayCard: false
-  };
 
   DOMSelectors = {
     board: new DOMSelector('board'),
@@ -258,13 +247,7 @@ export class UiController {
     this._draggedCard = null;
   }
 
-  clearOptimisticState() {
-    this.optimisticState.playedCardId = null;
-  }
-
   update() {
-    this.clearOptimisticState();
-
     if (this.selectedCard?.isExhausted) {
       this.unselect();
     }

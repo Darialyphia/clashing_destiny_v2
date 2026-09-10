@@ -100,6 +100,7 @@ export const cosmicAvatarAlt: MinionBlueprint = {
   art: {
     default: {
       main: 'minions/cosmic-avatar-alt-main',
+      sprite: 'minions/cosmic-avatar-alt',
       bg: 'minions/cosmic-avatar-alt-bg',
       isFullArt: false,
       foil: {
