@@ -110,6 +110,7 @@ const sprite = computed(() => {
           rarity: overrides.rarity ?? card.rarity,
           manaCost: overrides.manaCost ?? card.manaCost,
           baseManaCost: overrides.baseManaCost ?? card.baseManaCost,
+          manaSupply: overrides.manaSupply ?? card.manaSupply,
           hp: overrides.hp ?? card.maxHp,
           atk: overrides.atk ?? card.atk,
           durability: overrides.durability ?? card.durability,

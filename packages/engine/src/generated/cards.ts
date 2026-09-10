@@ -76,7 +76,12 @@ export const cards = {
 "gorehorn": "gorehorn",
 "chakri-avatar": "chakri-avatar",
 "flutter-crane": "flutter-crane",
-"mistDragonSeal": "mistDragonSeal"
+"mistDragonSeal": "mistDragonSeal",
+"phoenixFire": "phoenixFire",
+"innerFocus": "innerFocus",
+"kaido-assassin": "kaido-assassin",
+"keshrai-fanblade": "keshrai-fanblade",
+"tusk-boar": "tusk-boar"
 } as const;
 
 export const collectableCards = {
@@ -145,7 +150,12 @@ export const collectableCards = {
 "gorehorn": "gorehorn",
 "chakri-avatar": "chakri-avatar",
 "flutter-crane": "flutter-crane",
-"mistDragonSeal": "mistDragonSeal"
+"mistDragonSeal": "mistDragonSeal",
+"phoenixFire": "phoenixFire",
+"innerFocus": "innerFocus",
+"kaido-assassin": "kaido-assassin",
+"keshrai-fanblade": "keshrai-fanblade",
+"tusk-boar": "tusk-boar"
 } as const;
 
 type CardSet = Array<{id: string; collectable: boolean; rarity: Rarity, kind: CardKind}>;
@@ -576,6 +586,36 @@ export const cardsBySet: Record<string, CardSet> = {
     "collectable": true,
     "rarity": "common",
     "kind": "SPELL"
+  },
+  {
+    "id": "phoenixFire",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "SPELL"
+  },
+  {
+    "id": "innerFocus",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "SPELL"
+  },
+  {
+    "id": "kaido-assassin",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "MINION"
+  },
+  {
+    "id": "keshrai-fanblade",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "MINION"
+  },
+  {
+    "id": "tusk-boar",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "MINION"
   }
 ]
 };
@@ -651,7 +691,12 @@ export const cardShortIds: Record<string, number> = {
 "gorehorn": 71,
 "chakri-avatar": 72,
 "flutter-crane": 73,
-"mistDragonSeal": 74
+"mistDragonSeal": 74,
+"phoenixFire": 75,
+"innerFocus": 76,
+"kaido-assassin": 77,
+"keshrai-fanblade": 78,
+"tusk-boar": 79
 } as const;
 
 export const cardIdByShortId: Record<number, string> = {
@@ -725,5 +770,10 @@ export const cardIdByShortId: Record<number, string> = {
 "71": "gorehorn",
 "72": "chakri-avatar",
 "73": "flutter-crane",
-"74": "mistDragonSeal"
+"74": "mistDragonSeal",
+"75": "phoenixFire",
+"76": "innerFocus",
+"77": "kaido-assassin",
+"78": "keshrai-fanblade",
+"79": "tusk-boar"
 } as const;

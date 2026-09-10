@@ -72,6 +72,11 @@ import { gorehorn } from './core/minions/gorehorn';
 import { chakriAvatar } from './core/minions/chakri-avatar';
 import { flutterCrane } from './core/minions/fluttercrane';
 import { mistDragonSeal } from './core/spells/mist-dragon-seal';
+import { phoenixFire } from './core/spells/phoenix-fire';
+import { innerFocus } from './core/spells/inner-focus';
+import { kaidoAssassin } from './core/minions/kaido-assasin';
+import { keshraiFanblade } from './core/minions/keshrai-fanblade';
+import { tuskBoar } from './core/minions/tusk-boar';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -147,6 +152,11 @@ export const coreSet: CardSet = {
     gorehorn,
     chakriAvatar,
     flutterCrane,
-    mistDragonSeal
+    mistDragonSeal,
+    phoenixFire,
+    innerFocus,
+    kaidoAssassin,
+    keshraiFanblade,
+    tuskBoar
   ]
 };

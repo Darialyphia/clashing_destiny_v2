@@ -30,7 +30,7 @@ export class DoubleAttackModifier extends WhileOnBoardModifier<MinionCard> {
             if (event.data.attacker.isAlive && event.data.target.isAlive) {
               await event.data.attacker.dealDamage(
                 event.data.target,
-                new CombatDamage(event.data.attacker),
+                new CombatDamage(event.data.attacker, event.data.target),
                 true
               );
             }

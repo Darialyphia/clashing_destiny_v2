@@ -280,14 +280,14 @@ export class CombatSystem
 
       const performAtttackerStrike = async () => {
         if (defender.isAlive) {
-          await attacker.dealDamage(defender, new CombatDamage(attacker));
+          await attacker.dealDamage(defender, new CombatDamage(attacker, defender));
         }
       };
 
       const performDefenderStrike = async () => {
         if (!this.isDefenderRetaliating) return;
         if (attacker.isAlive) {
-          await defender.dealDamage(attacker, new CombatDamage(defender));
+          await defender.dealDamage(attacker, new CombatDamage(defender, attacker));
         }
       };
 

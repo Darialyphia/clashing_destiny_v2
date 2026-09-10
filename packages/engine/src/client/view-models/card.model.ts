@@ -148,6 +148,13 @@ export class CardViewModel {
     return null;
   }
 
+  get manaSupply() {
+    if ('manaSupply' in this.data) {
+      return this.data.manaSupply as number;
+    }
+    return null;
+  }
+
   get baseManaCost() {
     if ('baseManaCost' in this.data) {
       return this.data.baseManaCost as number;

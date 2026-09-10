@@ -67,8 +67,8 @@ const costStatus = computed(() => {
   position: absolute;
   top: calc(2px * var(--pixel-scale));
   right: calc(2px * var(--pixel-scale));
-  font-size: calc(var(--pixel-scale) * 10px);
-  font-weight: var(--font-weight-7);
+  font-size: calc(var(--pixel-scale) * 12px);
+  font-weight: var(--font-weight-9);
   z-index: 0;
   width: calc(18px * var(--pixel-scale));
   aspect-ratio: 1;

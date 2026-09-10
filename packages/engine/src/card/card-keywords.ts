@@ -14,6 +14,12 @@ export const KEYWORDS = {
     description: 'This unit has +X power when attacking.',
     aliases: [/attacker [0-9]+/]
   },
+  BACKSTAB: {
+    id: 'backstab',
+    name: 'Backstab X',
+    description: 'This unit deals X extra damage when attacking an exhausted minion.',
+    aliases: [/backstab [0-9]+/]
+  },
   BLAST: {
     id: 'blast',
     name: 'Blast X',

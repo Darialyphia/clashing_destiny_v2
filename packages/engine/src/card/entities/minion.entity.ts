@@ -74,6 +74,7 @@ export type MinionCardInterceptors = CardInterceptors & {
   >;
   canBeTargeted: Interceptable<boolean, { source: AnyCard }>;
   canScore: Interceptable<boolean, MinionCard>;
+  dealtDamage: Interceptable<number, { target: MinionCard }>;
   receivedDamage: Interceptable<number, { damage: Damage }>;
   maxHp: Interceptable<number, MinionCard>;
   atk: Interceptable<number, MinionCard>;
@@ -115,6 +116,7 @@ export class MinionCard extends Card<
         hasSummoningSickness: new Interceptable(),
         canUseAbility: new Interceptable(),
         canBeTargeted: new Interceptable(),
+        dealtDamage: new Interceptable(),
         receivedDamage: new Interceptable(),
         maxHp: new Interceptable(),
         atk: new Interceptable(),
@@ -151,6 +153,11 @@ export class MinionCard extends Card<
       this.hasMovedManuallyThisTurn = false;
       this.damageTracker.resetDamageTaken();
     });
+  }
+
+  override async wakeUp() {
+    await super.wakeUp();
+    this.resetManualMovement();
   }
 
   isValidMovementPosition(space: BoardSpace): boolean {
@@ -294,6 +301,12 @@ export class MinionCard extends Card<
 
   removeAbility(abilityId: string) {
     this.abilityManager.removeAbility(abilityId);
+  }
+
+  getDealtDamage(target: MinionCard) {
+    return this.interceptors.dealtDamage.getValue(this.atk, {
+      target
+    });
   }
 
   getReceivedDamage(damage: Damage) {

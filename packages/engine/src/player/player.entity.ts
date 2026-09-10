@@ -4,6 +4,7 @@ import { assert, isDefined, type MaybePromise, type Serializable } from '@game/s
 import type { AnyCard } from '../card/entities/card.entity';
 import { NotEnoughManaError } from '../card/card-errors';
 import { CardTrackerComponent } from './components/cards-tracker.component';
+import { EventTracker } from './components/event-tracker.component';
 import { Interceptable } from '../utils/interceptable';
 import type { Ability, AbilityOwner } from '../card/entities/ability.entity';
 import { EntityWithModifiers } from '../modifier/entity-with-modifiers';
@@ -61,6 +62,8 @@ export class Player
 
   readonly cardTracker: CardTrackerComponent;
 
+  readonly eventTracker: EventTracker;
+
   readonly manaManager = new ManaManagerComponent(this.game, this);
 
   readonly boardSide: BoardSide;
@@ -78,6 +81,7 @@ export class Player
     this.boardSide = new BoardSide(this.game, this);
 
     this.cardTracker = new CardTrackerComponent(game, this);
+    this.eventTracker = new EventTracker(game);
     this.cardManager = new CardManagerComponent(game, this, {
       maxHandSize: this.game.config.MAX_HAND_SIZE,
       shouldShuffleDeck: true,

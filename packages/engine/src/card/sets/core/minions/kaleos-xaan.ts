@@ -55,7 +55,6 @@ export const kaleosXaan: MinionBlueprint = {
                 new CardEffectTriggeredEvent({ card, message: 'Kaleos Xaan wakes up!' })
               );
               await card.wakeUp();
-              card.resetManualMovement();
             }
           })
         ]
