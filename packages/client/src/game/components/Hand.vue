@@ -118,8 +118,7 @@ const cards = computed(() => {
       hoveredIndexInHand !== null && i > hoveredIndexInHand ? 1 : 0;
     return {
       card,
-      x:
-        i * step.value + offset + (isAfterHoveredCard ? cardW.value * 0.25 : 0),
+      x: i * step.value + offset + (isAfterHoveredCard ? cardW.value : 0),
       y: 0,
       z: i
     };
@@ -192,9 +191,6 @@ watch(width, v => {
   &.opponent-hand:not(.expanded) {
     position: absolute;
     right: 0;
-  }
-  &.hoverable:hover {
-    /* transform: translateY(-135px); */
   }
 }
 </style>

@@ -157,7 +157,7 @@ useFxEvent(FX_EVENTS.CARD_EXHAUST, async event => {
       :pixel-scale="pixelScale"
       :overrides="{ atk: card.atk, hp: card.hp, commandment: card.commandment }"
     />
-    <!-- <ModifiersList :modifiers="modifiers" class="modifiers" /> -->
+    <ModifiersList :modifiers="modifiers" class="modifiers" />
     <!-- <AbilityMenu
       :card="card"
       use-portal
@@ -277,9 +277,18 @@ useFxEvent(FX_EVENTS.CARD_EXHAUST, async event => {
 
 .modifiers {
   position: absolute;
-  top: calc(-3px * var(--pixel-scale));
-  right: calc(-3px * var(--pixel-scale));
+  top: calc(-28px * var(--pixel-scale));
+  left: calc(-3px * var(--pixel-scale));
   transform: translateZ(2px);
+  translate: 0 5px;
+  opacity: 0;
+  transition:
+    opacity 0.2s var(--ease-2),
+    translate 0.2s var(--ease-2);
+  .board-card:hover & {
+    opacity: 1;
+    translate: 0 0;
+  }
 }
 
 .retaliate-button {

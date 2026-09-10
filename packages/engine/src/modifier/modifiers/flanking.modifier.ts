@@ -3,6 +3,7 @@ import type { AnyCard } from '../../card/entities/card.entity';
 import type { MinionCard } from '../../card/entities/minion.entity';
 import type { Game } from '../../game/game';
 import { MinionInterceptorModifierMixin } from '../mixins/interceptor.mixin';
+import { KeywordModifierMixin } from '../mixins/keyword.mixin';
 import type { ModifierMixin } from '../modifier-mixin';
 import { Modifier } from '../modifier.entity';
 
@@ -18,6 +19,7 @@ export class FlankingModifier<T extends MinionCard> extends Modifier<T> {
       description: KEYWORDS.FLANKING.description,
       isUnique: true,
       mixins: [
+        new KeywordModifierMixin(game, KEYWORDS.FLANKING),
         new MinionInterceptorModifierMixin(game, {
           key: 'canMoveBetweenBattlefields',
           interceptor: () => {

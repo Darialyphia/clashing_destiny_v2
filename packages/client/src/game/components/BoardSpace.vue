@@ -82,8 +82,8 @@ const handleMouseup = (e: MouseEvent) => {
 .minion-cell {
   width: var(--card-small-v3-width);
   height: var(--card-small-v3-height);
-  background: url('@/assets/ui/board-small-card-slot.png') no-repeat center
-    center;
+  /* background: url('@/assets/ui/board-small-card-slot.png') no-repeat center
+    center; */
   transition:
     background-image 0.25s,
     filter 0.2s var(--ease-2),
@@ -109,7 +109,6 @@ const handleMouseup = (e: MouseEvent) => {
   &.can-move-to {
     background-image: url('@/assets/ui/board-small-card-slot-targetable.png');
     filter: drop-shadow(0 0 6px var(--blue-9));
-    translate: 0 -8px;
 
     &:hover {
       filter: drop-shadow(0 0 12px var(--cyan-1)) brightness(250%);

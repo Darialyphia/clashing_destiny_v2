@@ -95,7 +95,12 @@ const isWaiting = computed(() => {
     }"
   >
     <div class="content">
-      <p class="text-5 mb-4" v-if="!isShowingBoard">
+      <p
+        class="title text-center dual-text"
+        v-if="!isShowingBoard"
+        :data-text="`${label} (${selectedIndices.length}/${maxChoices})`"
+        style="--dual-text-stroke-offset-y: -5px"
+      >
         {{ label }} ({{ selectedIndices.length }}/{{ maxChoices }})
       </p>
       <div class="card-list fancy-scrollbar">
@@ -132,8 +137,13 @@ const isWaiting = computed(() => {
             }
           "
         />
-        <p v-if="isWaiting">
-          Waiting for other players to make their choices...
+        <p
+          v-if="isWaiting"
+          class="waiting dual-text"
+          data-text="Waiting for Opponent to make their choice..."
+          style="--dual-text-stroke-offset-y: -5px"
+        >
+          Waiting for Opponent to make their choice...
         </p>
       </footer>
     </div>
@@ -183,5 +193,19 @@ const isWaiting = computed(() => {
   > label:has(input:disabled) {
     filter: grayscale(0.75);
   }
+}
+
+.title {
+  font-size: var(--font-size-6);
+  font-weight: var(--font-weight-7);
+  margin-bottom: var(--size-4);
+  color: transparent;
+  text-align: center;
+}
+.waiting {
+  text-align: center;
+  font-size: var(--font-size-5);
+  font-weight: var(--font-weight-7);
+  color: transparent;
 }
 </style>

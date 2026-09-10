@@ -4,6 +4,7 @@ import { Game, type GameOptions } from '@game/engine/src/game/game';
 import type { SerializedInput } from '@game/engine/src/input/input-system';
 import { match } from 'ts-pattern';
 import type { AnyCard } from '@game/engine/src/card/entities/card.entity';
+import { randomInt, waitFor } from '@game/shared';
 
 type SandboxWorkerEvent =
   | {
@@ -77,6 +78,7 @@ self.addEventListener('message', ({ data }) => {
       });
     })
     .with({ type: 'dispatch' }, async ({ payload }) => {
+      await waitFor(200 + randomInt(250));
       game.dispatch(payload.input);
     })
     .with({ type: 'rewind' }, async ({ payload }) => {
