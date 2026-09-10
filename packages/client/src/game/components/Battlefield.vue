@@ -37,11 +37,8 @@ const onMouseup = (e: MouseEvent) => {
     }"
     @mouseup="onMouseup"
   >
-    <BoardCard
-      :card="battlefield.destinyCard"
-      @mouseenter="ui.hover(battlefield.destinyCard)"
-      @mouseleave="ui.unhover()"
-    />
+    <BoardCard :card="battlefield.destinyCard" />
+
     <div class="my-score">
       <div
         class="dual-text"

@@ -58,6 +58,7 @@ export type SerializedMinionCard = SerializedCard & {
   hasSummoningSickness: boolean;
   canRetaliate: boolean;
   canScore: boolean;
+  potentialSummonPositions: string[];
 };
 
 export type MinionCardInterceptors = CardInterceptors & {
@@ -632,7 +633,8 @@ export class MinionCard extends Card<
       canMove: this.canMoveManually,
       hasSummoningSickness: this.hasSummoningSickness,
       canRetaliate: this.canRetaliate(this.game.combatSystem.attacker!),
-      canScore: this.canScore
+      canScore: this.canScore,
+      potentialSummonPositions: this.potentialSummonPositions.map(space => space.id)
     };
   }
 }

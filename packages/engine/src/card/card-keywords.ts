@@ -311,3 +311,14 @@ export type KeywordId = Values<typeof KEYWORDS>['id'];
 
 export const getKeywordById = (id: KeywordId): Keyword | undefined =>
   Object.values(KEYWORDS).find(k => k.id === id);
+
+export const getKeywordByIdOrAlias = (idOrAlias: string): Keyword | undefined =>
+  Object.values(KEYWORDS).find(
+    k =>
+      k.id === idOrAlias ||
+      k.aliases.some(alias =>
+        alias instanceof RegExp
+          ? alias.test(idOrAlias.toLocaleLowerCase())
+          : alias === idOrAlias
+      )
+  );

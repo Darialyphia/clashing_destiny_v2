@@ -34,27 +34,33 @@ export class OptimisticStateManager {
   startPlayingCard(cardId: string) {
     this._state.playedCardId = cardId;
     this._state.isCancellingPlayCard = false;
+    this.client.triggerStateUpdate();
   }
 
   cancelPlayingCard() {
     this._state.playedCardId = null;
     this._state.isCancellingPlayCard = true;
+    this.client.triggerStateUpdate();
   }
 
   resetCancellingPlayCard() {
     this._state.isCancellingPlayCard = false;
+    this.client.triggerStateUpdate();
   }
 
   finishPlayingCard() {
     this._state.playedCardId = null;
     this._state.isCancellingPlayCard = false;
+    this.client.triggerStateUpdate();
   }
 
   chooseCards(playerId: string, cardIndices: number[]) {
     this._state.chooseCardSelection[playerId] = cardIndices;
+    this.client.triggerStateUpdate();
   }
 
   clearChooseCardSelection() {
     this._state.chooseCardSelection = {};
+    this.client.triggerStateUpdate();
   }
 }

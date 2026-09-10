@@ -5,6 +5,7 @@ import type { Game } from '../../game/game';
 import { GAME_EVENTS } from '../../game/game.events';
 import { CombatDamage } from '../../utils/damage';
 import { GameEventModifierMixin } from '../mixins/game-event.mixin';
+import { KeywordModifierMixin } from '../mixins/keyword.mixin';
 import type { ModifierMixin } from '../modifier-mixin';
 import { WhileOnBoardModifier } from './while-on-board.modifier';
 
@@ -20,6 +21,7 @@ export class DoubleAttackModifier extends WhileOnBoardModifier<MinionCard> {
       description: KEYWORDS.DOUBLE_ATTACK.description,
       isUnique: true,
       mixins: [
+        new KeywordModifierMixin(game, KEYWORDS.DOUBLE_ATTACK),
         new GameEventModifierMixin(game, {
           eventName: GAME_EVENTS.AFTER_RESOLVE_COMBAT,
           handler: async event => {

@@ -6,6 +6,7 @@ import type { MinionCard } from '../../card/entities/minion.entity';
 import { MinionInterceptorModifierMixin } from '../mixins/interceptor.mixin';
 import type { ModifierMixin } from '../modifier-mixin';
 import { Modifier } from '../modifier.entity';
+import { KeywordModifierMixin } from '../mixins/keyword.mixin';
 
 export class AttackerModifier extends Modifier<MinionCard> {
   constructor(
@@ -21,6 +22,7 @@ export class AttackerModifier extends Modifier<MinionCard> {
       description: KEYWORDS.ATTACKER.description,
       icon: 'icons/keyword-attacker',
       mixins: [
+        new KeywordModifierMixin(game, KEYWORDS.DOUBLE_ATTACK),
         new MinionInterceptorModifierMixin(game, {
           key: 'atk',
           interceptor: (value, ctx) => {

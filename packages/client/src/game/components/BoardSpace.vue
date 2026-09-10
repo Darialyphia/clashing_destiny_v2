@@ -47,14 +47,6 @@ const handleMouseup = (e: MouseEvent) => {
       'can-attack': canAttack && !client.isPlayingFx,
       'is-moving-unit': isMovingUnit
     }"
-    @mouseenter="
-      () => {
-        if (cell.card) {
-          ui.hover(cell.card);
-        }
-      }
-    "
-    @mouseleave="ui.unhover()"
     @mouseup.stop="handleMouseup"
     @mousedown="dragSelection.onMousedown"
   >

@@ -136,9 +136,6 @@ const draggedCard = computed(() => {
 
   return card;
 });
-watchEffect(() => {
-  console.log(draggedCard.value?.id, isHidden.value);
-});
 </script>
 
 <template>

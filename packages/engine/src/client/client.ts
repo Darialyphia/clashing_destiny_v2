@@ -208,6 +208,10 @@ export class GameClient {
     await this.sync();
   }
 
+  triggerStateUpdate() {
+    void this.emitter.emit('update', {});
+  }
+
   async update(snapshot: GameStateSnapshot<PatchBasedSnapshotDiff>) {
     if (snapshot.id <= this.lastSnapshotId) {
       console.log(
@@ -291,7 +295,7 @@ export class GameClient {
 
   declarePlayCard(card: CardViewModel) {
     this.optimisticStateManager.startPlayingCard(card.id);
-
+    console.log('declare play card');
     this.dispatch({
       type: 'declarePlayCard',
       payload: {

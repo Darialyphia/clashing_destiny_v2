@@ -14,6 +14,7 @@ import type { CardViewModel } from '@game/engine/src/client/view-models/card.mod
 // import AbilityMenu from './AbilityMenu.vue';
 import { INTERACTION_STATES } from '@game/engine/src/game/game.enums';
 import UiSimpleTooltip from '@/ui/components/UiSimpleTooltip.vue';
+import InspectableCard from '@/card/components/InspectableCard.vue';
 
 const {
   card,
@@ -150,13 +151,19 @@ useFxEvent(FX_EVENTS.CARD_EXHAUST, async event => {
     }"
     @mouseup="onMouseup"
   >
-    <GameCard
-      :variant
-      :card-id="card.id"
-      show-stats
-      :pixel-scale="pixelScale"
-      :overrides="{ atk: card.atk, hp: card.hp, commandment: card.commandment }"
-    />
+    <InspectableCard :card-id="card.id" side="right" :side-offset="20">
+      <GameCard
+        :variant
+        :card-id="card.id"
+        show-stats
+        :pixel-scale="pixelScale"
+        :overrides="{
+          atk: card.atk,
+          hp: card.hp,
+          commandment: card.commandment
+        }"
+      />
+    </InspectableCard>
     <ModifiersList :modifiers="modifiers" class="modifiers" />
     <!-- <AbilityMenu
       :card="card"
