@@ -81,6 +81,7 @@ export class UiController {
 
   DOMSelectors = {
     board: new DOMSelector('board'),
+    boardInner: new DOMSelector('board-inner'),
     effectChain: new DOMSelector('effect-chain'),
     playedCardZone: new DOMSelector('played-card'),
     heroHealthIndicator: (playerId: string) =>

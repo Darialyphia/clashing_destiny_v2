@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { isDefined } from '@game/shared';
-import { type CardKind } from '@game/engine/src/card/card.enums';
+import { isDefined, type Nullable } from '@game/shared';
+import { CARD_KINDS, type CardKind } from '@game/engine/src/card/card.enums';
 import CardGlare from './CardGlare.vue';
 import { useCardTilt } from '../composables/useCardtilt';
 import FoilScanlines from './foil/FoilScanlines.vue';
@@ -11,13 +11,18 @@ import FoilLightGradient from './foil/FoilLightGradient.vue';
 import FoilGoldenGlare from './foil/FoilGoldenGlare.vue';
 import FoilBrightShine from './foil/FoilBrightShine.vue';
 import FoilGlitter from './foil/FoilGlitter.vue';
-import { assets } from '@/assets';
+import { type SpriteData } from '@/assets';
 import type { CardArt } from '@game/engine/src/card/card-blueprint';
+import { match } from 'ts-pattern';
+import { ANIMATIONS_NAMES } from '@game/engine/src/game/game.enums.js';
+import { useSprite } from '@/shared/composables/useSprite.js';
 
 const {
   card,
   isFoil,
-  showStats = false
+  showStats = false,
+  sprite,
+  animationSequence
 } = defineProps<{
   card: {
     id: string;
@@ -37,6 +42,8 @@ const {
   };
   isFoil?: boolean;
   showStats?: boolean;
+  sprite: Nullable<SpriteData>;
+  animationSequence?: string[];
 }>();
 
 const root = useTemplateRef('card');
@@ -45,19 +52,27 @@ const { pointerStyle } = useCardTilt(root, {
   isEnabled: ref(true)
 });
 
-const artBgImage = computed(() => {
-  if (!card.art.bg) {
-    return null;
-  }
-  if (card.art.isFullArt || card.art.bg.includes('-alt')) {
-    return assets[card.art.bg].css;
-  }
+const _animationSequence = computed(() => {
+  if (animationSequence) return animationSequence;
 
-  return assets['cards/placeholder-spell-bg'].css;
+  return match(card.kind)
+    .with(CARD_KINDS.MINION, () => [ANIMATIONS_NAMES.BREATHING])
+    .with(
+      CARD_KINDS.SPELL,
+      CARD_KINDS.ARTIFACT,
+      CARD_KINDS.DESTINY,
+      CARD_KINDS.RUNE,
+      () => [ANIMATIONS_NAMES.DEFAULT]
+    )
+    .exhaustive();
 });
 
-const artMainImage = computed(() => {
-  return assets[card.art.main].css;
+const { activeFrameRect, bgPosition, imageBg } = useSprite({
+  animationSequence: _animationSequence,
+  sprite: computed(() => sprite ?? null),
+  kind: computed(() => card.kind),
+  scale: 1,
+  scalePositionByPixelScale: true
 });
 </script>
 
@@ -69,19 +84,27 @@ const artMainImage = computed(() => {
     ref="card"
   >
     <div class="card-front">
-      <div class="image">
-        <div v-if="artBgImage" class="art-bg" />
+      <div
+        class="art"
+        v-if="sprite"
+        :style="{
+          '--bg-position': bgPosition,
+          '--width': `${activeFrameRect.width}px`,
+          '--height': `${activeFrameRect.height}px`,
+          '--background-width': `calc(${sprite?.sheetSize.w ?? 0}px * var(--pixel-scale))`,
+          '--background-height': `calc(${sprite?.sheetSize.h ?? 0}px * var(--pixel-scale))`
+        }"
+      >
         <FoilScanlines v-if="isFoil && card.art.foil.scanlines" />
         <FoilGlitter v-if="isFoil && card.art.foil.glitter" />
-        <div class="art-main" />
+        <div class="sprite" />
         <FoilBrightShine v-if="isFoil && card.art.foil.brightShine" />
-        <div class="art-frame" />
       </div>
 
       <template v-if="showStats">
         <div
           v-if="isDefined(card.commandment)"
-          class="commandment"
+          class="stat commandment"
           :class="{
             buffed:
               isDefined(card.baseBounty) && card.commandment > card.baseBounty,
@@ -129,14 +152,6 @@ const artMainImage = computed(() => {
             {{ card.durability }}
           </div>
         </div>
-        <div
-          v-if="isDefined(card.countdown) && showStats"
-          class="stat countdown"
-        >
-          <div class="dual-text" :data-text="card.countdown">
-            {{ card.countdown }}
-          </div>
-        </div>
       </template>
       <template v-if="isFoil">
         <FoilSheen v-if="card.art.foil.sheen" />
@@ -160,8 +175,8 @@ const artMainImage = computed(() => {
   --foil-oil-x: calc(1px * v-bind('pointerStyle?.foilOilX'));
   --foil-oil-y: calc(1px * v-bind('pointerStyle?.foilOilY'));
   --foil-animated-toggle: ;
-  width: calc(var(--card-small-v2-width) * var(--pixel-scale));
-  height: calc(var(--card-small-v2-height) * var(--pixel-scale));
+  width: calc(var(--card-small-v3-width) * var(--pixel-scale));
+  height: calc(var(--card-small-v3-height) * var(--pixel-scale));
   display: grid;
   font-family: 'Lato', sans-serif;
   transform-style: preserve-3d;
@@ -181,6 +196,7 @@ const artMainImage = computed(() => {
 
 .card-front {
   backface-visibility: hidden;
+  background: url('@/assets/ui/card/v3/card-front-small.png');
   background-size: cover;
   color: #fcffcb;
   font-size: 16px;
@@ -215,29 +231,13 @@ const artMainImage = computed(() => {
   background: url('@/assets/ui/card/v2/art-frame.png');
   background-size: cover;
 }
-.art-main {
-  position: absolute;
-  inset: 0;
-  background: v-bind(artMainImage);
-  background-position: center;
-  background-repeat: no-repeat;
-}
-
-.art-bg {
-  position: absolute;
-  inset: 0;
-  background: v-bind(artBgImage);
-  background-position: center;
-  background-repeat: no-repeat;
-}
 
 .stat {
-  width: calc(40px * var(--pixel-scale));
-  height: calc(26px * var(--pixel-scale));
+  width: calc(32px * var(--pixel-scale));
+  height: calc(20px * var(--pixel-scale));
   background-repeat: no-repeat;
   background-size: cover;
   position: absolute;
-  bottom: calc(0px * var(--pixel-scale));
   font-size: calc(var(--pixel-scale) * 14px);
   text-align: right;
   font-weight: var(--font-weight-9);
@@ -257,34 +257,43 @@ const artMainImage = computed(() => {
 }
 
 .atk {
-  background-image: url('@/assets/ui/card/power.png');
-  left: 0;
+  background-image: url('@/assets/ui/card/v3/attack.png');
+  left: calc(1px * var(--pixel-scale));
+  bottom: calc(1px * var(--pixel-scale));
+  padding-left: calc(25px * var(--pixel-scale));
+
   --dual-text-offset-y: calc(4px * var(--pixel-scale));
   --dual-text-offset-x: calc(-8px * var(--pixel-scale));
 }
 
 .hp {
-  background-image: url('@/assets/ui/card/health.png');
-  right: 0;
+  background-image: url('@/assets/ui/card/v3/health.png');
+  right: calc(1px * var(--pixel-scale));
+  bottom: calc(1px * var(--pixel-scale));
+  text-align: right;
+  padding-left: calc(18px * var(--pixel-scale));
+  --dual-text-offset-y: calc(4px * var(--pixel-scale));
+  --dual-text-offset-x: calc(-2px * var(--pixel-scale));
+}
+
+.commandment {
+  background-image: url('@/assets/ui/card/v3/commandment.png');
+  right: calc(1px * var(--pixel-scale));
+  top: calc(0px * var(--pixel-scale));
   text-align: right;
   padding-left: calc(18px * var(--pixel-scale));
   --dual-text-offset-y: calc(4px * var(--pixel-scale));
   --dual-text-offset-x: calc(-2px * var(--pixel-scale));
 }
 .durability {
-  background-image: url('@/assets/ui/card/durability.png');
+  background-image: url('@/assets/ui/card/v3/durability.png');
   right: 0;
   padding-right: 0px;
   padding-left: 2px;
 }
 
-.countdown {
-  background-image: url('@/assets/ui/card/countdown.png');
-  right: 0;
-}
-
 .mana-cost {
-  background-image: url('@/assets/ui/mana-cost.png');
+  background-image: url('@/assets/ui/card/v3/mana-cost.png');
   background-repeat: no-repeat;
   background-size: cover;
   width: calc(22px * var(--pixel-scale));
@@ -302,19 +311,24 @@ const artMainImage = computed(() => {
   scale: 2;
 }
 
-.commandment {
+.art {
   position: absolute;
-  top: calc(-1px * var(--pixel-scale));
-  left: calc(-1px * var(--pixel-scale));
-  background-image: url('@/assets/ui/card/commandment.png');
-  font-weight: var(--font-weight-7);
-  padding-top: calc(3px * var(--pixel-scale));
-  width: calc(30px * var(--pixel-scale));
-  height: calc(28px * var(--pixel-scale));
-  font-size: calc(var(--pixel-scale) * 14px);
-  .dual-text::before {
-    transform: translateY(-3px);
-  }
-  padding-left: calc(8px * var(--pixel-scale));
+  width: calc(var(--pixel-scale) * var(--width));
+  height: calc(var(--pixel-scale) * var(--height));
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: calc(10px * var(--pixel-scale));
+  overflow: hidden;
+}
+
+.sprite {
+  position: absolute;
+  inset: 0;
+  background: v-bind(imageBg);
+  background-position: var(--bg-position);
+  background-repeat: no-repeat;
+  background-size: var(--background-width) var(--background-height);
+  translate: calc(var(--parallax-x, 0)) var(--parallax-y, 0) !important;
+  pointer-events: none;
 }
 </style>

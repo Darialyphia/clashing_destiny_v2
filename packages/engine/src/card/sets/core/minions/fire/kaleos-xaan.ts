@@ -13,9 +13,6 @@ import { FlankingModifier } from '../../../../../modifier/modifiers/flanking.mod
 import { GameEventModifierMixin } from '../../../../../modifier/mixins/game-event.mixin';
 import { GAME_EVENTS } from '../../../../../game/game.events';
 import type { MinionCard } from '../../../../entities/minion.entity';
-import { InstantMoveModifier } from '../../../../../modifier/modifiers/instant-move.modifier';
-import { UntilEndOfTurnModifierMixin } from '../../../../../modifier/mixins/until-end-of-turn.mixin';
-import { InstantAttackModifier } from '../../../../../modifier/modifiers/instant-attack.modifier';
 import { WhileOnBoardModifier } from '../../../../../modifier/modifiers/while-on-board.modifier';
 import { CardEffectTriggeredEvent } from '../../../../card.events';
 

@@ -112,6 +112,9 @@ useFxEvent(FX_EVENTS.INTERACTION_AFTER_CHANGE_STATE, event => {
     isHidden.value = true;
   }
 });
+useFxEvent(FX_EVENTS.CARD_BEFORE_PLAY, () => {
+  isHidden.value = true;
+});
 const unsub = client.value.onUpdateCompleted(() => {
   isHidden.value = false;
 });

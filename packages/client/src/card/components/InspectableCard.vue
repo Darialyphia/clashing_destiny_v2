@@ -18,13 +18,15 @@ const {
   cardId,
   side,
   sideOffset,
+  align,
   closeDelay = 0,
   openDelay = 0,
-  enabled = true
+  enabled = true,
+  pixelScale = 1.5
 } = defineProps<
-  { cardId: string; enabled?: boolean } & Pick<
+  { cardId: string; enabled?: boolean; pixelScale?: number } & Pick<
     HoverCardContentProps,
-    'side' | 'sideOffset'
+    'side' | 'sideOffset' | 'align'
   > &
     Pick<HoverCardRootProps, 'openDelay' | 'closeDelay'>
 >();
@@ -42,9 +44,13 @@ const ui = useGameUi();
         v-if="!ui.draggedCard && enabled"
         :side="side"
         :side-offset="sideOffset"
-        style="--pixel-scale: 1.5"
+        :align="align"
       >
-        <GameCard :card-id="cardId" :interactive="false" />
+        <GameCard
+          :card-id="cardId"
+          :interactive="false"
+          :pixel-scale="pixelScale"
+        />
       </HoverCardContent>
     </HoverCardPortal>
   </HoverCardRoot>

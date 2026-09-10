@@ -91,7 +91,7 @@ const isWaiting = computed(() => {
     :description="`Select up to ${maxChoices} cards`"
     :closable="false"
     :style="{
-      '--ui-modal-size': 'var(--size-lg)'
+      '--ui-modal-size': 'var(--size-xl)'
     }"
   >
     <div class="content">
@@ -100,7 +100,12 @@ const isWaiting = computed(() => {
       </p>
       <div class="card-list fancy-scrollbar">
         <label v-for="(card, index) in displayedCards" :key="card">
-          <GameCard :key="card" :card-id="card" :interactive="false" />
+          <GameCard
+            :key="card"
+            :card-id="card"
+            :interactive="false"
+            :pixel-scale="2"
+          />
           <input
             type="checkbox"
             class="hidden"
@@ -116,7 +121,7 @@ const isWaiting = computed(() => {
       </div>
       <footer class="flex mt-7 gap-10 justify-center">
         <FancyButton
-          v-if="!isShowingBoard"
+          v-if="!isShowingBoard && !isWaiting"
           variant="info"
           text="Confirm"
           :disabled="selectedIndices.length < minChoices || isWaiting"
@@ -152,14 +157,11 @@ const isWaiting = computed(() => {
   pointer-events: auto;
 }
 .card-list {
-  --pixel-scale: 1;
-  display: grid;
-  grid-template-columns: repeat(
-    auto-fit,
-    minmax(calc(var(--pixel-scale) * var(--card-v2-width)), 1fr)
-  );
-  justify-items: center;
-  row-gap: var(--size-4);
+  --pixel-scale: 2;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--size-4) var(--size-5);
   max-height: 60dvh;
   overflow-y: auto;
   > * {

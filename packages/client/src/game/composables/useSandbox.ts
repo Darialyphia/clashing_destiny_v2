@@ -124,33 +124,34 @@ export const provideSandbox = (
     rewindTo,
     restart: () => rewindTo(0),
     addCardToHand(blueprintId: string) {
+      console.log(blueprintId);
       worker.postMessage({
         type: 'addCardtoHand',
-        payload: { blueprintId, playerId: client.value.getActivePlayerIds() }
+        payload: { blueprintId, playerId: client.value.playerId }
       });
     },
     addCardToTopOfDeck(blueprintId: string) {
       worker.postMessage({
         type: 'addCardToTopOfDeck',
-        payload: { blueprintId, playerId: client.value.getActivePlayerIds() }
+        payload: { blueprintId, playerId: client.value.playerId }
       });
     },
     addCardToDiscardPile(blueprintId: string) {
       worker.postMessage({
         type: 'addCardToDiscardPile',
-        payload: { blueprintId, playerId: client.value.getActivePlayerIds() }
+        payload: { blueprintId, playerId: client.value.playerId }
       });
     },
     draw() {
       worker.postMessage({
         type: 'draw',
-        payload: { playerId: client.value.getActivePlayerIds() }
+        payload: { playerId: client.value.playerId }
       });
     },
     refillMana() {
       worker.postMessage({
         type: 'refillMana',
-        payload: { playerId: client.value.getActivePlayerIds() }
+        payload: { playerId: client.value.playerId }
       });
     },
     moveUnit(

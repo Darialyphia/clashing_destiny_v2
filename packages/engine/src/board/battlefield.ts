@@ -11,7 +11,7 @@ import { GAME_EVENTS } from '../game/game.events';
 export type SerializedBattlefield = {
   id: string;
   spaces: string[];
-  destinyCard: string | null;
+  destinyCard: string;
   commandmentScore: number;
   opponentCommandmentScore: number;
   player: string;
@@ -107,7 +107,7 @@ export class Battlefield
     return {
       id: this.id,
       spaces: this.spaces.map(space => space.id),
-      destinyCard: this.destinyCard?.id ?? null,
+      destinyCard: (this.destinyCard?.id ?? this.opponentBattlefield.destinyCard?.id)!,
       commandmentScore: this.commandmentScore,
       opponentCommandmentScore: this.opponentCommandmentScore,
       player: this.player.id

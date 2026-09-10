@@ -31,7 +31,7 @@ export class SupplyPhase implements GamePhaseController, Serializable<EmptyObjec
             })),
             minChoiceCount: 1,
             maxChoiceCount: 1,
-            label: `Choose a rune to play in the rune zone. The other will go to the bottom of the rune deck.`,
+            label: `Choose an affinity to play in the affinity zone. The other will go to the bottom of the affinity deck.`,
             timeoutFallback: []
           }
         ])

@@ -91,6 +91,16 @@ export class PlayerViewModel {
     return this.data.victoryPoints;
   }
 
+  get runeZone() {
+    return this.data.runeZone.map(cardId => {
+      return this.getEntities()[cardId] as CardViewModel;
+    });
+  }
+
+  get affinities() {
+    return this.data.affinities;
+  }
+
   get base() {
     return this.data.boardSide.base.map(spaceId => {
       return this.getEntities()[spaceId] as BoardSpaceViewModel;
@@ -107,11 +117,9 @@ export class PlayerViewModel {
       spaces: this.data.boardSide.leftBattlefield.spaces.map(spaceId => {
         return this.getEntities()[spaceId] as BoardSpaceViewModel;
       }),
-      destinyCard: this.data.boardSide.leftBattlefield.destinyCard
-        ? (this.getEntities()[
-            this.data.boardSide.leftBattlefield.destinyCard
-          ] as CardViewModel)
-        : null
+      destinyCard: this.getEntities()[
+        this.data.boardSide.leftBattlefield.destinyCard
+      ] as CardViewModel
     };
   }
 
@@ -125,11 +133,9 @@ export class PlayerViewModel {
       spaces: this.data.boardSide.rightBattlefield.spaces.map(spaceId => {
         return this.getEntities()[spaceId] as BoardSpaceViewModel;
       }),
-      destinyCard: this.data.boardSide.rightBattlefield.destinyCard
-        ? (this.getEntities()[
-            this.data.boardSide.rightBattlefield.destinyCard
-          ] as CardViewModel)
-        : null
+      destinyCard: this.getEntities()[
+        this.data.boardSide.rightBattlefield.destinyCard
+      ] as CardViewModel
     };
   }
 

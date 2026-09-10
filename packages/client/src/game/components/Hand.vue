@@ -90,7 +90,7 @@ const cardW = computed(() => {
   return (
     parseInt(
       getComputedStyle(document.documentElement).getPropertyValue(
-        '--card-v2-width-unitless'
+        '--card-v3-width-unitless'
       )
     ) * pixelScale.value
   );
@@ -126,13 +126,15 @@ const cards = computed(() => {
   });
 });
 
-const { width } = useElementBounding(() => ui.value.DOMSelectors.board.element);
+const { width } = useElementBounding(
+  () => ui.value.DOMSelectors.boardInner.element
+);
 const WIDTH_RATIO = 0.75;
 const handWidth = ref(width.value * WIDTH_RATIO);
 
 watch(width, v => {
   if (client.value.isPlayingFx) return;
-  handWidth.value = Math.max(v * WIDTH_RATIO, window.innerWidth);
+  handWidth.value = Math.min(v * WIDTH_RATIO, window.innerWidth);
 });
 </script>
 
@@ -192,7 +194,7 @@ watch(width, v => {
     right: 0;
   }
   &.hoverable:hover {
-    transform: translateY(-135px);
+    /* transform: translateY(-135px); */
   }
 }
 </style>

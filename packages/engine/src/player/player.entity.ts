@@ -14,6 +14,7 @@ import { match } from 'ts-pattern';
 import { BoardSide, type SerializedBoardSide } from '../board/board-side.entity';
 import { GAME_EVENTS } from '../game/game.events';
 import { PlayerGainVictoryPointEvent } from './player.events';
+import type { Affinity } from '../card/card.enums';
 
 export type PlayerOptions = {
   id: string;
@@ -36,19 +37,19 @@ export type SerializedPlayer = {
   manaRegen: number;
   boardSide: SerializedBoardSide;
   victoryPoints: number;
+  runeZone: string[];
+  affinities: Affinity[];
 };
 
 export type PlayerInterceptors = {
   cardsDrawnForTurn: Interceptable<number>;
   manaRegen: Interceptable<number>;
-  maxMana: Interceptable<number>;
 };
 
 const makeInterceptors = (): PlayerInterceptors => {
   return {
     cardsDrawnForTurn: new Interceptable(),
-    manaRegen: new Interceptable(),
-    maxMana: new Interceptable()
+    manaRegen: new Interceptable()
   };
 };
 
@@ -60,9 +61,7 @@ export class Player
 
   readonly cardTracker: CardTrackerComponent;
 
-  readonly manaManager = new ManaManagerComponent(this.game, this, {
-    maxMana: this.interceptors.maxMana
-  });
+  readonly manaManager = new ManaManagerComponent(this.game, this);
 
   readonly boardSide: BoardSide;
 
@@ -255,7 +254,11 @@ export class Player
       maxMana: this.maxMana,
       manaRegen: this.manaRegen,
       boardSide: this.boardSide.serialize(),
-      victoryPoints: this.victoryPoints
+      victoryPoints: this.victoryPoints,
+      runeZone: Array.from(this.cardManager.runeZone).map(card => card.id),
+      affinities: Array.from(this.cardManager.runeZone)
+        .map(card => card.affinities)
+        .flat()
     };
   }
 }

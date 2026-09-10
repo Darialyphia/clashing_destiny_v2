@@ -80,8 +80,8 @@ const handleMouseup = (e: MouseEvent) => {
 
 <style scoped lang="postcss">
 .minion-cell {
-  width: 148px;
-  height: 130px;
+  width: var(--card-small-v3-width);
+  height: var(--card-small-v3-height);
   background: url('@/assets/ui/board-small-card-slot.png') no-repeat center
     center;
   transition:

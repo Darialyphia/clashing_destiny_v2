@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useCard, useFxEvent, useGameUi } from '../composables/useGameClient';
-import Card from '@/card/components/cardV2/index.vue';
+import Card from '@/card/components/cardV3/index.vue';
 import SmallCard from '@/card/components/SmallCard.vue';
 import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
 import { waitFor } from '@game/shared';
@@ -8,9 +8,9 @@ import { refAutoReset } from '@vueuse/core';
 import CardActionsPopover from './CardActionsPopover.vue';
 import type { PopoverContentProps } from 'reka-ui';
 import { CARD_LOCATIONS } from '@game/engine/src/card/card.enums';
-import CardModifiers from './CardModifiers.vue';
 import { formatAbilityText } from '@/utils/formatters';
 import { provideRichTextContext } from '../composables/useRichText';
+import { sprites } from '@/assets';
 const {
   cardId,
   actionsOffset = -50,
@@ -20,10 +20,8 @@ const {
   isInteractive = true,
   showStats = false,
   useActionsPortal = true,
-  showModifiers = false,
   showActionEmptyState = true,
   actionsPortalTarget = '#card-actions-portal',
-  modifiersPosition = 'top',
   canTilt = false,
   overrides = {},
   pixelScale = 1
@@ -46,10 +44,6 @@ const {
   pixelScale?: number | null;
 }>();
 
-const emit = defineEmits<{
-  modifiersMouseEnter: [];
-  modifiersMouseLeave: [];
-}>();
 const card = useCard(computed(() => cardId));
 
 const ui = useGameUi();
@@ -79,6 +73,10 @@ const classes = computed(() => {
 
 provideRichTextContext({
   card
+});
+
+const sprite = computed(() => {
+  return sprites[card.value.art.sprite];
 });
 </script>
 
@@ -130,6 +128,7 @@ provideRichTextContext({
         class="game-card big"
         :class="classes"
         :max-tilt-angle="0"
+        :sprite="sprite"
       />
       <SmallCard
         v-else-if="variant === 'small'"
@@ -152,14 +151,7 @@ provideRichTextContext({
         :class="classes"
         :show-stats="showStats"
         :is-foil="card.isFoil"
-      />
-
-      <CardModifiers
-        v-if="showModifiers"
-        :position="modifiersPosition"
-        :card="card"
-        @modifiers-mouse-enter="emit('modifiersMouseEnter')"
-        @modifiers-mouse-leave="emit('modifiersMouseLeave')"
+        :sprite="sprite"
       />
 
       <!-- <div class="damage" v-if="damageTaken > 0">

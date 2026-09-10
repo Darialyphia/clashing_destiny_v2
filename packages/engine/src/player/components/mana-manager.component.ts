@@ -3,6 +3,8 @@ import { PLAYER_EVENTS } from '../player.enums';
 import type { Player } from '../player.entity';
 import { PlayerManaChangeEvent } from '../player.events';
 import type { Interceptable } from '../../utils/interceptable';
+import { GAME_EVENTS } from '../../game/game.events';
+import { GAME_PHASES } from '../../game/game.enums';
 
 export type ManaInterceptors = {
   maxMana: Interceptable<number>;
@@ -10,16 +12,20 @@ export type ManaInterceptors = {
 
 export class ManaManagerComponent {
   private _mana = 0;
-  private _baseMaxMana = 0;
+
+  private _maxMana = 0;
 
   constructor(
     private game: Game,
-    private player: Player,
-    private interceptors: ManaInterceptors
+    private player: Player
   ) {}
 
   init() {
-    this._baseMaxMana = this.game.config.MAX_MANA;
+    this.game.on(GAME_EVENTS.AFTER_CHANGE_PHASE, async event => {
+      if (event.data.to.state === GAME_PHASES.MAIN) {
+        this._maxMana = this.manaRegen;
+      }
+    });
   }
 
   get mana() {
@@ -27,7 +33,7 @@ export class ManaManagerComponent {
   }
 
   get maxMana() {
-    return this.interceptors.maxMana.getValue(this._baseMaxMana, {});
+    return this._maxMana;
   }
 
   get manaRegen() {

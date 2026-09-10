@@ -50,7 +50,6 @@ useFxEvent(GAME_EVENTS.PLAYER_AFTER_MANA_CHANGE, event => {
 
 <template>
   <div class="player-infos" :class="{ inverted }">
-    <div class="mana">{{ Math.round(displayedMana) }}</div>
     <div class="relative" :class="{ 'has-initiative': hasInitiative }">
       <div>Todo player infos</div>
     </div>

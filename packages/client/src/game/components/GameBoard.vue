@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import {
+  useGameClient,
   useGameState,
   useGameUi,
   useMyPlayer,
@@ -9,10 +10,9 @@ import BoardSpace from './BoardSpace.vue';
 import { useWindowSize } from '@vueuse/core';
 import { config } from '@/utils/config';
 import PassButton from './PassButton.vue';
-import EffectChain from './EffectChain.vue';
-import BoardCard from './BoardCard.vue';
-import ScoreButton from './ScoreButton.vue';
 import type { PlayerClockState } from '../composables/useGameSocket';
+import Battlefield from './Battlefield.vue';
+import RuneZone from './RuneZone.vue';
 
 const { clocks } = defineProps<{
   clocks?: Record<string, PlayerClockState>;
@@ -20,6 +20,7 @@ const { clocks } = defineProps<{
 
 const ui = useGameUi();
 const state = useGameState();
+const { client } = useGameClient();
 const myPlayer = useMyPlayer();
 const opponent = useOpponentPlayer();
 const { height } = useWindowSize();
@@ -41,59 +42,25 @@ const boardMargin = computed(() => {
 });
 
 const pointsToWin = computed(() => state.value.config.VICTORY_POINTS_TO_WIN);
+
+const hasInitiative = computed(() => {
+  return client.value.getActivePlayerIds().includes(myPlayer.value.id);
+});
+
+const opponentHasInitiative = computed(() => {
+  return client.value.getActivePlayerIds().includes(opponent.value.id);
+});
 </script>
 
 <template>
   <div class="board" :id="ui.DOMSelectors.board.id">
-    <div class="minions-zone">
-      <div class="opponent-left-destiny">
-        <BoardCard
-          v-if="opponent.leftBattlefield.destinyCard"
-          :card="opponent.leftBattlefield.destinyCard"
-          @mouseenter="ui.hover(opponent.leftBattlefield.destinyCard)"
-          @mouseleave="ui.unhover()"
-        />
+    <div class="minions-zone" :id="ui.DOMSelectors.boardInner.id">
+      <div class="left-destiny">
+        <Battlefield :battlefield="myPlayer.leftBattlefield" />
       </div>
-      <div class="opponent-right-destiny">
-        <BoardCard
-          v-if="opponent.rightBattlefield.destinyCard"
-          :card="opponent.rightBattlefield.destinyCard"
-          @mouseenter="ui.hover(opponent.rightBattlefield.destinyCard)"
-          @mouseleave="ui.unhover()"
-        />
+      <div class="right-destiny">
+        <Battlefield :battlefield="myPlayer.rightBattlefield" />
       </div>
-      <div class="my-left-destiny">
-        <BoardCard
-          v-if="myPlayer.leftBattlefield.destinyCard"
-          :card="myPlayer.leftBattlefield.destinyCard"
-          @mouseenter="ui.hover(myPlayer.leftBattlefield.destinyCard)"
-          @mouseleave="ui.unhover()"
-        />
-      </div>
-      <div class="my-right-destiny">
-        <BoardCard
-          v-if="myPlayer.rightBattlefield.destinyCard"
-          :card="myPlayer.rightBattlefield.destinyCard"
-          @mouseenter="ui.hover(myPlayer.rightBattlefield.destinyCard)"
-          @mouseleave="ui.unhover()"
-        />
-      </div>
-      <ScoreButton
-        class="opponent-left-score"
-        :battlefield="opponent.leftBattlefield"
-      />
-      <ScoreButton
-        class="opponent-right-score"
-        :battlefield="opponent.rightBattlefield"
-      />
-      <ScoreButton
-        class="my-left-score"
-        :battlefield="myPlayer.leftBattlefield"
-      />
-      <ScoreButton
-        class="my-right-score"
-        :battlefield="myPlayer.rightBattlefield"
-      />
 
       <div class="opponent-base zone">
         <BoardSpace
@@ -175,7 +142,12 @@ const pointsToWin = computed(() => state.value.config.VICTORY_POINTS_TO_WIN);
             :class="{ empty: opponent.victoryPoints < point }"
           />
         </div>
-        <EffectChain class="effect-chain" />
+        <div
+          class="initiative-indicator opponent"
+          :class="{ active: opponentHasInitiative }"
+        />
+        <PassButton class="pass-button" />
+        <div class="initiative-indicator" :class="{ active: hasInitiative }" />
         <div class="victory-points">
           <div
             v-for="point in state.config.VICTORY_POINTS_TO_WIN"
@@ -184,8 +156,14 @@ const pointsToWin = computed(() => state.value.config.VICTORY_POINTS_TO_WIN);
             :class="{ empty: myPlayer.victoryPoints < point }"
           />
         </div>
+      </div>
 
-        <PassButton />
+      <div class="my-rune-zone">
+        <RuneZone :player="myPlayer" />
+      </div>
+
+      <div class="opponent-rune-zone">
+        <RuneZone :player="opponent" />
       </div>
     </div>
 
@@ -219,38 +197,36 @@ const pointsToWin = computed(() => state.value.config.VICTORY_POINTS_TO_WIN);
 }
 
 .minions-zone {
-  width: 1350px;
-  height: 685px;
-  background: url(@/assets/ui/board.png);
+  width: 1188px;
+  height: 548px;
+  background: url(@/assets/ui/board-v2.png);
   background-size: cover;
   margin-inline: auto;
-  padding-block: 12px;
   display: flex;
   flex-direction: column;
   gap: 12px;
   position: absolute;
-  top: 50%;
+  top: 52%;
   left: 50%;
   translate: -50% calc(-50% - 40px);
   .zone {
-    height: 130px;
+    height: 100px;
     display: flex;
     justify-content: space-between;
+    align-items: center;
   }
 }
 
-.opponent-left-destiny,
-.my-left-destiny {
+.left-destiny {
   position: absolute;
-  top: 288px;
-  left: 175px;
+  top: 228px;
+  left: 200px;
 }
 
-.opponent-right-destiny,
-.my-right-destiny {
+.right-destiny {
   position: absolute;
-  top: 288px;
-  right: 175px;
+  top: 228px;
+  right: 195px;
 }
 
 .arrows {
@@ -335,47 +311,57 @@ const pointsToWin = computed(() => state.value.config.VICTORY_POINTS_TO_WIN);
 
 .opponent-base {
   position: absolute;
-  width: 930px;
+  top: 10px;
+  width: calc(
+    var(--card-small-v3-width) * 6 + var(--size-4) * 5 - var(--size-3) * 2
+  );
   left: 50%;
   translate: -50% 0;
 }
 
 .opponent-battlefields {
   position: absolute;
-  top: 160px;
+  top: 115px;
   display: flex;
   padding-inline: 22px;
   justify-content: space-between;
   width: 100%;
 
   .zone {
-    width: 438px;
+    width: 450px;
     padding-inline: 10px;
     position: relative;
+    display: flex;
+    justify-content: center;
+    gap: var(--size-6);
   }
 }
 
 .my-battlefields {
   position: absolute;
-  top: 395px;
+  top: 325px;
   display: flex;
   padding-inline: 22px;
   justify-content: space-between;
   width: 100%;
-
   .zone {
-    width: 438px;
+    width: 450px;
     padding-inline: 10px;
     position: relative;
+    display: flex;
+    justify-content: center;
+    gap: var(--size-6);
   }
 }
 
 .my-base {
   position: absolute;
-  width: 930px;
+  top: 430px;
+  width: calc(
+    var(--card-small-v3-width) * 6 + var(--size-4) * 5 - var(--size-3) * 2
+  );
   left: 50%;
   translate: -50% 0;
-  top: 536px;
 }
 
 .right-side {
@@ -384,42 +370,16 @@ const pointsToWin = computed(() => state.value.config.VICTORY_POINTS_TO_WIN);
   top: 288px;
 }
 
-.effect-chain {
-  flex-grow: 1;
-  width: 100%;
-  height: calc(var(--card-small-v2-height) / 2 + var(--size-4));
-}
-
-.opponent-left-score {
-  top: 298px;
-  left: 305px;
-}
-
-.my-left-score {
-  top: 338px;
-  left: 305px;
-}
-
-.opponent-right-score {
-  top: 298px;
-  right: 310px;
-}
-
-.my-right-score {
-  top: 338px;
-  right: 310px;
-}
-
 .victory-points {
   display: grid;
-  grid-template-columns: repeat(v-bind('pointsToWin'), 47px);
-  gap: 4px;
+  grid-template-columns: repeat(v-bind('pointsToWin'), 27px);
+  gap: 3px;
   align-items: center;
   justify-content: center;
 }
 .victory-point {
-  width: 43px;
-  height: 43px;
+  width: 27px;
+  height: 26px;
   background: url('@/assets/ui/score.png');
   &.empty {
     background: url('@/assets/ui/score-empty.png');
@@ -428,13 +388,40 @@ const pointsToWin = computed(() => state.value.config.VICTORY_POINTS_TO_WIN);
 
 .middle-side {
   position: absolute;
-  top: 390px;
+  top: 270px;
   left: 50%;
+  height: 320px;
   translate: -50% -50%;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
   gap: var(--size-2);
-  width: 350px;
+  width: 212px;
+}
+
+.initiative-indicator {
+  width: 44px;
+  height: 23px;
+  background: url('@/assets/ui/initiative-indicator.png');
+  background-size: cover;
+  margin-block: 10px;
+  &.opponent {
+    transform: scaleY(-1);
+  }
+  &:not(.active) {
+    opacity: 0;
+  }
+}
+
+.my-rune-zone {
+  position: absolute;
+  bottom: 10px;
+  right: -80px;
+}
+.opponent-rune-zone {
+  position: absolute;
+  top: 10px;
+  right: -80px;
 }
 </style>

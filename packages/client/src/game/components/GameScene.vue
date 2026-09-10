@@ -30,6 +30,8 @@ import OpponentHand from './OpponentHand.vue';
 import ScoringArrow from './ScoringArrow.vue';
 import InteractionArrows from './InteractionArrows.vue';
 import type { PlayerClockState } from '../composables/useGameSocket';
+import PlayerResources from './PlayerResources.vue';
+import Deck from './Deck.vue';
 
 const { clocks } = defineProps<{
   clocks?: Record<string, PlayerClockState>;
@@ -39,7 +41,7 @@ const { clocks } = defineProps<{
 }>();
 
 const ui = useGameUi();
-const { playerId } = useGameClient();
+const { playerId, client } = useGameClient();
 const state = useGameState();
 const myPlayer = useMyPlayer();
 const opponent = useOpponentPlayer();
@@ -97,10 +99,10 @@ const isDev = import.meta.env.DEV;
 <template>
   <div v-if="isDev" class="debug">
     <div>You are: {{ playerId }}</div>
+    <div>Active players: {{ client.getActivePlayerIds().join(', ') }}</div>
     <div>Game Phase: {{ state.phase.state }}</div>
     <div>Selected Card: {{ ui.selectedCard?.id }}</div>
     <div>Interaction State: {{ state.interaction.state }}</div>
-    <div>Chain: {{ state.effectChain?.state }}</div>
   </div>
 
   <div class="game-board-container">
@@ -115,6 +117,19 @@ const isDev = import.meta.env.DEV;
       <GameBoard :clocks="clocks" />
     </Camera>
     <DraggedCard />
+
+    <div class="my-deck">
+      <Deck
+        :size="myPlayer.remainingCardsInMainDeck"
+        :offset="{ x: -0.75, y: 0, z: 1 }"
+      />
+    </div>
+    <div class="opponent-deck">
+      <Deck
+        :size="opponent.remainingCardsInMainDeck"
+        :offset="{ x: -0.75, y: 0, z: 0.5 }"
+      />
+    </div>
   </div>
 
   <HoveredCardInfos class="hovered-cell-infos" />
@@ -135,8 +150,12 @@ const isDev = import.meta.env.DEV;
     />
   </div>
 
+  <PlayerResources class="my-resources" :player="myPlayer" />
+  <PlayerResources class="opponent-resources" :player="opponent" />
+
   <PlayerInfos class="opponent-player" :player="opponent" inverted />
   <PlayerInfos class="my-player" :player="myPlayer" />
+
   <GameMenu>
     <template #menu>
       <slot name="menu" />
@@ -155,8 +174,8 @@ const isDev = import.meta.env.DEV;
 }
 .debug {
   position: fixed;
-  top: var(--size-13);
-  left: 0;
+  top: 0;
+  left: var(--size-13);
   color: white;
   font-size: var(--font-size-0);
   z-index: 10;
@@ -178,7 +197,7 @@ const isDev = import.meta.env.DEV;
 .my-hand {
   position: fixed;
   width: 100%;
-  bottom: 195px;
+  bottom: 185px;
   left: 0;
 }
 
@@ -216,11 +235,24 @@ const isDev = import.meta.env.DEV;
   left: var(--size-6);
   bottom: var(--size-3);
 }
+.my-resources {
+  position: absolute;
+  right: 140px;
+  top: 50.5%;
+  width: 200px;
+}
 
 .opponent-player {
   position: absolute;
   right: var(--size-6);
   top: var(--size-3);
+}
+
+.opponent-resources {
+  position: absolute;
+  right: 140px;
+  top: 43%;
+  width: 200px;
 }
 
 .hovered-cell-infos {
@@ -229,5 +261,36 @@ const isDev = import.meta.env.DEV;
   top: 45%;
   translate: 0 -50%;
   z-index: 2;
+}
+
+.my-deck {
+  --pixel-scale: 1.5;
+  perspective: 1500px;
+  perspective-origin: -2000px 2000px;
+  position: absolute;
+  right: var(--size-10);
+  bottom: -20px;
+  transform-style: preserve-3d;
+  rotate: -30deg;
+
+  > * > * {
+    border-bottom: #73473a 1px solid;
+    border-left: #af7d48 1px solid;
+  }
+}
+.opponent-deck {
+  --pixel-scale: 1.5;
+  perspective: 1500px;
+  perspective-origin: 3000px 2000px;
+  position: absolute;
+  right: var(--size-10);
+  top: -20px;
+  transform-style: preserve-3d;
+  rotate: 30deg;
+
+  > * > * {
+    border-right: #73473a 1px solid;
+    border-bottom: #af7d48 1px solid;
+  }
 }
 </style>

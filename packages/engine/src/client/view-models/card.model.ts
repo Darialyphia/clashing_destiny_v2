@@ -88,7 +88,8 @@ export class CardViewModel {
       main: `cards/${this.data.art.main}`,
       bg: `cards/${this.data.art.bg}`,
       foilBg: this.data.art.foilBg ? `cards/${this.data.art.foilBg}` : undefined,
-      foilMain: this.data.art.foilMain ? `cards/${this.data.art.foilMain}` : undefined
+      foilMain: this.data.art.foilMain ? `cards/${this.data.art.foilMain}` : undefined,
+      sprite: `cards/${this.data.art.sprite}`
     };
   }
 

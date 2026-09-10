@@ -115,6 +115,16 @@ export class CardManagerComponent {
     if (rightBattlefieldCard)
       return { card: rightBattlefieldCard, location: CARD_LOCATIONS.RIGHT_BATTLEFIELD };
 
+    const destinyDeckCard = this.destinyDeck.cards.find(card => card.id === id);
+    if (destinyDeckCard)
+      return { card: destinyDeckCard, location: CARD_LOCATIONS.DESTINY_DECK };
+
+    const runeDeckCard = this.runeDeck.cards.find(card => card.id === id);
+    if (runeDeckCard) return { card: runeDeckCard, location: CARD_LOCATIONS.RUNE_DECK };
+
+    const runeZoneCard = [...this.runeZone].find(card => card.id === id);
+    if (runeZoneCard) return { card: runeZoneCard, location: CARD_LOCATIONS.RUNE_ZONE };
+
     return null;
   }
 

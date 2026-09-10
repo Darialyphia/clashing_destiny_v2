@@ -11,7 +11,7 @@ import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
 import { until } from '@vueuse/core';
 import ModifiersList from './ModifiersList.vue';
 import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
-import AbilityMenu from './AbilityMenu.vue';
+// import AbilityMenu from './AbilityMenu.vue';
 import { INTERACTION_STATES } from '@game/engine/src/game/game.enums';
 import UiSimpleTooltip from '@/ui/components/UiSimpleTooltip.vue';
 
@@ -157,14 +157,14 @@ useFxEvent(FX_EVENTS.CARD_EXHAUST, async event => {
       :pixel-scale="pixelScale"
       :overrides="{ atk: card.atk, hp: card.hp, commandment: card.commandment }"
     />
-    <ModifiersList :modifiers="modifiers" class="modifiers" />
-    <AbilityMenu
+    <!-- <ModifiersList :modifiers="modifiers" class="modifiers" /> -->
+    <!-- <AbilityMenu
       :card="card"
       use-portal
       class="abilities"
       :class="variant"
       :actions-side="variant === 'small' ? 'bottom' : 'top'"
-    />
+    /> -->
     <UiSimpleTooltip>
       <template #trigger>
         <button
@@ -180,7 +180,7 @@ useFxEvent(FX_EVENTS.CARD_EXHAUST, async event => {
 
 <style scoped lang="postcss">
 .board-card {
-  --pixel-scale: 2;
+  --pixel-scale: 1;
   /* width: var(--card-small-v2-width);
   height: var(--card-small-v2-height); */
   transition: all 0.3s var(--ease-2);

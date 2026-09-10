@@ -1,23 +1,22 @@
 <script setup lang="ts">
-import CountChip from './CountChip.vue';
-
-const { size } = defineProps<{ size: number }>();
-
-const maxSize = 25;
+const { size, offset } = defineProps<{
+  size: number;
+  offset: { x: number; y: number; z: number };
+}>();
 </script>
 
 <template>
-  <div class="pile">
-    <div
-      v-for="i in Math.min(size, maxSize)"
-      :key="i"
-      class="pile-item"
-      :style="{ '--i': i - 1 }"
-    >
+  <div
+    class="pile"
+    :style="{
+      '--offset-x': offset.x + 'px',
+      '--offset-y': offset.y + 'px',
+      '--offset-z': offset.z + 'px'
+    }"
+  >
+    <div v-for="i in size" :key="i" class="pile-item" :style="{ '--i': i - 1 }">
       <slot :index="i - 1" />
     </div>
-
-    <CountChip :count="size" class="count" />
   </div>
 </template>
 
@@ -38,14 +37,8 @@ const maxSize = 25;
 
 .pile-item {
   background-size: contain;
-  transform: translateZ(calc(var(--i) * 1px));
-}
-
-.count {
-  bottom: 0;
-  right: 0;
-  position: absolute;
-  z-index: 99;
-  transform: translateZ(calc(v-bind(size) * 1px));
+  transform: translateZ(calc(var(--i) * var(--offset-z)))
+    translateX(calc(var(--i) * var(--offset-x)))
+    translateY(calc(var(--i) * var(--offset-y)));
 }
 </style>
