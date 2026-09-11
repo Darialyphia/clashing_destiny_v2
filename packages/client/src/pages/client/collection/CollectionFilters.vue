@@ -85,7 +85,7 @@ const cardKinds: Array<{
 const affinities: Array<{ id: Affinity; img: string; label: string }> =
   Object.values(AFFINITIES).map(affinity => ({
     id: affinity,
-    img: assets[`ui/card/affinity-${affinity.toLocaleLowerCase()}`].path,
+    img: assets[`ui/card/v3/affinity-${affinity.toLocaleLowerCase()}`].path,
     label: uppercaseFirstLetter(affinity.toLocaleLowerCase())
   }));
 

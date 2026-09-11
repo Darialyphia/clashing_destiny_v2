@@ -15,7 +15,7 @@ export const ghostLightning: SpellBlueprint = {
   id: 'ghostLightning',
   name: 'Ghost Lightning',
   description: dedent /*html*/ `
-  Deal 1 damage to all enemy minions at a battlefield.
+  Deal 1 damage to all enemy minions on each battlefield.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,

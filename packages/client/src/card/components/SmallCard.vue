@@ -318,7 +318,13 @@ const { activeFrameRect, bgPosition, imageBg } = useSprite({
   left: 50%;
   transform: translateX(-50%);
   bottom: calc(10px * var(--pixel-scale));
-  overflow: hidden;
+  pointer-events: none;
+
+  .spell &,
+  .rune &,
+  .artifact & {
+    transform: translateX(-50%) translateY(calc(-12px * var(--pixel-scale)));
+  }
 }
 
 .sprite {

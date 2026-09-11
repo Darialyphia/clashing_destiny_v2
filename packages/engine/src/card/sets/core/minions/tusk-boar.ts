@@ -6,23 +6,28 @@ import {
   CARD_KINDS,
   RARITIES,
   CARD_SPEED,
-  AFFINITIES
+  AFFINITIES,
+  CARD_LOCATIONS
 } from '../../../card.enums';
-import { discardFromHand } from '../../../card-actions-utils';
-import { OnMoveModifier } from '../../../../modifier/modifiers/on-move.modifier';
+import { GAME_EVENTS } from '../../../../game/game.events';
+import { CardAfterDealCombatDamageEvent } from '../../../card.events';
+import type { MinionCard } from '../../../entities/minion.entity';
+import { Modifier } from '../../../../modifier/modifier.entity';
+import { GameEventModifierMixin } from '../../../../modifier/mixins/game-event.mixin';
+import { TogglableModifierMixin } from '../../../../modifier/mixins/togglable.mixin';
 
 export const tuskBoar: MinionBlueprint = {
   id: 'tusk-boar',
   name: 'Tusk Boar',
   description: dedent /*html*/ `
-  When you deal more than 5 damage in a turn while this is in your hand, summon this minion.
-  <rt-timing>End of Turn</rt-timing> Return this to your hand.
+  When you deal more than 5 combat damage in a turn, summon this minion from your hand.
+  <rt-timing>End of Turn</rt-timing>Return this to your hand.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
   art: defaultCardArt('minions/tusk-boar'),
   kind: CARD_KINDS.MINION,
-  rarity: RARITIES.COMMON,
+  rarity: RARITIES.LEGENDARY,
   affinities: [AFFINITIES.FIRE, AFFINITIES.FIRE, AFFINITIES.NEUTRAL],
   manaCost: 3,
   manaSupply: 1,
@@ -33,7 +38,54 @@ export const tuskBoar: MinionBlueprint = {
   commandment: 1,
   canPlay: () => true,
   abilities: [],
-  async onInit(game, card) {},
+  async onInit(game, card) {
+    const summonIfEligible = async () => {
+      const totalDamageDealt = card.player.eventTracker
+        .getEventsThisGameTurnByName(GAME_EVENTS.CARD_AFTER_DEAL_COMBAT_DAMAGE)
+        .filter(event => {
+          const damageEvent = event.data.event as CardAfterDealCombatDamageEvent;
+          return damageEvent.data.card.isAlly(card);
+        })
+        .reduce((total, event) => {
+          const damageEvent = event.data.event as CardAfterDealCombatDamageEvent;
+          return total + damageEvent.data.damage.getFinalAmount(damageEvent.data.target);
+        }, 0);
+
+      if (totalDamageDealt <= 5) return;
+      const position = card.player.boardSide.base.find(space => space.isEmpty);
+      if (!position) return;
+      await card.playImmediatelyAt(position, {});
+    };
+
+    await card.modifiers.add(
+      new Modifier<MinionCard>('tusk-boar-summon', game, card, {
+        mixins: [
+          new TogglableModifierMixin(game, () => card.location === CARD_LOCATIONS.HAND),
+          new GameEventModifierMixin(game, {
+            eventName: GAME_EVENTS.CARD_AFTER_DEAL_COMBAT_DAMAGE,
+            filter: event => event.data.card.isAlly(card),
+            async handler() {
+              await summonIfEligible();
+            }
+          })
+        ]
+      })
+    );
+
+    await card.modifiers.add(
+      new Modifier<MinionCard>('tusk-boar-bounce', game, card, {
+        mixins: [
+          new GameEventModifierMixin(game, {
+            eventName: GAME_EVENTS.TURN_END,
+            async handler() {
+              if (!card.isOnBoard) return;
+              await card.addToHand();
+            }
+          })
+        ]
+      })
+    );
+  },
   async onPlay() {},
   aiHints: {
     shouldPlay: () => 1,

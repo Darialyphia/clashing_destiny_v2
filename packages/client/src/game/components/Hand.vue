@@ -139,6 +139,7 @@ watch(width, v => {
 
 <template>
   <OnClickOutside
+    v-if="state.phase.state !== GAME_PHASES.DRAW"
     class="hand-wrapper"
     :options="{ ignore: [`${ui.DOMSelectors.globalActionButtons.selector} *`] }"
   >

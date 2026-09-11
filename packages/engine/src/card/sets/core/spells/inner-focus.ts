@@ -10,7 +10,6 @@ import {
   RARITIES
 } from '../../../card.enums';
 import type { MinionCard } from '../../../entities/minion.entity';
-import { SpellDamage } from '../../../../utils/damage';
 import { SimpleCommandmentBuffModifier } from '../../../../modifier/modifiers/simple-commandment-modifier';
 import { UntilEndOfTurnModifierMixin } from '../../../../modifier/mixins/until-end-of-turn.mixin';
 
@@ -22,16 +21,15 @@ export const innerFocus: SpellBlueprint<MinionCard> = {
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
-  art: defaultCardArt('spells/inner-focus'),
+  art: defaultCardArt('spells/inner_focus'),
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.COMMON,
-  affinities: [AFFINITIES.FIRE],
-  manaCost: 2,
+  affinities: [AFFINITIES.FIRE, AFFINITIES.FIRE],
+  manaCost: 3,
   manaSupply: 2,
   speed: CARD_SPEED.FAST,
   tags: [],
-  canPlay: (game, card) =>
-    singleAllyMinionTargetRules.canPlay(game, card, minion => minion.isOnBattlefield),
+  canPlay: (game, card) => singleAllyMinionTargetRules.canPlay(game, card),
   getTargets: (game, card) =>
     singleAllyMinionTargetRules.getTargets({
       game,

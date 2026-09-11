@@ -12,8 +12,8 @@ import type { DestinyCard } from '../../../entities/destiny.entity';
 import { WhileOnBattlefieldModifier } from '../../../../modifier/modifiers/while-on-board.modifier';
 import { GAME_EVENTS } from '../../../../game/game.events';
 import { GameEventModifierMixin } from '../../../../modifier/mixins/game-event.mixin';
-import { fireBolt } from '../spells/fire/fire-bolt';
 import { FleetingModifier } from '../../../../modifier/modifiers/fleeting.modifier';
+import { phoenixFire } from '../spells/phoenix-fire';
 
 export const igniteTheSky: DestinyBlueprint = {
   id: 'ignite-the-sky',
@@ -21,7 +21,7 @@ export const igniteTheSky: DestinyBlueprint = {
   collectable: true,
   name: 'Ignite the Sky',
   description: dedent /*html*/ `
-    When a minion moves to this battlefield, add a <rt-card>Fire Bolt</rt-card> to its owner's hand and give it <rt-keyword>Fleeting</rt-keyword>.
+    When a minion moves to this battlefield, add a <rt-card>Phoenix Fire</rt-card> to its owner's hand and give it <rt-keyword>Fleeting</rt-keyword>.
   `,
   setId: CARD_SETS.CORE,
   rarity: RARITIES.RARE,
@@ -39,7 +39,7 @@ export const igniteTheSky: DestinyBlueprint = {
               isMinion(event.data.card) && event.data.to.position.zone === card.location,
             async handler(event) {
               const generatedCard = await event.data.card.player.generateCard(
-                fireBolt.id,
+                phoenixFire.id,
                 event.data.card.isFoil
               );
 

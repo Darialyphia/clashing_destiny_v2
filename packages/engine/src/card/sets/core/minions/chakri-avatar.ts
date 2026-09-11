@@ -8,7 +8,7 @@ import {
   AFFINITIES,
   CARD_SPEED
 } from '../../../card.enums';
-import { WhileOnBattlefieldModifier } from '../../../../modifier/modifiers/while-on-board.modifier';
+import { WhileOnBoardModifier } from '../../../../modifier/modifiers/while-on-board.modifier';
 import { GameEventModifierMixin } from '../../../../modifier/mixins/game-event.mixin';
 import { MinionCard } from '../../../entities/minion.entity';
 import { GAME_EVENTS } from '../../../../game/game.events';
@@ -20,7 +20,7 @@ export const chakriAvatar: MinionBlueprint = {
   id: 'chakri-avatar',
   name: 'Chakri Avatar',
   description: dedent /*html*/ `
-  <rt-location locations="battlefield"></rt-location> When you play a spell, this gains +1 Attack this turn.
+  When you play a spell, this gains +1 Attack this turn.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -29,7 +29,7 @@ export const chakriAvatar: MinionBlueprint = {
   rarity: RARITIES.COMMON,
   affinities: [AFFINITIES.FIRE],
   manaCost: 2,
-  manaSupply: 1,
+  manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 1,
@@ -39,7 +39,7 @@ export const chakriAvatar: MinionBlueprint = {
   abilities: [],
   async onInit(game, card) {
     await card.modifiers.add(
-      new WhileOnBattlefieldModifier<MinionCard>('chakri_avatar', game, card, {
+      new WhileOnBoardModifier<MinionCard>('chakri_avatar', game, card, {
         mixins: [
           new GameEventModifierMixin(game, {
             eventName: GAME_EVENTS.CARD_AFTER_PLAY,

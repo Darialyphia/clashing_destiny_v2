@@ -296,6 +296,61 @@ export const singleEnemyMinionTargetRules = {
   }
 };
 
+export const battlefieldTargetingRules = {
+  getTargets: async ({
+    game,
+    card,
+    label = 'Select a battlefield',
+    timeoutFallback,
+    predicate = () => true,
+    aiHints,
+    canCancel = false
+  }: {
+    game: Game;
+    card: AnyCard;
+    label?: string;
+    timeoutFallback: AnyCard[];
+    predicate?: (c: DestinyCard) => boolean;
+    aiHints: {
+      shouldPick: (game: Game, player: Player, selectedCards: AnyCard[]) => number;
+    };
+    canCancel?: boolean;
+  }): Promise<InteractionResult<Targets<DestinyCard>>> => {
+    const result = await game.interaction.selectCardsOnBoard<DestinyCard>({
+      player: card.player,
+      label,
+      source: card,
+      timeoutFallback,
+      canCancel,
+      aiHints,
+      isElligible(candidate) {
+        if (!isDestiny(candidate)) {
+          return false;
+        }
+
+        return predicate(candidate);
+      },
+      canCommit(selectedCards) {
+        return selectedCards.length === 1;
+      },
+      isDone(selectedCards) {
+        return selectedCards.length === 1;
+      }
+    });
+    if (result.cancelled) {
+      return { cancelled: true as const, result: null };
+    }
+    return {
+      cancelled: false as const,
+      result: {
+        cards: result.result as DestinyCard[],
+        spaces: [],
+        effect: null
+      }
+    };
+  }
+};
+
 export const singleAllyMinionTargetRules = {
   canPlay(game: Game, card: AnyCard, predicate: (c: MinionCard) => boolean = () => true) {
     return singleAllyTargetRules.canPlay(game, card, c => isMinion(c) && predicate(c));

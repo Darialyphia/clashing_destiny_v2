@@ -104,13 +104,12 @@ export const CARD_LOCATIONS = {
 export type CardLocation = Values<typeof CARD_LOCATIONS>;
 
 export const AFFINITIES = {
-  FIRE: 'Fire',
-  WATER: 'Water',
-  EARTH: 'Earth',
-  AIR: 'Air',
-  LIGHT: 'Light',
-  DARK: 'Dark',
-  ARCANE: 'Arcane',
+  FIRE: 'Songhai',
+  WATER: 'Vanar',
+  EARTH: 'Magmar',
+  AIR: 'Vetruvian',
+  LIGHT: 'Lyonar',
+  DARK: 'Abyssian',
   NEUTRAL: 'Neutral'
 } as const;
 export type Affinity = Values<typeof AFFINITIES>;

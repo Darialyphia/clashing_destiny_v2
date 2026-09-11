@@ -403,10 +403,7 @@ export class MinionCard extends Card<
   }
 
   get canMove(): boolean {
-    return this.interceptors.canMove.getValue(
-      this.game.gamePhaseSystem.getContext().state === GAME_PHASES.MAIN && this.isOnBoard,
-      this
-    );
+    return this.interceptors.canMove.getValue(this.isOnBoard, this);
   }
 
   get canMoveManually(): boolean {

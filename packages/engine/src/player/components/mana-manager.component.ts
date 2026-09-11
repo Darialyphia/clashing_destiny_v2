@@ -22,7 +22,10 @@ export class ManaManagerComponent {
 
   init() {
     this.game.on(GAME_EVENTS.AFTER_CHANGE_PHASE, async event => {
-      if (event.data.to.state === GAME_PHASES.MAIN) {
+      if (
+        event.data.to.state === GAME_PHASES.MAIN &&
+        event.data.from === GAME_PHASES.SUPPLY
+      ) {
         this._maxMana = this.manaRegen;
       }
     });

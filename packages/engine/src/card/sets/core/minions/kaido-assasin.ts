@@ -18,7 +18,7 @@ export const kaidoAssassin: MinionBlueprint = {
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
-  art: defaultCardArt('minions/kaido-assassin'),
+  art: defaultCardArt('minions/kaido-assasin'),
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.COMMON,
   affinities: [AFFINITIES.FIRE],

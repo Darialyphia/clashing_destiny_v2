@@ -87,27 +87,25 @@ watch(
   background-position: center;
   background-repeat: no-repeat;
   position: relative;
-  &[data-affinity='fire'] {
-    background-image: url('@/assets/ui/card/v3/affinity-fire.png');
+  &[data-affinity='songhai'] {
+    background-image: url('@/assets/ui/card/v3/affinity-songhai.png');
   }
-  &[data-affinity='water'] {
-    background-image: url('@/assets/ui/card/v3/affinity-water.png');
+  &[data-affinity='vanar'] {
+    background-image: url('@/assets/ui/card/v3/affinity-vanar.png');
   }
-  &[data-affinity='earth'] {
-    background-image: url('@/assets/ui/card/v3/affinity-earth.png');
+  &[data-affinity='magmar'] {
+    background-image: url('@/assets/ui/card/v3/affinity-magmar.png');
   }
-  &[data-affinity='air'] {
-    background-image: url('@/assets/ui/card/v3/affinity-air.png');
+  &[data-affinity='vetruvian'] {
+    background-image: url('@/assets/ui/card/v3/affinity-vetruvian.png');
   }
-  &[data-affinity='light'] {
-    background-image: url('@/assets/ui/card/v3/affinity-light.png');
+  &[data-affinity='lyonar'] {
+    background-image: url('@/assets/ui/card/v3/affinity-lyonar.png');
   }
-  &[data-affinity='dark'] {
-    background-image: url('@/assets/ui/card/v3/affinity-dark.png');
+  &[data-affinity='abyssian'] {
+    background-image: url('@/assets/ui/card/v3/affinity-abyssian.png');
   }
-  &[data-affinity='arcane'] {
-    background-image: url('@/assets/ui/card/v3/affinity-arcane.png');
-  }
+
   &[data-affinity='neutral'] {
     background-image: url('@/assets/ui/card/v3/affinity-neutral.png');
   }

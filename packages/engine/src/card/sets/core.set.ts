@@ -1,66 +1,13 @@
 import type { CardSet } from '.';
 import { CARD_SETS } from '../card.enums';
-import { arcaneSight } from './core/spells/arcane/arcane-sight';
-import { arcaneSpark } from './core/spells/arcane/arcane-spark';
-import { astralBall } from './core/minions/arcane/astral-ball';
-import { astralSage } from './core/minions/arcane/astral-sage';
-import { birdOfGoodLuck } from './core/minions/neutral/bird-of-good-luck';
-import { braveCitizen } from './core/minions/neutral/brave-citizen';
-import { conjureFocus } from './core/spells/neutral/conjure-focus';
-import { conjureMight } from './core/spells/neutral/conjure-might';
-import { conjureResonance } from './core/spells/neutral/conjure-resonance';
-import { conjureWisdom } from './core/spells/neutral/conjure-wisdom';
-import { cremation } from './core/spells/fire/cremation';
 import { crowdsFavor } from './core/destinies/crowds-favor';
 import { dayOfConquest } from './core/destinies/day-of-conquest';
 import { dayOfFortitude } from './core/destinies/day-of-fortitude';
-import { engulfInFlames } from './core/spells/fire/engulf-in-flames';
-import { enigmaticWizard } from './core/minions/arcane/enigmatic-wizard';
-import { erinasApprentice } from './core/minions/arcane/erinas-apprentice';
-import { fallingStar } from './core/spells/arcane/falling-star';
-import { fireBall } from './core/spells/fire/fire-ball';
-import { fireBolt } from './core/spells/fire/fire-bolt';
-import { fireImp } from './core/minions/fire/fire-imp';
-import { flameArchmage } from './core/minions/fire/flame-archmage';
-import { impassibleMonk } from './core/minions/earth/impassible-monk';
-import { indomitableVindicator } from './core/minions/fire/indomitable-vindicator';
-import { innerFire } from './core/spells/fire/inner-fire';
-import { lesserFireSummoning } from './core/spells/fire/lesser-fire-summoning';
-import { manaFueledGolem } from './core/minions/arcane/mana-fueled-golem';
-import { manaWeaverApprentice } from './core/minions/arcane/mana-weaver-apprentice';
-import { mountainProtector } from './core/minions/earth/mountain-protector';
-import { mysticRecall } from './core/spells/arcane/mystic-recall';
-import { pyromancer } from './core/minions/fire/pyromancer';
-import { recklessRecruit } from './core/minions/fire/reckless-recruit';
-import { repulsorShield } from './core/spells/arcane/repulsor-shield';
 import { restrainTheBeast } from './core/destinies/restrain-the-beast';
-import { rockSlideGolem } from './core/minions/earth/rock-slide-golem';
-import { runicCatalyst } from './core/artifacts/arcane/runic-catalyst';
-import { spellSiphon } from './core/spells/arcane/spell-siphon';
-import { starConvergence } from './core/spells/arcane/star-convergence';
-import { starSeer } from './core/minions/arcane/star-seer';
-import { terramancer } from './core/minions/earth/terramancer';
-import { twinFlame } from './core/spells/fire/twin-flame';
-import { vineTrapper } from './core/minions/earth/vine-trapper';
-import { willowisp } from './core/minions/fire/willowisp';
 import { ashesOfPain } from './core/destinies/ashes-of-pain';
-import { blastSorcerer } from './core/minions/fire/blast-sorcerer';
-import { moltenSalamander } from './core/minions/fire/molten-salamander';
 import { austerity } from './core/destinies/austerity';
-import { cosmic } from './core/spells/arcane/cosmic-flurry';
-import {
-  enjiOneManArmy,
-  enjiOneManArmyFullArt,
-  enjiOneManArmyAlt
-} from './core/minions/fire/enji-one-man-army';
-import { cosmicAvatar, cosmicAvatarAlt } from './core/minions/arcane/cosmic-avatar';
 import { fleetingThought } from './core/destinies/fleeting-thoughts';
 import { igniteTheSky } from './core/destinies/ignite-the-sky';
-import { ancientTreant } from './core/minions/earth/ancient-treant';
-import { loamkinTender } from './core/minions/earth/loamkin-tender';
-import { mosscloakQuartermaster } from './core/minions/earth/mosscloak-quartermaster';
-import { invigorate } from './core/spells/earth/invigorate';
-import { landSlide } from './core/spells/earth/land-slide';
 import { lightAffinity } from './core/runes/light-affinity';
 import { fireAffinity } from './core/runes/fire-affinity';
 import { kaleosXaan } from './core/minions/kaleos-xaan';
@@ -77,71 +24,22 @@ import { innerFocus } from './core/spells/inner-focus';
 import { kaidoAssassin } from './core/minions/kaido-assasin';
 import { keshraiFanblade } from './core/minions/keshrai-fanblade';
 import { tuskBoar } from './core/minions/tusk-boar';
+import { assassinationProtocol } from './core/spells/assassination-protocol';
+import { eightGates } from './core/spells/eight-gates';
+import { firestormMantra } from './core/spells/firestorm-mantra';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
   name: 'Core Set',
   cards: [
-    arcaneSight,
-    arcaneSpark,
-    astralBall,
-    astralSage,
-    birdOfGoodLuck,
-    braveCitizen,
-    conjureFocus,
-    conjureMight,
-    conjureResonance,
-    conjureWisdom,
-    cremation,
     crowdsFavor,
     dayOfConquest,
     dayOfFortitude,
-    engulfInFlames,
-    enigmaticWizard,
-    erinasApprentice,
-    fallingStar,
-    fireBall,
-    fireBolt,
-    fireImp,
-    flameArchmage,
-    impassibleMonk,
-    indomitableVindicator,
-    innerFire,
-    lesserFireSummoning,
-    manaFueledGolem,
-    manaWeaverApprentice,
-    mountainProtector,
-    mysticRecall,
-    pyromancer,
-    recklessRecruit,
-    repulsorShield,
     restrainTheBeast,
-    rockSlideGolem,
-    runicCatalyst,
-    spellSiphon,
-    starConvergence,
-    starSeer,
-    terramancer,
-    twinFlame,
-    vineTrapper,
-    willowisp,
     ashesOfPain,
-    blastSorcerer,
-    moltenSalamander,
     austerity,
-    cosmic,
-    enjiOneManArmy,
-    cosmicAvatar,
-    cosmicAvatarAlt,
-    enjiOneManArmyFullArt,
-    enjiOneManArmyAlt,
     fleetingThought,
     igniteTheSky,
-    ancientTreant,
-    loamkinTender,
-    mosscloakQuartermaster,
-    invigorate,
-    landSlide,
     lightAffinity,
     fireAffinity,
     kaleosXaan,
@@ -157,6 +55,9 @@ export const coreSet: CardSet = {
     innerFocus,
     kaidoAssassin,
     keshraiFanblade,
-    tuskBoar
+    tuskBoar,
+    assassinationProtocol,
+    eightGates,
+    firestormMantra
   ]
 };

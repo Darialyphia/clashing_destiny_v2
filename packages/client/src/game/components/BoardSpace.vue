@@ -74,8 +74,8 @@ const handleMouseup = (e: MouseEvent) => {
 .minion-cell {
   width: var(--card-small-v3-width);
   height: var(--card-small-v3-height);
-  /* background: url('@/assets/ui/board-small-card-slot.png') no-repeat center
-    center; */
+  background: url('@/assets/ui/board-small-card-slot.png') no-repeat center
+    center;
   transition:
     background-image 0.25s,
     filter 0.2s var(--ease-2),

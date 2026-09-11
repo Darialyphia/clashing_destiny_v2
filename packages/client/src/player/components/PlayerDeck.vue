@@ -1,5 +1,9 @@
 <script setup lang="ts">
-import { CARD_KINDS } from '@game/engine/src/card/card.enums';
+import {
+  AFFINITIES,
+  CARD_KINDS,
+  type Affinity
+} from '@game/engine/src/card/card.enums';
 import { CARDS_DICTIONARY } from '@game/engine/src/card/sets';
 import {
   HoverCardContent,
@@ -9,6 +13,7 @@ import {
 } from 'reka-ui';
 import FancyButton from '@/ui/components/FancyButton.vue';
 import type { DeckValidationResult } from '@game/engine/src/card/validators/deck.validator';
+import { assets } from '@/assets';
 
 export type DisplayedDeck = {
   name: string;
@@ -40,6 +45,22 @@ const artifacts = computed(() =>
 const violations = computed(() =>
   deck.isValid.result === 'failure' ? deck.isValid.violations : []
 );
+
+const affinities = computed(() => {
+  const result: Affinity[] = [];
+  for (const aff of Object.values(AFFINITIES)) {
+    if (aff === AFFINITIES.NEUTRAL) continue;
+    const max = Math.max(
+      ...mainDeck.value.map(
+        item => item.blueprint.affinities.filter(a => a === aff).length
+      )
+    );
+
+    result.push(...Array.from({ length: max }, () => aff));
+  }
+
+  return result;
+});
 </script>
 
 <template>
@@ -57,14 +78,17 @@ const violations = computed(() =>
           <div v-if="deck.isValid.result === 'failure'" class="invalid-label">
             Invalid Deck
           </div>
-          <!-- <div v-else class="flex gap-2">
+          <div v-else class="flex gap-2">
             <img
               v-for="aff in affinities"
               :key="aff"
-              :src="assets[`ui/card/affinity-${aff.toLocaleLowerCase()}`].path"
+              :src="
+                assets[`ui/card/v3/affinity-${aff.toLocaleLowerCase()}`].path
+              "
               :alt="aff"
+              class="affinity"
             />
-          </div> -->
+          </div>
         </div>
 
         <HoverCardTrigger as-child>
@@ -180,5 +204,10 @@ const violations = computed(() =>
 .invalid-label {
   color: var(--red-6);
   font-weight: var(--font-weight-7);
+}
+
+.affinity {
+  width: 26px;
+  aspect-ratio: 1 / 1;
 }
 </style>

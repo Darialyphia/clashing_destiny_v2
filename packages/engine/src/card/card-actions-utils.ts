@@ -1,3 +1,4 @@
+import { isDefined } from '@game/shared';
 import type { Game } from '../game/game';
 import { GAME_PHASES } from '../game/game.enums';
 import { GAME_EVENTS } from '../game/game.events';
@@ -208,38 +209,44 @@ export const askMandatoryYesNoQuestion = async ({
   return answer.result === 'yes';
 };
 
-export const statBuff = async (
+export const statsBuff = async (
   game: Game,
   source: AnyCard,
   card: MinionCard,
   options: {
     modifierType: string;
-    atk: number | (() => number);
-    maxHp: number | (() => number);
-    cmd: number | (() => number);
+    atk?: number | (() => number);
+    maxHp?: number | (() => number);
+    cmd?: number | (() => number);
     mixins?: () => ModifierMixin<MinionCard>[];
   }
 ) => {
-  await card.modifiers.add(
-    new SimpleAttackBuffModifier(`${options.modifierType}-atk`, game, source, {
-      amount: options.atk,
-      mixins: options.mixins?.() ?? []
-    })
-  );
+  if (isDefined(options.atk)) {
+    await card.modifiers.add(
+      new SimpleAttackBuffModifier(`${options.modifierType}-atk`, game, source, {
+        amount: options.atk,
+        mixins: options.mixins?.() ?? []
+      })
+    );
+  }
 
-  await card.modifiers.add(
-    new SimpleHealthBuffModifier(`${options.modifierType}-hp`, game, source, {
-      amount: options.maxHp,
-      mixins: options.mixins?.() ?? []
-    })
-  );
+  if (isDefined(options.maxHp)) {
+    await card.modifiers.add(
+      new SimpleHealthBuffModifier(`${options.modifierType}-hp`, game, source, {
+        amount: options.maxHp,
+        mixins: options.mixins?.() ?? []
+      })
+    );
+  }
 
-  await card.modifiers.add(
-    new SimpleCommandmentBuffModifier(`${options.modifierType}-cmd`, game, source, {
-      amount: options.cmd,
-      mixins: options.mixins?.() ?? []
-    })
-  );
+  if (isDefined(options.cmd)) {
+    await card.modifiers.add(
+      new SimpleCommandmentBuffModifier(`${options.modifierType}-cmd`, game, source, {
+        amount: options.cmd,
+        mixins: options.mixins?.() ?? []
+      })
+    );
+  }
 };
 
 export const reserve = async (game: Game, cards: AnyCard[]) => {

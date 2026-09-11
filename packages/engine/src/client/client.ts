@@ -295,7 +295,6 @@ export class GameClient {
 
   declarePlayCard(card: CardViewModel) {
     this.optimisticStateManager.startPlayingCard(card.id);
-    console.log('declare play card');
     this.dispatch({
       type: 'declarePlayCard',
       payload: {

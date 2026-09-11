@@ -14,30 +14,28 @@ import {
   RARITIES
 } from '../../../card.enums';
 import type { MinionCard } from '../../../entities/minion.entity';
-import { SimpleAttackBuffModifier } from '../../../../modifier/modifiers/simple-attack-buff.modifier';
-import { SimpleCommandmentBuffModifier } from '../../../../modifier/modifiers/simple-commandment-modifier';
+import { StealthModifier } from '../../../../modifier/modifiers/stealth.modifier';
 import { UntilEndOfTurnModifierMixin } from '../../../../modifier/mixins/until-end-of-turn.mixin';
-import { SimpleHealthBuffModifier } from '../../../../modifier/modifiers/simple-health-buff.modifier';
+import { BackstabModifier } from '../../../../modifier/modifiers/backstab.modifier';
 
-export const mistDragonSeal: SpellBlueprint<MinionCard> = {
-  id: 'mistDragonSeal',
-  name: 'Mist Dragon Seal',
+export const assassinationProtocol: SpellBlueprint<MinionCard> = {
+  id: 'assassinationProtocol',
+  name: 'Assassination Protocol',
   description: dedent /*html*/ `
-  Move an ally minion to a battlefield. It gains +1/+1/+1.
+  Move an ally with a cost of <rt-mana>3</rt-mana> or less. Give it <rt-keyword>Stealth</rt-keyword> and <rt-keyword>Backstab 1</rt-keyword> this turn.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
-  art: defaultCardArt('spells/mist-dragon-seal'),
+  art: defaultCardArt('spells/assassination-protocol'),
   kind: CARD_KINDS.SPELL,
-  rarity: RARITIES.COMMON,
-  affinities: [AFFINITIES.FIRE, AFFINITIES.NEUTRAL],
-  manaCost: 3,
+  rarity: RARITIES.RARE,
+  affinities: [AFFINITIES.FIRE, AFFINITIES.FIRE],
+  manaCost: 2,
   manaSupply: 2,
   speed: CARD_SPEED.FAST,
   tags: [],
-  shouldHideTargetArrows: true,
   canPlay: (game, card) =>
-    singleAllyMinionTargetRules.canPlay(game, card, minion => minion.isOnBattlefield) &&
+    singleAllyMinionTargetRules.canPlay(game, card, minion => minion.manaCost <= 3) &&
     card.player.boardSide.hasEmptySpaceInBattlefield,
   getTargets: async (game, card) => {
     const minionToMove = await singleAllyMinionTargetRules.getTargets({
@@ -45,7 +43,7 @@ export const mistDragonSeal: SpellBlueprint<MinionCard> = {
       card,
       timeoutFallback: singleAllyMinionTargetRules.defaultTimeoutFallback(game, card),
       canCancel: true,
-      predicate: minion => minion.isOnBattlefield,
+      predicate: minion => minion.manaCost <= 3,
       aiHints: {
         shouldPick: () => 1
       }
@@ -56,10 +54,7 @@ export const mistDragonSeal: SpellBlueprint<MinionCard> = {
     const destination = await emptyBoardSpaceTargetRules.getTargets({
       game,
       card,
-      predicate: space =>
-        space.player.equals(card.player) &&
-        (space.position.zone === CARD_LOCATIONS.LEFT_BATTLEFIELD ||
-          space.position.zone === CARD_LOCATIONS.RIGHT_BATTLEFIELD),
+      predicate: space => space.player.equals(card.player),
       label: 'Select a space to move the minion to.'
     });
 
@@ -85,18 +80,12 @@ export const mistDragonSeal: SpellBlueprint<MinionCard> = {
     await target.move(destination.position.zone, destination.position.index);
 
     await target.modifiers.add(
-      new SimpleAttackBuffModifier('mist-dragon-seal-atk-buff', game, card, {
-        amount: 1
-      })
+      new StealthModifier(game, card, { mixins: [new UntilEndOfTurnModifierMixin(game)] })
     );
     await target.modifiers.add(
-      new SimpleCommandmentBuffModifier('mist-dragon-seal-cmd-buff', game, card, {
-        amount: 1
-      })
-    );
-    await target.modifiers.add(
-      new SimpleHealthBuffModifier('mist-dragon-seal-hp-buff', game, card, {
-        amount: 1
+      new BackstabModifier(game, card, {
+        amount: 1,
+        mixins: [new UntilEndOfTurnModifierMixin(game)]
       })
     );
   },

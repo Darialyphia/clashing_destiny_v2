@@ -263,8 +263,7 @@ export const KEYWORDS = {
   STEALTH: {
     id: 'stealth',
     name: 'Stealth',
-    description:
-      'This unit cannot be attacked or targeted  as long as it is not exhausted.',
+    description: 'This unit cannot be attacked or targeted  as long as it is awake.',
     aliases: []
   },
   STUNNED: {
