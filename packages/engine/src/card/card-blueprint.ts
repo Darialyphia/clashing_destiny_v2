@@ -136,7 +136,7 @@ export type MinionBlueprint = CardBlueprintBase & {
   maxHp: number;
   atk: number;
   commandment: number;
-  abilities: AbilityBlueprint<MinionCard, any>[];
+  abilities: AbilityBlueprint<MinionCard, AnyCard>[];
   canPlay: (game: Game, card: MinionCard) => boolean;
   onInit: (game: Game, card: MinionCard) => Promise<void>;
   onPlay: (game: Game, card: MinionCard) => Promise<void>;
@@ -167,7 +167,7 @@ export type ArtifactBlueprint = CardBlueprintBase & {
   manaSupply: number;
   kind: Extract<CardKind, typeof CARD_KINDS.ARTIFACT>;
   durability: number;
-  abilities: AbilityBlueprint<ArtifactCard, any>[];
+  abilities: AbilityBlueprint<ArtifactCard, AnyCard>[];
   onInit: (game: Game, card: ArtifactCard) => Promise<void>;
   canPlay: (game: Game, card: ArtifactCard) => boolean;
   onPlay: (game: Game, card: ArtifactCard) => Promise<void>;

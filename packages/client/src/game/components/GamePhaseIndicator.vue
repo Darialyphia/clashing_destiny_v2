@@ -9,11 +9,9 @@ const phase = ref<string | null>(null);
 useFxEvent(FX_EVENTS.AFTER_CHANGE_PHASE, async event => {
   if (
     event.from === GAME_PHASES.PLAY_CARD ||
-    event.to.state === GAME_PHASES.PLAY_CARD
+    event.to.state === GAME_PHASES.PLAY_CARD ||
+    event.to.state === GAME_PHASES.END
   ) {
-    return;
-  }
-  if (event.to.state === GAME_PHASES.DRAW) {
     return;
   }
 

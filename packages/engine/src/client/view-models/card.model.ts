@@ -282,9 +282,17 @@ export class CardViewModel {
     return null;
   }
 
+  get maxDurability() {
+    if ('maxDurability' in this.data) {
+      return this.data.maxDurability as number;
+    }
+
+    return null;
+  }
+
   get durability() {
-    if ('durability' in this.data) {
-      return this.data.durability as number;
+    if ('remainingDurability' in this.data) {
+      return this.data.remainingDurability as number;
     }
 
     return null;

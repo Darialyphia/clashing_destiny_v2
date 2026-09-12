@@ -58,15 +58,17 @@ const ui = useGameUi();
   gap: var(--size-2);
 }
 .ability {
-  width: 24px;
+  width: 32px;
   aspect-ratio: 1;
-  background: url('@/assets/ui/card/ability.png') no-repeat center/contain;
+  background: url('@/assets/ui/card/v3/ability.png');
+  background-size: cover;
   transition: filter 0.2s;
   &:hover {
     filter: drop-shadow(0 0 2px white) brightness(150%);
   }
   &:disabled {
-    background: url('@/assets/ui/card/ability-disabled.png');
+    background: url('@/assets/ui/card/v3/ability-disabled.png') no-repeat
+      center/cover;
   }
 }
 

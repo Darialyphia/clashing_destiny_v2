@@ -179,15 +179,8 @@ export const provideCardList = () => {
         return true;
       })
       .sort((a, b) => {
-        if (a.card.affinities.length !== b.card.affinities.length) {
-          return a.card.affinities.length - b.card.affinities.length;
-        }
-
-        if (a.card.affinities[0] !== b.card.affinities[0]) {
-          return (
-            (AFFINITY_ORDER[a.card.affinities[0]] ?? 999) -
-            (AFFINITY_ORDER[b.card.affinities[0]] ?? 999)
-          );
+        if (KIND_ORDER[a.card.kind] !== KIND_ORDER[b.card.kind]) {
+          return KIND_ORDER[a.card.kind] - KIND_ORDER[b.card.kind];
         }
         if (
           'manaCost' in a.card &&
@@ -196,9 +189,13 @@ export const provideCardList = () => {
         ) {
           return (a.card.manaCost ?? 0) - (b.card.manaCost ?? 0);
         }
-
-        if (a.card.kind !== b.card.kind) {
-          return KIND_ORDER[a.card.kind] - KIND_ORDER[b.card.kind];
+        const affinityA = a.card.affinities?.[0];
+        const affinityB = b.card.affinities?.[0];
+        if (affinityA !== affinityB) {
+          return (
+            (AFFINITY_ORDER[affinityA] ?? -1) -
+            (AFFINITY_ORDER[affinityB] ?? -1)
+          );
         }
 
         return a.card.name

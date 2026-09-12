@@ -8,6 +8,13 @@ import { SimpleCommandmentBuffModifier } from '../modifier/modifiers/simple-comm
 import { SimpleHealthBuffModifier } from '../modifier/modifiers/simple-health-buff.modifier';
 import type { AnyCard } from './entities/card.entity';
 import type { MinionCard } from './entities/minion.entity';
+import type { ArtifactCard } from './entities/artifact.entity';
+import {
+  RemoveOnLeaveBoardModifierMixin,
+  RemoveOnOtherModifierRemovedMixin
+} from '../modifier/mixins/remove-on-destroyed';
+import { EquippedModifier } from '../modifier/modifiers/equip.modifier';
+import type { Modifier } from '../modifier/modifier.entity';
 
 export const scry = async (game: Game, card: AnyCard, amount: number) => {
   const cards = card.player.cardManager.mainDeck.peek(amount);

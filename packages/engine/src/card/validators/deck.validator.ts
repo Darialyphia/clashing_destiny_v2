@@ -192,7 +192,7 @@ export class DeckValidator<TMeta> implements DeckValidator<TMeta> {
     }
 
     const violations = this.validateCard({ ...card, copies: card.copies + 1 }, deck);
-
+    console.log(card, violations);
     return violations.length === 0;
   }
 }

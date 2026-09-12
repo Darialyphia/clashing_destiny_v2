@@ -35,6 +35,10 @@ export const isRune = (card: AnyCard): card is RuneCard => {
   return card.kind === CARD_KINDS.RUNE;
 };
 
+export const isSecret = (card: AnyCard): boolean => {
+  return card.kind === CARD_KINDS.SECRET;
+};
+
 export const minionTargetRules = {
   canPlay: (
     game: Game,

@@ -34,7 +34,11 @@ export const cards = {
 "firestormMantra": "firestormMantra",
 "syvrel-the-exile": "syvrel-the-exile",
 "austerity": "austerity",
-"counterstrike": "counterstrike"
+"counterstrike": "counterstrike",
+"dagger-kiri": "dagger-kiri",
+"the-amber-pass": "the-amber-pass",
+"obscuring-blow": "obscuring-blow",
+"cycloneMask": "cycloneMask"
 } as const;
 
 export const collectableCards = {
@@ -66,7 +70,11 @@ export const collectableCards = {
 "firestormMantra": "firestormMantra",
 "syvrel-the-exile": "syvrel-the-exile",
 "austerity": "austerity",
-"counterstrike": "counterstrike"
+"counterstrike": "counterstrike",
+"dagger-kiri": "dagger-kiri",
+"the-amber-pass": "the-amber-pass",
+"obscuring-blow": "obscuring-blow",
+"cycloneMask": "cycloneMask"
 } as const;
 
 type CardSet = Array<{id: string; collectable: boolean; rarity: Rarity, kind: CardKind}>;
@@ -245,6 +253,30 @@ export const cardsBySet: Record<string, CardSet> = {
     "collectable": true,
     "rarity": "common",
     "kind": "SECRET"
+  },
+  {
+    "id": "dagger-kiri",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "MINION"
+  },
+  {
+    "id": "the-amber-pass",
+    "collectable": true,
+    "rarity": "rare",
+    "kind": "DESTINY"
+  },
+  {
+    "id": "obscuring-blow",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "SECRET"
+  },
+  {
+    "id": "cycloneMask",
+    "collectable": true,
+    "rarity": "rare",
+    "kind": "ARTIFACT"
   }
 ]
 };
@@ -278,7 +310,11 @@ export const cardShortIds: Record<string, number> = {
 "firestormMantra": 27,
 "syvrel-the-exile": 28,
 "austerity": 30,
-"counterstrike": 31
+"counterstrike": 31,
+"dagger-kiri": 32,
+"the-amber-pass": 33,
+"obscuring-blow": 34,
+"cycloneMask": 35
 } as const;
 
 export const cardIdByShortId: Record<number, string> = {
@@ -310,5 +346,9 @@ export const cardIdByShortId: Record<number, string> = {
 "27": "firestormMantra",
 "28": "syvrel-the-exile",
 "30": "austerity",
-"31": "counterstrike"
+"31": "counterstrike",
+"32": "dagger-kiri",
+"33": "the-amber-pass",
+"34": "obscuring-blow",
+"35": "cycloneMask"
 } as const;

@@ -29,6 +29,10 @@ import { firestormMantra } from './core/spells/firestorm-mantra';
 import { syvrelTheExile } from './core/minions/syvrel-the-exile';
 import { forgottenMarsh } from './core/destinies/forgotten-marsh';
 import { counterstrike } from './core/secrets/counterstrike';
+import { daggerKiri } from './core/minions/dagger-kiri';
+import { theAmberPass } from './core/destinies/the-amber-pass';
+import { obscuringBlow } from './core/secrets/obscuring-blow';
+import { cycloneMask } from './core/artifacts/cyclone-mask';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -62,6 +66,10 @@ export const coreSet: CardSet = {
     firestormMantra,
     syvrelTheExile,
     forgottenMarsh,
-    counterstrike
+    counterstrike,
+    daggerKiri,
+    theAmberPass,
+    obscuringBlow,
+    cycloneMask
   ]
 };

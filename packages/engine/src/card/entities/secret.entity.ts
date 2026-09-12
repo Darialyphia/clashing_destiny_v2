@@ -4,8 +4,12 @@ import { GAME_PHASES } from '../../game/game.enums';
 import type { Player } from '../../player/player.entity';
 import { Interceptable } from '../../utils/interceptable';
 import { type SecretBlueprint, type Targets } from '../card-blueprint';
-import { CARD_EVENTS, CARD_KINDS } from '../card.enums';
-import { CardEffectTriggeredEvent, CardPlayEvent } from '../card.events';
+import { CARD_EVENTS, CARD_KINDS, CARD_LOCATIONS } from '../card.enums';
+import {
+  CardChangeLocationEvent,
+  CardEffectTriggeredEvent,
+  CardPlayEvent
+} from '../card.events';
 import {
   Card,
   makeCardInterceptors,
@@ -14,7 +18,7 @@ import {
   type SerializedCard
 } from './card.entity';
 import type { DestinyCard } from './destiny.entity';
-import type { GameEventMap } from '../../game/game.events';
+import { GAME_EVENTS, type GameEventMap } from '../../game/game.events';
 
 export type SerializedSecretCard = SerializedCard;
 export type SecretCardInterceptors = CardInterceptors & {
@@ -103,6 +107,16 @@ export class SecretCard extends Card<
     return result;
   }
 
+  get battlefield() {
+    if (this.location === CARD_LOCATIONS.LEFT_BATTLEFIELD) {
+      return this.player.boardSide.leftBattlefield;
+    }
+    if (this.location === CARD_LOCATIONS.RIGHT_BATTLEFIELD) {
+      return this.player.boardSide.rightBattlefield;
+    }
+    return null;
+  }
+
   private async wrappedHandler(event: GameEventMap[keyof GameEventMap]) {
     if (!this.blueprint.trigger.filter(this.game, this, event)) {
       return;
@@ -126,6 +140,22 @@ export class SecretCard extends Card<
     await this.dispose();
   }
 
+  async onLeaveBoard(event: CardChangeLocationEvent) {
+    if (!event.data.card.equals(this)) return;
+    if (
+      this.location !== CARD_LOCATIONS.LEFT_BATTLEFIELD &&
+      this.location !== CARD_LOCATIONS.RIGHT_BATTLEFIELD
+    ) {
+      return;
+    }
+
+    this.game.off(this.blueprint.trigger.eventName, this.wrappedHandler as any);
+    this.game.off(CARD_EVENTS.CARD_AFTER_CHANGE_LOCATION, this.onLeaveBoard);
+    this.game.once(GAME_EVENTS.TURN_END, async () => {
+      await this.addToHand();
+    });
+  }
+
   async playWithTargets(position: DestinyCard, targets: Targets) {
     this.targets = targets;
     await this.resolve(async () => {
@@ -135,6 +165,7 @@ export class SecretCard extends Card<
         : position.battlefield!.opponentBattlefield!;
       battlefield.secretCard = this;
       this.game.on(this.blueprint.trigger.eventName, this.wrappedHandler as any);
+      this.game.on(CARD_EVENTS.CARD_AFTER_CHANGE_LOCATION, this.onLeaveBoard);
     });
 
     this.targets = null;

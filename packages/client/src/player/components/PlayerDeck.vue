@@ -67,7 +67,7 @@ const affinities = computed(() => {
   <div>
     <HoverCardRoot :open-delay="200" :close-delay="0">
       <button
-        class="player-deck"
+        class="player-deck surface"
         :class="{
           invalid: deck.isValid.result === 'failure'
         }"
@@ -147,7 +147,7 @@ const affinities = computed(() => {
     right calc(100% + 70px);
   background-size: 200%, calc(2px * 96);
   padding: var(--size-2) var(--size-4);
-  border: solid 1px hsl(var(--color-primary-hsl) / 0.5);
+  /* border: solid 1px hsl(var(--color-primary-hsl) / 0.5); */
   &.invalid {
     border-color: var(--red-8);
     background-image:

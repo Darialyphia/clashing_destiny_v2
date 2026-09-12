@@ -117,7 +117,7 @@ const { floatingStyles } = useFloating(reference, floating, {
             <li
               v-for="group in visibleModifiers"
               :key="group.key"
-              class="modifier-tooltip"
+              class="modifier-tooltip surface-transparent"
             >
               <div class="modifier-header">
                 <div
@@ -162,10 +162,10 @@ li {
   background-color: hsla(0, 0%, 0%, 0.65);
   backdrop-filter: blur(4px);
   color: #efef9f;
-  padding: var(--size-1) var(--size-3);
+  /* padding: var(--size-1) var(--size-3); */
   font-family: 'Lato';
   font-size: 12px;
-  border: solid 1px #bb8225;
+  /* border: solid 1px #bb8225; */
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
 }
 

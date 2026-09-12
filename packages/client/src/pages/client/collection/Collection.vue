@@ -4,6 +4,7 @@ import { useCollectionPage } from './useCollectionPage';
 import CollectionCard from './CollectionCard.vue';
 import { useIntersectionObserver } from '@vueuse/core';
 import UiSpinner from '@/ui/components/UiSpinner.vue';
+import { domToPng } from 'modern-screenshot';
 
 const { cards, viewMode, isLoading } = useCollectionPage();
 
@@ -37,6 +38,21 @@ useIntersectionObserver(
     threshold: 0
   }
 );
+
+const screenshot = async (id: string, e: MouseEvent) => {
+  const card = (e.target as HTMLElement)
+    .closest('li')
+    ?.querySelector('.card-front') as HTMLElement;
+  const png = await domToPng(card, {
+    backgroundColor: 'transparent'
+  });
+  const a = document.createElement('a');
+  a.href = png;
+  a.download = `${id}.png`;
+  a.click();
+};
+
+const isDev = import.meta.env.DEV;
 </script>
 
 <template>
@@ -65,13 +81,13 @@ useIntersectionObserver(
               <CollectionCard :card="card" />
             </div>
           </Transition>
-          <!-- <button
-            v-if="!isEditingDeck"
+          <button
+            v-if="isDev"
             @click="screenshot(card.id, $event)"
-            class="absolute bottom-0"
+            class="screenshot-button"
           >
             Screenshot
-          </button> -->
+          </button>
         </li>
       </ul>
 
@@ -83,12 +99,12 @@ useIntersectionObserver(
 
 <style scoped lang="postcss">
 .cards {
-  column-gap: var(--size-0);
   display: grid;
   grid-template-columns: repeat(
     auto-fill,
     minmax(calc(var(--card-v3-width) * var(--card-scale)), 1fr)
   );
+  column-gap: var(--size-0);
   justify-items: center;
   overflow-x: hidden;
   overflow-y: auto;
@@ -103,7 +119,7 @@ useIntersectionObserver(
     perspective: 700px;
     perspective-origin: center;
     isolation: isolate;
-    width: calc(var(--card-v2-width) * var(--pixel-scale));
+    width: calc(var(--card-v3-width) * var(--pixel-scale));
     aspect-ratio: var(--card-ratio);
   }
 
@@ -134,5 +150,16 @@ useIntersectionObserver(
 .v-enter-from,
 .v-leave-to {
   opacity: 0;
+}
+
+.screenshot-button {
+  position: absolute;
+  bottom: 0px;
+  opacity: 0;
+  font-size: 10px;
+  padding-block: var(--size-2);
+  &:hover {
+    opacity: 1;
+  }
 }
 </style>

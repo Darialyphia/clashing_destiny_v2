@@ -97,6 +97,13 @@ export const KEYWORDS = {
     description: 'This card is banished at the end of the turn if it is on the board.',
     aliases: []
   },
+  EQUIP: {
+    id: 'equip',
+    name: 'Equip',
+    description:
+      'Equip this artifact to an ally minion, granting it bonus effects. Can only be equiped to one target at a time. When the equipped minion takes damage, this loses 1 durability.',
+    aliases: []
+  },
   FLEETING: {
     id: 'fleeting',
     name: 'Fleeting',

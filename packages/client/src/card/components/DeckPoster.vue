@@ -165,7 +165,7 @@ const craftingCost = computed(() => {
   overflow: auto;
 
   &.full {
-    --pixel-scale: 1;
+    --pixel-scale: 1.5;
   }
   &.condensed {
     --pixel-scale: 1;

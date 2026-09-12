@@ -59,14 +59,15 @@
     center center,
     center center;
   background-blend-mode: overlay, soft-light, color-burn;
-  mask: var(--art-mask), linear-gradient(#000 0 0);
+  /* mask: var(--art-mask), linear-gradient(#000 0 0);
   mask-size:
     calc(var(--card-v2-art-frame-width) * var(--pixel-scale) * 2),
     calc(var(--card-v2-art-frame-height) * var(--pixel-scale) * 2);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
   mask-position: var(--art-mask-position, center), center;
-  mask-repeat: no-repeat, repeat;
+  mask-repeat: no-repeat, repeat; */
+  mask-image: var(--foil-mask);
   transition: opacity 0.5s;
   opacity: 0;
   animation: foil-glitter 2.5s linear infinite;

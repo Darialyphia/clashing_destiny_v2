@@ -145,6 +145,12 @@ onUnmounted(() => {
           </div>
         </div>
 
+        <div v-if="isDefined(card.durability)" class="stat durability">
+          <div class="dual-text" :data-text="card.durability">
+            {{ card.durability }}
+          </div>
+        </div>
+
         <div
           v-if="isDefined(card.durability) && showStats"
           class="stat durability"
@@ -307,11 +313,15 @@ onUnmounted(() => {
   --dual-text-offset-y: calc(4px * var(--pixel-scale));
   --dual-text-offset-x: calc(-2px * var(--pixel-scale));
 }
+
 .durability {
   background-image: url('@/assets/ui/card/v3/durability.png');
-  right: 0;
-  padding-right: 0px;
-  padding-left: 2px;
+  right: calc(1px * var(--pixel-scale));
+  bottom: calc(1px * var(--pixel-scale));
+  text-align: right;
+  padding-left: calc(18px * var(--pixel-scale));
+  --dual-text-offset-y: calc(4px * var(--pixel-scale));
+  --dual-text-offset-x: calc(-2px * var(--pixel-scale));
 }
 
 .mana-cost {

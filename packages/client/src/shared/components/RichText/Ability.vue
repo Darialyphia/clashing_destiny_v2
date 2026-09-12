@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const { cost, exhaust } = defineProps<{
   cost: number;
-  exhaust: boolean;
+  exhaust: boolean | undefined;
 }>();
 </script>
 

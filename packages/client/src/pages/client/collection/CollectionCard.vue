@@ -86,7 +86,7 @@ watch(isModalOpened, opened => {
     <div
       class="text-center text-xs text-yellow-50/90 select-none pointer-events-none py-2"
     >
-      X{{ card.copiesOwned }}
+      Copies owned: {{ card.copiesOwned }}
     </div>
   </div>
 </template>

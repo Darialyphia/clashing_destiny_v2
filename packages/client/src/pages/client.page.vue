@@ -43,9 +43,12 @@ watch(
 
 <style scoped lang="postcss">
 .client-page {
-  background: url('@/assets/backgrounds/main-menu.jpg');
+  background:
+    url('@/assets/backgrounds/main-menu.jpg'),
+    url('@/assets/backgrounds/main-menu.png');
   background-size: cover;
   background-attachment: fixed;
   min-height: 100dvh;
+  background-blend-mode: hard-light;
 }
 </style>

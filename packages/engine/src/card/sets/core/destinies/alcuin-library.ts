@@ -33,7 +33,7 @@ export const alcuinLibrary: DestinyBlueprint = {
   tags: [],
   async onInit(game, card) {
     await card.modifiers.add(
-      new WhileOnBattlefieldModifier<DestinyCard>('ashes-of-pain', game, card, {
+      new WhileOnBattlefieldModifier<DestinyCard>('alcuin-library', game, card, {
         mixins: [
           new CardAuraModifierMixin<MinionCard>(game, card, {
             isElligible(candidate) {

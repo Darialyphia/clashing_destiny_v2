@@ -32,6 +32,7 @@ import InteractionArrows from './InteractionArrows.vue';
 import type { PlayerClockState } from '../composables/useGameSocket';
 import PlayerResources from './PlayerResources.vue';
 import Deck from './Deck.vue';
+import GamePhaseIndicator from './GamePhaseIndicator.vue';
 
 const { clocks } = defineProps<{
   clocks?: Record<string, PlayerClockState>;
@@ -163,6 +164,7 @@ const isDev = import.meta.env.DEV;
     </template>
   </GameMenu>
   <TurnIndicator />
+  <GamePhaseIndicator />
 
   <slot name="board-additional" />
 

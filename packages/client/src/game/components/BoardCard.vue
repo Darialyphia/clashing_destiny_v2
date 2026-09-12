@@ -11,7 +11,7 @@ import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
 import { until } from '@vueuse/core';
 import ModifiersList from './ModifiersList.vue';
 import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
-// import AbilityMenu from './AbilityMenu.vue';
+import AbilityMenu from './AbilityMenu.vue';
 import {
   ANIMATIONS_NAMES,
   INTERACTION_STATES,
@@ -109,6 +109,15 @@ useFxEvent(FX_EVENTS.CARD_BEFORE_TAKE_DAMAGE, async event => {
   await waitFor(200);
 });
 
+useFxEvent(FX_EVENTS.CARD_WAKE_UP, async event => {
+  if (event.card !== card.id) return;
+  card.update({ isExhausted: false });
+});
+useFxEvent(FX_EVENTS.CARD_EXHAUST, async event => {
+  if (event.card !== card.id) return;
+  card.update({ isExhausted: true });
+});
+
 const hasAvailableAbilities = computed(() => {
   return card.abilityActions.some(ability => {
     return ability.predicate();
@@ -169,6 +178,8 @@ useFxEvent(FX_EVENTS.CARD_EXHAUST, async event => {
 const shouldScaleSprite = computed(() => {
   return card.kind !== CARD_KINDS.DESTINY;
 });
+
+const isHovered = ref(false);
 </script>
 
 <template>
@@ -195,7 +206,11 @@ const shouldScaleSprite = computed(() => {
       '--drop-duration': `${DROP_DURATION}ms`
     }"
     @mouseup="onMouseup"
+    @mouseenter="isHovered = true"
+    @mouseleave="isHovered = false"
   >
+    <ModifiersList :modifiers="modifiers" class="modifiers" />
+
     <InspectableCard :card-id="card.id" side="right" :side-offset="20">
       <GameCard
         :variant
@@ -211,14 +226,16 @@ const shouldScaleSprite = computed(() => {
         :sprite-scale="shouldScaleSprite ? 1.5 : 1"
       />
     </InspectableCard>
-    <ModifiersList :modifiers="modifiers" class="modifiers" />
-    <!-- <AbilityMenu
-      :card="card"
-      use-portal
-      class="abilities"
-      :class="variant"
-      :actions-side="variant === 'small' ? 'bottom' : 'top'"
-    /> -->
+    <Transition>
+      <AbilityMenu
+        v-if="isHovered"
+        :card="card"
+        use-portal
+        class="abilities"
+        :class="variant"
+        :actions-side="variant === 'small' ? 'bottom' : 'top'"
+      />
+    </Transition>
     <UiSimpleTooltip>
       <template #trigger>
         <button
@@ -320,12 +337,20 @@ const shouldScaleSprite = computed(() => {
   left: 50%;
   translate: -50% 0;
   transform: translateZ(2px);
-
   &.default {
     top: 7px;
   }
   &.small {
-    bottom: 7px;
+    bottom: -23px;
+  }
+  &.v-enter-active,
+  &.-leave-active {
+    transition: all 0.2s var(--ease-2);
+  }
+  &.v-enter-from,
+  &.-leave-to {
+    opacity: 0.5;
+    transform: translateZ(2px) translateY(-5px);
   }
 }
 
@@ -337,13 +362,14 @@ const shouldScaleSprite = computed(() => {
   .is-ally & {
     bottom: calc(-28px * var(--pixel-scale));
   }
-  transform: translateZ(2px);
+  transform: translateZ(0px);
   /* translate: 0 5px; */
   /* opacity: 0; */
   transition:
     opacity 0.2s var(--ease-2),
     translate 0.2s var(--ease-2);
   .board-card:hover & {
+    transform: translateZ(2px);
     opacity: 1;
     translate: 0 0;
   }

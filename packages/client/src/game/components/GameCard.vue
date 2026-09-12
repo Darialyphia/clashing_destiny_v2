@@ -93,6 +93,12 @@ provideRichTextContext({
 const sprite = computed(() => {
   return sprites[card.value.art.sprite];
 });
+
+watchEffect(() => {
+  if (card.value.kind === 'ARTIFACT') {
+    console.log(card.value);
+  }
+});
 </script>
 
 <template>

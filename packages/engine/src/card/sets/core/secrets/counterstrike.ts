@@ -35,7 +35,10 @@ export const counterstrike = defineSecretBlueprint({
   trigger: {
     eventName: GAME_EVENTS.AFTER_DECLARE_ATTACK_TARGET,
     filter(game, card, event) {
-      return event.data.attacker.isEnemy(card);
+      return (
+        event.data.attacker.isEnemy(card) &&
+        event.data.attacker.location === card.location
+      );
     }
   },
   async onTrigger(game, card, event) {

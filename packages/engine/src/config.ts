@@ -83,5 +83,5 @@ export const defaultConfig: Config = {
   AUTO_RETALIATE: true,
   SHOULD_EXHAUST_MINION_ON_RETALIATION: false,
 
-  SECRET_UPFRONT_COST: 2
+  SECRET_UPFRONT_COST: 1
 };
