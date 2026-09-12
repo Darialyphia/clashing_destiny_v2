@@ -24,6 +24,32 @@ const keyword = computed(() => {
     );
   });
 });
+
+const textContent = computed(() => el.value?.textContent || '');
+
+const value = computed(() => {
+  if (!keyword.value) return '';
+
+  const namePattern = keyword.value.name.replace('X', '(.+)');
+  const match = textContent.value.match(new RegExp(`^${namePattern}$`, 'i'));
+
+  return match?.[1] || '';
+});
+
+const nameWithValues = computed(() => {
+  if (!keyword.value) return '';
+
+  return keyword.value.name.replace(' X', ` ${value.value}`);
+});
+
+const descriptionWithValues = computed(() => {
+  if (!keyword.value) return '';
+
+  return keyword.value.description
+    .replaceAll(' X ', ` ${value.value} `)
+    .replace(/\+X/, `+${value.value}`)
+    .replace(/\-X/, `-${value.value}`);
+});
 </script>
 
 <template>
@@ -35,8 +61,8 @@ const keyword = computed(() => {
       <HoverCardContent class="z-10" side="top">
         <article>
           <div class="keyword-card" v-if="keyword">
-            <div class="font-600">{{ keyword.name }}</div>
-            <p class="text-0">{{ keyword.description }}</p>
+            <div class="font-600">{{ nameWithValues }}</div>
+            <p class="text-0">{{ descriptionWithValues }}</p>
           </div>
         </article>
       </HoverCardContent>

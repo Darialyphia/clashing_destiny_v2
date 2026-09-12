@@ -275,9 +275,9 @@ export class CardViewModel {
     return null;
   }
 
-  get baseBounty() {
-    if ('baseBounty' in this.data) {
-      return this.data.baseBounty as number;
+  get baseCommandment() {
+    if ('baseCommandment' in this.data) {
+      return this.data.baseCommandment as number;
     }
     return null;
   }

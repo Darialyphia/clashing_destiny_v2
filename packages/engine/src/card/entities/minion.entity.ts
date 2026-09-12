@@ -454,7 +454,12 @@ export class MinionCard extends Card<
     );
   }
 
+  async moveToSpace(space: BoardSpace) {
+    await this.move(space.position.zone, space.position.index);
+  }
+
   private async summon(position: BoardSpace, shouldExhaust = true) {
+    await this.removeFromCurrentLocation();
     position.placeCard(this);
     if (this.hasSummoningSickness && shouldExhaust) {
       await this.exhaust();
@@ -486,6 +491,7 @@ export class MinionCard extends Card<
 
   async playAt(position: BoardSpace) {
     await this.resolve(async () => {
+      await this.reveal();
       await this.summon(position);
     });
   }

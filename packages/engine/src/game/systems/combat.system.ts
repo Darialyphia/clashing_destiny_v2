@@ -146,7 +146,6 @@ export class CombatSystem
     );
 
     this._defender = target;
-    await this.attacker.exhaust();
 
     await this.game.emit(
       COMBAT_EVENTS.AFTER_DECLARE_ATTACK_TARGET,
@@ -188,9 +187,6 @@ export class CombatSystem
     }
 
     this.isDefenderRetaliating = true;
-    if (this.game.config.SHOULD_EXHAUST_MINION_ON_RETALIATION) {
-      await this.defender.exhaust();
-    }
 
     if (this.game.config.EFFECT_CHAIN) {
       await this.game.effectChainSystem.currentChain?.addEffect(
@@ -254,7 +250,10 @@ export class CombatSystem
       );
 
       await this.performAttacks();
-
+      await this.attacker.exhaust();
+      if (this.game.config.SHOULD_EXHAUST_MINION_ON_RETALIATION) {
+        await this.defender.exhaust();
+      }
       await this.game.emit(
         COMBAT_EVENTS.AFTER_RESOLVE_COMBAT,
         new AfterResolveCombatEvent({

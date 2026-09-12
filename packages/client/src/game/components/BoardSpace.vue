@@ -39,7 +39,7 @@ const handleMouseup = (e: MouseEvent) => {
 <template>
   <div
     :id="ui.DOMSelectors.boardSpace(cell.id).id"
-    class="minion-cell"
+    class="board-cell"
     :class="{
       'is-targetable': isTargetable && !client.isPlayingFx,
       'is-targeted': isTargeted && !client.isPlayingFx,
@@ -71,7 +71,7 @@ const handleMouseup = (e: MouseEvent) => {
 </template>
 
 <style scoped lang="postcss">
-.minion-cell {
+.board-cell {
   width: var(--card-small-v3-width);
   height: var(--card-small-v3-height);
   background: url('@/assets/ui/board-small-card-slot.png') no-repeat center
@@ -83,6 +83,7 @@ const handleMouseup = (e: MouseEvent) => {
   display: grid;
   place-content: center;
   position: relative;
+  transform-style: preserve-3d;
   &.is-in-aoe,
   &.can-attack {
     background-image: url('@/assets/ui/board-small-card-slot-in-aoe.png');

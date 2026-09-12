@@ -8,8 +8,6 @@ import {
   AFFINITIES,
   CARD_SPEED
 } from '../../../card.enums';
-import { OnMoveModifier } from '../../../../modifier/modifiers/on-move.modifier';
-import { reserve } from '../../../card-actions-utils';
 import { OnEnterModifier } from '../../../../modifier/modifiers/on-enter.modifier';
 import { Modifier } from '../../../../modifier/modifier.entity';
 import { CardAuraModifierMixin } from '../../../../modifier/mixins/aura.mixin';

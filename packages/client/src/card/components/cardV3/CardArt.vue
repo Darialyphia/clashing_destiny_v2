@@ -76,8 +76,13 @@ const { activeFrameRect, bgPosition, imageBg } = useSprite({
 
   &.spell,
   &.rune,
+  &.secret,
   &.artifact {
     translate: 0 calc(var(--pixel-scale) * -15px);
+  }
+
+  &.destiny {
+    translate: 0 calc(var(--pixel-scale) * 3px);
   }
 
   &.full-art {

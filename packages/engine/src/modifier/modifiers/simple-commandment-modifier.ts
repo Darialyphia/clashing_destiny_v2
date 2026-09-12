@@ -21,20 +21,16 @@ export class SimpleCommandmentBuffModifier extends Modifier<MinionCard> {
   ) {
     super(modifierType, game, card, {
       isUnique: options.isUnique ?? true,
-      icon: () => {
-        const amount = isFunction(options.amount) ? options.amount() : options.amount;
-        return amount > 0 ? 'keyword-commandment-buff' : 'keyword-commandment-debuff';
-      },
       name: () => {
         const name = isFunction(options.name) ? options.name() : options.name;
         if (name) return name;
 
         const amount = isFunction(options.amount) ? options.amount() : options.amount;
-        return amount > 0 ? 'Bounty Buff' : 'Bounty Debuff';
+        return amount > 0 ? 'Commandment Buff' : 'Commandment Debuff';
       },
       description: () => {
         const amount = isFunction(options.amount) ? options.amount() : options.amount;
-        return `${amount > 0 ? '+' : '-'}${options.amount} Bounty`;
+        return `${amount > 0 ? '+' : '-'}${options.amount} Commandment`;
       },
       mixins: [
         new RemoveOnDestroyedMixin(game),

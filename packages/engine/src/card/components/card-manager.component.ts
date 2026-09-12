@@ -8,6 +8,7 @@ import { GAME_EVENTS } from '../../game/game.events';
 import { PlayerDrawEvent } from '../../player/player.events';
 import type { DestinyCard } from '../entities/destiny.entity';
 import type { RuneCard } from '../entities/rune.entity';
+import { GAME_PHASES } from '../../game/game.enums';
 
 export type CardManagerComponentOptions = {
   maxHandSize: number;
@@ -31,6 +32,8 @@ export class CardManagerComponent {
   readonly banishPile = new Set<AnyCard>();
 
   readonly runeZone = new Set<RuneCard>();
+
+  readonly reserve = new Set<AnyCard>();
 
   constructor(
     game: Game,
@@ -72,6 +75,14 @@ export class CardManagerComponent {
     }
 
     this.hand.push(...this.mainDeck.draw(this.game.config.INITIAL_HAND_SIZE));
+
+    await this.game.on(GAME_EVENTS.BEFORE_CHANGE_PHASE, async event => {
+      if (event.data.to === GAME_PHASES.SUPPLY) {
+        for (const card of this.reserve) {
+          await card.addToHand();
+        }
+      }
+    });
   }
 
   get isHandFull() {
@@ -124,6 +135,9 @@ export class CardManagerComponent {
 
     const runeZoneCard = [...this.runeZone].find(card => card.id === id);
     if (runeZoneCard) return { card: runeZoneCard, location: CARD_LOCATIONS.RUNE_ZONE };
+
+    const reserveCard = [...this.reserve].find(card => card.id === id);
+    if (reserveCard) return { card: reserveCard, location: CARD_LOCATIONS.RESERVE };
 
     return null;
   }
@@ -266,5 +280,13 @@ export class CardManagerComponent {
 
   placeInRuneZone(card: RuneCard) {
     this.runeZone.add(card);
+  }
+
+  sendToReserve(card: AnyCard) {
+    this.reserve.add(card);
+  }
+
+  removeFromReserve(card: AnyCard) {
+    this.reserve.delete(card);
   }
 }

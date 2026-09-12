@@ -622,6 +622,7 @@ export const defaultCardArt = (
     foil: {
       oil: true,
       sheen: true,
+      starField: true,
       emboss: true
     },
     isFullArt,

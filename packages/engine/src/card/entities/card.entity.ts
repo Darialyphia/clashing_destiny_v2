@@ -272,9 +272,15 @@ export abstract class Card<
 
   protected async dispose() {
     await match(this.kind)
-      .with(CARD_KINDS.MINION, CARD_KINDS.SPELL, CARD_KINDS.ARTIFACT, async () => {
-        await this.sendToDiscardPile();
-      })
+      .with(
+        CARD_KINDS.MINION,
+        CARD_KINDS.SPELL,
+        CARD_KINDS.ARTIFACT,
+        CARD_KINDS.SECRET,
+        async () => {
+          await this.sendToDiscardPile();
+        }
+      )
       .with(CARD_KINDS.DESTINY, async () => {
         await this.sendToBanishPile();
       })
@@ -389,6 +395,9 @@ export abstract class Card<
       })
       .with(CARD_LOCATIONS.RUNE_DECK, () => {
         this.player.cardManager.runeDeck.pluck(this as any);
+      })
+      .with(CARD_LOCATIONS.RESERVE, () => {
+        this.player.cardManager.removeFromReserve(this);
       })
       .exhaustive();
   }
@@ -578,6 +587,12 @@ export abstract class Card<
         CARD_EVENTS.CARD_ADD_TO_HAND,
         new CardAddToHandevent({ card: this, index: index ?? null })
       );
+    });
+  }
+
+  async addToReserve() {
+    await this.changeLocation(CARD_LOCATIONS.RESERVE, async () => {
+      await this.player.cardManager.sendToReserve(this);
     });
   }
 

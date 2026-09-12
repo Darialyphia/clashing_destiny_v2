@@ -14,23 +14,23 @@ import { WhileOnBattlefieldModifier } from '../../../../modifier/modifiers/while
 import { isDefined } from '@game/shared';
 import { SimpleCommandmentBuffModifier } from '../../../../modifier/modifiers/simple-commandment-modifier';
 
-export const austerity: DestinyBlueprint = {
+export const forgottenMarsh: DestinyBlueprint = {
   id: 'austerity',
   kind: CARD_KINDS.DESTINY,
   collectable: true,
-  name: 'Austerity',
+  name: 'Forgotten Marsh',
   description: dedent /*html*/ `
-    Minions at this battlefield have -1/+0/+0.
+    Minions at this battlefield have -2/+0/+0.
   `,
   setId: CARD_SETS.CORE,
   rarity: RARITIES.EPIC,
-  art: defaultCardArt('placeholder'),
+  art: defaultCardArt('destinies/forgotten-marsh'),
   speed: CARD_SPEED.SLOW,
   affinities: [AFFINITIES.NEUTRAL],
   tags: [],
   async onInit(game, card) {
     await card.modifiers.add(
-      new WhileOnBattlefieldModifier<DestinyCard>('ashes-of-pain', game, card, {
+      new WhileOnBattlefieldModifier<DestinyCard>('forgotten-marsh', game, card, {
         mixins: [
           new CardAuraModifierMixin(game, card, {
             isElligible(candidate) {
@@ -41,8 +41,8 @@ export const austerity: DestinyBlueprint = {
             },
             getModifiers() {
               return [
-                new SimpleCommandmentBuffModifier('austerity-aura', game, card, {
-                  amount: -1
+                new SimpleCommandmentBuffModifier('forgotten-marsh-aura', game, card, {
+                  amount: -2
                 })
               ];
             }

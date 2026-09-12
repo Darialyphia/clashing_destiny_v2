@@ -75,10 +75,9 @@ export class SpellCard extends Card<
 
     await this.insertInChainOrExecute(
       async () => {
+        await this.reveal();
         await this.blueprint.onPlay(this.game, this, this.targets!);
-
         await this.dispose();
-
         this.targets = null;
       },
       { targets: this.targets }

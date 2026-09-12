@@ -48,7 +48,7 @@ class InvalidCardcountForKindRule<TMeta> extends DeckValidationRule<TMeta> {
 class UnknownCardRule<TMeta> extends CardValidationRule<TMeta> {
   constructor() {
     super({
-      rule: (card, validator) => {
+      rule: (card, deck, validator) => {
         return !!validator.cardPool[card.blueprintId];
       },
       violation: () => ({
@@ -62,13 +62,19 @@ class UnknownCardRule<TMeta> extends CardValidationRule<TMeta> {
 class TooManyCopiesRule<TMeta> extends CardValidationRule<TMeta> {
   constructor(allowedCopies: Record<CardKind, number>) {
     super({
-      rule: (card, validator) => {
+      rule: (card, deck, validator) => {
         const blueprint = validator.cardPool[card.blueprintId];
         if (!blueprint) return true;
 
-        return card.copies <= allowedCopies[blueprint.kind];
+        // factor in all copies across multiple cards (eg. foil and nonfoil versions)
+        const totalCopies = validator
+          .getCards(deck)
+          .filter(c => c.blueprintId === card.blueprintId)
+          .reduce((acc, c) => acc + c.copies, 0);
+
+        return totalCopies <= allowedCopies[blueprint.kind];
       },
-      violation: (card, validator) => ({
+      violation: (card, deck, validator) => ({
         type: 'too_many_copies',
         reason: `Card ${validator.cardPool[card.blueprintId]?.name} has too many copies.`
       })
@@ -100,7 +106,8 @@ export class StandardDeckValidator<TMeta> extends DeckValidator<TMeta> {
           MINION: defaultConfig.MAX_MAIN_DECK_CARD_COPIES,
           SPELL: defaultConfig.MAX_MAIN_DECK_CARD_COPIES,
           DESTINY: 1,
-          RUNE: defaultConfig.MAX_RUNE_CARDS
+          RUNE: defaultConfig.MAX_RUNE_CARDS,
+          SECRET: defaultConfig.MAX_MAIN_DECK_CARD_COPIES
         })
       ]
     });

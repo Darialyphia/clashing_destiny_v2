@@ -7,6 +7,7 @@ import {
   useOpponentPlayer
 } from '../composables/useGameClient';
 import BoardSpace from './BoardSpace.vue';
+import BoardCard from './BoardCard.vue';
 import { useWindowSize } from '@vueuse/core';
 import { config } from '@/utils/config';
 import PassButton from './PassButton.vue';
@@ -71,6 +72,12 @@ const opponentHasInitiative = computed(() => {
       </div>
       <div class="opponent-battlefields">
         <div class="zone">
+          <div class="secret-zone">
+            <BoardCard
+              v-if="opponent.leftBattlefield.secretCard"
+              :card="opponent.leftBattlefield.secretCard"
+            />
+          </div>
           <BoardSpace
             v-for="space in opponent.leftBattlefield.spaces"
             :key="space.id"
@@ -83,10 +90,22 @@ const opponentHasInitiative = computed(() => {
             :key="space.id"
             :cell-id="space.id"
           />
+          <div class="secret-zone">
+            <BoardCard
+              v-if="opponent.rightBattlefield.secretCard"
+              :card="opponent.rightBattlefield.secretCard"
+            />
+          </div>
         </div>
       </div>
       <div class="my-battlefields">
         <div class="zone">
+          <div class="secret-zone">
+            <BoardCard
+              v-if="myPlayer.leftBattlefield.secretCard"
+              :card="myPlayer.leftBattlefield.secretCard"
+            />
+          </div>
           <BoardSpace
             v-for="space in myPlayer.leftBattlefield.spaces"
             :key="space.id"
@@ -99,6 +118,12 @@ const opponentHasInitiative = computed(() => {
             :key="space.id"
             :cell-id="space.id"
           />
+          <div class="secret-zone">
+            <BoardCard
+              v-if="myPlayer.rightBattlefield.secretCard"
+              :card="myPlayer.rightBattlefield.secretCard"
+            />
+          </div>
         </div>
       </div>
       <div class="my-base zone">
@@ -209,7 +234,9 @@ const opponentHasInitiative = computed(() => {
   top: 52%;
   left: 50%;
   translate: -50% calc(-50% - 40px);
+  transform-style: preserve-3d;
   .zone {
+    transform-style: preserve-3d;
     height: 100px;
     display: flex;
     justify-content: space-between;
@@ -333,7 +360,7 @@ const opponentHasInitiative = computed(() => {
     position: relative;
     display: flex;
     justify-content: center;
-    gap: var(--size-6);
+    gap: var(--size-2);
   }
 }
 
@@ -350,7 +377,7 @@ const opponentHasInitiative = computed(() => {
     position: relative;
     display: flex;
     justify-content: center;
-    gap: var(--size-6);
+    gap: var(--size-2);
   }
 }
 
@@ -423,5 +450,10 @@ const opponentHasInitiative = computed(() => {
   position: absolute;
   top: 10px;
   right: -80px;
+}
+
+.secret-zone {
+  width: var(--card-small-v3-width);
+  height: var(--card-small-v3-height);
 }
 </style>

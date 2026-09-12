@@ -2,7 +2,9 @@ import type {
   CardAfterDestroyEvent,
   CardChangeLocationEvent
 } from '../../card/card.events';
+import type { ArtifactCard } from '../../card/entities/artifact.entity';
 import type { AnyCard } from '../../card/entities/card.entity';
+import type { MinionCard } from '../../card/entities/minion.entity';
 import type { Game } from '../../game/game';
 import { GAME_EVENTS } from '../../game/game.events';
 import { ModifierMixin } from '../modifier-mixin';
@@ -36,8 +38,10 @@ export class RemoveOnDestroyedMixin extends ModifierMixin<AnyCard> {
   async onReapplied() {}
 }
 
-export class RemoveOnLocationChangeModifierMixin extends ModifierMixin<AnyCard> {
-  private modifier!: Modifier<AnyCard>;
+export class RemoveOnLeaveBoardModifierMixin extends ModifierMixin<
+  MinionCard | ArtifactCard
+> {
+  private modifier!: Modifier<MinionCard | ArtifactCard>;
 
   constructor(game: Game) {
     super(game);
@@ -45,13 +49,17 @@ export class RemoveOnLocationChangeModifierMixin extends ModifierMixin<AnyCard> 
   }
 
   async onLocationChange(event: CardChangeLocationEvent) {
-    if (event.data.card.equals(this.modifier.target)) {
-      this.game.off(GAME_EVENTS.CARD_AFTER_CHANGE_LOCATION, this.onLocationChange);
-      await this.modifier.target.modifiers.remove(this.modifier);
-    }
+    if (!event.data.card.equals(this.modifier.target)) return;
+    if (!this.modifier.target.isOnBoard) return;
+    await this.modifier.target.modifiers.remove(this.modifier as any);
+
+    this.game.off(GAME_EVENTS.CARD_AFTER_CHANGE_LOCATION, this.onLocationChange);
   }
 
-  onApplied(target: AnyCard, modifier: Modifier<AnyCard>): void {
+  onApplied(
+    target: MinionCard | ArtifactCard,
+    modifier: Modifier<MinionCard | ArtifactCard>
+  ): void {
     this.modifier = modifier;
 
     this.game.on(GAME_EVENTS.CARD_AFTER_CHANGE_LOCATION, this.onLocationChange);

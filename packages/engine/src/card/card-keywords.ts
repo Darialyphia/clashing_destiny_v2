@@ -11,7 +11,7 @@ export const KEYWORDS = {
   ATTACKER: {
     id: 'attacker',
     name: 'Attacker X',
-    description: 'This unit has +X power when attacking.',
+    description: 'This unit has +X Attack when attacking.',
     aliases: [/attacker [0-9]+/]
   },
   BACKSTAB: {

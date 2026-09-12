@@ -13,7 +13,6 @@ const orderedAffinities = computed(() => {
     AFFINITIES.AIR,
     AFFINITIES.LIGHT,
     AFFINITIES.DARK,
-    AFFINITIES.ARCANE,
     AFFINITIES.NEUTRAL
   ];
   return affinities.sort((a, b) => ordered.indexOf(a) - ordered.indexOf(b));

@@ -4,7 +4,8 @@ import {
   type Rarity,
   type Affinity,
   type CardSpeed,
-  CARD_KINDS
+  CARD_KINDS,
+  RARITIES
 } from '@game/engine/src/card/card.enums';
 import { isDefined, type Nullable } from '@game/shared';
 import CardGlare from '../CardGlare.vue';
@@ -82,6 +83,16 @@ const { pointerStyle, angle, onMousemove, onMouseleave, onMouseEnter } =
     isEnabled: computed(() => isTiltEnabled && isFoil)
   });
 
+const frontBg = computed(() => {
+  if (card.rarity === RARITIES.LEGENDARY) {
+    return isFoil
+      ? assets[`ui/card/v3/card-front-legendary-foil`].css
+      : assets[`ui/card/v3/card-front-legendary`].css;
+  }
+  return isFoil
+    ? assets[`ui/card/v3/card-front-foil`].css
+    : assets[`ui/card/v3/card-front`].css;
+});
 const tint = computed(() => {
   return `linear-gradient(to right in oklch, ${card.affinities
     .map(affinity => {
@@ -118,7 +129,7 @@ const _animationSequence = computed(() => {
         ? [ANIMATIONS_NAMES.ATTACK, ANIMATIONS_NAMES.IDLE]
         : [ANIMATIONS_NAMES.BREATHING]
     )
-    .with(CARD_KINDS.SPELL, CARD_KINDS.ARTIFACT, () =>
+    .with(CARD_KINDS.SPELL, CARD_KINDS.ARTIFACT, CARD_KINDS.SECRET, () =>
       isHovered.value ? [ANIMATIONS_NAMES.ACTIVE] : [ANIMATIONS_NAMES.DEFAULT]
     )
     .with(CARD_KINDS.DESTINY, CARD_KINDS.RUNE, () => [ANIMATIONS_NAMES.DEFAULT])
@@ -273,11 +284,7 @@ const _animationSequence = computed(() => {
 
 .card-front {
   backface-visibility: hidden;
-  background: url('@/assets/ui/card/v3/card-front.png');
-  .card:has(.foil) & {
-    background: url('@/assets/ui/card/v3/card-front-foil.png');
-    background-size: cover;
-  }
+  background: v-bind(frontBg);
   background-size: cover;
   color: #fcfcfc;
   font-size: calc(var(--pixel-scale) * 8px);

@@ -29,6 +29,7 @@ export class GrantMissingCardsUseCase
       MINION: 3,
       SPELL: 3,
       ARTIFACT: 3,
+      SECRET: 3,
       DESTINY: 1,
       RUNE: 10
     };

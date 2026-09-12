@@ -9,17 +9,16 @@ import {
   RARITIES
 } from '../../../card.enums';
 import type { MinionCard } from '../../../entities/minion.entity';
-import { SimpleHealthBuffModifier } from '../../../../modifier/modifiers/simple-health-buff.modifier';
 import { SimpleAttackBuffModifier } from '../../../../modifier/modifiers/simple-attack-buff.modifier';
-import { SimpleCommandmentBuffModifier } from '../../../../modifier/modifiers/simple-commandment-modifier';
-import { GAME_EVENTS } from '../../../../game/game.events';
-import { RemoveOnLocationChangeModifierMixin } from '../../../../modifier/mixins/remove-on-destroyed';
+import { RemoveOnLeaveBoardModifierMixin } from '../../../../modifier/mixins/remove-on-destroyed';
+import { OverwhelmModifier } from '../../../../modifier/modifiers/overwhelm.modifier';
+import { SpellDamage } from '../../../../utils/damage';
 
 export const eightGates: SpellBlueprint<MinionCard> = {
   id: 'eightGates',
   name: 'Eight Gates',
   description: dedent /*html*/ `
-  Give an ally minion +2/+4/+4. Destroy it at the end of the turn.
+  Deal 2 damage to a ally minion to give it +4 Attack and  <rt-keyword>Overwhelm</rt-keyword>. 
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -27,7 +26,7 @@ export const eightGates: SpellBlueprint<MinionCard> = {
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.EPIC,
   affinities: [AFFINITIES.FIRE, AFFINITIES.FIRE, AFFINITIES.FIRE],
-  manaCost: 4,
+  manaCost: 3,
   manaSupply: 2,
   speed: CARD_SPEED.FAST,
   tags: [],
@@ -48,29 +47,21 @@ export const eightGates: SpellBlueprint<MinionCard> = {
     const target = targets.cards[0];
     if (!target) return;
 
+    await target.takeDamage(card, new SpellDamage(2, card));
+    if (!target.isAlive) return;
+
     await target.modifiers.add(
       new SimpleAttackBuffModifier('eight-gates-atk-buff', game, card, {
         amount: 4,
-        mixins: [new RemoveOnLocationChangeModifierMixin(game)]
+        mixins: [new RemoveOnLeaveBoardModifierMixin(game)]
       })
     );
+
     await target.modifiers.add(
-      new SimpleCommandmentBuffModifier('eight-gates-cmd-buff', game, card, {
-        amount: 2,
-        mixins: [new RemoveOnLocationChangeModifierMixin(game)]
+      new OverwhelmModifier(game, card, {
+        mixins: [new RemoveOnLeaveBoardModifierMixin(game)]
       })
     );
-    await target.modifiers.add(
-      new SimpleHealthBuffModifier('eight-gates-hp-buff', game, card, {
-        amount: 4,
-        mixins: [new RemoveOnLocationChangeModifierMixin(game)]
-      })
-    );
-    game.once(GAME_EVENTS.TURN_END, async () => {
-      if (target.isOnBoard) {
-        await target.destroy(card);
-      }
-    });
   },
   aiHints: {
     shouldPlay: () => 1

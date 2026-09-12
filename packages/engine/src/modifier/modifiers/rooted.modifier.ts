@@ -4,7 +4,7 @@ import type { MinionCard } from '../../card/entities/minion.entity';
 import type { Game } from '../../game/game';
 import { MinionInterceptorModifierMixin } from '../mixins/interceptor.mixin';
 import { KeywordModifierMixin } from '../mixins/keyword.mixin';
-import { RemoveOnDestroyedMixin } from '../mixins/remove-on-destroyed';
+import { RemoveOnLeaveBoardModifierMixin } from '../mixins/remove-on-destroyed';
 import type { ModifierMixin } from '../modifier-mixin';
 import { Modifier } from '../modifier.entity';
 
@@ -24,7 +24,7 @@ export class RootedModifier extends Modifier<MinionCard> {
           key: 'canMove',
           interceptor: () => false
         }),
-        new RemoveOnDestroyedMixin(game),
+        new RemoveOnLeaveBoardModifierMixin(game),
         ...(options.mixins ?? [])
       ]
     });

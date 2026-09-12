@@ -7,11 +7,14 @@ import type { DestinyCard } from '../card/entities/destiny.entity';
 import type { MinionCard } from '../card/entities/minion.entity';
 import { Entity } from '../entity';
 import { GAME_EVENTS } from '../game/game.events';
+import type { AnyCard } from '../card/entities/card.entity';
+import type { SecretCard } from '../card/entities/secret.entity';
 
 export type SerializedBattlefield = {
   id: string;
   spaces: string[];
   destinyCard: string;
+  secretCard: string | null;
   commandmentScore: number;
   opponentCommandmentScore: number;
   player: string;
@@ -23,6 +26,8 @@ export class Battlefield
   readonly spaces: BoardSpace[];
 
   destinyCard: DestinyCard | null = null;
+
+  secretCard: SecretCard | null = null;
 
   _commandmentScore = 0;
 
@@ -45,6 +50,18 @@ export class Battlefield
     this.game.on(GAME_EVENTS.TURN_START, async () => {
       this._commandmentScore = 0;
     });
+  }
+
+  remove(card: AnyCard) {
+    if (this.secretCard?.equals(card)) {
+      this.secretCard = null;
+      return;
+    }
+
+    const space = this.spaces.find(space => space.card?.equals(card));
+    if (space) {
+      space.removeCard();
+    }
   }
 
   get opponentSpaces() {
@@ -108,6 +125,7 @@ export class Battlefield
       id: this.id,
       spaces: this.spaces.map(space => space.id),
       destinyCard: (this.destinyCard?.id ?? this.opponentBattlefield.destinyCard?.id)!,
+      secretCard: this.secretCard?.id ?? null,
       commandmentScore: this.commandmentScore,
       opponentCommandmentScore: this.opponentCommandmentScore,
       player: this.player.id

@@ -1,5 +1,11 @@
 <script setup lang="ts">
-import { useCard, useFxEvent, useGameUi } from '../composables/useGameClient';
+import {
+  useCard,
+  useFxEvent,
+  useGameUi,
+  useMyPlayer
+} from '../composables/useGameClient';
+import type { AnimationName } from '@game/engine/src/game/game.enums';
 import Card from '@/card/components/cardV3/index.vue';
 import SmallCard from '@/card/components/SmallCard.vue';
 import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
@@ -24,7 +30,9 @@ const {
   actionsPortalTarget = '#card-actions-portal',
   canTilt = false,
   overrides = {},
-  pixelScale = 1
+  pixelScale = 1,
+  animationSequence,
+  spriteScale = 1
 } = defineProps<{
   cardId: string;
   actionsOffset?: number;
@@ -42,6 +50,8 @@ const {
   canTilt?: boolean;
   overrides?: Record<string, any>;
   pixelScale?: number | null;
+  animationSequence?: AnimationName[];
+  spriteScale?: number;
 }>();
 
 const card = useCard(computed(() => cardId));
@@ -58,6 +68,10 @@ const onAbilityUse = async (e: { card: string }) => {
 useFxEvent(FX_EVENTS.ABILITY_BEFORE_USE, onAbilityUse);
 useFxEvent(FX_EVENTS.CARD_EFFECT_TRIGGERED, onAbilityUse);
 
+const myPlayer = useMyPlayer();
+const isFaceDown = computed(
+  () => !card.value.isRevealed && !card.value.player.equals(myPlayer.value)
+);
 const classes = computed(() => {
   return [
     card.value.keywords.map(kw => kw.toLowerCase()),
@@ -66,7 +80,8 @@ const classes = computed(() => {
       disabled:
         !card.value.canPlay && card.value.location === CARD_LOCATIONS.HAND,
       selected: ui.value.selectedCard?.equals(card.value),
-      'is-using-ability': isUsingAbility.value
+      'is-using-ability': isUsingAbility.value,
+      flipped: isFaceDown.value
     }
   ];
 });
@@ -130,6 +145,7 @@ const sprite = computed(() => {
         :class="classes"
         :max-tilt-angle="0"
         :sprite="sprite"
+        :animation-sequence="animationSequence"
       />
       <SmallCard
         v-else-if="variant === 'small'"
@@ -146,13 +162,15 @@ const sprite = computed(() => {
           maxHp: overrides.maxHp ?? card.maxHp,
           durability: overrides.durability ?? card.durability,
           commandment: overrides.commandment ?? card.commandment,
-          baseBounty: overrides.baseBounty ?? card.baseBounty
+          baseCommandment: overrides.baseCommandment ?? card.baseCommandment
         }"
         class="game-card small"
         :class="classes"
         :show-stats="showStats"
         :is-foil="card.isFoil"
         :sprite="sprite"
+        :animation-sequence="animationSequence"
+        :sprite-scale="spriteScale"
       />
 
       <!-- <div class="damage" v-if="damageTaken > 0">
@@ -207,6 +225,7 @@ const sprite = computed(() => {
 .game-card-container {
   position: relative;
   transform: translateZ(1px);
+  transform-style: preserve-3d;
 
   &:deep(> div) {
     transform-style: preserve-3d;
@@ -233,6 +252,9 @@ const sprite = computed(() => {
       inset: 0;
       background-color: hsl(200 100% 50% / 0.25);
     }
+  }
+  &.small.flipped {
+    transform: rotateY(180deg);
   }
 }
 

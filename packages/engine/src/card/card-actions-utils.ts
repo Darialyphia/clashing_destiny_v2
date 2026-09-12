@@ -248,17 +248,3 @@ export const statsBuff = async (
     );
   }
 };
-
-export const reserve = async (game: Game, cards: AnyCard[]) => {
-  for (const card of cards) {
-    await card.removeFromCurrentLocation();
-  }
-
-  game.once(GAME_EVENTS.BEFORE_CHANGE_PHASE, async event => {
-    if (event.data.to === GAME_PHASES.SUPPLY) {
-      for (const card of cards) {
-        await card.addToHand();
-      }
-    }
-  });
-};

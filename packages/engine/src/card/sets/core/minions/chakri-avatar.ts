@@ -15,12 +15,13 @@ import { GAME_EVENTS } from '../../../../game/game.events';
 import { CardEffectTriggeredEvent } from '../../../card.events';
 import { SimpleAttackBuffModifier } from '../../../../modifier/modifiers/simple-attack-buff.modifier';
 import { UntilEndOfTurnModifierMixin } from '../../../../modifier/mixins/until-end-of-turn.mixin';
+import { SimpleCommandmentBuffModifier } from '../../../../modifier/modifiers/simple-commandment-modifier';
 
 export const chakriAvatar: MinionBlueprint = {
   id: 'chakri-avatar',
   name: 'Chakri Avatar',
   description: dedent /*html*/ `
-  When you play a spell, this gains +1 Attack this turn.
+  When you play a spell, this gains +1/+1/+0 this turn.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -55,7 +56,13 @@ export const chakriAvatar: MinionBlueprint = {
                 })
               );
               await card.modifiers.add(
-                new SimpleAttackBuffModifier('chakri-avatar', game, card, {
+                new SimpleAttackBuffModifier('chakri-avatar-cmd', game, card, {
+                  amount: 1,
+                  mixins: [new UntilEndOfTurnModifierMixin(game)]
+                })
+              );
+              await card.modifiers.add(
+                new SimpleCommandmentBuffModifier('chakri-avatar-cmd', game, card, {
                   amount: 1,
                   mixins: [new UntilEndOfTurnModifierMixin(game)]
                 })

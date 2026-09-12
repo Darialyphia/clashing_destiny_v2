@@ -1,12 +1,11 @@
 import type { CardSet } from '.';
 import { CARD_SETS } from '../card.enums';
-import { crowdsFavor } from './core/destinies/crowds-favor';
+import { xenkaiArena } from './core/destinies/xenkai-arena';
 import { dayOfConquest } from './core/destinies/day-of-conquest';
 import { dayOfFortitude } from './core/destinies/day-of-fortitude';
 import { restrainTheBeast } from './core/destinies/restrain-the-beast';
 import { ashesOfPain } from './core/destinies/ashes-of-pain';
-import { austerity } from './core/destinies/austerity';
-import { fleetingThought } from './core/destinies/fleeting-thoughts';
+import { alcuinLibrary } from './core/destinies/alcuin-library';
 import { igniteTheSky } from './core/destinies/ignite-the-sky';
 import { lightAffinity } from './core/runes/light-affinity';
 import { fireAffinity } from './core/runes/fire-affinity';
@@ -27,18 +26,20 @@ import { tuskBoar } from './core/minions/tusk-boar';
 import { assassinationProtocol } from './core/spells/assassination-protocol';
 import { eightGates } from './core/spells/eight-gates';
 import { firestormMantra } from './core/spells/firestorm-mantra';
+import { syvrelTheExile } from './core/minions/syvrel-the-exile';
+import { forgottenMarsh } from './core/destinies/forgotten-marsh';
+import { counterstrike } from './core/secrets/counterstrike';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
   name: 'Core Set',
   cards: [
-    crowdsFavor,
+    xenkaiArena,
     dayOfConquest,
     dayOfFortitude,
     restrainTheBeast,
     ashesOfPain,
-    austerity,
-    fleetingThought,
+    alcuinLibrary,
     igniteTheSky,
     lightAffinity,
     fireAffinity,
@@ -58,6 +59,9 @@ export const coreSet: CardSet = {
     tuskBoar,
     assassinationProtocol,
     eightGates,
-    firestormMantra
+    firestormMantra,
+    syvrelTheExile,
+    forgottenMarsh,
+    counterstrike
   ]
 };

@@ -17,17 +17,17 @@ import { CardEffectTriggeredEvent } from '../../../card.events';
 import { GAME_EVENTS } from '../../../../game/game.events';
 import { discardFromHand } from '../../../card-actions-utils';
 
-export const fleetingThought: DestinyBlueprint = {
+export const alcuinLibrary: DestinyBlueprint = {
   id: 'fleeting-thought',
   kind: CARD_KINDS.DESTINY,
   collectable: true,
-  name: 'Fleeting Thoughts',
+  name: 'Alcuin Library',
   description: dedent /*html*/ `
     Minions at this battlefield have <rt-trigger>On Score</rt-trigger>  Discard a card, then draw a card.
   `,
   setId: CARD_SETS.CORE,
   rarity: RARITIES.RARE,
-  art: defaultCardArt('placeholder'),
+  art: defaultCardArt('destinies/alcuin-library'),
   speed: CARD_SPEED.SLOW,
   affinities: [AFFINITIES.NEUTRAL],
   tags: [],

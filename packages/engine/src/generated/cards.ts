@@ -11,7 +11,6 @@ export const cards = {
 "day-of-fortitude": "day-of-fortitude",
 "restrain-the-beast": "restrain-the-beast",
 "ashes-of-pain": "ashes-of-pain",
-"austerity": "austerity",
 "fleeting-thought": "fleeting-thought",
 "ignite-the-sky": "ignite-the-sky",
 "light-affinity": "light-affinity",
@@ -32,7 +31,10 @@ export const cards = {
 "tusk-boar": "tusk-boar",
 "assassinationProtocol": "assassinationProtocol",
 "eightGates": "eightGates",
-"firestormMantra": "firestormMantra"
+"firestormMantra": "firestormMantra",
+"syvrel-the-exile": "syvrel-the-exile",
+"austerity": "austerity",
+"counterstrike": "counterstrike"
 } as const;
 
 export const collectableCards = {
@@ -41,7 +43,6 @@ export const collectableCards = {
 "day-of-fortitude": "day-of-fortitude",
 "restrain-the-beast": "restrain-the-beast",
 "ashes-of-pain": "ashes-of-pain",
-"austerity": "austerity",
 "fleeting-thought": "fleeting-thought",
 "ignite-the-sky": "ignite-the-sky",
 "light-affinity": "light-affinity",
@@ -62,7 +63,10 @@ export const collectableCards = {
 "tusk-boar": "tusk-boar",
 "assassinationProtocol": "assassinationProtocol",
 "eightGates": "eightGates",
-"firestormMantra": "firestormMantra"
+"firestormMantra": "firestormMantra",
+"syvrel-the-exile": "syvrel-the-exile",
+"austerity": "austerity",
+"counterstrike": "counterstrike"
 } as const;
 
 type CardSet = Array<{id: string; collectable: boolean; rarity: Rarity, kind: CardKind}>;
@@ -96,12 +100,6 @@ export const cardsBySet: Record<string, CardSet> = {
     "id": "ashes-of-pain",
     "collectable": true,
     "rarity": "rare",
-    "kind": "DESTINY"
-  },
-  {
-    "id": "austerity",
-    "collectable": true,
-    "rarity": "epic",
     "kind": "DESTINY"
   },
   {
@@ -229,6 +227,24 @@ export const cardsBySet: Record<string, CardSet> = {
     "collectable": true,
     "rarity": "legendary",
     "kind": "SPELL"
+  },
+  {
+    "id": "syvrel-the-exile",
+    "collectable": true,
+    "rarity": "rare",
+    "kind": "MINION"
+  },
+  {
+    "id": "austerity",
+    "collectable": true,
+    "rarity": "epic",
+    "kind": "DESTINY"
+  },
+  {
+    "id": "counterstrike",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "SECRET"
   }
 ]
 };
@@ -239,7 +255,6 @@ export const cardShortIds: Record<string, number> = {
 "day-of-fortitude": 3,
 "restrain-the-beast": 4,
 "ashes-of-pain": 5,
-"austerity": 6,
 "fleeting-thought": 7,
 "ignite-the-sky": 8,
 "light-affinity": 9,
@@ -260,7 +275,10 @@ export const cardShortIds: Record<string, number> = {
 "tusk-boar": 24,
 "assassinationProtocol": 25,
 "eightGates": 26,
-"firestormMantra": 27
+"firestormMantra": 27,
+"syvrel-the-exile": 28,
+"austerity": 30,
+"counterstrike": 31
 } as const;
 
 export const cardIdByShortId: Record<number, string> = {
@@ -269,7 +287,6 @@ export const cardIdByShortId: Record<number, string> = {
 "3": "day-of-fortitude",
 "4": "restrain-the-beast",
 "5": "ashes-of-pain",
-"6": "austerity",
 "7": "fleeting-thought",
 "8": "ignite-the-sky",
 "9": "light-affinity",
@@ -290,5 +307,8 @@ export const cardIdByShortId: Record<number, string> = {
 "24": "tusk-boar",
 "25": "assassinationProtocol",
 "26": "eightGates",
-"27": "firestormMantra"
+"27": "firestormMantra",
+"28": "syvrel-the-exile",
+"30": "austerity",
+"31": "counterstrike"
 } as const;

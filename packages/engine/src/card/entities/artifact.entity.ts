@@ -1,5 +1,5 @@
 import type { AbilityBlueprint, ArtifactBlueprint } from '../card-blueprint';
-import { CARD_EVENTS } from '../card.enums';
+import { CARD_EVENTS, CARD_LOCATIONS } from '../card.enums';
 import { CardPlayEvent } from '../card.events';
 import {
   Card,
@@ -102,6 +102,10 @@ export class ArtifactCard extends Card<
     return this.maxDurability - this.lostDurability;
   }
 
+  get isOnBoard() {
+    return this.location === CARD_LOCATIONS.BASE;
+  }
+
   get unplayableReason() {
     if (!this.canPayManaCost) {
       return "You don't have enough mana.";
@@ -183,6 +187,7 @@ export class ArtifactCard extends Card<
 
   async playAt(position: BoardSpace) {
     await this.resolve(async () => {
+      await this.reveal();
       await this.equip(position);
     });
   }

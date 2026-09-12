@@ -12,9 +12,15 @@ import { until } from '@vueuse/core';
 import ModifiersList from './ModifiersList.vue';
 import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
 // import AbilityMenu from './AbilityMenu.vue';
-import { INTERACTION_STATES } from '@game/engine/src/game/game.enums';
+import {
+  ANIMATIONS_NAMES,
+  INTERACTION_STATES,
+  type AnimationName
+} from '@game/engine/src/game/game.enums';
 import UiSimpleTooltip from '@/ui/components/UiSimpleTooltip.vue';
 import InspectableCard from '@/card/components/InspectableCard.vue';
+import { match } from 'ts-pattern';
+import { CARD_KINDS } from '@game/engine/src/card/card.enums';
 
 const {
   card,
@@ -29,8 +35,30 @@ const {
 }>();
 
 const ui = useGameUi();
-const { client } = useGameClient();
+const { client, playerId } = useGameClient();
 const element = ref<HTMLElement>();
+
+const animationSequence = ref<AnimationName[] | undefined>(undefined);
+const isSelected = computed(() => ui.value.selectedCard?.equals(card));
+
+watch(isSelected, selected => {
+  if (!selected) {
+    animationSequence.value = undefined;
+  } else {
+    animationSequence.value = match(card.kind)
+      .with(CARD_KINDS.MINION, () => [ANIMATIONS_NAMES.IDLE])
+      .with(CARD_KINDS.ARTIFACT, () => [ANIMATIONS_NAMES.ACTIVE])
+      .with(
+        CARD_KINDS.SPELL,
+        CARD_KINDS.DESTINY,
+        CARD_KINDS.RUNE,
+        CARD_KINDS.SECRET,
+        () => [ANIMATIONS_NAMES.DEFAULT]
+      )
+      .exhaustive();
+  }
+});
+
 onMounted(() => {
   element.value = ui.value.DOMSelectors.cardOnBoard(card.id).element!;
 });
@@ -91,6 +119,17 @@ const modifiers = computed(() => card.modifiers.filter(isDefined));
 
 const state = useGameState();
 const isTargetable = computed(() => {
+  if (state.value.interaction.state === INTERACTION_STATES.IDLE) {
+    if (card.kind !== CARD_KINDS.DESTINY) return false;
+    if (!ui.value.selectedCard) return false;
+    if (ui.value.selectedCard.kind !== CARD_KINDS.MINION) return false;
+    if (
+      ui.value.selectedCard.canScore &&
+      ui.value.selectedCard.location === card.location
+    ) {
+      return true;
+    }
+  }
   if (
     state.value.interaction.state !==
     INTERACTION_STATES.SELECTING_CARDS_ON_BOARD
@@ -126,6 +165,10 @@ useFxEvent(FX_EVENTS.CARD_EXHAUST, async event => {
   if (event.card !== card.id) return;
   card.update({ isExhausted: true });
 });
+
+const shouldScaleSprite = computed(() => {
+  return card.kind !== CARD_KINDS.DESTINY;
+});
 </script>
 
 <template>
@@ -135,6 +178,8 @@ useFxEvent(FX_EVENTS.CARD_EXHAUST, async event => {
     class="board-card"
     :class="[
       {
+        'is-ally': card.player.id === playerId,
+        'is-enemy': card.player.id !== playerId,
         'is-exhausted': card.isExhausted,
         'is-selected': ui.selectedCard?.equals(card),
         'is-being-played': isBeingPlayed,
@@ -162,6 +207,8 @@ useFxEvent(FX_EVENTS.CARD_EXHAUST, async event => {
           hp: card.hp,
           commandment: card.commandment
         }"
+        :animation-sequence="animationSequence"
+        :sprite-scale="shouldScaleSprite ? 1.5 : 1"
       />
     </InspectableCard>
     <ModifiersList :modifiers="modifiers" class="modifiers" />
@@ -284,8 +331,12 @@ useFxEvent(FX_EVENTS.CARD_EXHAUST, async event => {
 
 .modifiers {
   position: absolute;
-  top: calc(-28px * var(--pixel-scale));
-  left: calc(-3px * var(--pixel-scale));
+  .is-enemy & {
+    top: calc(-28px * var(--pixel-scale));
+  }
+  .is-ally & {
+    bottom: calc(-28px * var(--pixel-scale));
+  }
   transform: translateZ(2px);
   /* translate: 0 5px; */
   /* opacity: 0; */

@@ -55,11 +55,12 @@ export const provideCardList = () => {
   );
 
   const KIND_ORDER = {
-    [CARD_KINDS.MINION]: 1,
-    [CARD_KINDS.SPELL]: 2,
-    [CARD_KINDS.ARTIFACT]: 3,
-    [CARD_KINDS.DESTINY]: 4,
-    [CARD_KINDS.RUNE]: 5
+    [CARD_KINDS.MINION]: 0,
+    [CARD_KINDS.SPELL]: 0,
+    [CARD_KINDS.ARTIFACT]: 0,
+    [CARD_KINDS.DESTINY]: 1,
+    [CARD_KINDS.RUNE]: 2,
+    [CARD_KINDS.SECRET]: 0
   };
 
   const AFFINITY_ORDER = {
@@ -69,8 +70,7 @@ export const provideCardList = () => {
     [AFFINITIES.EARTH]: 4,
     [AFFINITIES.LIGHT]: 5,
     [AFFINITIES.DARK]: 6,
-    [AFFINITIES.ARCANE]: 7,
-    [AFFINITIES.NEUTRAL]: 8
+    [AFFINITIES.NEUTRAL]: 7
   };
 
   const kindFilter = ref(new Set<CardKind>());

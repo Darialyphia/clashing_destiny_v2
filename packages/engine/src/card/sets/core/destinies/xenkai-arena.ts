@@ -14,17 +14,17 @@ import { WhileOnBattlefieldModifier } from '../../../../modifier/modifiers/while
 import { isDefined } from '@game/shared';
 import { SimpleCommandmentBuffModifier } from '../../../../modifier/modifiers/simple-commandment-modifier';
 
-export const crowdsFavor: DestinyBlueprint = {
+export const xenkaiArena: DestinyBlueprint = {
   id: 'crowds-favor',
   kind: CARD_KINDS.DESTINY,
   collectable: true,
-  name: "Crowd's Favor",
+  name: 'Xenkai Arena',
   description: dedent /*html*/ `
-    Minion(s) at this battlefield with the highest Attack have +1 Commandment.
+    Minion(s) at this battlefield with the highest Attack have +1/+0/+0.
   `,
   setId: CARD_SETS.CORE,
   rarity: RARITIES.COMMON,
-  art: defaultCardArt('placeholder'),
+  art: defaultCardArt('destinies/xenkai-arena'),
   speed: CARD_SPEED.SLOW,
   affinities: [AFFINITIES.NEUTRAL],
   tags: [],

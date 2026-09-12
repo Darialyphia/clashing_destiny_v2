@@ -39,6 +39,8 @@ export type Config = {
 
   AUTO_RETALIATE: boolean;
   SHOULD_EXHAUST_MINION_ON_RETALIATION: boolean;
+
+  SECRET_UPFRONT_COST: number;
 };
 
 export const defaultConfig: Config = {
@@ -79,5 +81,7 @@ export const defaultConfig: Config = {
   EFFECT_CHAIN: false,
 
   AUTO_RETALIATE: true,
-  SHOULD_EXHAUST_MINION_ON_RETALIATION: false
+  SHOULD_EXHAUST_MINION_ON_RETALIATION: false,
+
+  SECRET_UPFRONT_COST: 2
 };

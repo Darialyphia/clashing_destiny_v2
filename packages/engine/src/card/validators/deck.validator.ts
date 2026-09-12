@@ -1,6 +1,5 @@
-import { defaultConfig, type Config } from '../../config';
+import { type Config } from '../../config';
 import type { CardBlueprint } from '../card-blueprint';
-import { CARD_KINDS } from '../card.enums';
 
 export type DeckViolation = {
   type: string;
@@ -56,13 +55,19 @@ export class DeckValidationRule<TMeta> {
 export class CardValidationRule<TMeta> {
   constructor(
     private options: {
-      rule: (card: ValidatableCard<TMeta>, validator: DeckValidator<TMeta>) => boolean;
+      rule: (
+        card: ValidatableCard<TMeta>,
+        deck: ValidatableDeck<TMeta>,
+        validator: DeckValidator<TMeta>
+      ) => boolean;
       violation: (
         card: ValidatableCard<TMeta>,
+        deck: ValidatableDeck<TMeta>,
         validator: DeckValidator<TMeta>
       ) => DeckViolation;
       predicate?: (
         card: ValidatableCard<TMeta>,
+        deck: ValidatableDeck<TMeta>,
         validator: DeckValidator<TMeta>
       ) => boolean;
     }
@@ -70,14 +75,15 @@ export class CardValidationRule<TMeta> {
 
   validate(
     card: ValidatableCard<TMeta>,
+    deck: ValidatableDeck<TMeta>,
     validator: DeckValidator<TMeta>
   ): DeckViolation | null {
-    if (this.options.predicate && !this.options.predicate(card, validator)) {
+    if (this.options.predicate && !this.options.predicate(card, deck, validator)) {
       return null;
     }
-    return this.options.rule(card, validator)
+    return this.options.rule(card, deck, validator)
       ? null
-      : this.options.violation(card, validator);
+      : this.options.violation(card, deck, validator);
   }
 }
 
@@ -132,17 +138,20 @@ export class DeckValidator<TMeta> implements DeckValidator<TMeta> {
     return cards.reduce((acc, card) => acc + card.copies, 0);
   }
 
-  private getDeckCards(deck: ValidatableDeck<TMeta>) {
+  getCards(deck: ValidatableDeck<TMeta>) {
     return deck.cards.map(card => ({
       ...card,
       blueprint: this.cardPool[card.blueprintId] as CardBlueprint
     }));
   }
 
-  private validateCard(card: ValidatableCard<TMeta>): DeckViolation[] {
+  private validateCard(
+    card: ValidatableCard<TMeta>,
+    deck: ValidatableDeck<TMeta>
+  ): DeckViolation[] {
     const violations: DeckViolation[] = [];
     for (const rule of this.cardRules) {
-      const violation = rule.validate(card, this);
+      const violation = rule.validate(card, deck, this);
       if (violation) {
         violations.push(violation);
       }
@@ -161,7 +170,7 @@ export class DeckValidator<TMeta> implements DeckValidator<TMeta> {
     }
 
     for (const card of deck.cards) {
-      const cardViolations = this.validateCard(card);
+      const cardViolations = this.validateCard(card, deck);
       violations.push(...cardViolations);
     }
 
@@ -173,7 +182,7 @@ export class DeckValidator<TMeta> implements DeckValidator<TMeta> {
   }
 
   canAdd(card: ValidatableCard<TMeta>, deck: ValidatableDeck<TMeta>): boolean {
-    const deckCards = this.getDeckCards(deck);
+    const deckCards = this.getCards(deck);
 
     const cardBlueprint = this.cardPool[card.blueprintId];
     if (!cardBlueprint) return false;
@@ -182,7 +191,7 @@ export class DeckValidator<TMeta> implements DeckValidator<TMeta> {
       return false;
     }
 
-    const violations = this.validateCard({ ...card, copies: card.copies + 1 });
+    const violations = this.validateCard({ ...card, copies: card.copies + 1 }, deck);
 
     return violations.length === 0;
   }

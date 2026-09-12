@@ -34,7 +34,8 @@ export const CARD_KINDS = {
   SPELL: 'SPELL',
   ARTIFACT: 'ARTIFACT',
   DESTINY: 'DESTINY',
-  RUNE: 'RUNE'
+  RUNE: 'RUNE',
+  SECRET: 'SECRET'
 } as const;
 export type CardKind = Values<typeof CARD_KINDS>;
 
@@ -48,8 +49,6 @@ export type ArtifactKind = Values<typeof ARTIFACT_KINDS>;
 export const CARD_SPEED = {
   SLOW: 'SLOW',
   FAST: 'FAST'
-  // BURST: 'BURST'
-  // WARP: 'WARP'
 } as const;
 export type CardSpeed = Values<typeof CARD_SPEED>;
 
@@ -99,7 +98,8 @@ export const CARD_LOCATIONS = {
   BANISH_PILE: 'banishPile',
   BASE: 'base',
   LEFT_BATTLEFIELD: 'left_battlefield',
-  RIGHT_BATTLEFIELD: 'right_battlefield'
+  RIGHT_BATTLEFIELD: 'right_battlefield',
+  RESERVE: 'reserve'
 } as const;
 export type CardLocation = Values<typeof CARD_LOCATIONS>;
 

@@ -10,13 +10,12 @@ export type NonNeutralAffinity = BetterExclude<Affinity, 'Neutral'>;
 
 export class RuneManagerComponent {
   private _runes: Record<NonNeutralAffinity, number> = {
-    Air: 0,
-    Arcane: 0,
-    Dark: 0,
-    Earth: 0,
-    Fire: 0,
-    Light: 0,
-    Water: 0
+    Songhai: 0,
+    Abyssian: 0,
+    Vetruvian: 0,
+    Magmar: 0,
+    Lyonar: 0,
+    Vanar: 0
   };
 
   constructor(

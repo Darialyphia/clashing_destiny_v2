@@ -10,7 +10,7 @@ import {
   CARD_LOCATIONS
 } from '../../../card.enums';
 import { GAME_EVENTS } from '../../../../game/game.events';
-import { CardAfterDealCombatDamageEvent } from '../../../card.events';
+import { CardAfterTakeDamageEvent } from '../../../card.events';
 import type { MinionCard } from '../../../entities/minion.entity';
 import { Modifier } from '../../../../modifier/modifier.entity';
 import { GameEventModifierMixin } from '../../../../modifier/mixins/game-event.mixin';
@@ -20,7 +20,7 @@ export const tuskBoar: MinionBlueprint = {
   id: 'tusk-boar',
   name: 'Tusk Boar',
   description: dedent /*html*/ `
-  When you deal more than 5 combat damage in a turn, summon this minion from your hand.
+  When you deal more than 5 damage in a turn, summon this minion from your hand.
   <rt-timing>End of Turn</rt-timing>Return this to your hand.
   `,
   collectable: true,
@@ -29,26 +29,26 @@ export const tuskBoar: MinionBlueprint = {
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.LEGENDARY,
   affinities: [AFFINITIES.FIRE, AFFINITIES.FIRE, AFFINITIES.NEUTRAL],
-  manaCost: 3,
+  manaCost: 4,
   manaSupply: 1,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 3,
   maxHp: 3,
-  commandment: 1,
+  commandment: 2,
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {
     const summonIfEligible = async () => {
       const totalDamageDealt = card.player.eventTracker
-        .getEventsThisGameTurnByName(GAME_EVENTS.CARD_AFTER_DEAL_COMBAT_DAMAGE)
+        .getEventsThisGameTurnByName(GAME_EVENTS.CARD_AFTER_TAKE_DAMAGE)
         .filter(event => {
-          const damageEvent = event.data.event as CardAfterDealCombatDamageEvent;
-          return damageEvent.data.card.isAlly(card);
+          const damageEvent = event.data.event as CardAfterTakeDamageEvent;
+          return damageEvent.data.source.isAlly(card);
         })
         .reduce((total, event) => {
-          const damageEvent = event.data.event as CardAfterDealCombatDamageEvent;
-          return total + damageEvent.data.damage.getFinalAmount(damageEvent.data.target);
+          const damageEvent = event.data.event as CardAfterTakeDamageEvent;
+          return total + damageEvent.data.damage.getFinalAmount(damageEvent.data.card);
         }, 0);
 
       if (totalDamageDealt <= 5) return;
@@ -62,8 +62,8 @@ export const tuskBoar: MinionBlueprint = {
         mixins: [
           new TogglableModifierMixin(game, () => card.location === CARD_LOCATIONS.HAND),
           new GameEventModifierMixin(game, {
-            eventName: GAME_EVENTS.CARD_AFTER_DEAL_COMBAT_DAMAGE,
-            filter: event => event.data.card.isAlly(card),
+            eventName: GAME_EVENTS.CARD_AFTER_TAKE_DAMAGE,
+            filter: event => event.data.source.isAlly(card),
             async handler() {
               await summonIfEligible();
             }

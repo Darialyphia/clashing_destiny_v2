@@ -119,7 +119,12 @@ export class PlayerViewModel {
       }),
       destinyCard: this.getEntities()[
         this.data.boardSide.leftBattlefield.destinyCard
-      ] as CardViewModel
+      ] as CardViewModel,
+      secretCard: this.data.boardSide.leftBattlefield.secretCard
+        ? (this.getEntities()[
+            this.data.boardSide.leftBattlefield.secretCard
+          ] as CardViewModel)
+        : null
     };
   }
 
@@ -135,7 +140,12 @@ export class PlayerViewModel {
       }),
       destinyCard: this.getEntities()[
         this.data.boardSide.rightBattlefield.destinyCard
-      ] as CardViewModel
+      ] as CardViewModel,
+      secretCard: this.data.boardSide.rightBattlefield.secretCard
+        ? (this.getEntities()[
+            this.data.boardSide.rightBattlefield.secretCard
+          ] as CardViewModel)
+        : null
     };
   }
 

@@ -21,16 +21,12 @@ export class SimpleAttackBuffModifier<T extends MinionCard> extends Modifier<T> 
   ) {
     super(modifierType, game, card, {
       isUnique: options.isUnique ?? true,
-      icon: () => {
-        const amount = isFunction(options.amount) ? options.amount() : options.amount;
-        return amount > 0 ? 'keyword-attack-buff' : 'keyword-attack-debuff';
-      },
       name: () => {
         const name = isFunction(options.name) ? options.name() : options.name;
         if (name) return name;
 
         const amount = isFunction(options.amount) ? options.amount() : options.amount;
-        return amount > 0 ? 'attack Buff' : 'attack Debuff';
+        return amount > 0 ? 'Attack Buff' : 'Attack Debuff';
       },
       description: () => {
         const amount = isFunction(options.amount) ? options.amount() : options.amount;

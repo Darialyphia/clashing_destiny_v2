@@ -103,6 +103,7 @@ const isDev = import.meta.env.DEV;
     <div>Game Phase: {{ state.phase.state }}</div>
     <div>Selected Card: {{ ui.selectedCard?.id }}</div>
     <div>Interaction State: {{ state.interaction.state }}</div>
+    <div>Hovered card id hand: {{ ui.hoveredCardInHand?.id }}</div>
   </div>
 
   <div class="game-board-container">

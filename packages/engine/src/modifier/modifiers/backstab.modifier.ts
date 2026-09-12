@@ -14,8 +14,8 @@ export class BackstabModifier<T extends MinionCard> extends Modifier<T> {
     { amount, mixins }: { amount: number; mixins?: ModifierMixin<MinionCard>[] }
   ) {
     super(KEYWORDS.BACKSTAB.id, game, source, {
-      name: KEYWORDS.BACKSTAB.name,
-      description: KEYWORDS.BACKSTAB.description,
+      name: () => KEYWORDS.BACKSTAB.name.replace('X', amount.toString()),
+      description: () => KEYWORDS.BACKSTAB.description.replace('X', amount.toString()),
       icon: 'icons/keyword-backstab',
       isUnique: false,
       mixins: [

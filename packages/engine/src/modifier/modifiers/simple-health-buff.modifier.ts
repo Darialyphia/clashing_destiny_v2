@@ -19,10 +19,6 @@ export class SimpleHealthBuffModifier<T extends MinionCard> extends Modifier<T> 
     }
   ) {
     super(modifierType, game, card, {
-      icon: () => {
-        const amount = isFunction(options.amount) ? options.amount() : options.amount;
-        return amount > 0 ? 'keyword-hp-buff' : 'keyword-hp-debuff';
-      },
       name: () => {
         const name = isFunction(options.name) ? options.name() : options.name;
         if (name) return name;

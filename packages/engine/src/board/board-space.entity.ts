@@ -10,6 +10,7 @@ import type { Game } from '../game/game';
 import type { Player } from '../player/player.entity';
 import type { AnyCard } from '../card/entities/card.entity';
 import { match } from 'ts-pattern';
+import type { SecretCard } from '../card/entities/secret.entity';
 
 export type BoardRow = BetterExtract<
   CardLocation,

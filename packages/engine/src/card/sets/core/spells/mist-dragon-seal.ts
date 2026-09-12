@@ -16,8 +16,8 @@ import {
 import type { MinionCard } from '../../../entities/minion.entity';
 import { SimpleAttackBuffModifier } from '../../../../modifier/modifiers/simple-attack-buff.modifier';
 import { SimpleCommandmentBuffModifier } from '../../../../modifier/modifiers/simple-commandment-modifier';
-import { UntilEndOfTurnModifierMixin } from '../../../../modifier/mixins/until-end-of-turn.mixin';
 import { SimpleHealthBuffModifier } from '../../../../modifier/modifiers/simple-health-buff.modifier';
+import { RemoveOnLeaveBoardModifierMixin } from '../../../../modifier/mixins/remove-on-destroyed';
 
 export const mistDragonSeal: SpellBlueprint<MinionCard> = {
   id: 'mistDragonSeal',
@@ -37,7 +37,7 @@ export const mistDragonSeal: SpellBlueprint<MinionCard> = {
   tags: [],
   shouldHideTargetArrows: true,
   canPlay: (game, card) =>
-    singleAllyMinionTargetRules.canPlay(game, card, minion => minion.isOnBattlefield) &&
+    singleAllyMinionTargetRules.canPlay(game, card) &&
     card.player.boardSide.hasEmptySpaceInBattlefield,
   getTargets: async (game, card) => {
     const minionToMove = await singleAllyMinionTargetRules.getTargets({
@@ -45,7 +45,6 @@ export const mistDragonSeal: SpellBlueprint<MinionCard> = {
       card,
       timeoutFallback: singleAllyMinionTargetRules.defaultTimeoutFallback(game, card),
       canCancel: true,
-      predicate: minion => minion.isOnBattlefield,
       aiHints: {
         shouldPick: () => 1
       }
@@ -86,17 +85,20 @@ export const mistDragonSeal: SpellBlueprint<MinionCard> = {
 
     await target.modifiers.add(
       new SimpleAttackBuffModifier('mist-dragon-seal-atk-buff', game, card, {
-        amount: 1
+        amount: 1,
+        mixins: [new RemoveOnLeaveBoardModifierMixin(game)]
       })
     );
     await target.modifiers.add(
       new SimpleCommandmentBuffModifier('mist-dragon-seal-cmd-buff', game, card, {
-        amount: 1
+        amount: 1,
+        mixins: [new RemoveOnLeaveBoardModifierMixin(game)]
       })
     );
     await target.modifiers.add(
       new SimpleHealthBuffModifier('mist-dragon-seal-hp-buff', game, card, {
-        amount: 1
+        amount: 1,
+        mixins: [new RemoveOnLeaveBoardModifierMixin(game)]
       })
     );
   },

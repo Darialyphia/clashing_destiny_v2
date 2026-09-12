@@ -18,18 +18,22 @@ export class OnMoveModifier extends Modifier<MinionCard> {
       mixins?: ModifierMixin<MinionCard>[];
       handler: (event: CardAfterMoveEvent, modifier: Modifier<MinionCard>) => void;
       location?: 'base' | 'battlefield' | 'both';
+      fromlocation?: 'base' | 'battlefield' | 'both';
     }
   ) {
     super(KEYWORDS.ON_MOVE.id, game, source, {
       name: KEYWORDS.ON_MOVE.name,
       description: KEYWORDS.ON_MOVE.description,
-      icon: 'icons/keyword-on-move',
       mixins: [
         new KeywordModifierMixin(game, KEYWORDS.ON_MOVE),
         new GameEventModifierMixin(game, {
           eventName: GAME_EVENTS.CARD_AFTER_MOVE,
           filter: event => {
             if (!event.data.card.equals(this.target)) return false;
+
+            const fromLocationValid = this.checkFromLocation(event);
+            if (!fromLocationValid) return false;
+
             if (this.options.location === 'base') {
               return event.data.to.position.zone === CARD_LOCATIONS.BASE;
             }
@@ -46,6 +50,23 @@ export class OnMoveModifier extends Modifier<MinionCard> {
         ...(options.mixins || [])
       ]
     });
+  }
+
+  private checkFromLocation(event: CardAfterMoveEvent): boolean {
+    if (
+      this.options.fromlocation === 'base' &&
+      event.data.from.position.zone !== CARD_LOCATIONS.BASE
+    ) {
+      return false;
+    }
+    if (
+      this.options.fromlocation === 'battlefield' &&
+      event.data.from.position.zone !== CARD_LOCATIONS.LEFT_BATTLEFIELD &&
+      event.data.from.position.zone !== CARD_LOCATIONS.RIGHT_BATTLEFIELD
+    ) {
+      return false;
+    }
+    return true;
   }
 
   private async onMove(event: CardAfterMoveEvent) {

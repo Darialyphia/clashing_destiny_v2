@@ -22,7 +22,8 @@ const {
   isFoil,
   showStats = false,
   sprite,
-  animationSequence
+  animationSequence,
+  spriteScale = 1
 } = defineProps<{
   card: {
     id: string;
@@ -35,7 +36,7 @@ const {
     maxHp?: number | null;
     baseMaxHp?: number | null;
     commandment?: number | null;
-    baseBounty?: number | null;
+    baseCommandment?: number | null;
     durability?: number | null;
     manaCost?: number | null;
     destinyCost?: number | null;
@@ -44,6 +45,11 @@ const {
   showStats?: boolean;
   sprite: Nullable<SpriteData>;
   animationSequence?: string[];
+  spriteScale?: number;
+}>();
+
+const emit = defineEmits<{
+  artSequenceEnd: [];
 }>();
 
 const root = useTemplateRef('card');
@@ -51,7 +57,6 @@ const { pointerStyle } = useCardTilt(root, {
   maxAngle: 10,
   isEnabled: ref(true)
 });
-
 const _animationSequence = computed(() => {
   if (animationSequence) return animationSequence;
 
@@ -62,17 +67,28 @@ const _animationSequence = computed(() => {
       CARD_KINDS.ARTIFACT,
       CARD_KINDS.DESTINY,
       CARD_KINDS.RUNE,
+      CARD_KINDS.SECRET,
       () => [ANIMATIONS_NAMES.DEFAULT]
     )
     .exhaustive();
 });
 
-const { activeFrameRect, bgPosition, imageBg } = useSprite({
+const { activeFrameRect, bgPosition, imageBg, off, on } = useSprite({
   animationSequence: _animationSequence,
   sprite: computed(() => sprite ?? null),
   kind: computed(() => card.kind),
-  scale: 1,
+  scale: spriteScale,
   scalePositionByPixelScale: true
+});
+
+const onSequenceEnd = () => {
+  emit('artSequenceEnd');
+};
+onMounted(() => {
+  on('sequenceEnd', onSequenceEnd);
+});
+onUnmounted(() => {
+  off('sequenceEnd', onSequenceEnd);
 });
 </script>
 
@@ -84,34 +100,19 @@ const { activeFrameRect, bgPosition, imageBg } = useSprite({
     ref="card"
   >
     <div class="card-front">
-      <div
-        class="art"
-        v-if="sprite"
-        :style="{
-          '--bg-position': bgPosition,
-          '--width': `${activeFrameRect.width}px`,
-          '--height': `${activeFrameRect.height}px`,
-          '--background-width': `calc(${sprite?.sheetSize.w ?? 0}px * var(--pixel-scale))`,
-          '--background-height': `calc(${sprite?.sheetSize.h ?? 0}px * var(--pixel-scale))`
-        }"
-      >
-        <FoilScanlines v-if="isFoil && card.art.foil.scanlines" />
-        <FoilGlitter v-if="isFoil && card.art.foil.glitter" />
-        <div class="sprite" />
-        <FoilBrightShine v-if="isFoil && card.art.foil.brightShine" />
-      </div>
-
       <template v-if="showStats">
         <div
           v-if="isDefined(card.commandment)"
           class="stat commandment"
           :class="{
             buffed:
-              isDefined(card.baseBounty) && card.commandment > card.baseBounty,
+              isDefined(card.baseCommandment) &&
+              card.commandment > card.baseCommandment,
             debuffed:
-              isDefined(card.baseBounty) && card.commandment < card.baseBounty
+              isDefined(card.baseCommandment) &&
+              card.commandment < card.baseCommandment
           }"
-          data-label="Bounty"
+          data-label="Commandment"
         >
           <div class="dual-text" :data-text="card.commandment">
             {{ card.commandment }}
@@ -153,6 +154,23 @@ const { activeFrameRect, bgPosition, imageBg } = useSprite({
           </div>
         </div>
       </template>
+      <div
+        class="art"
+        v-if="sprite"
+        :style="{
+          '--bg-position': bgPosition,
+          '--width': `${activeFrameRect.width}px`,
+          '--height': `${activeFrameRect.height}px`,
+          '--sprite-scale': spriteScale,
+          '--background-width': `calc(${sprite?.sheetSize.w ?? 0}px * var(--sprite-scale) * var(--pixel-scale))`,
+          '--background-height': `calc(${sprite?.sheetSize.h ?? 0}px * var(--sprite-scale) * var(--pixel-scale))`
+        }"
+      >
+        <FoilScanlines v-if="isFoil && card.art.foil.scanlines" />
+        <FoilGlitter v-if="isFoil && card.art.foil.glitter" />
+        <div class="sprite" />
+        <FoilBrightShine v-if="isFoil && card.art.foil.brightShine" />
+      </div>
       <template v-if="isFoil">
         <FoilSheen v-if="card.art.foil.sheen" />
         <FoilOil v-if="card.art.foil.oil" />
@@ -192,6 +210,10 @@ const { activeFrameRect, bgPosition, imageBg } = useSprite({
     grid-column: 1;
     grid-row: 1;
   }
+
+  &.destiny {
+    overflow: hidden;
+  }
 }
 
 .card-front {
@@ -209,7 +231,7 @@ const { activeFrameRect, bgPosition, imageBg } = useSprite({
 .card-back {
   transform: rotateY(0.5turn);
   backface-visibility: hidden;
-  background: url('@/assets/ui/card/card_backs/default-small.png');
+  background: url('@/assets/ui/card/v3/card-back-small.png');
   background-size: cover;
   --glare-mask: url('@/assets/ui/card/card_backs/default-small.png');
 }
@@ -319,6 +341,7 @@ const { activeFrameRect, bgPosition, imageBg } = useSprite({
   transform: translateX(-50%);
   bottom: calc(10px * var(--pixel-scale));
   pointer-events: none;
+  transform-style: preserve-3d;
 
   .spell &,
   .rune &,

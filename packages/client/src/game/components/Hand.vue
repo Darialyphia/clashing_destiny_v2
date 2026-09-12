@@ -156,6 +156,7 @@ watch(width, v => {
         '--hand-offset-y': handOffsetY
       }"
       ref="hand"
+      @mouseleave="ui.unhoverCardInHand"
     >
       <HandCard
         v-for="card in cards"
@@ -180,7 +181,7 @@ watch(width, v => {
   width: calc(1px * v-bind(handWidth));
   left: 50%;
   transform: translateX(-50%);
-  height: 50px;
+
   z-index: 10;
 }
 .hand {
@@ -189,6 +190,7 @@ watch(width, v => {
   z-index: 1;
   width: 100%;
   transition: transform 0.15s var(--ease-in-3);
+  height: 200px;
   &.opponent-hand:not(.expanded) {
     position: absolute;
     right: 0;

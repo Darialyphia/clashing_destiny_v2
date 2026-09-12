@@ -21,7 +21,8 @@ const FALLBACK_ANIMATION_BY_KIND: Record<CardKind, string> = {
   [CARD_KINDS.SPELL]: ANIMATIONS_NAMES.DEFAULT,
   [CARD_KINDS.ARTIFACT]: ANIMATIONS_NAMES.DEFAULT,
   [CARD_KINDS.RUNE]: ANIMATIONS_NAMES.DEFAULT,
-  [CARD_KINDS.DESTINY]: ANIMATIONS_NAMES.DEFAULT
+  [CARD_KINDS.DESTINY]: ANIMATIONS_NAMES.DEFAULT,
+  [CARD_KINDS.SECRET]: ANIMATIONS_NAMES.DEFAULT
 };
 export function useSprite({
   sprite,
@@ -101,7 +102,6 @@ export function useSprite({
           currentFrame.value = startFrame;
           if (!repeat) {
             isDone.value = true;
-            return;
           }
 
           emitter.emit('sequenceEnd', {});

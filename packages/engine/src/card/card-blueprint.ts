@@ -19,6 +19,9 @@ import type { DestinyCard } from './entities/destiny.entity';
 import type { Effect } from '../game/effect-chain';
 import type { Nullable } from '@game/shared';
 import type { RuneCard } from './entities/rune.entity';
+import type { GameEventMap } from '../game/game.events';
+import type { EventMapWithStarEvent } from '../utils/typed-emitter';
+import type { SecretCard } from './entities/secret.entity';
 
 export type CardArt = {
   foil: {
@@ -185,9 +188,46 @@ export type RuneBlueprint = CardBlueprintBase & {
   onPlay: (game: Game, card: RuneCard) => Promise<void>;
 };
 
+export type SecretBlueprint<
+  TEvent extends keyof EventMapWithStarEvent<GameEventMap>,
+  T extends AnyCard = AnyCard
+> = CardBlueprintBase & {
+  kind: Extract<CardKind, typeof CARD_KINDS.SECRET>;
+  manaCost: number;
+  manaSupply: number;
+  onInit: (game: Game, card: SecretCard) => Promise<void>;
+  onTrigger: (
+    game: Game,
+    card: SecretCard,
+    event: EventMapWithStarEvent<GameEventMap>[TEvent],
+    targets: Targets<T>
+  ) => Promise<void>;
+  canPlay: (game: Game, card: SecretCard) => boolean;
+  getTargets: (game: Game, card: SecretCard) => Promise<InteractionResult<Targets<T>>>;
+  trigger: {
+    eventName: TEvent;
+    filter: (
+      game: Game,
+      card: SecretCard,
+      event: EventMapWithStarEvent<GameEventMap>[TEvent]
+    ) => boolean;
+  };
+  aiHints: {
+    shouldPlay: (game: Game, card: SecretCard) => number;
+  };
+};
+
+export const defineSecretBlueprint = <
+  TEvent extends keyof EventMapWithStarEvent<GameEventMap>,
+  T extends AnyCard = AnyCard
+>(
+  blueprint: SecretBlueprint<TEvent, T>
+) => blueprint;
+
 export type CardBlueprint =
   | SpellBlueprint<any>
   | MinionBlueprint
   | ArtifactBlueprint
   | DestinyBlueprint
-  | RuneBlueprint;
+  | RuneBlueprint
+  | SecretBlueprint<any, any>;
