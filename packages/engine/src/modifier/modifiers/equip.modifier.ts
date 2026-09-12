@@ -21,7 +21,7 @@ export class EquippedModifier extends Modifier<ArtifactCard> {
     super(`${source.id}-equip`, game, source, {
       name: 'Equipped',
       description: () => `Equipped to ${options.attachedTo.blueprint.name}`,
-      icon: 'keyword/equipped',
+      icon: 'icons/keyword-equipped',
       mixins: [
         new RemoveOnLeaveBoardModifierMixin(game),
         new RemoveOnLeaveBoardModifierMixin(game, options.attachedTo),

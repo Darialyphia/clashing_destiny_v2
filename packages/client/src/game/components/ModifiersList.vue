@@ -15,6 +15,9 @@ const { playerId } = useGameClient();
 const displayedModifiers = computed(() => {
   return uniqBy(
     modifiers.filter(mod => {
+      if (mod.icon) {
+        console.log(mod.icon, assets[mod.icon!]);
+      }
       return isDefined(mod.icon) && mod.stacks > 0 && mod.isEnabled;
     }),
     'modifierType'
