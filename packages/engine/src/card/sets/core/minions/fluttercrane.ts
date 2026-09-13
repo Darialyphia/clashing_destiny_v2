@@ -14,7 +14,7 @@ export const flutterCrane: MinionBlueprint = {
   id: 'flutter-crane',
   name: 'Flutter Crane',
   description: dedent /*html*/ `
-  <rt-trigger>On Move</rt-trigger> <rt-keyword>Reserve</rt-keyword> a card.
+  <rt-timing>Once per turn</rt-timing> <rt-trigger>On Move</rt-trigger> <rt-keyword>Reserve</rt-keyword> a card.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -34,6 +34,7 @@ export const flutterCrane: MinionBlueprint = {
   async onInit(game, card) {
     await card.modifiers.add(
       new OnMoveModifier(game, card, {
+        frequencyPerGameTurn: 1,
         async handler() {
           for (const topCard of card.player.cardManager.mainDeck.peek(1)) {
             await topCard.addToReserve();

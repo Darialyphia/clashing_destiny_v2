@@ -19,6 +19,7 @@ export class OnMoveModifier extends Modifier<MinionCard> {
       handler: (event: CardAfterMoveEvent, modifier: Modifier<MinionCard>) => void;
       location?: 'base' | 'battlefield' | 'both';
       fromlocation?: 'base' | 'battlefield' | 'both';
+      frequencyPerGameTurn?: number;
     }
   ) {
     super(KEYWORDS.ON_MOVE.id, game, source, {
@@ -28,6 +29,7 @@ export class OnMoveModifier extends Modifier<MinionCard> {
         new KeywordModifierMixin(game, KEYWORDS.ON_MOVE),
         new GameEventModifierMixin(game, {
           eventName: GAME_EVENTS.CARD_AFTER_MOVE,
+          frequencyPerGameTurn: options.frequencyPerGameTurn,
           filter: event => {
             if (!event.data.card.equals(this.target)) return false;
 
