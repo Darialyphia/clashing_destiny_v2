@@ -30,7 +30,7 @@ export class SimpleCommandmentBuffModifier extends Modifier<MinionCard> {
       },
       description: () => {
         const amount = isFunction(options.amount) ? options.amount() : options.amount;
-        return `${amount > 0 ? '+' : '-'}${options.amount} Commandment`;
+        return `${amount > 0 ? '+' : ''}${options.amount} Commandment`;
       },
       mixins: [
         new RemoveOnDestroyedMixin(game),

@@ -28,7 +28,7 @@ export const cycloneMask: ArtifactBlueprint = {
   art: defaultCardArt('artifacts/cyclone-mask'),
   kind: CARD_KINDS.ARTIFACT,
   rarity: RARITIES.RARE,
-  affinities: [AFFINITIES.FIRE],
+  affinities: [AFFINITIES.FIRE, AFFINITIES.FIRE],
   manaCost: 2,
   manaSupply: 2,
   durability: 2,

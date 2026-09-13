@@ -38,7 +38,8 @@ export const cards = {
 "dagger-kiri": "dagger-kiri",
 "the-amber-pass": "the-amber-pass",
 "obscuring-blow": "obscuring-blow",
-"cycloneMask": "cycloneMask"
+"cycloneMask": "cycloneMask",
+"bloodrageMask": "bloodrageMask"
 } as const;
 
 export const collectableCards = {
@@ -74,7 +75,8 @@ export const collectableCards = {
 "dagger-kiri": "dagger-kiri",
 "the-amber-pass": "the-amber-pass",
 "obscuring-blow": "obscuring-blow",
-"cycloneMask": "cycloneMask"
+"cycloneMask": "cycloneMask",
+"bloodrageMask": "bloodrageMask"
 } as const;
 
 type CardSet = Array<{id: string; collectable: boolean; rarity: Rarity, kind: CardKind}>;
@@ -277,6 +279,12 @@ export const cardsBySet: Record<string, CardSet> = {
     "collectable": true,
     "rarity": "rare",
     "kind": "ARTIFACT"
+  },
+  {
+    "id": "bloodrageMask",
+    "collectable": true,
+    "rarity": "rare",
+    "kind": "ARTIFACT"
   }
 ]
 };
@@ -314,7 +322,8 @@ export const cardShortIds: Record<string, number> = {
 "dagger-kiri": 32,
 "the-amber-pass": 33,
 "obscuring-blow": 34,
-"cycloneMask": 35
+"cycloneMask": 35,
+"bloodrageMask": 36
 } as const;
 
 export const cardIdByShortId: Record<number, string> = {
@@ -350,5 +359,6 @@ export const cardIdByShortId: Record<number, string> = {
 "32": "dagger-kiri",
 "33": "the-amber-pass",
 "34": "obscuring-blow",
-"35": "cycloneMask"
+"35": "cycloneMask",
+"36": "bloodrageMask"
 } as const;

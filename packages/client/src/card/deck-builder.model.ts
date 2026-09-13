@@ -130,8 +130,12 @@ export class DeckBuilderViewModel {
     }
   }
 
-  getCard(blueprintId: string) {
+  getCardByBlueprintId(blueprintId: string) {
     return this._deck.cards.find(card => card.blueprintId === blueprintId);
+  }
+
+  getCardById(cardId: string) {
+    return this._deck.cards.find(card => card.meta.cardId === cardId);
   }
 
   get validator() {

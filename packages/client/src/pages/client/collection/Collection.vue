@@ -105,6 +105,7 @@ const isDev = import.meta.env.DEV;
     minmax(calc(var(--card-v3-width) * var(--card-scale)), 1fr)
   );
   column-gap: var(--size-0);
+  row-gap: var(--size-2);
   justify-items: center;
   overflow-x: hidden;
   overflow-y: auto;

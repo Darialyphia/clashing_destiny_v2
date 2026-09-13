@@ -56,7 +56,7 @@ export const chakriAvatar: MinionBlueprint = {
                 })
               );
               await card.modifiers.add(
-                new SimpleAttackBuffModifier('chakri-avatar-cmd', game, card, {
+                new SimpleAttackBuffModifier('chakri-avatar-atk', game, card, {
                   amount: 1,
                   mixins: [new UntilEndOfTurnModifierMixin(game)]
                 })

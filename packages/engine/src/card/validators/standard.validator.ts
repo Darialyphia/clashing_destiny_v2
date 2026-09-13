@@ -71,8 +71,7 @@ class TooManyCopiesRule<TMeta> extends CardValidationRule<TMeta> {
           .getCards(deck)
           .filter(c => c.blueprintId === card.blueprintId)
           .reduce((acc, c) => acc + c.copies, 0);
-
-        return totalCopies <= allowedCopies[blueprint.kind];
+        return totalCopies < allowedCopies[blueprint.kind];
       },
       violation: (card, deck, validator) => ({
         type: 'too_many_copies',

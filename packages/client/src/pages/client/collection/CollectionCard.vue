@@ -20,7 +20,7 @@ const canAddCard = computed(() => {
   if (!isEditingDeck.value) return false;
   if (card.copiesOwned === 0) return false;
 
-  const existing = deckBuilder.value.getCard(card.card.id);
+  const existing = deckBuilder.value.getCardById(card.id);
   if (existing && card.copiesOwned <= existing.copies) {
     return false;
   }
@@ -40,7 +40,7 @@ const canAddCard = computed(() => {
 const isModalOpened = ref(false);
 const isInvisible = ref(false);
 watch(isModalOpened, opened => {
-  // we had a delay to avoid flickering when right clicking a card to see the modal
+  // we add a delay to avoid flickering when right clicking a card to see the modal
   // because the modal has some Flip shenanigans going on
   if (opened) {
     setTimeout(() => {
@@ -83,11 +83,7 @@ watch(isModalOpened, opened => {
 
     <CardDetailsModal v-model:is-opened="isModalOpened" :card="card" />
 
-    <div
-      class="text-center text-xs text-yellow-50/90 select-none pointer-events-none py-2"
-    >
-      Copies owned: {{ card.copiesOwned }}
-    </div>
+    <div class="copies-owned">Copies owned: {{ card.copiesOwned }}</div>
   </div>
 </template>
 
@@ -117,5 +113,15 @@ watch(isModalOpened, opened => {
 
 .collection-card:not(.disabled):hover {
   cursor: url('@/assets/ui/cursor-hover.png'), auto;
+}
+.copies-owned {
+  text-align: center;
+  font-size: var(--font-size-0);
+  user-select: none;
+  -webkit-text-stroke: 3px black;
+  paint-order: stroke fill;
+  display: grid;
+  place-items: center;
+  margin-top: var(--size-1);
 }
 </style>

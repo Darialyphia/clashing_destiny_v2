@@ -33,6 +33,7 @@ import { daggerKiri } from './core/minions/dagger-kiri';
 import { theAmberPass } from './core/destinies/the-amber-pass';
 import { obscuringBlow } from './core/secrets/obscuring-blow';
 import { cycloneMask } from './core/artifacts/cyclone-mask';
+import { bloodrageMask } from './core/artifacts/bloodrage-mask';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -70,6 +71,7 @@ export const coreSet: CardSet = {
     daggerKiri,
     theAmberPass,
     obscuringBlow,
-    cycloneMask
+    cycloneMask,
+    bloodrageMask
   ]
 };

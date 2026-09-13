@@ -89,6 +89,17 @@ const { floatingStyles } = useFloating(reference, floating, {
   middleware: [offset(10)],
   strategy: 'fixed'
 });
+
+const isInspectable = computed(() => {
+  if (ui.value.draggedCard) return false;
+  if (ui.value.selectedCard) return false;
+  if (!enabled) return false;
+  if (card.value.player.id !== playerId.value && !card.value.isRevealed) {
+    return false;
+  }
+
+  return true;
+});
 </script>
 
 <template>
@@ -100,10 +111,7 @@ const { floatingStyles } = useFloating(reference, floating, {
     </HoverCardTrigger>
     <HoverCardPortal to="#card-portal">
       <HoverCardContent :side="side" :side-offset="sideOffset" :align="align">
-        <div
-          ref="reference"
-          v-if="!ui.draggedCard && !ui.selectedCard && enabled"
-        >
+        <div ref="reference" v-if="isInspectable">
           <GameCard
             :card-id="cardId"
             :interactive="false"

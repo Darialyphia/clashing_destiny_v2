@@ -28,7 +28,7 @@ export class SimpleHealthBuffModifier<T extends MinionCard> extends Modifier<T> 
       },
       description: () => {
         const amount = isFunction(options.amount) ? options.amount() : options.amount;
-        return `${amount > 0 ? '+' : '-'}${amount} Health`;
+        return `${amount > 0 ? '+' : ''}${amount} Health`;
       },
       mixins: [
         new RemoveOnDestroyedMixin(game),

@@ -17,7 +17,7 @@
   align-items: center;
   padding-bottom: 1px;
   color: white;
-  -webkit-text-stroke: 2px black;
+  -webkit-text-stroke: 3px black;
   paint-order: stroke fill;
   translate: 0 calc(-1px * var(--pixel-scale));
 }

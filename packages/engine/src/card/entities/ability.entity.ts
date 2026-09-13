@@ -82,7 +82,7 @@ export class Ability<T extends AbilityOwner>
     );
   }
 
-  private async resolveEffect() {
+  private async resolveEffect(onResolved?: () => MaybePromise<void>) {
     await this.game.emit(
       ABILITY_EVENTS.ABILITY_BEFORE_USE,
       new AbilityBeforeUseEvent({ card: this.card, abilityId: this.abilityId })
@@ -96,6 +96,10 @@ export class Ability<T extends AbilityOwner>
     );
 
     this.targets = null;
+
+    if (onResolved) {
+      await onResolved();
+    }
   }
 
   protected async insertInChainOrExecute(
@@ -124,7 +128,7 @@ export class Ability<T extends AbilityOwner>
         });
       }
     } else {
-      await this.resolveEffect();
+      await this.resolveEffect(onResolved);
     }
   }
 

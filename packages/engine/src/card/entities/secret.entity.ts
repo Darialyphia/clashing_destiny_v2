@@ -117,6 +117,13 @@ export class SecretCard extends Card<
     return null;
   }
 
+  get isOnBoard() {
+    return (
+      this.location === CARD_LOCATIONS.LEFT_BATTLEFIELD ||
+      this.location === CARD_LOCATIONS.RIGHT_BATTLEFIELD
+    );
+  }
+
   private async wrappedHandler(event: GameEventMap[keyof GameEventMap]) {
     if (!this.blueprint.trigger.filter(this.game, this, event)) {
       return;
@@ -151,9 +158,6 @@ export class SecretCard extends Card<
 
     this.game.off(this.blueprint.trigger.eventName, this.wrappedHandler as any);
     this.game.off(CARD_EVENTS.CARD_AFTER_CHANGE_LOCATION, this.onLeaveBoard);
-    this.game.once(GAME_EVENTS.TURN_END, async () => {
-      await this.addToHand();
-    });
   }
 
   async playWithTargets(position: DestinyCard, targets: Targets) {
@@ -166,6 +170,11 @@ export class SecretCard extends Card<
       battlefield.secretCard = this;
       this.game.on(this.blueprint.trigger.eventName, this.wrappedHandler as any);
       this.game.on(CARD_EVENTS.CARD_AFTER_CHANGE_LOCATION, this.onLeaveBoard);
+      this.game.once(GAME_EVENTS.TURN_END, async () => {
+        if (this.isOnBoard) {
+          await this.addToHand();
+        }
+      });
     });
 
     this.targets = null;
