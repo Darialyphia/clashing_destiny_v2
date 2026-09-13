@@ -34,7 +34,7 @@ export const kaleosXaan: MinionBlueprint = {
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 4,
-  maxHp: 5,
+  maxHp: 6,
   commandment: 2,
   canPlay: () => true,
   abilities: [],

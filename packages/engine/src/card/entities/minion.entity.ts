@@ -67,6 +67,7 @@ export type MinionCardInterceptors = CardInterceptors & {
   canAttack: Interceptable<boolean, { target: AttackTarget }>;
   canBeAttacked: Interceptable<boolean, { attacker: Attacker }>;
   canRetaliate: Interceptable<boolean, { attacker: AttackTarget }>;
+  canRetaliateWhileExhausted: Interceptable<boolean, { attacker: AttackTarget }>;
   canBeRetaliatedAgainst: Interceptable<boolean, { defender: AttackTarget }>;
   canUseAbility: Interceptable<
     boolean,
@@ -112,6 +113,7 @@ export class MinionCard extends Card<
         canAttack: new Interceptable(),
         canBeAttacked: new Interceptable(),
         canRetaliate: new Interceptable(),
+        canRetaliateWhileExhausted: new Interceptable(),
         canBeRetaliatedAgainst: new Interceptable(),
         hasSummoningSickness: new Interceptable(),
         canUseAbility: new Interceptable(),
@@ -269,13 +271,20 @@ export class MinionCard extends Card<
     });
   }
 
+  canRetaliateWhileExhausted(target: AttackTarget) {
+    return this.interceptors.canRetaliateWhileExhausted.getValue(false, {
+      attacker: target
+    });
+  }
+
   canRetaliate(target: AttackTarget) {
     if (!this.game.combatSystem.defender?.equals(this)) return false;
     if (this.game.combatSystem.isDefenderRetaliating) return false;
     if (this.game.combatSystem.state !== COMBAT_STEPS.REACTION) return false;
 
     return this.interceptors.canRetaliate.getValue(
-      !!this.game.combatSystem.attacker?.canBeRetaliatedBy(this) && !this.isExhausted,
+      !!this.game.combatSystem.attacker?.canBeRetaliatedBy(this) &&
+        (!this._isExhausted || this.canRetaliateWhileExhausted(target)),
       {
         attacker: target
       }

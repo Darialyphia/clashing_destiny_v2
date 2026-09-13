@@ -124,6 +124,11 @@ export class BoardSpace
     return !this.isOccupied;
   }
 
+  get inFront(): BoardSpace | null {
+    if (!this.battlefield) return null;
+    return this.battlefield.opponentBattlefield.spaces[this.index] ?? null;
+  }
+
   placeCard(card: AnyCard) {
     this._card = card;
   }

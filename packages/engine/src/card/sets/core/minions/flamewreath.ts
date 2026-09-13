@@ -26,7 +26,7 @@ export const flamewreath: MinionBlueprint = {
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.RARE,
   affinities: [AFFINITIES.FIRE, AFFINITIES.FIRE],
-  manaCost: 5,
+  manaCost: 4,
   manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],

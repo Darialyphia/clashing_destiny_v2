@@ -34,6 +34,18 @@ import { theAmberPass } from './core/destinies/the-amber-pass';
 import { obscuringBlow } from './core/secrets/obscuring-blow';
 import { cycloneMask } from './core/artifacts/cyclone-mask';
 import { bloodrageMask } from './core/artifacts/bloodrage-mask';
+import { healingMystic } from './core/minions/healing-mystic';
+import { dancingBlades } from './core/minions/dancing-blades';
+import { silverGuardKnight } from './core/minions/silverguard-knight';
+import { windbladeAdept } from './core/minions/windblade-adept';
+import { azuriteLion } from './core/minions/azurite-lion';
+import { ironcliffeGuardian } from './core/minions/ironcliffe-guardian';
+import { primusFist } from './core/minions/primus-fist';
+import { primusShieldmaster } from './core/minions/primus-shieldmaster';
+import { martyrdom } from './core/spells/martyrdom';
+import { trueStrike } from './core/spells/true-strike';
+import { tempest } from './core/spells/tempest';
+import { sunlionPriest } from './core/minions/sun-lion-priest';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -72,6 +84,18 @@ export const coreSet: CardSet = {
     theAmberPass,
     obscuringBlow,
     cycloneMask,
-    bloodrageMask
+    bloodrageMask,
+    healingMystic,
+    dancingBlades,
+    silverGuardKnight,
+    windbladeAdept,
+    azuriteLion,
+    ironcliffeGuardian,
+    primusFist,
+    primusShieldmaster,
+    martyrdom,
+    trueStrike,
+    tempest,
+    sunlionPriest
   ]
 };

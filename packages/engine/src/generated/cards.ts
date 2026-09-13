@@ -39,7 +39,19 @@ export const cards = {
 "the-amber-pass": "the-amber-pass",
 "obscuring-blow": "obscuring-blow",
 "cycloneMask": "cycloneMask",
-"bloodrageMask": "bloodrageMask"
+"bloodrageMask": "bloodrageMask",
+"healing-mystic": "healing-mystic",
+"dancing-blades": "dancing-blades",
+"silverguard-knight": "silverguard-knight",
+"windblade-adept": "windblade-adept",
+"azurite-lion": "azurite-lion",
+"ironcliffe-guardian": "ironcliffe-guardian",
+"primus-fist": "primus-fist",
+"primus-shieldmaster": "primus-shieldmaster",
+"martyrdom": "martyrdom",
+"trueStrike": "trueStrike",
+"tempest": "tempest",
+"sun-lion-priest": "sun-lion-priest"
 } as const;
 
 export const collectableCards = {
@@ -76,7 +88,19 @@ export const collectableCards = {
 "the-amber-pass": "the-amber-pass",
 "obscuring-blow": "obscuring-blow",
 "cycloneMask": "cycloneMask",
-"bloodrageMask": "bloodrageMask"
+"bloodrageMask": "bloodrageMask",
+"healing-mystic": "healing-mystic",
+"dancing-blades": "dancing-blades",
+"silverguard-knight": "silverguard-knight",
+"windblade-adept": "windblade-adept",
+"azurite-lion": "azurite-lion",
+"ironcliffe-guardian": "ironcliffe-guardian",
+"primus-fist": "primus-fist",
+"primus-shieldmaster": "primus-shieldmaster",
+"martyrdom": "martyrdom",
+"trueStrike": "trueStrike",
+"tempest": "tempest",
+"sun-lion-priest": "sun-lion-priest"
 } as const;
 
 type CardSet = Array<{id: string; collectable: boolean; rarity: Rarity, kind: CardKind}>;
@@ -235,7 +259,7 @@ export const cardsBySet: Record<string, CardSet> = {
   {
     "id": "firestormMantra",
     "collectable": true,
-    "rarity": "legendary",
+    "rarity": "epic",
     "kind": "SPELL"
   },
   {
@@ -285,6 +309,78 @@ export const cardsBySet: Record<string, CardSet> = {
     "collectable": true,
     "rarity": "rare",
     "kind": "ARTIFACT"
+  },
+  {
+    "id": "healing-mystic",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "MINION"
+  },
+  {
+    "id": "dancing-blades",
+    "collectable": true,
+    "rarity": "rare",
+    "kind": "MINION"
+  },
+  {
+    "id": "silverguard-knight",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "MINION"
+  },
+  {
+    "id": "windblade-adept",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "MINION"
+  },
+  {
+    "id": "azurite-lion",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "MINION"
+  },
+  {
+    "id": "ironcliffe-guardian",
+    "collectable": true,
+    "rarity": "rare",
+    "kind": "MINION"
+  },
+  {
+    "id": "primus-fist",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "MINION"
+  },
+  {
+    "id": "primus-shieldmaster",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "MINION"
+  },
+  {
+    "id": "martyrdom",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "SPELL"
+  },
+  {
+    "id": "trueStrike",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "SPELL"
+  },
+  {
+    "id": "tempest",
+    "collectable": true,
+    "rarity": "rare",
+    "kind": "SPELL"
+  },
+  {
+    "id": "sun-lion-priest",
+    "collectable": true,
+    "rarity": "epic",
+    "kind": "MINION"
   }
 ]
 };
@@ -323,7 +419,19 @@ export const cardShortIds: Record<string, number> = {
 "the-amber-pass": 33,
 "obscuring-blow": 34,
 "cycloneMask": 35,
-"bloodrageMask": 36
+"bloodrageMask": 36,
+"healing-mystic": 37,
+"dancing-blades": 38,
+"silverguard-knight": 39,
+"windblade-adept": 40,
+"azurite-lion": 41,
+"ironcliffe-guardian": 42,
+"primus-fist": 43,
+"primus-shieldmaster": 44,
+"martyrdom": 45,
+"trueStrike": 46,
+"tempest": 47,
+"sun-lion-priest": 48
 } as const;
 
 export const cardIdByShortId: Record<number, string> = {
@@ -360,5 +468,17 @@ export const cardIdByShortId: Record<number, string> = {
 "33": "the-amber-pass",
 "34": "obscuring-blow",
 "35": "cycloneMask",
-"36": "bloodrageMask"
+"36": "bloodrageMask",
+"37": "healing-mystic",
+"38": "dancing-blades",
+"39": "silverguard-knight",
+"40": "windblade-adept",
+"41": "azurite-lion",
+"42": "ironcliffe-guardian",
+"43": "primus-fist",
+"44": "primus-shieldmaster",
+"45": "martyrdom",
+"46": "trueStrike",
+"47": "tempest",
+"48": "sun-lion-priest"
 } as const;

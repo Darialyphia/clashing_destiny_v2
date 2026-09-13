@@ -26,7 +26,7 @@ export const syvrelTheExile: MinionBlueprint = {
   rarity: RARITIES.RARE,
   affinities: [AFFINITIES.FIRE, AFFINITIES.NEUTRAL],
   manaCost: 4,
-  manaSupply: 1,
+  manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 2,
@@ -38,6 +38,7 @@ export const syvrelTheExile: MinionBlueprint = {
     await card.modifiers.add(
       new OnMoveModifier(game, card, {
         location: 'battlefield',
+        fromlocation: 'base',
         async handler() {
           const destination = card.battlefield!.opponentBattlefield.spaces.find(
             space => space.isEmpty

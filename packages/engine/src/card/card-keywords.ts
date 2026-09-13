@@ -33,24 +33,6 @@ export const KEYWORDS = {
     description: 'This takes X damage at the start of every turn.',
     aliases: [/burn [0-9]+/, /burn/]
   },
-  INSTANT: {
-    id: 'instant',
-    name: 'Instant',
-    description: 'You do not lose initiative after playing this card.',
-    aliases: []
-  },
-  INSTANT_ATTACK: {
-    id: 'instant-attack',
-    name: 'Instant Attack',
-    description: 'You do not lose initiative after this minion attacks.',
-    aliases: []
-  },
-  INSTANT_MOVE: {
-    id: 'instant-move',
-    name: 'Instant Move',
-    description: 'You do not lose initiative after this minion moves.',
-    aliases: []
-  },
   CLEAVE: {
     id: 'cleave',
     name: 'Cleave X',
@@ -102,7 +84,7 @@ export const KEYWORDS = {
     name: 'Equip',
     description:
       'Equip this artifact to an ally minion, granting it bonus effects. Can only be equiped to one target at a time. When the equipped minion takes damage, this loses 1 durability.',
-    aliases: []
+    aliases: [/equipped/]
   },
   FLEETING: {
     id: 'fleeting',
@@ -115,6 +97,24 @@ export const KEYWORDS = {
     id: 'flanking',
     name: 'Flanking',
     description: 'This minion can move between battlefields.',
+    aliases: []
+  },
+  INSTANT: {
+    id: 'instant',
+    name: 'Instant',
+    description: 'You do not lose initiative after playing this card.',
+    aliases: []
+  },
+  INSTANT_ATTACK: {
+    id: 'instant-attack',
+    name: 'Instant Attack',
+    description: 'You do not lose initiative after this minion attacks.',
+    aliases: []
+  },
+  INSTANT_MOVE: {
+    id: 'instant-move',
+    name: 'Instant Move',
+    description: 'You do not lose initiative after this minion moves.',
     aliases: []
   },
   INTIMIDATE: {
@@ -144,7 +144,8 @@ export const KEYWORDS = {
   ON_ENGAGE: {
     id: 'on-engage',
     name: 'On Engage',
-    description: 'Does something when this moves from the base to the battlefield.',
+    description:
+      'Does something when this moves or is moved from the base to the battlefield.',
     aliases: []
   },
   ON_ENTER: {
@@ -163,13 +164,14 @@ export const KEYWORDS = {
   ON_MOVE: {
     id: 'on-move',
     name: 'On Move',
-    description: 'Does something when this card moves.',
+    description: 'Does something when this card moves or is moved.',
     aliases: ['on move to base', 'on move to battlefield']
   },
   ON_RETREAT: {
     id: 'on-retreat',
     name: 'On Retreat',
-    description: 'Does something when this moves from the battlefield to the base.',
+    description:
+      'Does something when this moves or is moved from the battlefield to the base.',
     aliases: []
   },
   ON_SCORE: {
@@ -307,7 +309,7 @@ export const KEYWORDS = {
   VIGILANT: {
     id: 'vigilant',
     name: 'Vigilant',
-    description: 'This unit does not exhaust when it retaliates.',
+    description: 'This unit can retaliate while exhausted.',
     aliases: []
   },
   VULNERABLE: {
@@ -321,6 +323,13 @@ export const KEYWORDS = {
     name: 'Wither X',
     description: 'At the start of the turn, this unit loses X Attack and X Health.',
     aliases: [/wither [0-9]+/]
+  },
+  ZEAL: {
+    id: 'zeal',
+    name: 'Zeal',
+    description:
+      'This unit gains an effect while an ally minion has taken damage in the same location as this during this turn.',
+    aliases: []
   }
 };
 

@@ -20,7 +20,7 @@ export const firestormMantra: SpellBlueprint<DestinyCard> = {
   setId: CARD_SETS.CORE,
   art: defaultCardArt('spells/firestorm-mantra'),
   kind: CARD_KINDS.SPELL,
-  rarity: RARITIES.LEGENDARY,
+  rarity: RARITIES.EPIC,
   affinities: [AFFINITIES.FIRE, AFFINITIES.FIRE, AFFINITIES.FIRE],
   manaCost: 4,
   manaSupply: 2,

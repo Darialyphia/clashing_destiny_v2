@@ -28,7 +28,7 @@ export const keshraiFanblade: MinionBlueprint = {
   rarity: RARITIES.COMMON,
   affinities: [AFFINITIES.FIRE, AFFINITIES.NEUTRAL],
   manaCost: 5,
-  manaSupply: 1,
+  manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 3,

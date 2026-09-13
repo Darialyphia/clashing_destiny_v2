@@ -191,7 +191,27 @@ export class DeckValidator<TMeta> implements DeckValidator<TMeta> {
       return false;
     }
 
-    const violations = this.validateCard({ ...card, copies: card.copies + 1 }, deck);
+    const matchingCardIndex = deck.cards.findIndex(deckCard =>
+      deck.isEqual(deckCard, card)
+    );
+    const cardToValidate =
+      matchingCardIndex === -1
+        ? { ...card, copies: 1 }
+        : {
+            ...deck.cards[matchingCardIndex],
+            copies: deck.cards[matchingCardIndex].copies + 1
+          };
+    const testDeck: ValidatableDeck<TMeta> = {
+      ...deck,
+      cards:
+        matchingCardIndex === -1
+          ? [...deck.cards, cardToValidate]
+          : deck.cards.map((deckCard, index) =>
+              index === matchingCardIndex ? cardToValidate : deckCard
+            )
+    };
+
+    const violations = this.validateCard(cardToValidate, testDeck);
 
     return violations.length === 0;
   }

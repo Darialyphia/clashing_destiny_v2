@@ -265,14 +265,7 @@ const isHovered = ref(false);
 
   &.is-exhausted:not(.is-being-played) {
     rotate: 5deg;
-    &::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      backdrop-filter: grayscale(100%);
-      pointer-events: none;
-      transform: translateZ(2px);
-    }
+    filter: grayscale(70%) brightness(80%);
   }
 
   &.is-being-played {

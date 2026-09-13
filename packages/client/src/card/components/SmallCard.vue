@@ -100,6 +100,24 @@ onUnmounted(() => {
     ref="card"
   >
     <div class="card-front">
+      <div
+        class="art"
+        v-if="sprite"
+        :style="{
+          '--bg-position': bgPosition,
+          '--width': `${activeFrameRect.width}px`,
+          '--height': `${activeFrameRect.height}px`,
+          '--sprite-scale': spriteScale,
+          '--background-width': `calc(${sprite?.sheetSize.w ?? 0}px * var(--sprite-scale) * var(--pixel-scale))`,
+          '--background-height': `calc(${sprite?.sheetSize.h ?? 0}px * var(--sprite-scale) * var(--pixel-scale))`
+        }"
+      >
+        <FoilScanlines v-if="isFoil && card.art.foil.scanlines" />
+        <FoilGlitter v-if="isFoil && card.art.foil.glitter" />
+        <div class="sprite" />
+        <FoilBrightShine v-if="isFoil && card.art.foil.brightShine" />
+      </div>
+
       <template v-if="showStats">
         <div
           v-if="isDefined(card.commandment)"
@@ -160,23 +178,7 @@ onUnmounted(() => {
           </div>
         </div>
       </template>
-      <div
-        class="art"
-        v-if="sprite"
-        :style="{
-          '--bg-position': bgPosition,
-          '--width': `${activeFrameRect.width}px`,
-          '--height': `${activeFrameRect.height}px`,
-          '--sprite-scale': spriteScale,
-          '--background-width': `calc(${sprite?.sheetSize.w ?? 0}px * var(--sprite-scale) * var(--pixel-scale))`,
-          '--background-height': `calc(${sprite?.sheetSize.h ?? 0}px * var(--sprite-scale) * var(--pixel-scale))`
-        }"
-      >
-        <FoilScanlines v-if="isFoil && card.art.foil.scanlines" />
-        <FoilGlitter v-if="isFoil && card.art.foil.glitter" />
-        <div class="sprite" />
-        <FoilBrightShine v-if="isFoil && card.art.foil.brightShine" />
-      </div>
+
       <template v-if="isFoil">
         <FoilSheen v-if="card.art.foil.sheen" />
         <FoilOil v-if="card.art.foil.oil" />
@@ -343,6 +345,9 @@ onUnmounted(() => {
   scale: 2;
 }
 
+.small-card:not(:hover) .art {
+  z-index: 1;
+}
 .art {
   position: absolute;
   width: calc(var(--pixel-scale) * var(--width));

@@ -23,7 +23,6 @@ export class IntimidateModifier<T extends MinionCard> extends Modifier<T> {
       isUnique: false,
       mixins: [
         new KeywordModifierMixin(game, KEYWORDS.INTIMIDATE),
-        new RemoveOnDestroyedMixin(game),
         new MinionInterceptorModifierMixin(game, {
           key: 'canBeAttacked',
           interceptor: (value, { attacker }) => {

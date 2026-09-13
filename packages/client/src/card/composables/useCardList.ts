@@ -4,6 +4,7 @@ import { KEYWORDS } from '@game/engine/src/card/card-keywords';
 import {
   AFFINITIES,
   CARD_KINDS,
+  RARITIES,
   type Affinity,
   type CardKind,
   type Rarity
@@ -13,6 +14,7 @@ import { isFunction, isString } from '@game/shared';
 import type { Ref, ComputedRef, InjectionKey } from 'vue';
 import { api, type CardId } from '@game/api';
 import { useAuthedQuery } from '@/auth/composables/useAuth';
+import { useUrlSearchParams } from '@vueuse/core';
 
 export type CardListContext = {
   isLoading: Ref<boolean>;
@@ -78,6 +80,69 @@ export const provideCardList = () => {
   const affinityFilter = ref(new Set<Affinity>());
   const manaCostFilter = ref<{ min: number; max: number } | null>(null);
   const includeUnowned = ref(false);
+
+  const urlParams = useUrlSearchParams<{
+    kinds?: string;
+    rarities?: string;
+    affinities?: string;
+    manaMin?: string;
+    manaMax?: string;
+    includeUnowned?: string;
+  }>('history', { removeNullishValues: true });
+
+  const parseFilterSet = <T extends string>(
+    value: string | undefined,
+    allowedValues: readonly T[]
+  ) =>
+    new Set(
+      value
+        ?.split(',')
+        .filter((item): item is T => allowedValues.includes(item as T))
+    );
+
+  const restoreFiltersFromUrl = () => {
+    kindFilter.value = parseFilterSet(
+      urlParams.kinds,
+      Object.values(CARD_KINDS)
+    );
+    rarityFilter.value = parseFilterSet(
+      urlParams.rarities,
+      Object.values(RARITIES)
+    );
+    affinityFilter.value = parseFilterSet(
+      urlParams.affinities,
+      Object.values(AFFINITIES)
+    );
+
+    const min = Number(urlParams.manaMin);
+    const max =
+      urlParams.manaMax === undefined ? Infinity : Number(urlParams.manaMax);
+    manaCostFilter.value =
+      Number.isFinite(min) && (max === Infinity || Number.isFinite(max))
+        ? { min, max }
+        : null;
+    includeUnowned.value = urlParams.includeUnowned === 'true';
+  };
+
+  const syncFiltersToUrl = () => {
+    urlParams.kinds = [...kindFilter.value].join(',') || undefined;
+    urlParams.rarities = [...rarityFilter.value].join(',') || undefined;
+    urlParams.affinities = [...affinityFilter.value].join(',') || undefined;
+    urlParams.manaMin = manaCostFilter.value?.min.toString();
+    urlParams.manaMax =
+      manaCostFilter.value?.max === Infinity
+        ? undefined
+        : manaCostFilter.value?.max.toString();
+    urlParams.includeUnowned = includeUnowned.value ? 'true' : undefined;
+  };
+
+  restoreFiltersFromUrl();
+  watch(
+    [kindFilter, rarityFilter, affinityFilter, manaCostFilter, includeUnowned],
+    syncFiltersToUrl,
+    { deep: true }
+  );
+  watch(urlParams, restoreFiltersFromUrl, { deep: true });
 
   const textFilter = ref('');
 

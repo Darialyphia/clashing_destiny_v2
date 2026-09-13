@@ -218,10 +218,9 @@ export type SecretBlueprint<
 };
 
 export const defineSecretBlueprint = <
-  TEvent extends keyof EventMapWithStarEvent<GameEventMap>,
-  T extends AnyCard = AnyCard
+  TEvent extends keyof EventMapWithStarEvent<GameEventMap>
 >(
-  blueprint: SecretBlueprint<TEvent, T>
+  blueprint: SecretBlueprint<TEvent, AnyCard>
 ) => blueprint;
 
 export type CardBlueprint =
