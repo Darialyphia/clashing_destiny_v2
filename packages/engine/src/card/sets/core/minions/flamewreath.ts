@@ -18,7 +18,7 @@ export const flamewreath: MinionBlueprint = {
   name: 'Flamewreath',
   description: dedent /*html*/ `
   <rt-keyword>Flanking</rt-keyword><br/>
-  <rt-trigger>On Move</rt-trigger> Inflict <rt-keyword>Burn 1</rt-keyword> to all enemies at this battlefield.
+  <rt-trigger>On Move</rt-trigger> Inflict <rt-keyword>Burn 2</rt-keyword> to all enemies at this battlefield.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -46,7 +46,7 @@ export const flamewreath: MinionBlueprint = {
             .battlefield!.opponentSpaces.map(space => space.card)
             .filter(isDefined);
           for (const enemy of enemies) {
-            await enemy?.modifiers.add(new BurnModifier(game, card, { stacks: 1 }));
+            await enemy?.modifiers.add(new BurnModifier(game, card, { stacks: 2 }));
           }
         }
       })

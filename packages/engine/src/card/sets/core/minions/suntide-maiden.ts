@@ -1,6 +1,6 @@
 import dedent from 'dedent';
 import type { MinionBlueprint } from '../../../card-blueprint';
-import { defaultCardArt } from '../../../card-utils';
+import { defaultCardArt, isMinion } from '../../../card-utils';
 import {
   CARD_SETS,
   CARD_KINDS,
@@ -10,24 +10,25 @@ import {
 } from '../../../card.enums';
 import { SimpleAttackBuffModifier } from '../../../../modifier/modifiers/simple-attack-buff.modifier';
 import { ZealModifier } from '../../../../modifier/modifiers/zeal.modifier';
+import { isDefined } from '@game/shared';
 
-export const windbladeAdept: MinionBlueprint = {
-  id: 'windblade-adept',
-  name: 'Windblade Adept',
+export const suntideMaiden: MinionBlueprint = {
+  id: 'suntide-maiden',
+  name: 'Suntide Maiden',
   description: dedent /*html*/ `
-  <rt-keyword>Zeal 2</rt-keyword>: Gains +0/+1/+0.
+  <rt-keyword>Zeal 4</rt-keyword>: Heal all minions on this location for 3.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
-  art: defaultCardArt('minions/windblade-adept'),
+  art: defaultCardArt('minions/suntide-maiden'),
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.COMMON,
-  manaCost: 3,
+  manaCost: 4,
   manaSupply: 1,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 2,
-  maxHp: 3,
+  maxHp: 4,
   affinities: [AFFINITIES.LIGHT],
   commandment: 2,
   canPlay: () => true,
@@ -35,12 +36,19 @@ export const windbladeAdept: MinionBlueprint = {
   async onInit(game, card) {
     await card.modifiers.add(
       new ZealModifier(game, card, {
-        amount: 2,
-        zealedModifiers: [
-          new SimpleAttackBuffModifier('windblade-adept-atk', game, card, {
-            amount: 1
-          })
-        ]
+        amount: 4,
+        zealedModifiers: [],
+        onGainZeal: async () => {
+          const minionstoHeal =
+            card.battlefield?.spaces
+              .map(space => space.card)
+              .filter(isDefined)
+              .filter(isMinion) ?? [];
+
+          for (const minion of minionstoHeal) {
+            await minion.heal(3);
+          }
+        }
       })
     );
   },

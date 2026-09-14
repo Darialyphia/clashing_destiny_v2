@@ -8,6 +8,8 @@ export type AuraOptions<TCandidate extends ModifierTarget> = {
   isElligible(candidate: TCandidate): boolean;
   getModifiers: (candidate: TCandidate) => Modifier<TCandidate>[];
   getCandidates: () => TCandidate[];
+  onGainAura?: (candidate: TCandidate) => void;
+  onLoseAura?: (candidate: TCandidate) => void;
 };
 
 class AuraModifierMixin<
@@ -47,6 +49,7 @@ class AuraModifierMixin<
         for (const mod of modifierstoRemove) {
           await mod.removeSource(this.source);
         }
+        this.options.onLoseAura?.(candidate);
         continue;
       }
 
@@ -56,6 +59,7 @@ class AuraModifierMixin<
         for (const mod of modifiers) {
           await candidate.modifiers.add(mod);
         }
+        this.options.onGainAura?.(candidate);
         continue;
       }
     }

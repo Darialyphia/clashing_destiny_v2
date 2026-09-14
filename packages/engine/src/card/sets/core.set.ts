@@ -46,6 +46,7 @@ import { martyrdom } from './core/spells/martyrdom';
 import { trueStrike } from './core/spells/true-strike';
 import { tempest } from './core/spells/tempest';
 import { sunlionPriest } from './core/minions/sun-lion-priest';
+import { suntideMaiden } from './core/minions/suntide-maiden';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -96,6 +97,7 @@ export const coreSet: CardSet = {
     martyrdom,
     trueStrike,
     tempest,
-    sunlionPriest
+    sunlionPriest,
+    suntideMaiden
   ]
 };

@@ -20,6 +20,8 @@ export class ZealModifier extends WhileOnBoardModifier<MinionCard> {
       mixins?: ModifierMixin<MinionCard>[];
       zealedModifiers: Modifier<MinionCard>[];
       amount: number;
+      onGainZeal?: (candidate: MinionCard) => void;
+      onLoseZeal?: (candidate: MinionCard) => void;
     }
   ) {
     super(KEYWORDS.ZEAL.id, game, source, {
