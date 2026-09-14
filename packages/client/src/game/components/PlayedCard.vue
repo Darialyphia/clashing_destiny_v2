@@ -12,10 +12,7 @@ useFxEvent(FX_EVENTS.CARD_BEFORE_PLAY, async event => {
   const playedCard = state.value.entities[event.card.id] as CardViewModel;
 
   card.value = playedCard;
-  nextTick(() => {
-    console.log(state.value.interaction.state);
-    // debugger;
-  });
+
   await waitFor(600);
   card.value = null;
 });
