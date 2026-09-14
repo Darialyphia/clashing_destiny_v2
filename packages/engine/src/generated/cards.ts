@@ -52,7 +52,8 @@ export const cards = {
 "trueStrike": "trueStrike",
 "tempest": "tempest",
 "sun-lion-priest": "sun-lion-priest",
-"suntide-maiden": "suntide-maiden"
+"suntide-maiden": "suntide-maiden",
+"war-judicator": "war-judicator"
 } as const;
 
 export const collectableCards = {
@@ -102,7 +103,8 @@ export const collectableCards = {
 "trueStrike": "trueStrike",
 "tempest": "tempest",
 "sun-lion-priest": "sun-lion-priest",
-"suntide-maiden": "suntide-maiden"
+"suntide-maiden": "suntide-maiden",
+"war-judicator": "war-judicator"
 } as const;
 
 type CardSet = Array<{id: string; collectable: boolean; rarity: Rarity, kind: CardKind}>;
@@ -389,6 +391,12 @@ export const cardsBySet: Record<string, CardSet> = {
     "collectable": true,
     "rarity": "common",
     "kind": "MINION"
+  },
+  {
+    "id": "war-judicator",
+    "collectable": true,
+    "rarity": "epic",
+    "kind": "MINION"
   }
 ]
 };
@@ -440,7 +448,8 @@ export const cardShortIds: Record<string, number> = {
 "trueStrike": 46,
 "tempest": 47,
 "sun-lion-priest": 48,
-"suntide-maiden": 49
+"suntide-maiden": 49,
+"war-judicator": 50
 } as const;
 
 export const cardIdByShortId: Record<number, string> = {
@@ -490,5 +499,6 @@ export const cardIdByShortId: Record<number, string> = {
 "46": "trueStrike",
 "47": "tempest",
 "48": "sun-lion-priest",
-"49": "suntide-maiden"
+"49": "suntide-maiden",
+"50": "war-judicator"
 } as const;

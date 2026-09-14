@@ -47,6 +47,7 @@ import { trueStrike } from './core/spells/true-strike';
 import { tempest } from './core/spells/tempest';
 import { sunlionPriest } from './core/minions/sun-lion-priest';
 import { suntideMaiden } from './core/minions/suntide-maiden';
+import { warJudicator } from './core/minions/war-judicator';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -98,6 +99,7 @@ export const coreSet: CardSet = {
     trueStrike,
     tempest,
     sunlionPriest,
-    suntideMaiden
+    suntideMaiden,
+    warJudicator
   ]
 };

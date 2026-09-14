@@ -15,10 +15,10 @@ const { bgPosition, imageBg } = useSprite({
 
 <template>
   <div
-    class="foil foil-bluespark"
+    class="foil foil-bluespark parallax"
     :style="{
+      '--parallax-strength': 2,
       '--bg-position': bgPosition,
-
       '--background-width': `calc(${sprite.sheetSize.w}px * var(--pixel-scale))`,
       '--background-height': `calc(${sprite.sheetSize.h}px * var(--pixel-scale))`
     }"
