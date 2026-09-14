@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { RARITIES } from '@game/engine/src/card/card.enums';
-import BlueprintCard from './BlueprintCard.vue';
+import BlueprintCard from '@/card/components/BlueprintCard.vue';
 import {
   provideBoosterPack,
   type BoosterPackCardEntry
-} from '../composables/useBoosterPack';
+} from './composables/useBoosterPack';
 
 const props = defineProps<{
   cards: BoosterPackCardEntry[];
@@ -215,6 +215,9 @@ const cardsWithParticles = computed(() => {
   justify-content: center;
   align-items: center;
   z-index: var(--z-index);
+  &:hover {
+    z-index: calc(var(--z-index) + 2);
+  }
 
   transition: transform 0.4s
     linear(
@@ -271,8 +274,8 @@ const cardsWithParticles = computed(() => {
 }
 
 .card-wrapper {
-  --pixel-scale: 1;
-  width: calc(var(--card-v2-width) * var(--pixel-scale));
+  --pixel-scale: 2;
+  width: calc(var(--card-v3-width) * var(--pixel-scale));
   aspect-ratio: var(--card-ratio);
   transform-origin: center center;
   transform-style: preserve-3d;
@@ -411,8 +414,8 @@ const cardsWithParticles = computed(() => {
 
 .stack-glow {
   position: absolute;
-  width: calc(var(--pixel-scale) * var(--card-v2-width));
-  height: calc(var(--pixel-scale) * var(--card-v2-height));
+  width: calc(var(--pixel-scale) * var(--card-v3-width));
+  height: calc(var(--pixel-scale) * var(--card-v3-height));
   background: radial-gradient(circle at center, red, transparent 40%);
   z-index: 6;
   filter: blur(30px);

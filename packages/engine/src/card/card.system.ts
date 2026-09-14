@@ -123,7 +123,7 @@ export class CardSystem extends System<CardSystemOptions> {
           new SecretCard(this.game, player, {
             id,
             blueprint
-          } as CardOptions<SecretBlueprint>)
+          } as CardOptions<SecretBlueprint<any>>)
       )
       .exhaustive();
     await card.init();

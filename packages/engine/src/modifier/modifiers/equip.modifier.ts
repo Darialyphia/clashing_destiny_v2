@@ -25,7 +25,7 @@ export class EquippedModifier extends Modifier<ArtifactCard> {
       mixins: [
         new RemoveOnLeaveBoardModifierMixin(game),
         new RemoveOnLeaveBoardModifierMixin(game, options.attachedTo),
-        new CardAuraModifierMixin(game, source, {
+        new CardAuraModifierMixin<MinionCard>(game, source, {
           isElligible(candidate) {
             return candidate.equals(options.attachedTo) && candidate.isOnBoard;
           },

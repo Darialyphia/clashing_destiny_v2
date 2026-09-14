@@ -10,6 +10,7 @@ import GameCard from './GameCard.vue';
 import { INTERACTION_STATES } from '@game/engine/src/game/game.enums';
 import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
 import { isDefined } from '@game/shared';
+import { useIsMobile } from '@/shared/composables/useIsMobile';
 
 const { client, playerId } = useGameClient();
 const _isOpened = ref(false);
@@ -96,6 +97,8 @@ const confirm = () => {
     _isOpened.value = false;
   }
 };
+
+const isMobile = useIsMobile();
 </script>
 
 <template>
@@ -123,7 +126,7 @@ const confirm = () => {
             :key="card"
             :card-id="card"
             :interactive="false"
-            :pixel-scale="2"
+            :pixel-scale="isMobile ? 1 : 2"
             class="choose-card-item"
             :style="{ '--animation-delay': `${index * 75}ms` }"
           />
@@ -176,6 +179,12 @@ const confirm = () => {
   right: var(--size-8);
   z-index: 50;
   pointer-events: auto;
+
+  @screen lt-lg {
+    bottom: var(--size-6);
+    right: unset;
+    left: var(--size-6);
+  }
 }
 .card-list {
   --pixel-scale: 2;

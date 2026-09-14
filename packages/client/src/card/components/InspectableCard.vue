@@ -164,6 +164,8 @@ ul {
   display: flex;
   flex-direction: column;
   gap: var(--size-1);
+  flex-wrap: wrap;
+  max-height: 550px;
 }
 li {
   max-inline-size: calc(var(--card-v2-width) * var(--pixel-scale));

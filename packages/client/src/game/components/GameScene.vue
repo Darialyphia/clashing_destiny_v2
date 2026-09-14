@@ -15,8 +15,6 @@ import GameMenu from './GameMenu.vue';
 import Camera from './Camera.vue';
 import Hand from './Hand.vue';
 import DraggedCard from './DraggedCard.vue';
-import { useKeyboardControl } from '@/shared/composables/useKeyboardControl';
-import { useSettingsStore } from '@/shared/composables/useSettings';
 import { useEventListener, usePageLeave } from '@vueuse/core';
 import { INTERACTION_STATES } from '@game/engine/src/game/game.enums';
 import HoveredCardInfos from './HoveredCardnfos.vue';
@@ -52,17 +50,6 @@ const opponent = useOpponentPlayer();
 useGameKeyboardControls();
 // const myClock = computed(() => clocks?.[myPlayer.value.id]);
 // const opponentClock = computed(() => clocks?.[opponentPlayer.value.id]);
-
-const isGameSettingsOpened = ref(false);
-const settings = useSettingsStore();
-
-useKeyboardControl(
-  'keydown',
-  settings.settings.bindings.openSettings.control,
-  () => {
-    isGameSettingsOpened.value = !isGameSettingsOpened.value;
-  }
-);
 
 const isOutOfScreen = usePageLeave();
 
@@ -186,6 +173,12 @@ const isDev = import.meta.env.DEV;
   backdrop-filter: blur(4px);
   padding: var(--size-4);
   max-width: var(--size-xs);
+  @screen lt-lg {
+    font-size: var(--font-size-00);
+    padding: var(--size-2);
+    left: unset;
+    right: 0;
+  }
 }
 .game-board-container {
   width: 100vw;
@@ -202,6 +195,10 @@ const isDev = import.meta.env.DEV;
   width: 100%;
   bottom: 185px;
   left: 0;
+
+  @screen lt-lg {
+    bottom: 90px;
+  }
 }
 
 .opponent-hand {
@@ -276,6 +273,12 @@ const isDev = import.meta.env.DEV;
   transform-style: preserve-3d;
   rotate: -30deg;
 
+  @screen lt-lg {
+    scale: 0.5;
+    right: -40px;
+    bottom: -100px;
+  }
+
   > * > * {
     border-bottom: #73473a 1px solid;
     border-left: #af7d48 1px solid;
@@ -290,6 +293,12 @@ const isDev = import.meta.env.DEV;
   top: -20px;
   transform-style: preserve-3d;
   rotate: 30deg;
+
+  @screen lt-lg {
+    scale: 0.5;
+    right: -40px;
+    top: -100px;
+  }
 
   > * > * {
     border-right: #73473a 1px solid;

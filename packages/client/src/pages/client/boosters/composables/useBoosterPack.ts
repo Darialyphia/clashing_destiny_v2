@@ -60,14 +60,11 @@ export const provideBoosterPack = ({
   const containerRef = ref<HTMLElement | null>(null);
   const canvasContainerRef = ref<HTMLElement | null>(null);
 
-  // Initialize PixiJS effects
   const { triggerPixiExplosion } = useBoosterPixiEffects(canvasContainerRef);
 
-  // Initialize dealing state (shake/deal animations)
   const { dealingStatus, isShaking, startShaking, stopShakingAndDeal } =
     useBoosterDealingState(cards, wrapperRefs);
 
-  // Initialize reveal state (flipped cards, hover, reveal logic)
   const {
     flippedCards,
     isSweeping,
@@ -83,14 +80,12 @@ export const provideBoosterPack = ({
     triggerPixiExplosion
   );
 
-  // Initialize card layout (positioning/styling)
   const { cardStyles, allRevealed } = useBoosterCardLayout(
     cards,
     dealingStatus,
     flippedCards
   );
 
-  // Sweep interaction handlers
   const startSweep = (index: number) => {
     if (dealingStatus.value === 'waiting') {
       startShaking();

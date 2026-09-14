@@ -1,6 +1,11 @@
 import { computed, type ComputedRef, type Ref } from 'vue';
 import type { BoosterPackCardEntry, DealingStatus } from './useBoosterPack';
 
+const CARD_FAN_RADIUS = 800;
+const CARD_FAN_START_ANGLE = -90;
+
+const CARD_FAN_ANGLE_STEP = 12;
+
 export function useBoosterCardLayout(
   cards: ComputedRef<BoosterPackCardEntry[]>,
   dealingStatus: Ref<DealingStatus>,
@@ -8,16 +13,15 @@ export function useBoosterCardLayout(
 ) {
   const cardStyles = computed(() => {
     const count = cards.value.length;
-    const radius = 800;
-    const angleStep = 12;
-    const totalArc = (count - 1) * angleStep;
-    const startAngle = -90 - totalArc / 2;
+
+    const totalArc = (count - 1) * CARD_FAN_ANGLE_STEP;
+    const startAngle = CARD_FAN_START_ANGLE - totalArc / 2;
 
     return cards.value.map((_, index) => {
-      const angle = startAngle + index * angleStep;
+      const angle = startAngle + index * CARD_FAN_ANGLE_STEP;
       const radian = (angle * Math.PI) / 180;
-      const x = Math.cos(radian) * radius;
-      const y = Math.sin(radian) * radius + 650;
+      const x = Math.cos(radian) * CARD_FAN_RADIUS;
+      const y = Math.sin(radian) * CARD_FAN_RADIUS + 650;
       const rotation = angle + 90;
 
       return {

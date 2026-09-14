@@ -3,6 +3,7 @@ import type { SpellBlueprint } from '../../../card-blueprint';
 import {
   defaultCardArt,
   isArtifact,
+  isMinion,
   singleEnemyMinionTargetRules,
   singleEnemyTargetRules
 } from '../../../card-utils';
@@ -16,12 +17,13 @@ import {
 import type { MinionCard } from '../../../entities/minion.entity';
 import { SpellDamage } from '../../../../utils/damage';
 import { EquippedModifier } from '../../../../modifier/modifiers/equip.modifier';
+import { ZealModifier } from '../../../../modifier/modifiers/zeal.modifier';
 
 export const trueStrike: SpellBlueprint<MinionCard> = {
   id: 'trueStrike',
   name: 'True Strike',
   description: dedent /*html*/ `
-  Deal 1 damage to an enemy minion If you have an <rt-keyword>Equipped</rt-keyword> artifact, this deals 2 damage instead.
+  Deal 1 damage to an enemy minion. If you have a minion with <rt-keyword>Zeal</rt-keyword> enabled, this deals 2 damage instead.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -50,13 +52,16 @@ export const trueStrike: SpellBlueprint<MinionCard> = {
   async onPlay(game, card, targets) {
     const [target] = targets.cards;
     if (!target) return;
-    const damageToDeal =
-      card.player.boardSide
-        .getAllCardsInPlay()
-        .filter(isArtifact)
-        .filter(artifact => artifact.modifiers.has(EquippedModifier)).length > 0
-        ? 2
-        : 1;
+    const damageToDeal = card.player.boardSide
+      .getAllCardsInPlay()
+      .filter(isMinion)
+      .filter(minion => {
+        const zealMods = minion.modifiers.list.filter(mod => mod instanceof ZealModifier);
+        if (!zealMods.length) return false;
+        return zealMods.some(mod => mod.isEnabled);
+      })
+      ? 2
+      : 1;
     await target.takeDamage(card, new SpellDamage(damageToDeal, card));
   },
   aiHints: {

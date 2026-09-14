@@ -326,10 +326,10 @@ export const KEYWORDS = {
   },
   ZEAL: {
     id: 'zeal',
-    name: 'Zeal',
+    name: 'Zeal X',
     description:
-      'This unit gains an effect while an ally minion has taken damage in the same location as this during this turn.',
-    aliases: []
+      'This unit gains an effect while on a battlefield that has at least X influence.',
+    aliases: [/zeal [0-9]+/]
   }
 };
 

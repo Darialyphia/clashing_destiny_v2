@@ -13,7 +13,13 @@ provideAuth();
     <SVGFilters />
 
     <TooltipProvider :delay-duration="400">
-      <RouterView />
+      <router-view v-slot="{ Component, route }">
+        <transition :name="route.meta.transition as any" mode="out-in">
+          <div class="page-wrapper" :key="route.fullPath">
+            <component :is="Component" />
+          </div>
+        </transition>
+      </router-view>
     </TooltipProvider>
     <div id="card-portal"></div>
     <div id="card-actions-portal"></div>
@@ -21,13 +27,22 @@ provideAuth();
   </div>
 </template>
 
-<style>
-#ui-root {
-  position: absolute;
-  inset: 0;
-  /* pointer-events: none; */
+<style lang="postcss">
+body:has(
+  :is(
+    .page-wrapper.slide-left-enter-active,
+    .page-wrapper.slide-left-leave-active,
+    .page-wrapper.slide-right-enter-active,
+    .page-wrapper.slide-right-leave-active
+  )
+) {
+  max-width: 100vw;
+  overflow-x: hidden;
 }
+</style>
+e
 
+<style scoped>
 #card-portal {
   position: fixed;
   z-index: 10;
@@ -39,5 +54,32 @@ provideAuth();
   z-index: 11;
   top: 0;
   left: 0;
+}
+
+.slide-left-enter-active,
+.slide-left-leave-active,
+.slide-right-enter-active,
+.slide-right-leave-active {
+  transition: all 0.2s ease;
+}
+
+.slide-right-enter-from {
+  transform: translateX(-25%) scale(0.75);
+  opacity: 0;
+}
+
+.slide-right-leave-to {
+  transform: translateX(25%) scale(0.75);
+  opacity: 0;
+}
+
+.slide-left-enter-from {
+  transform: translateX(25%) scale(0.75);
+  opacity: 0;
+}
+
+.slide-left-leave-to {
+  transform: translateX(-25%) scale(0.75);
+  opacity: 0;
 }
 </style>

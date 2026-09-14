@@ -17,8 +17,7 @@ export const silverGuardKnight: MinionBlueprint = {
   id: 'silverguard-knight',
   name: 'Silverguard Knight',
   description: dedent /*html*/ `
-  <rt-keyword>Protector</rt-keyword>.
-  <rt-keyword>Zeal</rt-keyword>: Gains +1/+0/+0 and <rt-keyword>Defender 2</rt-keyword>.
+  <rt-keyword>Zeal 3</rt-keyword>: <rt-keyword>Protector</rt-keyword> <rt-keyword>Defender 2</rt-keyword>.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -31,7 +30,7 @@ export const silverGuardKnight: MinionBlueprint = {
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 1,
-  maxHp: 5,
+  maxHp: 4,
   commandment: 2,
   canPlay: () => true,
   abilities: [],
@@ -39,6 +38,7 @@ export const silverGuardKnight: MinionBlueprint = {
     await card.modifiers.add(new ProtectorModifier(game, card));
     await card.modifiers.add(
       new ZealModifier(game, card, {
+        amount: 3,
         zealedModifiers: [
           new SimpleCommandmentBuffModifier('silverguard-knight-cmd-buff', game, card, {
             amount: 1

@@ -242,6 +242,11 @@ const opponentHasInitiative = computed(() => {
     justify-content: space-between;
     align-items: center;
   }
+
+  @screen lt-lg {
+    scale: 0.5;
+    transform-origin: center;
+  }
 }
 
 .left-destiny {
@@ -446,6 +451,7 @@ const opponentHasInitiative = computed(() => {
   bottom: 10px;
   right: -80px;
 }
+
 .opponent-rune-zone {
   position: absolute;
   top: 10px;

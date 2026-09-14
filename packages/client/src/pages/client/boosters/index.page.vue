@@ -6,7 +6,7 @@ import type { CardBlueprint } from '@game/engine/src/card/card-blueprint';
 import {
   useOpenBoosterPack,
   useUnopenedBoosterPacks
-} from '@/card/composables/useBoosterPack';
+} from './composables/useBoosterPack';
 
 definePage({
   name: 'Boosters',

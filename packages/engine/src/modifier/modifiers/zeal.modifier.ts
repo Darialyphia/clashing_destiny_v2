@@ -4,7 +4,9 @@ import type { AnyCard } from '../../card/entities/card.entity';
 import type { MinionCard } from '../../card/entities/minion.entity';
 import type { Game } from '../../game/game';
 import { GAME_EVENTS } from '../../game/game.events';
+import { CardAuraModifierMixin } from '../mixins/aura.mixin';
 import { GameEventModifierMixin } from '../mixins/game-event.mixin';
+import { TogglableModifierMixin } from '../mixins/togglable.mixin';
 import { UntilEndOfTurnModifierMixin } from '../mixins/until-end-of-turn.mixin';
 import type { ModifierMixin } from '../modifier-mixin';
 import type { Modifier } from '../modifier.entity';
@@ -17,6 +19,7 @@ export class ZealModifier extends WhileOnBoardModifier<MinionCard> {
     options: {
       mixins?: ModifierMixin<MinionCard>[];
       zealedModifiers: Modifier<MinionCard>[];
+      amount: number;
     }
   ) {
     super(KEYWORDS.ZEAL.id, game, source, {
@@ -24,27 +27,20 @@ export class ZealModifier extends WhileOnBoardModifier<MinionCard> {
       description: KEYWORDS.ZEAL.description,
       icon: 'icons/keyword-zeal',
       mixins: [
-        new GameEventModifierMixin(game, {
-          eventName: GAME_EVENTS.CARD_AFTER_TAKE_DAMAGE,
-          frequencyPerGameTurn: 1,
-          filter: event =>
-            event.data.card.isAlly(this.target) &&
-            !event.data.card.equals(this.target) &&
-            event.data.card.location === this.target.location,
-          handler: async () => {
-            await this.game.emit(
-              GAME_EVENTS.CARD_EFFECT_TRIGGERED,
-              new CardEffectTriggeredEvent({
-                card: this.target,
-                message: `${this.target.blueprint.name} is zealed!`
-              })
-            );
-            for (const modifier of options.zealedModifiers) {
-              modifier.addMixin(new UntilEndOfTurnModifierMixin(game));
-              await this.target.modifiers.add(modifier);
-            }
+        new CardAuraModifierMixin<MinionCard>(game, source, {
+          isElligible: candidate => {
+            return candidate.equals(this.target);
+          },
+          getModifiers() {
+            return options.zealedModifiers;
           }
         }),
+        new TogglableModifierMixin(
+          game,
+          () =>
+            this.target.isOnBattlefield &&
+            this.target.battlefield!.commandmentScore >= options.amount
+        ),
         ...(options.mixins ?? [])
       ]
     });

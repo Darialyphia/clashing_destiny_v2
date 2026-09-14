@@ -1,8 +1,21 @@
 <script setup lang="ts">
 import UiModal from '@/ui/components/UiModal.vue';
 import FancyButton from '@/ui/components/FancyButton.vue';
+import { useKeyboardControl } from '@/shared/composables/useKeyboardControl';
+import { useSettingsStore } from '@/shared/composables/useSettings';
 
 const isOpened = ref(false);
+
+const isGameSettingsOpened = ref(false);
+const settings = useSettingsStore();
+
+useKeyboardControl(
+  'keydown',
+  settings.settings.bindings.openSettings.control,
+  () => {
+    isGameSettingsOpened.value = !isGameSettingsOpened.value;
+  }
+);
 </script>
 
 <template>
@@ -40,6 +53,12 @@ const isOpened = ref(false);
   z-index: 2;
   &:hover {
     filter: brightness(1.2);
+  }
+
+  @screen lt-lg {
+    right: var(--size-4);
+    bottom: var(--size-4);
+    --pixel-scale: 1;
   }
 }
 
