@@ -176,6 +176,16 @@ export class ClientStateController {
     if (event.eventName === GAME_EVENTS.AFTER_CHANGE_PHASE) {
       return this.onAfterChangePhase(event);
     }
+
+    if (event.eventName === GAME_EVENTS.INTERACTION_AFTER_CHANGE_STATE) {
+      return this.onInteractionAfterChangeState(event);
+    }
+  }
+
+  private async onInteractionAfterChangeState(event: {
+    event: SerializedEvent<'INTERACTION_AFTER_CHANGE_STATE'>;
+  }) {
+    this.state.interaction = event.event.to;
   }
 
   private async onMinionSummoned(event: { event: SerializedEvent<'MINION_SUMMONED'> }) {

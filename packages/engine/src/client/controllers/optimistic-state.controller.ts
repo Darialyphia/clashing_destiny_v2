@@ -1,4 +1,5 @@
 import { INTERACTION_STATES } from '../../game/game.enums';
+import { GAME_EVENTS, type SerializedStarEvent } from '../../game/game.events';
 import type { GameClient } from '../client';
 import { FX_EVENTS } from './fx-controller';
 
@@ -27,8 +28,14 @@ export class OptimisticStateManager {
     return this._state;
   }
 
+  async onEvent(event: SerializedStarEvent) {
+    if (event.eventName === GAME_EVENTS.CARD_BEFORE_PLAY) {
+      this.finishPlayingCard();
+    }
+  }
+
   onUpdate() {
-    this.finishPlayingCard();
+    // this.finishPlayingCard();
   }
 
   startPlayingCard(cardId: string) {

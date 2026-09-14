@@ -627,7 +627,8 @@ export const defaultCardArt = (
       oil: true,
       sheen: true,
       starField: true,
-      emboss: true
+      emboss: true,
+      blueSpark: true
     },
     isFullArt,
     sprite: name,

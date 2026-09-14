@@ -26,7 +26,7 @@ const ui = useGameUi();
         <GameCard
           :card-id="state.interaction.ctx.source"
           :is-interactive="false"
-          style="--pixel-scale: 1"
+          style="--pixel-scale: 1.5"
         />
       </InspectableCard>
       <FancyButton

@@ -98,9 +98,9 @@ const draggedCard = computed(() => {
 
 watch(draggedCard, draggedCard => {
   if (draggedCard) {
-    rotationAnimation.pause();
-  } else {
     rotationAnimation.resume();
+  } else {
+    rotationAnimation.pause();
   }
 });
 </script>

@@ -41,6 +41,7 @@ export type CardArt = {
     rain?: boolean;
     starField?: boolean;
     emboss?: boolean;
+    blueSpark?: boolean;
   };
   sprite: string;
   bg?: string;

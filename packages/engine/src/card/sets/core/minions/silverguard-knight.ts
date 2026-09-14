@@ -17,7 +17,7 @@ export const silverGuardKnight: MinionBlueprint = {
   id: 'silverguard-knight',
   name: 'Silverguard Knight',
   description: dedent /*html*/ `
-  <rt-keyword>Zeal 3</rt-keyword>: <rt-keyword>Protector</rt-keyword> <rt-keyword>Defender 2</rt-keyword>.
+  <rt-keyword>Zeal 3</rt-keyword>: This gains <rt-keyword>Protector</rt-keyword> and <rt-keyword>Defender 2</rt-keyword>.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,

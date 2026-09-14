@@ -34,6 +34,7 @@ import FoilStarfield from '../foil/FoilStarfield.vue';
 import FoilEmboss from '../foil/FoilEmboss.vue';
 import { match } from 'ts-pattern';
 import { ANIMATIONS_NAMES } from '@game/engine/src/game/game.enums.js';
+import FoilBluespark from '../foil/FoilBluespark.vue';
 
 const {
   card,
@@ -176,6 +177,7 @@ const _animationSequence = computed(() => {
           <FoilScanlines v-if="card.art.foil.scanlines" />
           <FoilAuroraBorder v-if="card.art.foil.auroraBorder" />
           <FoilCRT v-if="card.art.foil.crt" />
+          <FoilBluespark v-if="card.art.foil.blueSpark" />
         </template>
 
         <ManaCost
