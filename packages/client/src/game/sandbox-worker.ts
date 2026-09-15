@@ -87,6 +87,7 @@ self.addEventListener('message', ({ data }) => {
       game = new Game({ ...game.options, history });
 
       await game.initialize();
+
       self.postMessage({
         type: 'ready',
         payload: {

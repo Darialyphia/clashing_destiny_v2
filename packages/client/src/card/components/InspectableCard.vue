@@ -14,9 +14,8 @@ import {
   useGameUi
 } from '@/game/composables/useGameClient';
 import { useFloating, offset } from '@floating-ui/vue';
-import type { ModifierViewModel } from '@game/engine/src/client/view-models/modifier.model';
-import { gameStateRef } from '@/game/composables/gameStateRef';
 import { assets } from '@/assets';
+import { useModifierGroups } from '@/game/composables/useModifierGroup';
 
 defineOptions({
   inheritAttrs: false
@@ -43,44 +42,7 @@ const ui = useGameUi();
 const { playerId } = useGameClient();
 const card = useCard(computed(() => cardId));
 
-const visibleModifiers = gameStateRef(() => {
-  const raw =
-    card.value.modifiers.filter(
-      modifier => modifier.name && modifier.description && modifier.stacks > 0
-    ) ?? [];
-
-  const result: Array<{
-    key: string;
-    playerId: string;
-    totalStacks: number;
-    icon?: string;
-    name: string;
-    description: string;
-    sources: ModifierViewModel['source'][];
-  }> = [];
-  raw.forEach(modifier => {
-    let group = result.find(
-      g =>
-        g.key === modifier.groupKey && g.playerId === modifier.source.player.id
-    );
-    if (!group) {
-      group = {
-        key: modifier.groupKey,
-        playerId: modifier.source.player.id,
-        totalStacks: 0,
-        icon: modifier.icon,
-        name: modifier.name!,
-        description: modifier.description!,
-        sources: [modifier.source]
-      };
-      result.push(group);
-    } else {
-      group.sources.push(modifier.source);
-    }
-    group.totalStacks += modifier.stacks;
-  });
-  return result;
-});
+const visibleModifiers = useModifierGroups(card);
 
 const reference = ref(null);
 const floating = ref(null);
@@ -133,7 +95,12 @@ const isInspectable = computed(() => {
                   class="modifier-icon"
                   :style="{ '--bg': assets[group.icon!]?.css }"
                 />
-                <div class="modifier-name">{{ group.name }}</div>
+                <div class="modifier-name">
+                  {{ group.name }}
+                  <span v-if="group.totalStacks > 1">
+                    ({{ group.totalStacks }})
+                  </span>
+                </div>
               </div>
               <div
                 class="modifier-description"

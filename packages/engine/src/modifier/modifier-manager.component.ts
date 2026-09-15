@@ -38,7 +38,12 @@ export class ModifierManager<T extends ModifierTarget> {
     ? Nullable<InstanceType<TArg>>
     : Nullable<Modifier<T>> {
     if (modifierOrType instanceof Modifier) {
-      return this._modifiers.find(modifier => modifier.equals(modifierOrType)) as any;
+      return this._modifiers.find(modifier => {
+        if (modifierOrType.isUnique) {
+          return modifier.modifierType === modifierOrType.modifierType;
+        }
+        return modifier.equals(modifierOrType);
+      }) as any;
     } else if (isString(modifierOrType)) {
       return this._modifiers.find(
         modifier => modifier.modifierType === modifierOrType

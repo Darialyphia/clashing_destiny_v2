@@ -3,7 +3,12 @@ import { InputSystem, type SerializedInput } from '../input/input-system';
 import type { Player, PlayerOptions } from '../player/player.entity';
 import { RngSystem } from '../rng/rng.system';
 import { TypedSerializableEventEmitter } from '../utils/typed-emitter';
-import { type BetterOmit, type IndexedRecord, type Serializable } from '@game/shared';
+import {
+  waitFor,
+  type BetterOmit,
+  type IndexedRecord,
+  type Serializable
+} from '@game/shared';
 import {
   GameSnapshotSystem,
   type GameStateSnapshot,
@@ -170,10 +175,11 @@ export class Game implements Serializable<SerializedGame> {
     await this.emit(GAME_EVENTS.READY, new GameReadyEvent({}));
     await this.gamePhaseSystem.startGame();
 
+    // @FIXME startGame starts a non awaited Promise and this can cause race conditions with hisory replay expecting a different interaction state
+    await waitFor(300);
     if (this.options.history) {
       await this.inputSystem.applyHistory(this.options.history);
     }
-
     await this.snapshotSystem.takeSnapshot();
     console.log(
       `%cGame ${this.id} initialized in ${(performance.now() - start).toFixed(0)}ms`,

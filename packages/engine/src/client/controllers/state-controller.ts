@@ -113,7 +113,7 @@ export class ClientStateController {
     }
 
     // Clone all entities to trigger reactivity in case of reference equality.
-    // e.g. a unit's modifier is updated, but the unit isn't —
+    // e.g. a unit's modifier is updated, but the unit isn't, since it only stores the modifier Id —
     // a computed property depending on the unit wouldn't update.
     for (const [id, entity] of Object.entries(this.state.entities)) {
       this.state.entities[id] = entity.clone();
@@ -141,7 +141,6 @@ export class ClientStateController {
     // Apply patches to existing entities
     for (const [id, patches] of Object.entries(entityPatches)) {
       if (this.state.entities[id]) {
-        // Entity exists - apply patches
         this.state.entities[id] = this.state.entities[id]
           .updateWithPatches(patches)
           .clone();
@@ -150,17 +149,14 @@ export class ClientStateController {
       }
     }
 
-    // Add new entities
     for (const [id, entity] of Object.entries(addedEntities)) {
       this.state.entities[id] = this.buildViewModel(entity as any);
     }
 
-    // Remove deleted entities
     removedEntities.forEach(id => {
       delete this.state.entities[id];
     });
 
-    // Update top-level state
     this.state = {
       ...this.state,
       ...rest,
@@ -208,5 +204,13 @@ export class ClientStateController {
   }) {
     this.state.phase = event.event.to;
     this.state = { ...this.state };
+  }
+
+  getCard(id: string): CardViewModel | null {
+    const entity = this.state.entities[id];
+    if (entity && entity instanceof CardViewModel) {
+      return entity as CardViewModel;
+    }
+    return null;
   }
 }

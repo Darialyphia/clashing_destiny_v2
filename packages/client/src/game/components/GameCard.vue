@@ -100,11 +100,7 @@ const sprite = computed(() => {
 </script>
 
 <template>
-  <div
-    class="game-card-container"
-    :data-game-card="card.id"
-    :data-flip-id="`card_${card.id}`"
-  >
+  <div class="game-card-container" :data-game-card="card.id">
     <CardActionsPopover
       :card-id="card.id"
       :is-interactive="isInteractive"
@@ -120,6 +116,7 @@ const sprite = computed(() => {
         :style="{ '--pixel-scale': pixelScale }"
         :is-animated="true"
         :id="card.id"
+        :data-flip-id="`card_${card.id}`"
         :card="{
           id: card.id,
           art: overrides.art ?? card.art,
@@ -155,6 +152,7 @@ const sprite = computed(() => {
         v-else-if="variant === 'small'"
         :style="{ '--pixel-scale': pixelScale }"
         :id="card.id"
+        :data-flip-id="`card_${card.id}_small`"
         :card="{
           id: card.id,
           art: overrides.art ?? card.art,

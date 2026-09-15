@@ -55,7 +55,11 @@ const isOutOfScreen = usePageLeave();
 
 const resetUiState = async () => {
   await nextTick();
-  return ui.value.reset();
+  const actionTaken = ui.value.reset();
+  if (actionTaken) {
+    client.value.optimisticStateManager.cancelPlayingCard();
+  }
+  return actionTaken;
 };
 
 watch(isOutOfScreen, out => {

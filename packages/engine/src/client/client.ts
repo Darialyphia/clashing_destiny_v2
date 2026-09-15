@@ -23,6 +23,7 @@ import type { BoardSpaceViewModel } from './view-models/board-space.model';
 import { EFFECT_CHAIN_STATES } from '../game/effect-chain';
 import type { Rune } from '../player/player.enums';
 import { OptimisticStateManager } from './controllers/optimistic-state.controller';
+import { GAME_PHASES } from '../game/game.enums';
 
 export const GAME_TYPES = {
   LOCAL: 'local',
@@ -306,6 +307,10 @@ export class GameClient {
   }
 
   cancelInteraction() {
+    if (this.state.phase.state === GAME_PHASES.PLAY_CARD) {
+      const card = this.stateManager.getCard(this.state.phase.ctx.card)!;
+      void this.fxAdapter.onCancelPlayCard(card, this);
+    }
     this.dispatch({
       type: 'cancelInteraction',
       payload: { playerId: this.playerId }

@@ -14,10 +14,12 @@ export class BackstabModifier<T extends MinionCard> extends Modifier<T> {
     { amount, mixins }: { amount: number; mixins?: ModifierMixin<MinionCard>[] }
   ) {
     super(KEYWORDS.BACKSTAB.id, game, source, {
-      name: () => KEYWORDS.BACKSTAB.name.replace('X', amount.toString()),
-      description: () => KEYWORDS.BACKSTAB.description.replace('X', amount.toString()),
+      name: () => KEYWORDS.BACKSTAB.name.replace('X', this.stacks.toString()),
+      description: () =>
+        KEYWORDS.BACKSTAB.description.replace('X', this.stacks.toString()),
       icon: 'icons/keyword-backstab',
-      isUnique: false,
+      isUnique: true,
+      stacks: amount,
       mixins: [
         new KeywordModifierMixin(game, KEYWORDS.BACKSTAB),
         new MinionInterceptorModifierMixin(game, {
@@ -25,7 +27,7 @@ export class BackstabModifier<T extends MinionCard> extends Modifier<T> {
           interceptor: (val, { target }) => {
             if (!target.isExhausted) return val;
 
-            return val + amount;
+            return val + this.stacks;
           }
         }),
         ...(mixins ?? [])

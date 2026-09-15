@@ -96,7 +96,6 @@ const isVisible = computed(() => {
 
     <GameCard
       v-if="card && isVisible"
-      :id="ui.DOMSelectors.cardInHand(card.id, card.player.id).id"
       :card-id="card.id"
       actions-side="top"
       :actions-offset="15"

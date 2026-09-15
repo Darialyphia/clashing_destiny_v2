@@ -104,7 +104,7 @@ const isHovered = ref(false);
     @mouseenter="isHovered = true"
     @mouseleave="isHovered = false"
   >
-    <ModifiersList :modifiers="modifiers" class="modifiers" />
+    <ModifiersList :card="card" class="modifiers" />
 
     <InspectableCard :card-id="card.id" side="right" :side-offset="20">
       <GameCard

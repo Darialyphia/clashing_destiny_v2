@@ -23,7 +23,7 @@ export const tempest: SpellBlueprint = {
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.RARE,
   affinities: [AFFINITIES.LIGHT, AFFINITIES.LIGHT],
-  manaCost: 4,
+  manaCost: 3,
   manaSupply: 2,
   speed: CARD_SPEED.FAST,
   tags: [],

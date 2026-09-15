@@ -104,7 +104,6 @@ const step = computed(() => {
     (handContainerSize.value.w - cardW.value) / (handSize.value - 1);
   return clamp(natural, 0, cardW.value);
 });
-
 const cards = computed(() => {
   if (handSize.value === 0) return [];
   const usedSpan = cardW.value + (handSize.value - 1) * step.value;
@@ -113,6 +112,7 @@ const cards = computed(() => {
   const hoveredIndexInHand = ui.value.hoveredCardInHand
     ? player.value.hand.findIndex(c => c.equals(ui.value.hoveredCardInHand!))
     : null;
+
   return player.value.hand.map((card, i) => {
     const isAfterHoveredCard =
       hoveredIndexInHand !== null && i > hoveredIndexInHand ? 1 : 0;

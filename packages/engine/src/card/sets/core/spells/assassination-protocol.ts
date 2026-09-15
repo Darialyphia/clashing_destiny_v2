@@ -29,7 +29,7 @@ export const assassinationProtocol: SpellBlueprint<MinionCard> = {
   art: defaultCardArt('spells/assassination-protocol'),
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.RARE,
-  affinities: [AFFINITIES.FIRE, AFFINITIES.FIRE],
+  affinities: [AFFINITIES.FIRE],
   manaCost: 2,
   manaSupply: 2,
   speed: CARD_SPEED.FAST,

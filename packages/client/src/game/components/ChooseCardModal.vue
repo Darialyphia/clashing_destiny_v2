@@ -13,8 +13,10 @@ import { isDefined } from '@game/shared';
 import { useIsMobile } from '@/shared/composables/useIsMobile';
 
 const { client, playerId } = useGameClient();
-const _isOpened = ref(false);
 const state = useGameState();
+const _isOpened = ref(
+  state.value.interaction.state === INTERACTION_STATES.CHOOSING_CARDS
+);
 
 const isOpened = computed({
   get() {
@@ -97,6 +99,13 @@ const confirm = () => {
     _isOpened.value = false;
   }
 };
+const handleCardClick = (index: number, event: MouseEvent) => {
+  if (maxChoices.value > 1 || isWaiting.value) return;
+
+  event.preventDefault();
+  selectedIndices.value = [index];
+  confirm();
+};
 
 const isMobile = useIsMobile();
 </script>
@@ -121,7 +130,11 @@ const isMobile = useIsMobile();
         {{ label }} ({{ selectedIndices.length }}/{{ maxChoices }})
       </p>
       <div class="card-list fancy-scrollbar">
-        <label v-for="(card, index) in displayedCards" :key="card">
+        <label
+          v-for="(card, index) in displayedCards"
+          :key="card"
+          @click="handleCardClick(index, $event)"
+        >
           <GameCard
             :key="card"
             :card-id="card"
@@ -145,7 +158,7 @@ const isMobile = useIsMobile();
       </div>
       <footer class="flex mt-7 gap-10 justify-center">
         <FancyButton
-          v-if="!isShowingBoard && !isWaiting"
+          v-if="!isShowingBoard && !isWaiting && maxChoices > 1"
           variant="info"
           text="Confirm"
           :disabled="selectedIndices.length < minChoices || isWaiting"
