@@ -116,8 +116,8 @@ const onMouseleave = () => {
       :actions-offset="15"
       :is-interactive="isInteractive"
       show-disabled-message
-      @mouseenter="onMouseenter($event)"
-      @mouseleave="onMouseleave($event)"
+      @mouseenter="onMouseenter()"
+      @mouseleave="onMouseleave()"
     />
     <CardBack v-else-if="!card" class="hand-card-flipped" />
   </div>
