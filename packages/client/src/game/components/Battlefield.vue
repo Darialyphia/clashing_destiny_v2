@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { PlayerViewModel } from '@game/engine/src/client/view-models/player.model';
 import { useGameClient, useGameUi } from '../composables/useGameClient';
-import BoardCard from './BoardCard.vue';
+import BoardCard from './BoardCard/index.vue';
 
 const { battlefield } = defineProps<{
   battlefield: PlayerViewModel['leftBattlefield'];

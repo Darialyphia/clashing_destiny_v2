@@ -32,7 +32,8 @@ const {
   overrides = {},
   pixelScale = 1,
   animationSequence,
-  spriteScale = 1
+  spriteScale = 1,
+  repeatAnimation = true
 } = defineProps<{
   cardId: string;
   actionsOffset?: number;
@@ -52,6 +53,7 @@ const {
   pixelScale?: number | null;
   animationSequence?: AnimationName[];
   spriteScale?: number;
+  repeatAnimation?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -173,6 +175,7 @@ const sprite = computed(() => {
         :sprite="sprite"
         :animation-sequence="animationSequence"
         :sprite-scale="spriteScale"
+        :repeat-animation="repeatAnimation"
         @art-sequence-end="emit('artSequenceEnd', $event)"
       />
 

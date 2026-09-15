@@ -1,15 +1,14 @@
 <script setup lang="ts">
-import { useGameClient, useGameUi } from '../composables/useGameClient';
-import GameCard from './GameCard.vue';
-import { isDefined } from '@game/shared';
-import ModifiersList from './ModifiersList.vue';
+import { useGameClient, useGameUi } from '../../composables/useGameClient';
+import GameCard from '../GameCard.vue';
+import ModifiersList from '../ModifiersList.vue';
 import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
-import AbilityMenu from './AbilityMenu.vue';
+import AbilityMenu from '../AbilityMenu.vue';
 import { CARD_KINDS } from '@game/engine/src/card/card.enums';
 import InspectableCard from '@/card/components/InspectableCard.vue';
-import { useBoardCardAnimationSequence } from '../composables/useBoardCardAnimationSequence';
-import { useBoardCardFxEvents } from '../composables/useBoardCardFx';
-import { useBoardCardInteraction } from '../composables/useBoardCardInteraction';
+import { useBoardCardAnimationSequence } from './useBoardCardAnimationSequence';
+import { useBoardCardFxEvents } from './useBoardCardFx';
+import { useBoardCardInteraction } from './useBoardCardInteraction';
 
 const {
   card,
@@ -35,6 +34,7 @@ const {
   playSelectedAnimationSequence,
   playAttackAnimationSequence,
   playHitSequence,
+  shouldRepeat,
   playDeathAnimationSequence
 } = useBoardCardAnimationSequence(card);
 
@@ -67,8 +67,6 @@ const { isBeingPlayed, DROP_DURATION, isAttacking, isTakingDamage } =
     onHit: playHitSequence,
     onSequenceEnd: addOnAnimationSequenceEndCallback
   });
-
-const modifiers = computed(() => card.modifiers.filter(isDefined));
 
 const shouldScaleSprite = computed(() => {
   return card.kind !== CARD_KINDS.DESTINY;
@@ -119,6 +117,7 @@ const isHovered = ref(false);
         }"
         :animation-sequence="animationSequence"
         :sprite-scale="shouldScaleSprite ? 1.5 : 1"
+        :repeat-animation="shouldRepeat"
         @art-sequence-end="onAnimationSequenceEnd"
       />
     </InspectableCard>

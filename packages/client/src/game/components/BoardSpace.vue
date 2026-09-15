@@ -5,13 +5,13 @@ import {
   useGameUi
 } from '../composables/useGameClient';
 import { useCellTargeting } from '../composables/useCellTargeting';
-import { useBoardCardDragSelection } from '../composables/useBoardCardDragSelection';
+import { useBoardCardDragSelection } from './BoardCard/useBoardCardDragSelection';
 import { useBoardSpaceArrowPath } from '../composables/useBoardSpaceArrowPath';
 import { useCardMoveFx } from '../composables/useCardMoveFx';
 import Arrow from './Arrow.vue';
 import type { BoardSpaceViewModel } from '@game/engine/src/client/view-models/board-space.model';
 import { useCellHighlights } from '../composables/useCellHighlights';
-import BoardCard from './BoardCard.vue';
+import BoardCard from './BoardCard/index.vue';
 
 const { cellId } = defineProps<{
   cellId: string;

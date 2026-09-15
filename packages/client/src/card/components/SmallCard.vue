@@ -23,7 +23,8 @@ const {
   showStats = false,
   sprite,
   animationSequence,
-  spriteScale = 1
+  spriteScale = 1,
+  repeatAnimation = true
 } = defineProps<{
   card: {
     id: string;
@@ -46,6 +47,7 @@ const {
   sprite: Nullable<SpriteData>;
   animationSequence?: string[];
   spriteScale?: number;
+  repeatAnimation?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -78,6 +80,7 @@ const { activeFrameRect, bgPosition, imageBg, on } = useSprite({
   sprite: computed(() => sprite ?? null),
   kind: computed(() => card.kind),
   scale: spriteScale,
+  repeat: computed(() => repeatAnimation),
   scalePositionByPixelScale: true
 });
 

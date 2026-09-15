@@ -1,5 +1,5 @@
 import type { ComputedRef } from 'vue';
-import { useGameState, useGameUi } from './useGameClient';
+import { useGameState, useGameUi } from '../../composables/useGameClient';
 import type { BoardSpaceViewModel } from '@game/engine/src/client/view-models/board-space.model';
 import { INTERACTION_STATES } from '@game/engine/src/game/game.enums';
 

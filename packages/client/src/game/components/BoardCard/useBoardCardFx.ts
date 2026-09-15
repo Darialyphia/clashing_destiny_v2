@@ -2,7 +2,7 @@ import { waitFor } from '@game/shared';
 import { until } from '@vueuse/core';
 import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
 import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
-import { useFxEvent } from './useGameClient';
+import { useFxEvent } from '../../composables/useGameClient';
 
 type SequenceEndCallback = (ctx: { animationSequence: string[] }) => void;
 
@@ -106,10 +106,10 @@ export const useBoardCardFxEvents = (
         const sprite = unitEl.value?.querySelector('.sprite') as HTMLElement;
         if (sprite) {
           sprite.animate([{ opacity: 1 }, { opacity: 0 }], {
-            duration: 500,
+            duration: 350,
             fill: 'forwards'
           });
-          waitFor(650).then(resolve);
+          waitFor(500).then(resolve);
         } else {
           resolve();
         }

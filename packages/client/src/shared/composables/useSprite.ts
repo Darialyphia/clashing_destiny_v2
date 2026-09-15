@@ -29,14 +29,14 @@ export function useSprite({
   animationSequence,
   kind,
   scale = 1,
-  repeat = true,
+  repeat = () => true,
   scalePositionByPixelScale = false
 }: {
   sprite: MaybeRefOrGetter<SpriteData | null>;
   animationSequence: MaybeRefOrGetter<string[] | undefined>;
   kind: MaybeRefOrGetter<CardKind>;
   scale?: number;
-  repeat?: boolean;
+  repeat?: MaybeRefOrGetter<boolean>;
   scalePositionByPixelScale?: boolean;
 }) {
   const emitter = new TypedEventEmitter<{
@@ -46,6 +46,8 @@ export function useSprite({
   const spriteRef = computed(() => toValue(sprite));
   const sequenceRef = computed(() => toValue(animationSequence));
   const kindRef = computed(() => toValue(kind));
+  const repeatRef = computed(() => toValue(repeat));
+
   const shouldAnimate = computed(
     () => isDefined(sequenceRef.value) && sequenceRef.value.length > 0
   );
@@ -62,6 +64,11 @@ export function useSprite({
   watch(sequenceToUse, () => {
     currentSequenceIndex.value = 0;
     isDone.value = false;
+  });
+  watch(repeatRef, () => {
+    if (repeatRef.value) {
+      isDone.value = false;
+    }
   });
 
   const currentAnimation = computed(() => {
@@ -87,8 +94,11 @@ export function useSprite({
     () => {
       if (!spriteRef.value) return;
       if (!currentAnimation.value || !shouldAnimate.value) return;
+      if (isDone.value) return;
       const { startFrame, endFrame } = currentAnimation.value;
+
       const totalFrames = endFrame - startFrame + 1;
+
       if (currentFrame.value >= endFrame) {
         if (currentSequenceIndex.value < sequenceToUse.value.length - 1) {
           currentSequenceIndex.value++;
@@ -99,9 +109,10 @@ export function useSprite({
             currentFrame.value = nextAnim.startFrame;
           }
         } else {
-          currentFrame.value = startFrame;
-          if (!repeat) {
+          if (!repeatRef.value) {
             isDone.value = true;
+          } else {
+            currentFrame.value = startFrame;
           }
 
           emitter.emit('sequenceEnd', {

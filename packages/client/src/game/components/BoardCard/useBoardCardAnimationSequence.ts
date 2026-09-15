@@ -6,11 +6,43 @@ import {
 } from '@game/engine/src/game/game.enums';
 import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
 
+type AnimationData = {
+  sequence: AnimationName[] | undefined;
+  shouldRepeat: boolean;
+  shouldResetOnEnd: boolean;
+};
+const CARD_ANIMATION_SEQUENCES: Record<string, AnimationData> = {
+  idle: {
+    sequence: undefined, // use fallback animation
+    shouldRepeat: true,
+    shouldResetOnEnd: true
+  },
+  attack: {
+    sequence: [ANIMATIONS_NAMES.ATTACK],
+    shouldRepeat: false,
+    shouldResetOnEnd: true
+  },
+  death: {
+    sequence: [ANIMATIONS_NAMES.DEATH],
+    shouldRepeat: false,
+    shouldResetOnEnd: false
+  },
+  hit: {
+    sequence: [ANIMATIONS_NAMES.HIT],
+    shouldRepeat: false,
+    shouldResetOnEnd: true
+  }
+};
+
 export const useBoardCardAnimationSequence = (card: CardViewModel) => {
   const animationSequence = ref<AnimationName[] | undefined>(undefined);
+  const shouldRepeat = ref(true);
+  const shouldResetOnEnd = ref(true);
 
   const resetAnimationSequence = () => {
     animationSequence.value = undefined;
+    shouldRepeat.value = true;
+    shouldResetOnEnd.value = true;
   };
 
   const onAnimationSequenceEndCallbacks: ((ctx: {
@@ -33,7 +65,9 @@ export const useBoardCardAnimationSequence = (card: CardViewModel) => {
     onAnimationSequenceEndCallbacks.forEach(cb =>
       cb({ animationSequence: animationSequence.value ?? [] })
     );
-    resetAnimationSequence();
+    if (shouldResetOnEnd.value) {
+      resetAnimationSequence();
+    }
   };
 
   const playSelectedAnimationSequence = () => {
@@ -55,7 +89,9 @@ export const useBoardCardAnimationSequence = (card: CardViewModel) => {
       onAnimationSequenceEnd();
       return;
     }
-    animationSequence.value = [ANIMATIONS_NAMES.ATTACK];
+    animationSequence.value = CARD_ANIMATION_SEQUENCES.attack.sequence;
+    shouldRepeat.value = CARD_ANIMATION_SEQUENCES.attack.shouldRepeat;
+    shouldResetOnEnd.value = CARD_ANIMATION_SEQUENCES.attack.shouldResetOnEnd;
   };
 
   const playDeathAnimationSequence = () => {
@@ -63,7 +99,9 @@ export const useBoardCardAnimationSequence = (card: CardViewModel) => {
       onAnimationSequenceEnd();
       return;
     }
-    animationSequence.value = [ANIMATIONS_NAMES.DEATH];
+    animationSequence.value = CARD_ANIMATION_SEQUENCES.death.sequence;
+    shouldRepeat.value = CARD_ANIMATION_SEQUENCES.death.shouldRepeat;
+    shouldResetOnEnd.value = CARD_ANIMATION_SEQUENCES.death.shouldResetOnEnd;
   };
 
   const playHitSequence = () => {
@@ -71,7 +109,9 @@ export const useBoardCardAnimationSequence = (card: CardViewModel) => {
       onAnimationSequenceEnd();
       return;
     }
-    animationSequence.value = [ANIMATIONS_NAMES.HIT];
+    animationSequence.value = CARD_ANIMATION_SEQUENCES.hit.sequence;
+    shouldRepeat.value = CARD_ANIMATION_SEQUENCES.hit.shouldRepeat;
+    shouldResetOnEnd.value = CARD_ANIMATION_SEQUENCES.hit.shouldResetOnEnd;
   };
 
   return {
@@ -82,6 +122,7 @@ export const useBoardCardAnimationSequence = (card: CardViewModel) => {
     playSelectedAnimationSequence,
     playAttackAnimationSequence,
     playDeathAnimationSequence,
-    playHitSequence
+    playHitSequence,
+    shouldRepeat
   };
 };

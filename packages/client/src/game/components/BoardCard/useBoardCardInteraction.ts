@@ -1,7 +1,11 @@
 import { CARD_KINDS } from '@game/engine/src/card/card.enums';
 import { INTERACTION_STATES } from '@game/engine/src/game/game.enums';
 import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
-import { useGameClient, useGameState, useGameUi } from './useGameClient';
+import {
+  useGameClient,
+  useGameState,
+  useGameUi
+} from '../../composables/useGameClient';
 
 export const useBoardCardInteraction = (card: CardViewModel) => {
   const ui = useGameUi();

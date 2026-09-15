@@ -7,7 +7,7 @@ import {
   useOpponentPlayer
 } from '../composables/useGameClient';
 import BoardSpace from './BoardSpace.vue';
-import BoardCard from './BoardCard.vue';
+import BoardCard from './BoardCard/index.vue';
 import { useWindowSize } from '@vueuse/core';
 import { config } from '@/utils/config';
 import PassButton from './PassButton.vue';
