@@ -1,25 +1,15 @@
 <script setup lang="ts">
-import {
-  useFxEvent,
-  useGameClient,
-  useGameState,
-  useGameUi
-} from '../composables/useGameClient';
+import { useGameClient, useGameUi } from '../composables/useGameClient';
 import GameCard from './GameCard.vue';
-import { isDefined, waitFor } from '@game/shared';
-import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
-import { until } from '@vueuse/core';
+import { isDefined } from '@game/shared';
 import ModifiersList from './ModifiersList.vue';
 import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
 import AbilityMenu from './AbilityMenu.vue';
-import {
-  ANIMATIONS_NAMES,
-  INTERACTION_STATES,
-  type AnimationName
-} from '@game/engine/src/game/game.enums';
-import InspectableCard from '@/card/components/InspectableCard.vue';
-import { match } from 'ts-pattern';
 import { CARD_KINDS } from '@game/engine/src/card/card.enums';
+import InspectableCard from '@/card/components/InspectableCard.vue';
+import { useBoardCardAnimationSequence } from '../composables/useBoardCardAnimationSequence';
+import { useBoardCardFxEvents } from '../composables/useBoardCardFx';
+import { useBoardCardInteraction } from '../composables/useBoardCardInteraction';
 
 const {
   card,
@@ -34,54 +24,27 @@ const {
 }>();
 
 const ui = useGameUi();
-const { client, playerId } = useGameClient();
+const { playerId } = useGameClient();
 const element = ref<HTMLElement>();
 
-const animationSequence = ref<AnimationName[] | undefined>(undefined);
-const resetAnimationSequence = () => {
-  animationSequence.value = undefined;
-};
-const onAnimationSequenceEndCallbacks: ((ctx: {
-  animationSequence: string[];
-}) => void)[] = [];
-const addOnAnimationSequenceEndCallback = (
-  cb: (ctx: { animationSequence: string[] }) => void
-) => {
-  onAnimationSequenceEndCallbacks.push(cb);
+const {
+  animationSequence,
+  resetAnimationSequence,
+  addOnAnimationSequenceEndCallback,
+  onAnimationSequenceEnd,
+  playSelectedAnimationSequence,
+  playAttackAnimationSequence,
+  playHitSequence,
+  playDeathAnimationSequence
+} = useBoardCardAnimationSequence(card);
 
-  return () => {
-    const index = onAnimationSequenceEndCallbacks.indexOf(cb);
-    if (index !== -1) {
-      onAnimationSequenceEndCallbacks.splice(index, 1);
-    }
-  };
-};
-
-const onAnimationSequenceEnd = () => {
-  onAnimationSequenceEndCallbacks.forEach(cb =>
-    cb({ animationSequence: animationSequence.value ?? [] })
-  );
-  resetAnimationSequence();
-};
-
-const isSelected = computed(() => ui.value.selectedCard?.equals(card));
-
-const playSelectedAnimationSequence = () => {
-  animationSequence.value = match(card.kind)
-    .with(CARD_KINDS.MINION, () => [ANIMATIONS_NAMES.IDLE])
-    .with(CARD_KINDS.ARTIFACT, () => [ANIMATIONS_NAMES.ACTIVE])
-    .with(
-      CARD_KINDS.SPELL,
-      CARD_KINDS.DESTINY,
-      CARD_KINDS.RUNE,
-      CARD_KINDS.SECRET,
-      () => [ANIMATIONS_NAMES.DEFAULT]
-    )
-    .exhaustive();
-};
-const playAttackAnimationSequence = () => {
-  animationSequence.value = [ANIMATIONS_NAMES.ATTACK];
-};
+const {
+  isSelected,
+  hasAvailableAbilities,
+  isTargetable,
+  canAttack,
+  onMouseup
+} = useBoardCardInteraction(card);
 
 watch(isSelected, selected => {
   if (!selected) {
@@ -95,132 +58,17 @@ onMounted(() => {
   element.value = ui.value.DOMSelectors.cardOnBoard(card.id).element!;
 });
 
-const isBeingPlayed = ref(false);
-const DROP_DURATION = 300;
-useFxEvent(FX_EVENTS.CARD_AFTER_PLAY, async event => {
-  if (event.card.id !== card.id) return;
-  isBeingPlayed.value = true;
-  await waitFor(DROP_DURATION);
-  isBeingPlayed.value = false;
-});
-
 const unitEl = useTemplateRef('unit');
 
-const isAttacking = ref(false);
-
-useFxEvent(FX_EVENTS.CARD_BEFORE_DEAL_COMBAT_DAMAGE, event => {
-  if (event.card !== card.id) return;
-
-  if (!unitEl.value) return;
-  const _unitEl = unitEl.value;
-
-  return new Promise(resolve => {
-    playAttackAnimationSequence();
-
-    const stop = addOnAnimationSequenceEndCallback(() => {
-      isAttacking.value = true;
-
-      _unitEl.addEventListener(
-        'animationend',
-        () => {
-          isAttacking.value = false;
-        },
-        { once: true }
-      );
-
-      until(isAttacking)
-        .toBe(false)
-        .then(() => {
-          stop();
-          resolve();
-        });
-    });
+const { isBeingPlayed, DROP_DURATION, isAttacking, isTakingDamage } =
+  useBoardCardFxEvents(card, unitEl, {
+    onAttack: playAttackAnimationSequence,
+    onDestroy: playDeathAnimationSequence,
+    onHit: playHitSequence,
+    onSequenceEnd: addOnAnimationSequenceEndCallback
   });
-});
-
-const isTakingDamage = ref(false);
-useFxEvent(FX_EVENTS.CARD_BEFORE_TAKE_DAMAGE, async event => {
-  if (event.card !== card.id) return;
-
-  if (!unitEl.value) return;
-  isTakingDamage.value = true;
-  unitEl.value.addEventListener(
-    'animationend',
-    () => {
-      isTakingDamage.value = false;
-    },
-    { once: true }
-  );
-
-  await until(isTakingDamage).toBe(false);
-  await waitFor(200);
-});
-
-useFxEvent(FX_EVENTS.CARD_WAKE_UP, async event => {
-  if (event.card !== card.id) return;
-  card.update({ isExhausted: false });
-});
-useFxEvent(FX_EVENTS.CARD_EXHAUST, async event => {
-  if (event.card !== card.id) return;
-  card.update({ isExhausted: true });
-});
-
-const hasAvailableAbilities = computed(() => {
-  return card.abilityActions.some(ability => {
-    return ability.predicate();
-  });
-});
 
 const modifiers = computed(() => card.modifiers.filter(isDefined));
-
-const state = useGameState();
-const isTargetable = computed(() => {
-  if (state.value.interaction.state === INTERACTION_STATES.IDLE) {
-    if (card.kind !== CARD_KINDS.DESTINY) return false;
-    if (!ui.value.selectedCard) return false;
-    if (ui.value.selectedCard.kind !== CARD_KINDS.MINION) return false;
-    if (
-      ui.value.selectedCard.canScore &&
-      ui.value.selectedCard.location === card.location
-    ) {
-      return true;
-    }
-  }
-  if (
-    state.value.interaction.state !==
-    INTERACTION_STATES.SELECTING_CARDS_ON_BOARD
-  ) {
-    return false;
-  }
-  if (!client.value.isActive()) {
-    return false;
-  }
-
-  return state.value.interaction.ctx.elligibleCards.some(
-    cardId => cardId === card.id
-  );
-});
-
-const canAttack = computed(() => {
-  if (!ui.value.selectedCard) return false;
-
-  return ui.value.selectedCard.canAttackAt(card);
-});
-
-const onMouseup = (e: MouseEvent) => {
-  if (e.button !== 0) return;
-
-  const action = card.currentClickAction;
-  if (!action) return;
-  e.stopPropagation();
-
-  action.handler(card);
-};
-
-useFxEvent(FX_EVENTS.CARD_EXHAUST, async event => {
-  if (event.card !== card.id) return;
-  card.update({ isExhausted: true });
-});
 
 const shouldScaleSprite = computed(() => {
   return card.kind !== CARD_KINDS.DESTINY;

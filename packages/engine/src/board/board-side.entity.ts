@@ -311,7 +311,6 @@ export class BoardSide
     const card = this.getAllCardsInPlay().find(card => card.id === id);
     if (!card) return;
     if (!isMinion(card)) return;
-    console.log(id, zone, index);
     await match(zone)
       .with(CARD_LOCATIONS.BASE, () => this.moveToBase(card, index))
       .with(CARD_LOCATIONS.LEFT_BATTLEFIELD, () =>
