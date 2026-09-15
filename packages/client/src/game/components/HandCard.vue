@@ -3,7 +3,8 @@ import type { CardViewModel } from '@game/engine/src/client/view-models/card.mod
 import {
   useGameClient,
   useGameState,
-  useGameUi
+  useGameUi,
+  useMyPlayer
 } from '../composables/useGameClient';
 import GameCard from './GameCard.vue';
 import { GAME_PHASES } from '@game/engine/src/game/game.enums';
@@ -73,6 +74,20 @@ const isVisible = computed(() => {
     return true;
   return state.value.phase.ctx.card !== card?.id;
 });
+
+const myPlayer = useMyPlayer();
+const onMouseenter = () => {
+  if (!card) return;
+  if (card.player.equals(myPlayer.value)) {
+    ui.value.hoverCardInHand(card);
+  }
+};
+const onMouseleave = () => {
+  if (!card) return;
+  if (card.player.equals(myPlayer.value)) {
+    ui.value.unhoverCardInHand();
+  }
+};
 </script>
 
 <template>
@@ -101,8 +116,8 @@ const isVisible = computed(() => {
       :actions-offset="15"
       :is-interactive="isInteractive"
       show-disabled-message
-      @mouseenter="ui.hoverCardInHand(card)"
-      @mouseleave="ui.unhoverCardInHand()"
+      @mouseenter="onMouseenter($event)"
+      @mouseleave="onMouseleave($event)"
     />
     <CardBack v-else-if="!card" class="hand-card-flipped" />
   </div>

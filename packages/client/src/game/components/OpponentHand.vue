@@ -13,12 +13,12 @@ import { useElementBounding, useResizeObserver } from '@vueuse/core';
 import type { ShallowRef } from 'vue';
 import HandCard from './HandCard.vue';
 
-const { playerId, teachingMode } = defineProps<{
+const { playerId, isRevealed } = defineProps<{
   playerId: string;
-  teachingMode: boolean;
+  isRevealed: boolean;
 }>();
 
-const player = usePlayer(computed(() => playerId));
+const player = usePlayer(playerId);
 const ui = useGameUi();
 const { client } = useGameClient();
 
@@ -90,7 +90,7 @@ const cardW = computed(() => {
   return (
     parseInt(
       getComputedStyle(document.documentElement).getPropertyValue(
-        '--card-width-unitless'
+        '--card-v3-width-unitless'
       )
     ) * pixelScale.value
   );
@@ -104,31 +104,40 @@ const step = computed(() => {
     (handContainerSize.value.w - cardW.value) / (handSize.value - 1);
   return clamp(natural, 0, cardW.value);
 });
-
 const cards = computed(() => {
   if (handSize.value === 0) return [];
   const usedSpan = cardW.value + (handSize.value - 1) * step.value;
+
   const offset = (handContainerSize.value.w - usedSpan) / 2;
+  const hoveredIndexInHand = ui.value.hoveredCardInHand
+    ? player.value.hand.findIndex(c => c.equals(ui.value.hoveredCardInHand!))
+    : null;
 
   return player.value.hand.map((card, i) => {
+    const isAfterHoveredCard =
+      hoveredIndexInHand !== null && i > hoveredIndexInHand ? 1 : 0;
     return {
       card,
-      x: i * step.value + offset,
+      x: i * step.value + offset + (isAfterHoveredCard ? cardW.value : 0),
       y: 0,
       z: i
     };
   });
 });
 
-const { width } = useElementBounding(() => ui.value.DOMSelectors.board.element);
-const handWidth = ref(width.value * 0.75);
+const { width } = useElementBounding(
+  () => ui.value.DOMSelectors.boardInner.element
+);
+const WIDTH_RATIO = 0.75;
+const handWidth = ref(width.value * WIDTH_RATIO);
+
 watch(width, v => {
   if (client.value.isPlayingFx) return;
-  handWidth.value = v * 0.75;
+  handWidth.value = Math.min(v * WIDTH_RATIO, window.innerWidth);
 });
 
 const isHoverable = computed(
-  () => teachingMode || cards.value.some(c => c.card.isRevealed)
+  () => isRevealed || cards.value.some(c => c.card.isRevealed)
 );
 </script>
 
@@ -155,15 +164,15 @@ const isHoverable = computed(
         v-for="card in cards"
         :key="card.card.id"
         :is-interactive="isMyHand"
-        :card="teachingMode || card.card.isRevealed ? card.card : undefined"
+        :card="isRevealed || card.card.isRevealed ? card.card : undefined"
         :style="{
           '--x': `${card.x}px`,
           '--y': `${card.y}px`,
           '--z': card.z,
           '--keyboard-shortcut-right': '50%'
         }"
-        :hover-y-offset="190"
-        :hover-scale="1"
+        :hover-y-offset="180"
+        :hover-scale="2"
       />
     </section>
   </OnClickOutside>
@@ -190,7 +199,6 @@ const isHoverable = computed(
   z-index: 1;
   width: 100%;
   transition: transform 0.15s var(--ease-elastic-2);
-  transform: translateY(-255px);
 
   &:hover {
     --pixel-scale: 1;

@@ -109,7 +109,6 @@ const isDev = import.meta.env.DEV;
     <Camera>
       <GameBoard :clocks="clocks" />
     </Camera>
-    <DraggedCard />
 
     <div class="my-deck">
       <Deck
@@ -138,8 +137,8 @@ const isDev = import.meta.env.DEV;
 
   <div class="opponent-hand">
     <OpponentHand
+      :is-revealed="options.teachingMode"
       :player-id="opponent.id"
-      :teaching-mode="options.teachingMode"
     />
   </div>
 
@@ -148,6 +147,8 @@ const isDev = import.meta.env.DEV;
 
   <PlayerInfos class="opponent-player" :player="opponent" inverted />
   <PlayerInfos class="my-player" :player="myPlayer" />
+
+  <DraggedCard />
 
   <GameMenu>
     <template #menu>
@@ -208,7 +209,7 @@ const isDev = import.meta.env.DEV;
 .opponent-hand {
   position: fixed;
   width: 100%;
-  top: 3%;
+  top: 0%;
   left: 0;
 }
 

@@ -6,14 +6,13 @@ import { useSettingsStore } from '@/shared/composables/useSettings';
 
 const isOpened = ref(false);
 
-const isGameSettingsOpened = ref(false);
 const settings = useSettingsStore();
 
 useKeyboardControl(
   'keydown',
   settings.settings.bindings.openSettings.control,
   () => {
-    isGameSettingsOpened.value = !isGameSettingsOpened.value;
+    isOpened.value = !isOpened.value;
   }
 );
 </script>

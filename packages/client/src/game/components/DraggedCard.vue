@@ -134,7 +134,8 @@ watch(draggedCard, draggedCard => {
   transform-origin: center center;
   top: 0;
   left: 0;
-  transform: translateY(var(--y)) translateX(calc(-50% + var(--x)))
+  transform: translateZ(2px) translateY(var(--y))
+    translateX(calc(-50% + var(--x)))
     rotateX(calc(1deg * v-bind('cardRotation.x')))
     rotateY(calc(1deg * v-bind('cardRotation.y')));
 }
