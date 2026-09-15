@@ -102,9 +102,17 @@ export const useBoardCardFxEvents = (
       onDestroy();
 
       const stop = onSequenceEnd(() => {
-        console.log('sequence end');
-        resolve();
         stop();
+        const sprite = unitEl.value?.querySelector('.sprite') as HTMLElement;
+        if (sprite) {
+          sprite.animate([{ opacity: 1 }, { opacity: 0 }], {
+            duration: 500,
+            fill: 'forwards'
+          });
+          waitFor(650).then(resolve);
+        } else {
+          resolve();
+        }
       });
     });
   });
