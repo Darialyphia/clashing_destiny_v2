@@ -1,6 +1,6 @@
 import { computed, ref, watch, type MaybeRefOrGetter } from 'vue';
 import { useIntervalFn } from '@vueuse/core';
-import { isDefined, type EmptyObject } from '@game/shared';
+import { isDefined } from '@game/shared';
 import { CARD_KINDS, type CardKind } from '@game/engine/src/card/card.enums';
 import { TypedEventEmitter } from '@game/engine/src/utils/typed-emitter';
 import { ANIMATIONS_NAMES } from '@game/engine/src/game/game.enums';
@@ -40,7 +40,7 @@ export function useSprite({
   scalePositionByPixelScale?: boolean;
 }) {
   const emitter = new TypedEventEmitter<{
-    sequenceEnd: EmptyObject;
+    sequenceEnd: { animationSequence: string[] };
     frame: { index: number; total: number };
   }>();
   const spriteRef = computed(() => toValue(sprite));
@@ -104,7 +104,9 @@ export function useSprite({
             isDone.value = true;
           }
 
-          emitter.emit('sequenceEnd', {});
+          emitter.emit('sequenceEnd', {
+            animationSequence: sequenceToUse.value
+          });
         }
       } else {
         currentFrame.value++;
@@ -136,6 +138,10 @@ export function useSprite({
 
   const imageBg = computed(() => {
     return assets[`${spriteRef.value?.id}`]?.css ?? 'none';
+  });
+
+  onUnmounted(() => {
+    emitter.removeAllListeners();
   });
 
   return {

@@ -54,6 +54,10 @@ const {
   spriteScale?: number;
 }>();
 
+const emit = defineEmits<{
+  artSequenceEnd: [{ animationSequence: string[] }];
+}>();
+
 const card = useCard(computed(() => cardId));
 
 const ui = useGameUi();
@@ -171,6 +175,7 @@ const sprite = computed(() => {
         :sprite="sprite"
         :animation-sequence="animationSequence"
         :sprite-scale="spriteScale"
+        @art-sequence-end="emit('artSequenceEnd', $event)"
       />
 
       <!-- <div class="damage" v-if="damageTaken > 0">

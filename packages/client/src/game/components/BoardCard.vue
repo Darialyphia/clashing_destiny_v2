@@ -17,7 +17,6 @@ import {
   INTERACTION_STATES,
   type AnimationName
 } from '@game/engine/src/game/game.enums';
-import UiSimpleTooltip from '@/ui/components/UiSimpleTooltip.vue';
 import InspectableCard from '@/card/components/InspectableCard.vue';
 import { match } from 'ts-pattern';
 import { CARD_KINDS } from '@game/engine/src/card/card.enums';
@@ -39,23 +38,56 @@ const { client, playerId } = useGameClient();
 const element = ref<HTMLElement>();
 
 const animationSequence = ref<AnimationName[] | undefined>(undefined);
+const resetAnimationSequence = () => {
+  animationSequence.value = undefined;
+};
+const onAnimationSequenceEndCallbacks: ((ctx: {
+  animationSequence: string[];
+}) => void)[] = [];
+const addOnAnimationSequenceEndCallback = (
+  cb: (ctx: { animationSequence: string[] }) => void
+) => {
+  onAnimationSequenceEndCallbacks.push(cb);
+
+  return () => {
+    const index = onAnimationSequenceEndCallbacks.indexOf(cb);
+    if (index !== -1) {
+      onAnimationSequenceEndCallbacks.splice(index, 1);
+    }
+  };
+};
+
+const onAnimationSequenceEnd = () => {
+  onAnimationSequenceEndCallbacks.forEach(cb =>
+    cb({ animationSequence: animationSequence.value ?? [] })
+  );
+  resetAnimationSequence();
+};
+
 const isSelected = computed(() => ui.value.selectedCard?.equals(card));
+
+const playSelectedAnimationSequence = () => {
+  animationSequence.value = match(card.kind)
+    .with(CARD_KINDS.MINION, () => [ANIMATIONS_NAMES.IDLE])
+    .with(CARD_KINDS.ARTIFACT, () => [ANIMATIONS_NAMES.ACTIVE])
+    .with(
+      CARD_KINDS.SPELL,
+      CARD_KINDS.DESTINY,
+      CARD_KINDS.RUNE,
+      CARD_KINDS.SECRET,
+      () => [ANIMATIONS_NAMES.DEFAULT]
+    )
+    .exhaustive();
+};
+const playAttackAnimationSequence = () => {
+  animationSequence.value = [ANIMATIONS_NAMES.ATTACK];
+};
 
 watch(isSelected, selected => {
   if (!selected) {
-    animationSequence.value = undefined;
+    resetAnimationSequence();
   } else {
-    animationSequence.value = match(card.kind)
-      .with(CARD_KINDS.MINION, () => [ANIMATIONS_NAMES.IDLE])
-      .with(CARD_KINDS.ARTIFACT, () => [ANIMATIONS_NAMES.ACTIVE])
-      .with(
-        CARD_KINDS.SPELL,
-        CARD_KINDS.DESTINY,
-        CARD_KINDS.RUNE,
-        CARD_KINDS.SECRET,
-        () => [ANIMATIONS_NAMES.DEFAULT]
-      )
-      .exhaustive();
+    playSelectedAnimationSequence();
   }
 });
 
@@ -76,19 +108,34 @@ const unitEl = useTemplateRef('unit');
 
 const isAttacking = ref(false);
 
-useFxEvent(FX_EVENTS.CARD_BEFORE_DEAL_COMBAT_DAMAGE, async event => {
+useFxEvent(FX_EVENTS.CARD_BEFORE_DEAL_COMBAT_DAMAGE, event => {
   if (event.card !== card.id) return;
 
   if (!unitEl.value) return;
-  isAttacking.value = true;
-  unitEl.value.addEventListener(
-    'animationend',
-    () => {
-      isAttacking.value = false;
-    },
-    { once: true }
-  );
-  await until(isAttacking).toBe(false);
+  const _unitEl = unitEl.value;
+
+  return new Promise(resolve => {
+    playAttackAnimationSequence();
+
+    const stop = addOnAnimationSequenceEndCallback(() => {
+      isAttacking.value = true;
+
+      _unitEl.addEventListener(
+        'animationend',
+        () => {
+          isAttacking.value = false;
+        },
+        { once: true }
+      );
+
+      until(isAttacking)
+        .toBe(false)
+        .then(() => {
+          stop();
+          resolve();
+        });
+    });
+  });
 });
 
 const isTakingDamage = ref(false);
@@ -224,6 +271,7 @@ const isHovered = ref(false);
         }"
         :animation-sequence="animationSequence"
         :sprite-scale="shouldScaleSprite ? 1.5 : 1"
+        @art-sequence-end="onAnimationSequenceEnd"
       />
     </InspectableCard>
     <Transition>
@@ -236,16 +284,6 @@ const isHovered = ref(false);
         :actions-side="variant === 'small' ? 'bottom' : 'top'"
       />
     </Transition>
-    <UiSimpleTooltip>
-      <template #trigger>
-        <button
-          v-if="card.retaliateAction.predicate(card)"
-          class="retaliate-button"
-          @click="card.retaliateAction.handler()"
-        />
-      </template>
-      Retaliate
-    </UiSimpleTooltip>
   </div>
 </template>
 

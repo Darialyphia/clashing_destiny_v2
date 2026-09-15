@@ -49,7 +49,7 @@ const {
 }>();
 
 const emit = defineEmits<{
-  artSequenceEnd: [];
+  artSequenceEnd: [{ animationSequence: string[] }];
 }>();
 
 const root = useTemplateRef('card');
@@ -73,7 +73,7 @@ const _animationSequence = computed(() => {
     .exhaustive();
 });
 
-const { activeFrameRect, bgPosition, imageBg, off, on } = useSprite({
+const { activeFrameRect, bgPosition, imageBg, on } = useSprite({
   animationSequence: _animationSequence,
   sprite: computed(() => sprite ?? null),
   kind: computed(() => card.kind),
@@ -81,15 +81,10 @@ const { activeFrameRect, bgPosition, imageBg, off, on } = useSprite({
   scalePositionByPixelScale: true
 });
 
-const onSequenceEnd = () => {
-  emit('artSequenceEnd');
+const onSequenceEnd = (e: { animationSequence: string[] }) => {
+  emit('artSequenceEnd', e);
 };
-onMounted(() => {
-  on('sequenceEnd', onSequenceEnd);
-});
-onUnmounted(() => {
-  off('sequenceEnd', onSequenceEnd);
-});
+on('sequenceEnd', onSequenceEnd);
 </script>
 
 <template>
