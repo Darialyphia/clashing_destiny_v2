@@ -1,10 +1,7 @@
 <script setup lang="ts">
 import { useAuthedQuery } from '@/auth/composables/useAuth';
-import AuthenticatedHeader from '@/AuthenticatedHeader.vue';
-import FancyButton from '@/ui/components/FancyButton.vue';
-import UiButton from '@/ui/components/UiButton.vue';
 import { api, GIFT_STATES } from '@game/api';
-import { useMe } from '@/auth/composables/useMe';
+// import { useMe } from '@/auth/composables/useMe';
 import { useLogout } from '@/auth/composables/useLogout';
 
 definePage({
@@ -22,9 +19,9 @@ const unclaimedGiftsCount = computed(() => {
   );
 });
 
-const { data: me } = useMe();
-const { data: unopenedPacks, isLoading: isLoadingUnopenedPacks } =
-  useAuthedQuery(api.cards.unopenedPacks, {});
+// const { data: me } = useMe();
+// const { data: unopenedPacks, isLoading: isLoadingUnopenedPacks } =
+//   useAuthedQuery(api.cards.unopenedPacks, {});
 
 const { mutate: logout } = useLogout();
 </script>

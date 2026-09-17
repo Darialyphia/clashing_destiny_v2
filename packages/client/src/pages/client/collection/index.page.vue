@@ -9,8 +9,7 @@ definePage({
   name: 'Collection',
   path: '/client/collection',
   meta: {
-    requiresAuth: true,
-    transition: 'blur'
+    wrapperClass: 'page-blur'
   }
 });
 
@@ -39,17 +38,6 @@ const { isEditingDeck, cardScale } = provideCollectionPage();
   grid-template-columns: 1fr 24rem;
   grid-template-rows: auto 1fr;
   transform-style: preserve-3d;
-  backdrop-filter: blur(25px) brightness(0.75);
-  transition:
-    backdrop-filter 0.75s var(--ease-3),
-    opacity 0.75s var(--ease-3);
-  @starting-style {
-    backdrop-filter: blur(0px);
-  }
-  &.v-leave-to {
-    backdrop-filter: blur(0px) brightness(1);
-    opacity: 0;
-  }
   @screen lt-lg {
     grid-template-columns: 1fr 18rem;
     column-gap: 0;
@@ -64,7 +52,7 @@ const { isEditingDeck, cardScale } = provideCollectionPage();
   align-items: center;
   padding-block: var(--size-3);
   padding-inline: var(--size-5);
-  transition: translate 0.75s var(--ease-3);
+  transition: translate 0.75s var(--ease-bounce-2);
   @starting-style {
     translate: 0 -100%;
   }
@@ -74,7 +62,8 @@ const { isEditingDeck, cardScale } = provideCollectionPage();
   overflow-y: hidden;
   grid-row: 1 / -1;
   grid-column: 2;
-  transition: translate 0.75s var(--ease-3);
+  transition: translate 0.75s var(--ease-bounce-2);
+  transition-delay: 0.25;
   @starting-style {
     translate: 100% 0;
   }

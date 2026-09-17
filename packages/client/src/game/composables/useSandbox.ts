@@ -58,14 +58,9 @@ export const provideSandbox = (
   window.__debugGame = () => {
     worker.postMessage({ type: 'debug' });
   };
+
   const networkAdapter: NetworkAdapter = {
     dispatch: input => {
-      // helper to detect input serialization issues when sending to the worker (eg. sending an unserialized class instance that satisfies the interface and gives no type error)
-      try {
-        JSON.stringify(input);
-      } catch {
-        console.error('Input is not serializable', input);
-      }
       worker.postMessage({
         type: 'dispatch',
         payload: { input: JSON.parse(JSON.stringify(input)) }

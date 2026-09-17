@@ -81,9 +81,9 @@ const parallaxStyle = computed(() => ({
     <div class="background-layer background-overlay" />
 
     <router-view v-slot="{ Component, route }">
-      <transition :name="route.meta.transition as any" mode="out-in">
+      <div class="page-wrapper" :class="route.meta.wrapperClass">
         <component :is="Component" />
-      </transition>
+      </div>
     </router-view>
   </div>
 </template>
@@ -101,11 +101,17 @@ const parallaxStyle = computed(() => ({
   pointer-events: none;
   background-size: cover;
   background-repeat: no-repeat;
+  background-position: center;
+  pointer-events: none;
+  z-index: -1;
 }
 
 .background-back {
   background-image: url('@/assets/backgrounds/main-menu-back.png');
-  inset: 0;
+  left: -100px;
+  right: -100px;
+  top: 0;
+  bottom: 0;
 }
 
 @keyframes clouds-scroll {
@@ -134,7 +140,10 @@ const parallaxStyle = computed(() => ({
 .background-front {
   background-image: url('@/assets/backgrounds/main-menu-front.png');
   transform: translate3d(var(--parallax-front-x), 0, 0);
-  inset: 0;
+  left: -50px;
+  right: -50px;
+  top: 0;
+  bottom: 0;
 }
 
 .background-fx {
@@ -145,5 +154,24 @@ const parallaxStyle = computed(() => ({
 
 .background-overlay {
   background-image: url('@/assets/backgrounds/main-menu-overlay.png');
+  inset: 0;
+}
+.page-wrapper {
+  position: absolute;
+  height: 100dvh;
+  width: 100vw;
+  overflow-y: hidden;
+  transition:
+    backdrop-filter 0.75s var(--ease-3),
+    opacity 0.75s var(--ease-3);
+}
+</style>
+
+<style>
+.page-blur {
+  backdrop-filter: blur(25px) brightness(0.8);
+  transition:
+    backdrop-filter 0.75s var(--ease-3),
+    opacity 0.75s var(--ease-3);
 }
 </style>

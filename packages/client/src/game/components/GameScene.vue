@@ -193,6 +193,7 @@ const isDev = import.meta.env.DEV;
   position: relative;
   transform-style: preserve-3d;
   perspective: 1500px;
+  background: black;
 }
 
 .my-hand {

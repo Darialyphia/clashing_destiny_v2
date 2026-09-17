@@ -102,7 +102,7 @@ const sprite = computed(() => {
 </script>
 
 <template>
-  <div class="game-card-container" :data-game-card="card.id">
+  <div v-if="card" class="game-card-container" :data-game-card="card.id">
     <CardActionsPopover
       :card-id="card.id"
       :is-interactive="isInteractive"

@@ -1,15 +1,23 @@
 <script setup lang="ts">
+import FancyButton from '@/ui/components/FancyButton.vue';
 import { assets } from '@/assets';
-import AuthenticatedHeader from '@/AuthenticatedHeader.vue';
 
 definePage({
-  name: 'SelectMode'
+  name: 'SelectMode',
+  meta: {
+    wrapperClass: 'page-blur'
+  }
 });
 </script>
 
 <template>
   <div class="page">
-    <AuthenticatedHeader />
+    <FancyButton
+      class="absolute top-10 left-8"
+      text="Back"
+      size="md"
+      :to="{ name: 'ClientHome' }"
+    />
 
     <div class="page-container">
       <h1 class="dual-text" data-text="Choose Your Game Mode">
@@ -19,7 +27,7 @@ definePage({
       <div class="mode-options">
         <RouterLink
           :to="{ name: 'Matchmaking' }"
-          class="mode-card"
+          class="mode-card surface-transparent"
           :style="{ '--bg': assets['backgrounds/ranked'].css }"
         >
           <h2 class="mode-title">Matchmaking</h2>
@@ -30,7 +38,7 @@ definePage({
 
         <RouterLink
           :to="{ name: 'Lobbies' }"
-          class="mode-card"
+          class="mode-card surface-transparent"
           :style="{ '--bg': assets['backgrounds/lobbies'].css }"
         >
           <h2 class="mode-title">Lobby Games</h2>
@@ -41,7 +49,7 @@ definePage({
 
         <RouterLink
           :to="{ name: 'Sandbox' }"
-          class="mode-card"
+          class="mode-card surface-transparent"
           :style="{ '--bg': assets['backgrounds/sandbox'].css }"
         >
           <h2 class="mode-title">Sandbox</h2>
@@ -57,13 +65,15 @@ definePage({
 <style lang="postcss" scoped>
 .page {
   min-height: 100vh;
-  display: grid;
-  grid-template-rows: auto 1fr;
+  margin-top: var(--size-12);
 }
 
 .page-container {
   container-type: inline-size;
   text-align: center;
+  display: grid;
+  place-items: center;
+  width: 100vw;
 }
 
 h1 {
@@ -74,42 +84,16 @@ h1 {
   font-family: 'Cinzel Decorative', serif;
 }
 
-.dual-text {
-  color: transparent;
-  position: relative;
-  --_top-color: var(--top-color, #efef9f);
-  --_bottom-color: var(--bottom-color, #d7ad42);
-  &::before,
-  &::after {
-    position: absolute;
-    content: attr(data-text);
-    color: transparent;
-    inset: 0;
-  }
-  &:after {
-    background: linear-gradient(
-      var(--_top-color),
-      var(--_top-color) 50%,
-      var(--_bottom-color) 50%
-    );
-    line-height: 1.2;
-    background-clip: text;
-    background-size: 100% 1lh;
-    background-repeat: repeat-y;
-    translate: var(--dual-text-offset-x, 0) var(--dual-text-offset-y, 0);
-  }
-  &:before {
-    -webkit-text-stroke: calc(2px * var(--pixel-scale)) black;
-    z-index: -1;
-    translate: var(--dual-text-offset-x, 0) var(--dual-text-offset-y, 0);
-  }
-}
-
 .mode-options {
   display: flex;
   justify-content: center;
   gap: var(--size-6);
   margin: 0 auto;
+  transition: all 0.25s var(--ease-3);
+  @starting-style {
+    opacity: 0;
+    scale: 1.5;
+  }
 }
 
 .mode-card {
