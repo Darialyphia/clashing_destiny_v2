@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import BoosterPackContent from '@/card/components/BoosterPackContent.vue';
+import BoosterPackContent from './BoosterPackContent.vue';
 import FancyButton from '@/ui/components/FancyButton.vue';
 import { CARDS_DICTIONARY } from '@game/engine/src/card/sets';
 import type { CardBlueprint } from '@game/engine/src/card/card-blueprint';

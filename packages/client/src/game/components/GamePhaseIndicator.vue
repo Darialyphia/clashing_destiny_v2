@@ -72,6 +72,7 @@ useFxEvent(FX_EVENTS.AFTER_CHANGE_PHASE, async event => {
   place-content: center;
   background: rgba(0, 0, 0, 0.7);
   backdrop-filter: blur(4px);
+  overflow: hidden;
   z-index: 1000;
   pointer-events: none;
   font-family:

@@ -65,7 +65,8 @@ definePage({
 <style lang="postcss" scoped>
 .page {
   min-height: 100vh;
-  margin-top: var(--size-12);
+  padding-top: var(--size-12);
+  background-image: url('@/assets/backgrounds/main-menu-overlay.png');
 }
 
 .page-container {

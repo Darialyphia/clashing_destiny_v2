@@ -212,6 +212,9 @@ const isDev = import.meta.env.DEV;
   width: 100%;
   top: 0%;
   left: 0;
+  @media (max-height: 920px) {
+    top: -5%;
+  }
 }
 
 .vignette {

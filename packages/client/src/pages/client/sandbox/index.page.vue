@@ -69,7 +69,8 @@ const playersConfig = computed(() => {
   height: 100dvh;
   display: flex;
   flex-direction: column;
-  margin-top: var(--size-12);
+  padding-top: var(--size-12);
+  background-image: url('@/assets/backgrounds/main-menu-overlay.png');
 }
 
 h1 {

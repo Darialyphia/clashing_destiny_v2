@@ -25,3 +25,17 @@ const { decks, createDeck, editDeck } = useCollectionPage();
     @click="createDeck"
   />
 </template>
+
+<style scoped lang="postcss">
+li {
+  transition: all calc(var(--child-index) * 0.1s) var(--ease-2);
+  @starting-style {
+    transform: translateY(calc(var(--child-index) * -100%));
+    opacity: 0;
+  }
+
+  &:hover {
+    filter: brightness(1.25) drop-shadow(0 0 0.125rem yellow);
+  }
+}
+</style>

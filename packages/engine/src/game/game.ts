@@ -105,7 +105,7 @@ export class Game implements Serializable<SerializedGame> {
     return (
       this.options.overrides.winCondition ??
       ((game, player) => {
-        return false;
+        return player.victoryPoints >= this.config.VICTORY_POINTS_TO_WIN;
       })
     );
   }
@@ -176,7 +176,7 @@ export class Game implements Serializable<SerializedGame> {
     await this.gamePhaseSystem.startGame();
 
     // @FIXME startGame starts a non awaited Promise and this can cause race conditions with hisory replay expecting a different interaction state
-    await waitFor(300);
+    await waitFor(200);
     if (this.options.history) {
       await this.inputSystem.applyHistory(this.options.history);
     }

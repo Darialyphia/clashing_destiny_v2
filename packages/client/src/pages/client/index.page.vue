@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useAuthedQuery } from '@/auth/composables/useAuth';
 import { api, GIFT_STATES } from '@game/api';
-// import { useMe } from '@/auth/composables/useMe';
+import { useMe } from '@/auth/composables/useMe';
 import { useLogout } from '@/auth/composables/useLogout';
 
 definePage({
@@ -19,11 +19,17 @@ const unclaimedGiftsCount = computed(() => {
   );
 });
 
-// const { data: me } = useMe();
-// const { data: unopenedPacks, isLoading: isLoadingUnopenedPacks } =
-//   useAuthedQuery(api.cards.unopenedPacks, {});
+const { data: me } = useMe();
+const { data: unopenedPacks, isLoading: isLoadingUnopenedPacks } =
+  useAuthedQuery(api.cards.unopenedPacks, {});
 
 const { mutate: logout } = useLogout();
+
+const boosterPackButtonLabel = computed(() => {
+  return unopenedPacks.value?.packs.length > 1
+    ? `${unopenedPacks.value.packs.length} packs available`
+    : `${unopenedPacks.value.packs.length} pack available`;
+});
 </script>
 
 <template>
@@ -89,6 +95,17 @@ const { mutate: logout } = useLogout();
         </button>
       </li>
     </ul>
+
+    <RouterLink
+      v-if="unopenedPacks.packs?.length > 0"
+      class="boosters"
+      :to="{ name: 'Boosters' }"
+      aria-label="boosters"
+    >
+      <span class="dual-text" :data-text="boosterPackButtonLabel">
+        {{ boosterPackButtonLabel }}
+      </span>
+    </RouterLink>
   </div>
 </template>
 
@@ -147,6 +164,26 @@ const { mutate: logout } = useLogout();
       padding: 0.1rem 0.4rem;
       border-radius: var(--radius-2);
     }
+  }
+}
+
+.boosters {
+  display: block;
+  width: 314px;
+  height: 219px;
+  background-image: url('@/assets/ui/card/v3/boosters.png');
+  background-size: cover;
+  position: absolute;
+  bottom: var(--size-12);
+  left: var(--size-13);
+  display: grid;
+  place-content: center;
+  font-size: var(--font-size-5);
+  font-weight: var(--font-weight-7);
+  z-index: 0;
+  transition: all 0.3s ease;
+  &:hover {
+    filter: brightness(1.3) drop-shadow(0 0 5px var(--yellow-3));
   }
 }
 </style>

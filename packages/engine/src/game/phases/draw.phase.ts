@@ -19,7 +19,6 @@ export class DrawPhase implements GamePhaseController, Serializable<EmptyObject>
   }
 
   private async mulligan(count: number, redraw: boolean) {
-    console.log('mulligan');
     const result = await this.game.interaction.chooseCards({
       canCancel: false,
       players: Object.fromEntries(

@@ -9,7 +9,11 @@ import {
 import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
 import { clamp } from '@game/shared';
 import { OnClickOutside } from '@vueuse/components';
-import { useElementBounding, useResizeObserver } from '@vueuse/core';
+import {
+  useElementBounding,
+  useResizeObserver,
+  useWindowSize
+} from '@vueuse/core';
 import type { ShallowRef } from 'vue';
 import HandCard from './HandCard.vue';
 
@@ -134,6 +138,8 @@ watch(width, v => {
 const isHoverable = computed(
   () => isRevealed || cards.value.some(c => c.card.isRevealed)
 );
+
+const { height } = useWindowSize();
 </script>
 
 <template>
@@ -166,7 +172,7 @@ const isHoverable = computed(
           '--z': card.z,
           '--keyboard-shortcut-right': '50%'
         }"
-        :hover-y-offset="180"
+        :hover-y-offset="height <= 920 ? 230 : 180"
         :hover-scale="2"
       />
     </section>
