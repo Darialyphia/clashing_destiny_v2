@@ -1,5 +1,6 @@
 import type {
   CardAfterDestroyEvent,
+  CardAfterPlayEvent,
   CardChangeLocationEvent
 } from '../../card/card.events';
 import type { ArtifactCard } from '../../card/entities/artifact.entity';
@@ -104,6 +105,32 @@ export class RemoveOnOtherModifierRemovedMixin extends ModifierMixin<AnyCard> {
 
   onRemoved(): void {
     this.game.off(GAME_EVENTS.MODIFIER_AFTER_REMOVED, this.onOtherModifierRemoved);
+  }
+
+  async onReapplied() {}
+}
+
+export class RemoveAfterPlayedModifierMixin extends ModifierMixin<AnyCard> {
+  private modifier!: Modifier<AnyCard>;
+
+  constructor(game: Game) {
+    super(game);
+    this.onCardPlayed = this.onCardPlayed.bind(this);
+  }
+
+  async onCardPlayed(event: CardAfterPlayEvent) {
+    if (!event.data.card.equals(this.modifier.target)) return;
+    this.game.off(GAME_EVENTS.CARD_AFTER_PLAY, this.onCardPlayed);
+    await this.modifier.target.modifiers.remove(this.modifier);
+  }
+
+  onApplied(target: AnyCard, modifier: Modifier<AnyCard>): void {
+    this.modifier = modifier;
+    this.game.on(GAME_EVENTS.CARD_AFTER_PLAY, this.onCardPlayed);
+  }
+
+  onRemoved(): void {
+    this.game.off(GAME_EVENTS.CARD_AFTER_PLAY, this.onCardPlayed);
   }
 
   async onReapplied() {}

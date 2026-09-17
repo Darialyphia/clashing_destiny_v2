@@ -13,13 +13,7 @@ provideAuth();
     <SVGFilters />
 
     <TooltipProvider :delay-duration="400">
-      <router-view v-slot="{ Component, route }">
-        <transition :name="route.meta.transition as any" mode="out-in">
-          <div class="page-wrapper" :key="route.fullPath">
-            <component :is="Component" />
-          </div>
-        </transition>
-      </router-view>
+      <router-view />
     </TooltipProvider>
     <div id="card-portal"></div>
     <div id="card-actions-portal"></div>

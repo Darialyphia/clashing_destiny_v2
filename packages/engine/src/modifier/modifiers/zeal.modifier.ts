@@ -35,6 +35,21 @@ export class ZealModifier extends WhileOnBoardModifier<MinionCard> {
           },
           getModifiers() {
             return options.zealedModifiers;
+          },
+          onGainAura: async candidate => {
+            if (options.onGainZeal) {
+              await this.game.emit(
+                GAME_EVENTS.CARD_EFFECT_TRIGGERED,
+                new CardEffectTriggeredEvent({
+                  card: candidate,
+                  message: `${candidate.blueprint.name} becomes Zealed!`
+                })
+              );
+              await options.onGainZeal(candidate);
+            }
+          },
+          onLoseAura(candidate) {
+            options.onLoseZeal?.(candidate);
           }
         }),
         new TogglableModifierMixin(

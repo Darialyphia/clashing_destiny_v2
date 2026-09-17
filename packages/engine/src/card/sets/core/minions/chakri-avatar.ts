@@ -21,7 +21,7 @@ export const chakriAvatar: MinionBlueprint = {
   id: 'chakri-avatar',
   name: 'Chakri Avatar',
   description: dedent /*html*/ `
-  When you play a spell, this gains +1/+1/+0 this turn.
+  When you play a spell, this gains +1/+2/+0 this turn.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -57,7 +57,7 @@ export const chakriAvatar: MinionBlueprint = {
               );
               await card.modifiers.add(
                 new SimpleAttackBuffModifier('chakri-avatar-atk', game, card, {
-                  amount: 1,
+                  amount: 2,
                   mixins: [new UntilEndOfTurnModifierMixin(game)]
                 })
               );

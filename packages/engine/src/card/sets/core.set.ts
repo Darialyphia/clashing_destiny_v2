@@ -48,6 +48,8 @@ import { tempest } from './core/spells/tempest';
 import { sunlionPriest } from './core/minions/sun-lion-priest';
 import { suntideMaiden } from './core/minions/suntide-maiden';
 import { warJudicator } from './core/minions/war-judicator';
+import { manaVortex } from './core/spells/mana-vortex';
+import { backstep } from './core/spells/backstep';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -100,6 +102,8 @@ export const coreSet: CardSet = {
     tempest,
     sunlionPriest,
     suntideMaiden,
-    warJudicator
+    warJudicator,
+    manaVortex,
+    backstep
   ]
 };

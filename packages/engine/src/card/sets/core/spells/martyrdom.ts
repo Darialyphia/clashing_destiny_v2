@@ -1,6 +1,10 @@
 import dedent from 'dedent';
 import type { SpellBlueprint } from '../../../card-blueprint';
-import { defaultCardArt, singleEnemyMinionTargetRules } from '../../../card-utils';
+import {
+  defaultCardArt,
+  singleAllyMinionTargetRules,
+  singleEnemyMinionTargetRules
+} from '../../../card-utils';
 import {
   AFFINITIES,
   CARD_KINDS,
@@ -14,26 +18,26 @@ export const martyrdom: SpellBlueprint<MinionCard> = {
   id: 'martyrdom',
   name: 'Martyrdom',
   description: dedent /*html*/ `
-  Destroy an enemy minion at a battlefield. Your opponent gains influence here equal to the minion's attack.
+  Destroy an ally minion at a battlefield. You gain influence here equal to the minion's health.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
   art: defaultCardArt('spells/martyrdom'),
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.COMMON,
-  affinities: [AFFINITIES.LIGHT, AFFINITIES.LIGHT],
-  manaCost: 3,
+  affinities: [AFFINITIES.LIGHT],
+  manaCost: 2,
   manaSupply: 2,
   speed: CARD_SPEED.FAST,
   tags: [],
   canPlay: (game, card) =>
-    singleEnemyMinionTargetRules.canPlay(game, card, m => m.isOnBattlefield),
+    singleAllyMinionTargetRules.canPlay(game, card, m => m.isOnBattlefield),
   getTargets: (game, card) =>
-    singleEnemyMinionTargetRules.getTargets({
+    singleAllyMinionTargetRules.getTargets({
       game,
       card,
       predicate: m => m.isOnBattlefield,
-      timeoutFallback: singleEnemyMinionTargetRules.defaultTimeoutFallback(
+      timeoutFallback: singleAllyMinionTargetRules.defaultTimeoutFallback(
         game,
         card,
         m => m.isOnBattlefield
@@ -48,11 +52,11 @@ export const martyrdom: SpellBlueprint<MinionCard> = {
     const [target] = targets.cards;
     if (!target) return;
 
-    const attack = target.atk;
+    const health = target.remainingHp;
     const battlefield = target.battlefield;
     await target.destroy(card);
     if (battlefield) {
-      await battlefield.gainScore(attack);
+      await battlefield.gainScore(health);
     }
   },
   aiHints: {

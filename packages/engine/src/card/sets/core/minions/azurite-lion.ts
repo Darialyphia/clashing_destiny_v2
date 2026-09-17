@@ -15,7 +15,7 @@ export const azuriteLion: MinionBlueprint = {
   id: 'azurite-lion',
   name: 'Azurite Lion',
   description: dedent /*html*/ `
-  <rt-keyword>Flanking</rt-keyword>, <rt-keyword>Attacker 1</rt-keyword>.
+  <rt-keyword>Flanking</rt-keyword>.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -34,7 +34,6 @@ export const azuriteLion: MinionBlueprint = {
   abilities: [],
   async onInit(game, card) {
     await card.modifiers.add(new FlankingModifier(game, card));
-    await card.modifiers.add(new AttackerModifier(game, card, { amount: 1 }));
   },
   async onPlay() {},
   aiHints: {

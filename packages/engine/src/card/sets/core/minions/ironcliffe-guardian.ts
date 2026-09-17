@@ -15,14 +15,14 @@ export const ironcliffeGuardian: MinionBlueprint = {
   id: 'ironcliffe-guardian',
   name: 'Ironcliffe Guardian',
   description: dedent /*html*/ `
-  <rt-keyword>Protector</rt-keyword>, <rt-keyword>Vigilant</rt-keyword>.
+  <rt-keyword>Protector</rt-keyword>.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
   art: defaultCardArt('minions/ironcliffe-guardian'),
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.RARE,
-  affinities: [AFFINITIES.LIGHT, AFFINITIES.LIGHT],
+  affinities: [AFFINITIES.LIGHT, AFFINITIES.LIGHT, AFFINITIES.NEUTRAL],
   manaCost: 7,
   manaSupply: 2,
   speed: CARD_SPEED.SLOW,
@@ -34,7 +34,6 @@ export const ironcliffeGuardian: MinionBlueprint = {
   abilities: [],
   async onInit(game, card) {
     await card.modifiers.add(new ProtectorModifier(game, card));
-    await card.modifiers.add(new VigilantModifier(game, card));
   },
   async onPlay() {},
   aiHints: {

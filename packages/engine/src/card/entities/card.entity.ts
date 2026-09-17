@@ -248,7 +248,9 @@ export abstract class Card<
 
   async payManaCost() {
     if (!this.canPayManaCost) return;
+    const cost = this.manaCost;
     await this.player.manaManager.spend(this.manaCost);
+    return cost;
   }
 
   get manaSupply(): number {

@@ -251,6 +251,10 @@ export class BoardSide
     );
   }
 
+  get hasEmptySpaceInBase() {
+    return this.base.some(space => space.isEmpty);
+  }
+
   private async moveToBattlefield(
     card: MinionCard,
     battleField: BetterExtract<BoardRow, 'left_battlefield' | 'right_battlefield'>,

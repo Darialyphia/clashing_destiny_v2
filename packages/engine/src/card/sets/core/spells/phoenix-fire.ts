@@ -19,7 +19,7 @@ export const phoenixFire: SpellBlueprint<MinionCard> = {
   id: 'phoenixFire',
   name: 'Phoenix Fire',
   description: dedent /*html*/ `
-  Deal 2 damage to an enemy minion at a battlefield.
+  Deal 3 damage to an enemy minion at a battlefield.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -27,7 +27,7 @@ export const phoenixFire: SpellBlueprint<MinionCard> = {
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.COMMON,
   affinities: [AFFINITIES.FIRE],
-  manaCost: 2,
+  manaCost: 3,
   manaSupply: 2,
   speed: CARD_SPEED.FAST,
   tags: [],
@@ -49,7 +49,7 @@ export const phoenixFire: SpellBlueprint<MinionCard> = {
     const [target] = targets.cards;
     if (!target) return;
 
-    await target.takeDamage(card, new SpellDamage(2, card));
+    await target.takeDamage(card, new SpellDamage(3, card));
   },
   aiHints: {
     shouldPlay: () => 1

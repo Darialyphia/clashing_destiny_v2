@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { useMe } from '@/auth/composables/useMe';
-import { usePurchaseBoosterPacks } from '@/card/composables/useBoosterPack';
 import type { BoosterPackCatalogEntry } from '@game/api';
 import UiModal from '@/ui/components/UiModal.vue';
 import UiButton from '@/ui/components/UiButton.vue';
 import FancyButton from '@/ui/components/FancyButton.vue';
 import GodlIcon from '@/player/components/GodlIcon.vue';
+import { usePurchaseBoosterPacks } from '../boosters/composables/useBoosterPack';
 
 const { pack } = defineProps<{
   pack: BoosterPackCatalogEntry | null;

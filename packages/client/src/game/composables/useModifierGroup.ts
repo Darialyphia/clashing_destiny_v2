@@ -2,13 +2,17 @@ import type { Ref } from 'vue';
 import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
 import { gameStateRef } from './gameStateRef';
 import type { ModifierViewModel } from '@game/engine/src/client/view-models/modifier.model';
+import { isDefined } from '@game/shared';
 
 export const useModifierGroups = (card: Ref<CardViewModel>) => {
   const modifierGroups = gameStateRef(() => {
     const raw =
-      card.value.modifiers.filter(
-        modifier => modifier.name && modifier.description && modifier.stacks > 0
-      ) ?? [];
+      card.value.modifiers
+        .filter(isDefined)
+        .filter(
+          modifier =>
+            modifier.name && modifier.description && modifier.stacks > 0
+        ) ?? [];
 
     const result: Array<{
       key: string;

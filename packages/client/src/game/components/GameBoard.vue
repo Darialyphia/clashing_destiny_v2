@@ -43,7 +43,9 @@ const boardMargin = computed(() => {
 });
 
 const pointsToWin = computed(() => state.value.config.VICTORY_POINTS_TO_WIN);
-
+const pointsPerColumn = computed(() =>
+  pointsToWin.value > 7 ? pointsToWin.value / 2 : 1
+);
 const hasInitiative = computed(() => {
   return client.value.getActivePlayerIds().includes(myPlayer.value.id);
 });
@@ -404,7 +406,7 @@ const opponentHasInitiative = computed(() => {
 
 .victory-points {
   display: grid;
-  grid-template-columns: repeat(v-bind('pointsToWin'), 27px);
+  grid-template-columns: repeat(v-bind('pointsPerColumn'), 27px);
   gap: 3px;
   align-items: center;
   justify-content: center;

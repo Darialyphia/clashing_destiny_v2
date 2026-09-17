@@ -35,14 +35,11 @@ export const silverGuardKnight: MinionBlueprint = {
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {
-    await card.modifiers.add(new ProtectorModifier(game, card));
     await card.modifiers.add(
       new ZealModifier(game, card, {
         amount: 3,
         zealedModifiers: [
-          new SimpleCommandmentBuffModifier('silverguard-knight-cmd-buff', game, card, {
-            amount: 1
-          }),
+          new ProtectorModifier(game, card),
           new DefenderModifier(game, card, { amount: 2 })
         ]
       })

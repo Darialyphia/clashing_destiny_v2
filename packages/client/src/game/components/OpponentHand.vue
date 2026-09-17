@@ -18,7 +18,7 @@ const { playerId, isRevealed } = defineProps<{
   isRevealed: boolean;
 }>();
 
-const player = usePlayer(playerId);
+const player = usePlayer(computed(() => playerId));
 const ui = useGameUi();
 const { client } = useGameClient();
 
@@ -109,16 +109,11 @@ const cards = computed(() => {
   const usedSpan = cardW.value + (handSize.value - 1) * step.value;
 
   const offset = (handContainerSize.value.w - usedSpan) / 2;
-  const hoveredIndexInHand = ui.value.hoveredCardInHand
-    ? player.value.hand.findIndex(c => c.equals(ui.value.hoveredCardInHand!))
-    : null;
 
   return player.value.hand.map((card, i) => {
-    const isAfterHoveredCard =
-      hoveredIndexInHand !== null && i > hoveredIndexInHand ? 1 : 0;
     return {
       card,
-      x: i * step.value + offset + (isAfterHoveredCard ? cardW.value : 0),
+      x: i * step.value + offset,
       y: 0,
       z: i
     };

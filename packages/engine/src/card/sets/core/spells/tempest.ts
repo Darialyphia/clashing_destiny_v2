@@ -29,7 +29,8 @@ export const tempest: SpellBlueprint = {
   tags: [],
   shouldHideTargetArrows: true,
   canPlay: () => true,
-  getTargets: (game, card) => anywhereTargetRules.getTargets({ game, card }),
+  getTargets: (game, card) =>
+    anywhereTargetRules.getTargets({ game, card, canCancel: true }),
   async onInit() {},
   async onPlay(game, card) {
     const targets = [...card.player.minions, ...card.player.opponent.minions];

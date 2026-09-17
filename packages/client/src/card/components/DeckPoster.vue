@@ -20,20 +20,39 @@ const { mainDeck, name } = defineProps<{
   name: string;
 }>();
 
+const groupedMainDeck = computed(() => {
+  const groups = new Map<string, (typeof mainDeck)[number]>();
+
+  for (const item of mainDeck) {
+    const existing = groups.get(item.blueprint.id);
+    if (existing) {
+      existing.copies += item.copies;
+    } else {
+      groups.set(item.blueprint.id, { ...item });
+    }
+  }
+
+  return [...groups.values()];
+});
+
 const minions = computed(() =>
-  mainDeck.filter(item => item.blueprint.kind === CARD_KINDS.MINION)
+  groupedMainDeck.value.filter(
+    item => item.blueprint.kind === CARD_KINDS.MINION
+  )
 );
 const minionsCount = computed(() =>
   minions.value.reduce((sum, item) => sum + item.copies, 0)
 );
 const spells = computed(() =>
-  mainDeck.filter(item => item.blueprint.kind === CARD_KINDS.SPELL)
+  groupedMainDeck.value.filter(item => item.blueprint.kind === CARD_KINDS.SPELL)
 );
 const spellsCount = computed(() =>
   spells.value.reduce((sum, item) => sum + item.copies, 0)
 );
 const artifacts = computed(() =>
-  mainDeck.filter(item => item.blueprint.kind === CARD_KINDS.ARTIFACT)
+  groupedMainDeck.value.filter(
+    item => item.blueprint.kind === CARD_KINDS.ARTIFACT
+  )
 );
 const artifactsCount = computed(() =>
   artifacts.value.reduce((sum, item) => sum + item.copies, 0)
@@ -123,7 +142,7 @@ const craftingCost = computed(() => {
       <div>
         <section>
           <div
-            v-for="item in mainDeck"
+            v-for="item in groupedMainDeck"
             :key="item.blueprint.id"
             class="card-wrapper"
           >

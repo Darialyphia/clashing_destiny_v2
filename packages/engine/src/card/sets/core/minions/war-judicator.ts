@@ -19,7 +19,7 @@ export const warJudicator: MinionBlueprint = {
   id: 'war-judicator',
   name: 'War Judicator',
   description: dedent /*html*/ `
-  <rt-keyword>Zeal 4</rt-keyword>: Your spells cost <rt-mana>2</rt-mana> less.
+  <rt-keyword>Zeal 4</rt-keyword>: <rt-keyword>Reserve</rt-keyword> a card.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -40,31 +40,12 @@ export const warJudicator: MinionBlueprint = {
     await card.modifiers.add(
       new ZealModifier(game, card, {
         amount: 4,
-        zealedModifiers: [
-          new Modifier<MinionCard>('war-judicator-aura', game, card, {
-            mixins: [
-              new CardAuraModifierMixin(game, card, {
-                isElligible(candidate) {
-                  return (
-                    isSpell(candidate) &&
-                    candidate.isAlly(card) &&
-                    candidate.location === CARD_LOCATIONS.HAND
-                  );
-                },
-                getModifiers() {
-                  return [
-                    new SimpleManacostModifier(
-                      'war-judicator-spell-discount',
-                      game,
-                      card,
-                      { amount: -2 }
-                    )
-                  ];
-                }
-              })
-            ]
-          })
-        ]
+        zealedModifiers: [],
+        onGainZeal: async () => {
+          for (const topCard of card.player.cardManager.mainDeck.peek(1)) {
+            await topCard.addToReserve();
+          }
+        }
       })
     );
   },

@@ -73,6 +73,13 @@ export const KEYWORDS = {
       'When you play this card, add a Fleeting copy of it to your hand without Echo.',
     aliases: []
   },
+  ENHANCE: {
+    id: 'enhance',
+    name: 'Enhance X',
+    description:
+      'If you have X mana, spend it to play this card and gain an additional effect.',
+    aliases: [/enhance [0-9]+/]
+  },
   EPHEMERAL: {
     id: 'ephemeral',
     name: 'Ephemeral',

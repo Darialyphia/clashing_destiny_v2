@@ -28,7 +28,7 @@ const { data: unopenedPacks, isLoading: isLoadingUnopenedPacks } =
 
 <template>
   <div class="client-home-page">
-    <AuthenticatedHeader />
+    <!-- <AuthenticatedHeader /> -->
     <div class="container">
       <div class="surface gifts-notification" v-if="unclaimedGiftsCount > 0">
         You have some unclaimed gifts waiting for you !

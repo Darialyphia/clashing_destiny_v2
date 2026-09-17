@@ -18,15 +18,15 @@ export const eightGates: SpellBlueprint<MinionCard> = {
   id: 'eightGates',
   name: 'Eight Gates',
   description: dedent /*html*/ `
-  Deal 2 damage to a ally minion to give it +4 Attack and  <rt-keyword>Overwhelm</rt-keyword>. 
+  Give an ally minion +4 Attack and <rt-keyword>Overwhelm</rt-keyword>.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
   art: defaultCardArt('spells/eight-gates'),
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.EPIC,
-  affinities: [AFFINITIES.FIRE, AFFINITIES.FIRE, AFFINITIES.FIRE],
-  manaCost: 3,
+  affinities: [AFFINITIES.FIRE, AFFINITIES.FIRE],
+  manaCost: 4,
   manaSupply: 2,
   speed: CARD_SPEED.FAST,
   tags: [],

@@ -37,18 +37,24 @@ watch(
 
 <template>
   <div class="client-page">
-    <router-view />
+    <router-view v-slot="{ Component, route }">
+      <transition :name="route.meta.transition as any" mode="out-in">
+        <component :is="Component" />
+      </transition>
+    </router-view>
   </div>
 </template>
 
 <style scoped lang="postcss">
 .client-page {
   background:
-    url('@/assets/backgrounds/main-menu.jpg'),
-    url('@/assets/backgrounds/main-menu.png');
+    url('@/assets/backgrounds/main-menu-overlay.png'),
+    url('@/assets/backgrounds/main-menu-fx.png'),
+    url('@/assets/backgrounds/main-menu-front.png'),
+    url('@/assets/backgrounds/main-menu-middle.png'),
+    url('@/assets/backgrounds/main-menu-back.png');
   background-size: cover;
-  background-attachment: fixed;
   min-height: 100dvh;
-  background-blend-mode: hard-light;
+  background-blend-mode: normal, multiply, normal, normal;
 }
 </style>
