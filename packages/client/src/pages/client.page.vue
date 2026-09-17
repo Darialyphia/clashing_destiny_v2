@@ -2,6 +2,11 @@
 import { useAuth } from '@/auth/composables/useAuth';
 import { useMe } from '@/auth/composables/useMe';
 import { GAME_STATUS } from '@game/api';
+import { useMouse, useRafFn, useWindowSize } from '@vueuse/core';
+
+const PARALLAX_MIDDLE_DISTANCE_PX = 30;
+const PARALLAX_FRONT_DISTANCE_PX = 100;
+const PARALLAX_INERTIA = 3;
 
 definePage({
   name: 'Client',
@@ -33,10 +38,48 @@ watch(
   },
   { immediate: true }
 );
+
+const { x: mouseX } = useMouse();
+const { width: viewportWidth } = useWindowSize();
+const parallaxX = ref(0);
+
+const targetParallaxX = computed(() => {
+  if (!viewportWidth.value) return 0;
+
+  return mouseX.value / viewportWidth.value - 0.5;
+});
+
+const route = useRoute();
+
+const parallaxFn = useRafFn(({ delta }) => {
+  const smoothing = 1 - Math.exp((-PARALLAX_INERTIA * delta) / 1000);
+  parallaxX.value += (targetParallaxX.value - parallaxX.value) * smoothing;
+});
+
+watchEffect(() => {
+  if (route.name === 'ClientHome') {
+    parallaxFn.resume();
+  } else {
+    parallaxFn.pause();
+    gsap.to(parallaxX, { value: 0, duration: 0.3 });
+  }
+});
+
+const parallaxStyle = computed(() => ({
+  '--parallax-middle-x': `${-parallaxX.value * PARALLAX_MIDDLE_DISTANCE_PX}px`,
+  '--parallax-front-x': `${-parallaxX.value * PARALLAX_FRONT_DISTANCE_PX}px`
+}));
 </script>
 
 <template>
-  <div class="client-page">
+  <div class="client-page" :style="parallaxStyle">
+    <div class="background-layer background-back" />
+    <div class="background-layer background-clouds" />
+    <div class="background-layer background-middle" />
+    <div class="background-layer background-front" />
+    <div class="background-layer background-fx" />
+    <div class="background-layer background-overlay" />
+
     <router-view v-slot="{ Component, route }">
       <transition :name="route.meta.transition as any" mode="out-in">
         <component :is="Component" />
@@ -47,14 +90,60 @@ watch(
 
 <style scoped lang="postcss">
 .client-page {
-  background:
-    url('@/assets/backgrounds/main-menu-overlay.png'),
-    url('@/assets/backgrounds/main-menu-fx.png'),
-    url('@/assets/backgrounds/main-menu-front.png'),
-    url('@/assets/backgrounds/main-menu-middle.png'),
-    url('@/assets/backgrounds/main-menu-back.png');
-  background-size: cover;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
   min-height: 100dvh;
-  background-blend-mode: normal, multiply, normal, normal;
+}
+
+.background-layer {
+  position: absolute;
+  pointer-events: none;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.background-back {
+  background-image: url('@/assets/backgrounds/main-menu-back.png');
+  inset: 0;
+}
+
+@keyframes clouds-scroll {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+.background-clouds {
+  background-image: url('@/assets/backgrounds/main-menu-clouds.png');
+  background-repeat: repeat-x;
+  animation: clouds-scroll 90s linear infinite;
+  width: 200vw;
+  aspect-ratio: calc(2 * 960) / 540;
+  left: 0;
+  background-size: contain;
+}
+.background-middle {
+  background-image: url('@/assets/backgrounds/main-menu-middle.png');
+  transform: translate3d(var(--parallax-middle-x), 0, 0);
+  inset: 0;
+}
+
+.background-front {
+  background-image: url('@/assets/backgrounds/main-menu-front.png');
+  transform: translate3d(var(--parallax-front-x), 0, 0);
+  inset: 0;
+}
+
+.background-fx {
+  background-image: url('@/assets/backgrounds/main-menu-fx.png');
+  mix-blend-mode: multiply;
+  inset: 0;
+}
+
+.background-overlay {
+  background-image: url('@/assets/backgrounds/main-menu-overlay.png');
 }
 </style>
