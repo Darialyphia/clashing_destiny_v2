@@ -81,21 +81,15 @@ const getFlipTransform = (source: DOMRect, target: DOMRect) => ({
   scaleY: source.height / target.height
 });
 
-const setupFlipTransform = (
-  collectionCard: HTMLElement,
-  modalCardWrapper: HTMLElement,
-  modalCard: HTMLElement
+const snapElementToRect = (
+  el: HTMLElement,
+  fromRect: DOMRect,
+  toRect: DOMRect
 ) => {
-  const transforms = getFlipTransform(
-    collectionCard.getBoundingClientRect(),
-    modalCardWrapper.getBoundingClientRect()
-  );
+  const transforms = getFlipTransform(fromRect, toRect);
 
-  modalCardWrapper.style.transformOrigin = 'top left';
-  modalCardWrapper.style.transform = `translate(${transforms.x}px, ${transforms.y}px) scale(${transforms.scaleX}, ${transforms.scaleY})`;
-
-  modalCard.style.transformOrigin = 'center';
-  modalCard.style.transform = `rotateY(360deg)`;
+  el.style.transformOrigin = 'top left';
+  el.style.transform = `translate(${transforms.x}px, ${transforms.y}px) scale(${transforms.scaleX}, ${transforms.scaleY})`;
 };
 
 const animateCardIn = async () => {
@@ -107,7 +101,13 @@ const animateCardIn = async () => {
 
   const { collectionCard, modalCardWrapper, modalCard } = elements;
 
-  setupFlipTransform(collectionCard, modalCardWrapper, modalCard);
+  snapElementToRect(
+    modalCardWrapper,
+    collectionCard.getBoundingClientRect(),
+    modalCardWrapper.getBoundingClientRect()
+  );
+  modalCard.style.transformOrigin = 'center';
+  modalCard.style.transform = `rotateY(360deg)`;
 
   await nextTick();
   modalCardWrapper.style.transform = '';
@@ -141,7 +141,13 @@ const animateCardOut = async () => {
 
   const { collectionCard, modalCardWrapper, modalCard } = elements;
 
-  setupFlipTransform(collectionCard, modalCardWrapper, modalCard);
+  snapElementToRect(
+    collectionCard,
+    modalCardWrapper.getBoundingClientRect(),
+    collectionCard.getBoundingClientRect()
+  );
+  modalCard.style.transformOrigin = 'center';
+  modalCard.style.transform = `rotateY(0deg)`;
 
   const zIndexAncestor = collectionCard.closest<HTMLElement>(
     'li[data-collection-card-id]'

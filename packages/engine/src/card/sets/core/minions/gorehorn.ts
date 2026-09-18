@@ -21,7 +21,7 @@ export const gorehorn: MinionBlueprint = {
   art: defaultCardArt('minions/gorehorn'),
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.COMMON,
-  affinities: [AFFINITIES.FIRE, AFFINITIES.NEUTRAL],
+  affinities: [AFFINITIES.FIRE],
   manaCost: 4,
   manaSupply: 2,
   speed: CARD_SPEED.SLOW,
