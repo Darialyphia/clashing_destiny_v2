@@ -1,28 +1,56 @@
 <script setup lang="ts">
 import UiModal from '@/ui/components/UiModal.vue';
 import BlueprintCard from '@/card/components/BlueprintCard.vue';
-import type { CardBlueprint } from '@game/engine/src/card/card-blueprint';
 import CardText from '@/card/components/CardText.vue';
-import { isFunction, waitFor } from '@game/shared';
+import { isDefined, isFunction, waitFor } from '@game/shared';
 import { provideRichTextContext } from '@/game/composables/useRichText';
 import { unrefElement } from '@vueuse/core';
 import CardDetailsModalFooter from './CardDetailsModalFooter.vue';
+import { useCollectionPage } from '../useCollectionPage';
+import UiIconButton from '@/ui/components/UiIconButton.vue';
 
-const { card } = defineProps<{
-  card: {
-    card: CardBlueprint;
-    id: string;
-    isFoil: boolean;
-    copiesOwned: number;
-  };
-}>();
+const { selectedCard, selectCard, unselectCard, cards } = useCollectionPage();
 
-const isOpened = defineModel<boolean>('isOpened', { required: true });
+const isOpened = computed({
+  get() {
+    return isDefined(selectedCard.value);
+  },
+  set() {
+    animateCardOut();
+
+    nextTick(() => {
+      unselectCard();
+    });
+  }
+});
+
+const selectedCardIndex = computed(() => {
+  if (!selectedCard.value) return -1;
+  return cards.value.findIndex(card => card.id === selectedCard.value!.id);
+});
+
+const hasPreviousCard = computed(() => selectedCardIndex.value > 0);
+const hasNextCard = computed(
+  () =>
+    selectedCardIndex.value >= 0 &&
+    selectedCardIndex.value < cards.value.length - 1
+);
+
+const selectPreviousCard = () => {
+  if (!hasPreviousCard.value) return;
+  selectCard(cards.value[selectedCardIndex.value - 1].id);
+};
+
+const selectNextCard = () => {
+  if (!hasNextCard.value) return;
+  selectCard(cards.value[selectedCardIndex.value + 1].id);
+};
 
 const description = computed(() => {
-  return isFunction(card.card.description)
-    ? card.card.description()
-    : card.card.description;
+  if (!selectedCard.value) return '';
+  return isFunction(selectedCard.value.card.description)
+    ? selectedCard.value.card.description()
+    : selectedCard.value.card.description;
 });
 
 provideRichTextContext({
@@ -31,53 +59,75 @@ provideRichTextContext({
 
 const cardRoot = useTemplateRef('root');
 
-watch(isOpened, async opened => {
-  if (!opened) {
-    animateCardOut();
-  }
+const shouldDisplayCard = ref(false);
+
+const getCardAnimationElements = () => {
+  if (!selectedCard.value) return null;
+  const collectionCard = document.querySelector<HTMLElement>(
+    `[data-flip-id="collection-card-${selectedCard.value.id}"]`
+  );
+  const modalCardWrapper = unrefElement(cardRoot);
+  const modalCard = modalCardWrapper?.querySelector<HTMLElement>('.card');
+
+  if (!collectionCard || !modalCardWrapper || !modalCard) return null;
+
+  return { collectionCard, modalCardWrapper, modalCard };
+};
+
+const getFlipTransform = (source: DOMRect, target: DOMRect) => ({
+  x: source.left - target.left,
+  y: source.top - target.top,
+  scaleX: source.width / target.width,
+  scaleY: source.height / target.height
 });
 
-const shouldDisplayCard = ref(false);
+const setupFlipTransform = (
+  collectionCard: HTMLElement,
+  modalCardWrapper: HTMLElement,
+  modalCard: HTMLElement
+) => {
+  const transforms = getFlipTransform(
+    collectionCard.getBoundingClientRect(),
+    modalCardWrapper.getBoundingClientRect()
+  );
+
+  modalCardWrapper.style.transformOrigin = 'top left';
+  modalCardWrapper.style.transform = `translate(${transforms.x}px, ${transforms.y}px) scale(${transforms.scaleX}, ${transforms.scaleY})`;
+
+  modalCard.style.transformOrigin = 'center';
+  modalCard.style.transform = `rotateY(360deg)`;
+};
+
 const animateCardIn = async () => {
   shouldDisplayCard.value = true;
-  const collectionCard = document.querySelector(
-    `[data-flip-id="collection-card-${card.id}"]`
-  );
-  if (!collectionCard) return;
   await nextTick();
-  const modalCardWrapperEl = unrefElement(cardRoot)!;
-  const modalCardEl = modalCardWrapperEl.querySelector('.card') as HTMLElement;
-  const collectionCardRect = collectionCard.getBoundingClientRect();
-  const modalCardRect = modalCardWrapperEl.getBoundingClientRect();
-  const transforms = {
-    x: collectionCardRect.left - modalCardRect.left,
-    y: collectionCardRect.top - modalCardRect.top,
-    scaleX: collectionCardRect.width / modalCardRect.width,
-    scaleY: collectionCardRect.height / modalCardRect.height
-  };
-  modalCardWrapperEl.style.transformOrigin = 'top left';
-  modalCardWrapperEl.style.transform = `translate(${transforms.x}px, ${transforms.y}px) scale(${transforms.scaleX}, ${transforms.scaleY})`;
-  modalCardEl.style.transformOrigin = 'center';
-  console.log(modalCardEl.style.transform);
-  modalCardEl.style.transform = `rotateY(360deg)`;
+
+  const elements = getCardAnimationElements();
+  if (!elements) return;
+
+  const { collectionCard, modalCardWrapper, modalCard } = elements;
+
+  setupFlipTransform(collectionCard, modalCardWrapper, modalCard);
+
   await nextTick();
-  modalCardWrapperEl.style.transform = '';
-  modalCardWrapperEl.style.transition = 'transform 0.3s var(--ease-in-out-4)';
-  modalCardEl.style.transition = 'transform 1s var(--ease-in-out-4)';
-  modalCardWrapperEl.addEventListener(
+  modalCardWrapper.style.transform = '';
+  modalCardWrapper.style.transition = 'transform 0.3s var(--ease-in-out-4)';
+  modalCard.style.transition = 'transform 1s var(--ease-in-out-4)';
+
+  modalCardWrapper.addEventListener(
     'transitionend',
     () => {
-      modalCardWrapperEl.style.transition = '';
-      modalCardWrapperEl.style.transformOrigin = '';
+      modalCardWrapper.style.transition = '';
+      modalCardWrapper.style.transformOrigin = '';
     },
     { once: true }
   );
-  modalCardEl.addEventListener(
+  modalCard.addEventListener(
     'transitionend',
     () => {
-      modalCardEl.style.transform = '';
-      modalCardEl.style.transition = '';
-      modalCardEl.style.transformOrigin = '';
+      modalCard.style.transform = '';
+      modalCard.style.transition = '';
+      modalCard.style.transformOrigin = '';
     },
     { once: true }
   );
@@ -85,30 +135,15 @@ const animateCardIn = async () => {
 
 const animateCardOut = async () => {
   shouldDisplayCard.value = false;
-  const collectionCardEl = document.querySelector(
-    `[data-flip-id="collection-card-${card.id}"]`
-  ) as HTMLElement | null;
-  if (!collectionCardEl) return;
+  const elements = getCardAnimationElements();
 
-  const modalCardWrapperEl = unrefElement(cardRoot)!;
-  const modalCardEl = modalCardWrapperEl.querySelector('.card') as HTMLElement;
+  if (!elements) return;
 
-  const collectionCardRect = collectionCardEl.getBoundingClientRect();
-  const modalCardRect = modalCardWrapperEl.getBoundingClientRect();
+  const { collectionCard, modalCardWrapper, modalCard } = elements;
 
-  const transforms = {
-    x: modalCardRect.left - collectionCardRect.left,
-    y: modalCardRect.top - collectionCardRect.top,
-    scaleX: modalCardRect.width / collectionCardRect.width,
-    scaleY: modalCardRect.height / collectionCardRect.height
-  };
-  collectionCardEl.style.transformOrigin = 'top left';
-  collectionCardEl.style.transform = `translate(${transforms.x}px, ${transforms.y}px) scale(${transforms.scaleX}, ${transforms.scaleY})`;
+  setupFlipTransform(collectionCard, modalCardWrapper, modalCard);
 
-  modalCardEl.style.transformOrigin = 'center';
-  modalCardEl.style.transform = `rotate`;
-
-  const zIndexAncestor = collectionCardEl.closest<HTMLElement>(
+  const zIndexAncestor = collectionCard.closest<HTMLElement>(
     'li[data-collection-card-id]'
   );
   if (zIndexAncestor) {
@@ -116,16 +151,25 @@ const animateCardOut = async () => {
   }
 
   await waitFor(50);
-  collectionCardEl.style.transition = 'transform 0.3s var(--ease-in-out-4)';
-  collectionCardEl.style.transform = '';
-  collectionCardEl.addEventListener(
+  collectionCard.style.transition = 'transform 0.3s var(--ease-in-out-4)';
+  collectionCard.style.transform = '';
+  collectionCard.addEventListener(
     'transitionend',
     () => {
-      collectionCardEl.style.transition = '';
-      collectionCardEl.style.transformOrigin = '';
+      collectionCard.style.transition = '';
+      collectionCard.style.transformOrigin = '';
       if (zIndexAncestor) {
         zIndexAncestor.style.zIndex = '';
       }
+    },
+    { once: true }
+  );
+  modalCard.addEventListener(
+    'transitionend',
+    () => {
+      modalCard.style.transform = '';
+      modalCard.style.transition = '';
+      modalCard.style.transformOrigin = '';
     },
     { once: true }
   );
@@ -135,21 +179,36 @@ const animateCardOut = async () => {
 <template>
   <UiModal
     v-model:is-opened="isOpened"
-    :title="card.card.name"
+    :title="selectedCard?.card.name ?? ''"
     :description="description"
     :style="{ '--ui-modal-size': 'var(--size-lg)' }"
     :animated="false"
     @open-animation-end="animateCardIn"
   >
-    <article class="card-details">
+    <article class="card-details" v-if="selectedCard">
+      <UiIconButton
+        class="nav-button nav-button-previous"
+        icon="material-symbols:arrow-back-2-outline"
+        :disabled="!hasPreviousCard"
+        @click="selectPreviousCard"
+      />
+
+      <UiIconButton
+        class="nav-button nav-button-next"
+        icon="material-symbols:arrow-back-2-outline"
+        aria-label="Next card"
+        :disabled="!hasNextCard"
+        @click="selectNextCard"
+      />
+
       <aside class="card-preview">
         <div ref="root">
           <BlueprintCard
             v-if="shouldDisplayCard"
-            :data-flip-id="`collection-card-modal-${card.id}`"
-            :blueprint="card.card"
+            :data-flip-id="`collection-card-modal-${selectedCard.card.id}`"
+            :blueprint="selectedCard.card"
             show-stats
-            :is-foil="card.isFoil"
+            :is-foil="selectedCard.isFoil"
           />
         </div>
       </aside>
@@ -157,21 +216,21 @@ const animateCardOut = async () => {
       <Transition appear>
         <section class="card-info surface">
           <header>
-            <h2>{{ card.card.name }}</h2>
+            <h2>{{ selectedCard.card.name }}</h2>
             <span
               class="rarity-badge"
               :style="{
-                '--rarity-color': `var(--rarity-${card.card.rarity.toLowerCase()})`
+                '--rarity-color': `var(--rarity-${selectedCard.card.rarity.toLowerCase()})`
               }"
             >
-              {{ card.card.rarity }}
+              {{ selectedCard.card.rarity }}
             </span>
             <p class="metadata">
-              <span class="set-id">{{ card.card.setId }}</span>
+              <span class="set-id">{{ selectedCard.card.setId }}</span>
               <span class="separator">•</span>
               <span class="copies-count">
-                {{ card.copiesOwned }}
-                {{ card.copiesOwned === 1 ? 'copy' : 'copies' }} owned
+                {{ selectedCard.copiesOwned }}
+                {{ selectedCard.copiesOwned === 1 ? 'copy' : 'copies' }} owned
               </span>
             </p>
           </header>
@@ -182,18 +241,24 @@ const animateCardOut = async () => {
           </section>
 
           <section
-            v-if="'abilities' in card.card && card.card.abilities?.length"
+            v-if="
+              'abilities' in selectedCard.card &&
+              selectedCard.card.abilities?.length
+            "
             class="abilities"
           >
             <h3>Abilities</h3>
             <ul>
-              <li v-for="(ability, index) in card.card.abilities" :key="index">
+              <li
+                v-for="(ability, index) in selectedCard.card.abilities"
+                :key="index"
+              >
                 <CardText :text="ability.description" />
               </li>
             </ul>
           </section>
 
-          <CardDetailsModalFooter :card="card" />
+          <CardDetailsModalFooter :card="selectedCard" />
         </section>
       </Transition>
     </article>
@@ -210,9 +275,49 @@ const animateCardOut = async () => {
 } */
 
 .card-details {
+  position: relative;
   display: flex;
   gap: var(--size-5);
   min-height: var(--size-13);
+}
+
+.nav-button {
+  position: absolute;
+  top: 50%;
+  translate: 0 -50%;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--size-8);
+  height: var(--size-8);
+  border-radius: var(--radius-round);
+  background: var(--surface-2);
+  border: var(--border-size-1) solid var(--border-dimmed);
+  color: var(--text-1);
+  font-size: var(--font-size-6);
+  line-height: 1;
+  transition:
+    background 0.15s var(--ease-3),
+    opacity 0.15s var(--ease-3);
+
+  &:hover:not(:disabled) {
+    background: var(--surface-3);
+  }
+
+  &:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+}
+
+.nav-button-previous {
+  left: calc(-1 * var(--size-9));
+}
+
+.nav-button-next {
+  right: calc(-1 * var(--size-9));
+  rotate: 180deg;
 }
 
 .card-preview {

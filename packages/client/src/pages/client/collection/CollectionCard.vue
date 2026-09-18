@@ -3,7 +3,6 @@ import { useCollectionPage } from './useCollectionPage';
 import BlueprintCard from '@/card/components/BlueprintCard.vue';
 import type { CardBlueprint } from '@game/engine/src/card/card-blueprint';
 import type { CardId } from '@game/api';
-import CardDetailsModal from './CardDetailsModal/index.vue';
 
 const { card } = defineProps<{
   card: {
@@ -14,7 +13,8 @@ const { card } = defineProps<{
   };
 }>();
 
-const { deckBuilder, isEditingDeck } = useCollectionPage();
+const { deckBuilder, isEditingDeck, selectCard, selectedCard } =
+  useCollectionPage();
 
 const canAddCard = computed(() => {
   if (!isEditingDeck.value) return false;
@@ -37,12 +37,11 @@ const canAddCard = computed(() => {
   );
 });
 
-const isModalOpened = ref(false);
 const isInvisible = ref(false);
-watch(isModalOpened, opened => {
+watch(selectedCard, () => {
   // we add a delay to avoid flickering when right clicking a card to see the modal
   // because the modal has some Flip shenanigans going on
-  if (opened) {
+  if (selectedCard.value?.id === card.id) {
     setTimeout(() => {
       isInvisible.value = true;
     }, 0);
@@ -78,10 +77,8 @@ watch(isModalOpened, opened => {
           });
         }
       "
-      @contextmenu.prevent="isModalOpened = true"
+      @contextmenu.prevent="selectCard(card.id)"
     />
-
-    <CardDetailsModal v-model:is-opened="isModalOpened" :card="card" />
 
     <div class="copies-owned">Copies owned: {{ card.copiesOwned }}</div>
   </div>

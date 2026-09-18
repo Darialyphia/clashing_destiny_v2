@@ -16,6 +16,7 @@ import {
 } from '@/card/composables/useDecks';
 import type { Nullable } from '@game/shared';
 import type { DeckId } from '@game/api';
+import type { CardBlueprint } from '@game/engine/src/card/card-blueprint';
 
 export type CollectionContext = CardListContext & {
   viewMode: Ref<'expanded' | 'compact'>;
@@ -30,6 +31,16 @@ export type CollectionContext = CardListContext & {
   deleteDeck: () => void;
   isDeleting: Ref<boolean>;
   cardScale: Ref<[number]>;
+  selectedCard: Ref<
+    Nullable<{
+      card: CardBlueprint;
+      id: string;
+      isFoil: boolean;
+      copiesOwned: number;
+    }>
+  >;
+  selectCard: (id: string) => void;
+  unselectCard: () => void;
 };
 
 export const CollectionInjectionKey = Symbol(
@@ -109,7 +120,35 @@ export const provideCollectionPage = () => {
 
   const viewMode = ref<'expanded' | 'compact'>('expanded');
 
+  const selectedCard = ref<
+    Nullable<{
+      card: CardBlueprint;
+      id: string;
+      isFoil: boolean;
+      copiesOwned: number;
+    }>
+  >(null);
+
+  const selectCard = (id: string) => {
+    const card = cards.value.find(c => c.id === id);
+
+    if (!card) return;
+    selectedCard.value = {
+      card: cardPool.find(bp => bp.id === card.blueprintId)!,
+      id: card.id,
+      isFoil: card.isFoil,
+      copiesOwned: card.copiesOwned
+    };
+  };
+
+  const unselectCard = () => {
+    selectedCard.value = null;
+  };
+
   const api: CollectionContext = {
+    selectedCard,
+    selectCard,
+    unselectCard,
     isLoading: computed(() => isLoading.value || isLoadingDecks.value),
     cards,
     includeUnowned,

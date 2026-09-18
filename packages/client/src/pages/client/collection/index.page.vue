@@ -4,6 +4,7 @@ import DeckList from './DeckList.vue';
 import DeckEditor from './DeckEditor.vue';
 import Collection from './Collection.vue';
 import CollectionFilters from './CollectionFilters.vue';
+import CardDetailsModal from './CardDetailsModal/index.vue';
 
 definePage({
   name: 'Collection',
@@ -26,6 +27,8 @@ setTimeout(() => {
     <CollectionFilters class="collection-header" />
 
     <Collection class="collection" />
+
+    <CardDetailsModal />
 
     <aside class="right-sidebar surface">
       <template v-if="isSidebarContentDisplayed">

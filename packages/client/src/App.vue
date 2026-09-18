@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { TooltipProvider } from 'reka-ui';
+import { TooltipProvider, ToastProvider } from 'reka-ui';
 import { provideAuth } from './auth/composables/useAuth';
 import SVGFilters from './game/components/SVGFilters.vue';
 
@@ -11,10 +11,11 @@ provideAuth();
   <!-- <div v-if="!loaded">Loading...</div> -->
   <div>
     <SVGFilters />
-
-    <TooltipProvider :delay-duration="400">
-      <router-view />
-    </TooltipProvider>
+    <ToastProvider :duration="1200" swipe-direction="right">
+      <TooltipProvider :delay-duration="400">
+        <router-view />
+      </TooltipProvider>
+    </ToastProvider>
     <div id="card-portal"></div>
     <div id="card-actions-portal"></div>
     <div id="tooltip-portal"></div>

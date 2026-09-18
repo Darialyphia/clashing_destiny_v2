@@ -10,7 +10,9 @@ import {
   type CardId
 } from '@game/api';
 import type { CardBlueprint } from '@game/engine/src/card/card-blueprint';
-
+import FancyButton from '@/ui/components/FancyButton.vue';
+import UiSpinner from '@/ui/components/UiSpinner.vue';
+import CraftignShardIcon from '@/player/components/CraftignShardIcon.vue';
 const { card } = defineProps<{
   card: {
     card: CardBlueprint;
@@ -49,10 +51,10 @@ const { mutate: decraft, isLoading: isDecrafting } = useAuthedMutation(
 <template>
   <footer class="card-details-modal-footer">
     <FancyButton
-      :text="`Craft (${craftingCost})`"
+      :text="`Craft (${craftingCost * (card.isFoil ? FOIL_CRAFTING_COST_MULTIPLIER : 1)})`"
       :disabled="isCrafting || isDecrafting"
       size="sm"
-      @click="craft({ blueprintId: card.card.id, isFoil: false })"
+      @click="craft({ blueprintId: card.card.id, isFoil: card.isFoil })"
     >
       <template #left>
         <CraftignShardIcon />
@@ -63,20 +65,6 @@ const { mutate: decraft, isLoading: isDecrafting } = useAuthedMutation(
       </template>
     </FancyButton>
 
-    <FancyButton
-      :text="`Craft Foil (${craftingCost * FOIL_CRAFTING_COST_MULTIPLIER})`"
-      :disabled="isCrafting || isDecrafting"
-      size="sm"
-      @click="craft({ blueprintId: card.card.id, isFoil: true })"
-    >
-      <template #left>
-        <CraftignShardIcon />
-      </template>
-
-      <template v-if="isCrafting" #right>
-        <UiSpinner size="5" />
-      </template>
-    </FancyButton>
     <FancyButton
       :text="`Disenchant (${decraftingReward})`"
       :disabled="card.copiesOwned === 0 || isCrafting || isDecrafting"
@@ -101,10 +89,13 @@ const { mutate: decraft, isLoading: isDecrafting } = useAuthedMutation(
   --pixel-scale: 1;
   margin-block-start: auto;
   padding-block-start: var(--size-4);
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: var(--size-3);
   justify-content: center;
   border-block-start: var(--border-size-1) solid var(--border-dimmed);
+  > button {
+    width: 100%;
+  }
 }
 </style>
