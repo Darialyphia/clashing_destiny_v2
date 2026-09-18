@@ -65,6 +65,7 @@ useFxEvent(FX_EVENTS.TURN_START, async event => {
   backdrop-filter: blur(4px);
   z-index: 1000;
   pointer-events: none;
+  overflow: hidden;
   font-family:
     Cinzel Decorative,
     serif;

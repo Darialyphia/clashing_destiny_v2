@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useAuthedQuery } from '@/auth/composables/useAuth';
 import { api, GIFT_STATES } from '@game/api';
-import { useMe } from '@/auth/composables/useMe';
 import { useLogout } from '@/auth/composables/useLogout';
 
 definePage({
@@ -19,9 +18,7 @@ const unclaimedGiftsCount = computed(() => {
   );
 });
 
-const { data: me } = useMe();
-const { data: unopenedPacks, isLoading: isLoadingUnopenedPacks } =
-  useAuthedQuery(api.cards.unopenedPacks, {});
+const { data: unopenedPacks } = useAuthedQuery(api.cards.unopenedPacks, {});
 
 const { mutate: logout } = useLogout();
 
@@ -97,7 +94,7 @@ const boosterPackButtonLabel = computed(() => {
     </ul>
 
     <RouterLink
-      v-if="unopenedPacks.packs?.length > 0"
+      v-if="unopenedPacks?.packs.length > 0"
       class="boosters"
       :to="{ name: 'Boosters' }"
       aria-label="boosters"

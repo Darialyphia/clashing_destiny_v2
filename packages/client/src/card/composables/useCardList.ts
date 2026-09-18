@@ -151,23 +151,23 @@ export const provideCardList = () => {
   );
   const cards = computed(() => {
     if (!myCollection.value) return [];
-    const base = includeUnowned.value
-      ? myCollection.value.concat(
-          allBlueprints
-            .filter(bp => {
-              return (
-                bp.collectable &&
-                !myCollection.value!.some(c => c.blueprintId === bp.id)
-              );
-            })
-            .map(bp => ({
-              id: `unowned-${bp.id}` as CardId,
-              blueprintId: bp.id,
-              isFoil: false,
-              copiesOwned: 0
-            }))
-        )
-      : myCollection.value;
+    const base = [...myCollection.value];
+    if (includeUnowned.value) {
+      const missing = allBlueprints.filter(bp => {
+        return (
+          bp.collectable &&
+          !myCollection.value!.some(c => c.blueprintId === bp.id)
+        );
+      });
+      base.push(
+        ...missing.map(bp => ({
+          id: `unowned-${bp.id}` as CardId,
+          blueprintId: bp.id,
+          isFoil: false,
+          copiesOwned: 0
+        }))
+      );
+    }
 
     return base
       .map(c => {

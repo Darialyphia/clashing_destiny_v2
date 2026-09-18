@@ -11,7 +11,8 @@ import {
 definePage({
   name: 'Boosters',
   meta: {
-    requiresAuth: true
+    requiresAuth: true,
+    wrapperClass: 'page-blur'
   }
 });
 
@@ -64,4 +65,9 @@ const latestPackOpened = ref<
   </div>
 </template>
 
-<style scoped lang="postcss"></style>
+<style scoped lang="postcss">
+.page {
+  min-height: 100vh;
+  background-image: url('@/assets/backgrounds/main-menu-overlay.png');
+}
+</style>

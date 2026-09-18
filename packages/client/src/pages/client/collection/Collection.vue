@@ -13,6 +13,7 @@ const visibleCards = ref(new Set<string>());
 const cardElements = computed(() => {
   // eslint-disable-next-line @typescript-eslint/no-unused-expressions
   cards.value; //read the ref to trigger reactivity;
+
   if (!listRoot.value) return [];
   return Array.from(
     listRoot.value.querySelectorAll('li[data-collection-card-id]')

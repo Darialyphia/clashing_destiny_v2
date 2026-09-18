@@ -3,22 +3,10 @@ import UiModal from '@/ui/components/UiModal.vue';
 import BlueprintCard from '@/card/components/BlueprintCard.vue';
 import type { CardBlueprint } from '@game/engine/src/card/card-blueprint';
 import CardText from '@/card/components/CardText.vue';
-import FancyButton from '@/ui/components/FancyButton.vue';
-import {
-  api,
-  CRAFTING_COST_PER_RARITY,
-  DECRAFTING_REWARD_PER_RARITY,
-  FOIL_CRAFTING_COST_MULTIPLIER,
-  FOIL_DECRAFTING_REWARD_MULTIPLIER,
-  type CardId
-} from '@game/api';
-import CraftignShardIcon from '@/player/components/CraftignShardIcon.vue';
-import { useAuthedMutation } from '@/auth/composables/useAuth';
-import UiSpinner from '@/ui/components/UiSpinner.vue';
-import { useMe } from '@/auth/composables/useMe';
 import { isFunction, waitFor } from '@game/shared';
 import { provideRichTextContext } from '@/game/composables/useRichText';
 import { unrefElement } from '@vueuse/core';
+import CardDetailsModalFooter from './CardDetailsModalFooter.vue';
 
 const { card } = defineProps<{
   card: {
@@ -30,47 +18,6 @@ const { card } = defineProps<{
 }>();
 
 const isOpened = defineModel<boolean>('isOpened', { required: true });
-const { data: me } = useMe();
-
-const successMessage = ref<string | null>(null);
-let successTimeout: ReturnType<typeof setTimeout> | null = null;
-
-const showSuccess = (message: string) => {
-  successMessage.value = message;
-  if (successTimeout) clearTimeout(successTimeout);
-  successTimeout = setTimeout(() => {
-    successMessage.value = null;
-  }, 1500);
-};
-
-const { mutate: craft, isLoading: isCrafting } = useAuthedMutation(
-  api.cards.craft,
-  {
-    onSuccess: () => {
-      showSuccess(
-        `Craft succesful ${card.isFoil ? 'Foil ' : ''}${card.card.name}!`
-      );
-    }
-  }
-);
-
-const { mutate: decraft, isLoading: isDecrafting } = useAuthedMutation(
-  api.cards.decraft,
-  {
-    onSuccess: () => {
-      showSuccess(`Disenchant succesful for ${decraftingReward.value} shards!`);
-    }
-  }
-);
-
-const craftingCost = computed(() => {
-  return CRAFTING_COST_PER_RARITY[card.card.rarity];
-});
-
-const decraftingReward = computed(() => {
-  const multiplier = card.isFoil ? FOIL_DECRAFTING_REWARD_MULTIPLIER : 1;
-  return DECRAFTING_REWARD_PER_RARITY[card.card.rarity] * multiplier;
-});
 
 const description = computed(() => {
   return isFunction(card.card.description)
@@ -246,59 +193,7 @@ const animateCardOut = async () => {
             </ul>
           </section>
 
-          <Transition name="success-message">
-            <aside v-if="successMessage" class="success-notification">
-              {{ successMessage }}
-            </aside>
-          </Transition>
-
-          <footer>
-            <FancyButton
-              :text="`Craft (${craftingCost})`"
-              :disabled="isCrafting || isDecrafting"
-              size="sm"
-              @click="craft({ blueprintId: card.card.id, isFoil: false })"
-            >
-              <template #left>
-                <CraftignShardIcon />
-              </template>
-
-              <template v-if="isCrafting" #right>
-                <UiSpinner size="5" />
-              </template>
-            </FancyButton>
-
-            <FancyButton
-              :text="`Craft Foil (${craftingCost * FOIL_CRAFTING_COST_MULTIPLIER})`"
-              :disabled="isCrafting || isDecrafting"
-              size="sm"
-              @click="craft({ blueprintId: card.card.id, isFoil: true })"
-            >
-              <template #left>
-                <CraftignShardIcon />
-              </template>
-
-              <template v-if="isCrafting" #right>
-                <UiSpinner size="5" />
-              </template>
-            </FancyButton>
-            <FancyButton
-              :text="`Disenchant (${decraftingReward})`"
-              :disabled="card.copiesOwned === 0 || isCrafting || isDecrafting"
-              size="sm"
-              variant="error"
-              @click="decraft({ cardId: card.id as CardId, amount: 1 })"
-            >
-              <template #left>
-                <CraftignShardIcon />
-              </template>
-
-              <template v-if="isDecrafting" #right>
-                <UiSpinner size="5" />
-              </template>
-            </FancyButton>
-          </footer>
-          <p>Your Shards: {{ me?.wallet.craftingShards ?? 0 }}</p>
+          <CardDetailsModalFooter :card="card" />
         </section>
       </Transition>
     </article>
@@ -442,66 +337,6 @@ const animateCardOut = async () => {
 
 .abilities li:hover {
   background: var(--surface-3);
-}
-
-.success-notification {
-  padding: var(--size-3) var(--size-4);
-  background: linear-gradient(135deg, var(--green-7), var(--green-10));
-  color: var(--green-0);
-  font-size: var(--font-size-1);
-  font-weight: var(--font-weight-6);
-  text-align: center;
-  border-radius: var(--radius-3);
-  border: var(--border-size-2) solid var(--green-7);
-  box-shadow: var(--shadow-4);
-  animation: pulse 0.5s ease-out;
-}
-
-@keyframes pulse {
-  0% {
-    transform: scale(0.95);
-    opacity: 0;
-  }
-  50% {
-    transform: scale(1.02);
-  }
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-.success-message-enter-active {
-  transition:
-    opacity var(--speed-3) var(--ease-3),
-    transform var(--speed-3) var(--ease-spring-3);
-}
-
-.success-message-leave-active {
-  transition:
-    opacity var(--speed-2) var(--ease-2),
-    transform var(--speed-2) var(--ease-2);
-}
-
-.success-message-enter-from {
-  opacity: 0;
-  transform: translateY(-1rem);
-}
-
-.success-message-leave-to {
-  opacity: 0;
-  transform: translateY(-0.5rem);
-}
-
-footer {
-  --pixel-scale: 1;
-  margin-block-start: auto;
-  padding-block-start: var(--size-4);
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--size-3);
-  justify-content: center;
-  border-block-start: var(--border-size-1) solid var(--border-dimmed);
 }
 
 @media (max-width: 768px) {

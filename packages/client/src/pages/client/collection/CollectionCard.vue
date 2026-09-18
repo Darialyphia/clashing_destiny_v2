@@ -3,9 +3,7 @@ import { useCollectionPage } from './useCollectionPage';
 import BlueprintCard from '@/card/components/BlueprintCard.vue';
 import type { CardBlueprint } from '@game/engine/src/card/card-blueprint';
 import type { CardId } from '@game/api';
-import CardDetailsModal from './CardDetailsModal.vue';
-
-const { deckBuilder, isEditingDeck } = useCollectionPage();
+import CardDetailsModal from './CardDetailsModal/index.vue';
 
 const { card } = defineProps<{
   card: {
@@ -15,6 +13,8 @@ const { card } = defineProps<{
     copiesOwned: number;
   };
 }>();
+
+const { deckBuilder, isEditingDeck } = useCollectionPage();
 
 const canAddCard = computed(() => {
   if (!isEditingDeck.value) return false;

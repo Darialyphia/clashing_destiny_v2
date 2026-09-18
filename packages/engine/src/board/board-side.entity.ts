@@ -113,8 +113,12 @@ export class BoardSide
           ) ?? [])
         ].filter(isDefined);
       }),
-      ...(this.leftBattlefield.secretCard ? [this.leftBattlefield.secretCard] : []),
-      ...(this.rightBattlefield.secretCard ? [this.rightBattlefield.secretCard] : []),
+      ...(this.leftBattlefield.secretCard
+        ? [this.leftBattlefield.secretCard as AnyCard]
+        : []),
+      ...(this.rightBattlefield.secretCard
+        ? [this.rightBattlefield.secretCard as AnyCard]
+        : []),
       ...this.leftBattlefield.spaces.flatMap(space => {
         return [
           space.card,
