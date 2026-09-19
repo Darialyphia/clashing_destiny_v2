@@ -14,7 +14,7 @@ import { nanoid } from 'nanoid';
 
 export type DeckBuilderCardPool = Array<CardBlueprint>;
 
-type DeckBuilderCardMeta = {
+export type DeckBuilderCardMeta = {
   cardId: CardId;
   isFoil: boolean;
 };

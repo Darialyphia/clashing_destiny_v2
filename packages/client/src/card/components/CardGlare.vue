@@ -23,7 +23,7 @@
   mask-repeat: no-repeat;
 }
 
-:global(:is(.card-perspective-wrapper, .small-card):hover .glare) {
+:global(:is(.card-perspective-wrapper, .small-card, .deck-item):hover .glare) {
   opacity: 0.75;
 }
 </style>

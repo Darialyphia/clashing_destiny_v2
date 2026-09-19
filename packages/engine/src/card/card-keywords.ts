@@ -11,7 +11,7 @@ export const KEYWORDS = {
   ATTACKER: {
     id: 'attacker',
     name: 'Attacker X',
-    description: 'This unit has +X Attack when attacking.',
+    description: 'This unit has +X Attack while you have the initiative.',
     aliases: [/attacker [0-9]+/]
   },
   BACKSTAB: {
@@ -50,7 +50,7 @@ export const KEYWORDS = {
   DEFENDER: {
     id: 'defender',
     name: 'Defender X',
-    description: 'This unit has +X attack when counterattacking.',
+    description: 'This unit has +X attack while your opponent has the initiative.',
     aliases: [/defender [0-9]+/]
   },
   DISCOVER: {

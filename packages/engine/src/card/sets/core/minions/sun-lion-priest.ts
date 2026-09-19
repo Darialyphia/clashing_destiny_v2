@@ -31,7 +31,7 @@ export const sunlionPriest: MinionBlueprint = {
   manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
-  atk: 2,
+  atk: 3,
   maxHp: 5,
   commandment: 2,
   canPlay: () => true,

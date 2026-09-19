@@ -73,7 +73,9 @@
   animation: foil-glitter 2.5s linear infinite;
 }
 
-:global(:is(.card-perspective-wrapper, .small-card):hover .foil-emboss) {
+:global(
+  :is(.card-perspective-wrapper, .small-card, .deck-item):hover .foil-emboss
+) {
   opacity: 0.2;
   transition-delay: 0.3s;
 }

@@ -10,6 +10,7 @@ import {
 import { isDefined, type Nullable } from '@game/shared';
 import CardGlare from '../CardGlare.vue';
 import { useCardTilt } from '../../composables/useCardtilt';
+import type { CardArt } from '@game/engine/src/card/card-blueprint';
 import FoilSheen from '../foil/FoilSheen.vue';
 import FoilOil from '../foil/FoilOil.vue';
 import FoilGradient from '../foil/FoilGradient.vue';
@@ -17,7 +18,6 @@ import FoilScanlines from '../foil/FoilScanlines.vue';
 import FoilLightGradient from '../foil/FoilLightGradient.vue';
 import FoilGoldenGlare from '../foil/FoilGoldenGlare.vue';
 import FoilGlitter from '../foil/FoilGlitter.vue';
-import type { CardArt } from '@game/engine/src/card/card-blueprint';
 import FoilBrightShine from '../foil/FoilBrightShine.vue';
 import ManaCost from './ManaCost.vue';
 import Stats from './Stats.vue';

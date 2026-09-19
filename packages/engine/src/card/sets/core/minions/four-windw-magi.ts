@@ -18,7 +18,7 @@ export const fourWindsMagi: MinionBlueprint = {
   id: 'four-winds-magi',
   name: 'Four Winds Magi',
   description: dedent /*html*/ `
-  <rt-location locations="battlefield"></rt-location> When you play a spell, gain 1 Influence here.
+  <rt-location locations="battlefield"></rt-location> When you play a spell, steal 1 Influence here.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -30,7 +30,7 @@ export const fourWindsMagi: MinionBlueprint = {
   manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
-  atk: 2,
+  atk: 3,
   maxHp: 5,
   commandment: 1,
   canPlay: () => true,
