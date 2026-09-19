@@ -5,7 +5,7 @@ import { GAME_STATUS } from '@game/api';
 import { useMouse, useRafFn, useWindowSize } from '@vueuse/core';
 
 const PARALLAX_MIDDLE_DISTANCE_PX = 30;
-const PARALLAX_FRONT_DISTANCE_PX = 100;
+const PARALLAX_FRONT_DISTANCE_PX = 70;
 const PARALLAX_INERTIA = 3;
 
 definePage({
@@ -125,7 +125,7 @@ const parallaxStyle = computed(() => ({
 .background-clouds {
   background-image: url('@/assets/backgrounds/main-menu-clouds.png');
   background-repeat: repeat-x;
-  animation: clouds-scroll 90s linear infinite;
+  animation: clouds-scroll 150s linear infinite;
   width: 200vw;
   aspect-ratio: calc(2 * 960) / 540;
   left: 0;

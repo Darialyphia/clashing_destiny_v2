@@ -191,83 +191,79 @@ const animateCardOut = async () => {
     :animated="false"
     @open-animation-end="animateCardIn"
   >
-    <article class="card-details" v-if="selectedCard">
-      <UiIconButton
-        class="nav-button nav-button-previous"
-        icon="material-symbols:arrow-back-2-outline"
-        :disabled="!hasPreviousCard"
-        @click="selectPreviousCard"
-      />
+    <Transition :appear="false" mode="out-in">
+      <article class="card-details" v-if="selectedCard" :key="selectedCard.id">
+        <UiIconButton
+          class="nav-button nav-button-previous"
+          icon="material-symbols:arrow-back-2-outline"
+          :disabled="!hasPreviousCard"
+          @click="selectPreviousCard"
+        />
 
-      <UiIconButton
-        class="nav-button nav-button-next"
-        icon="material-symbols:arrow-back-2-outline"
-        aria-label="Next card"
-        :disabled="!hasNextCard"
-        @click="selectNextCard"
-      />
+        <UiIconButton
+          class="nav-button nav-button-next"
+          icon="material-symbols:arrow-back-2-outline"
+          aria-label="Next card"
+          :disabled="!hasNextCard"
+          @click="selectNextCard"
+        />
 
-      <aside class="card-preview">
-        <div ref="root">
-          <BlueprintCard
-            v-if="shouldDisplayCard"
-            :data-flip-id="`collection-card-modal-${selectedCard.card.id}`"
-            :blueprint="selectedCard.card"
-            show-stats
-            :is-foil="selectedCard.isFoil"
-          />
-        </div>
-      </aside>
+        <aside class="card-preview">
+          <div ref="root">
+            <BlueprintCard
+              v-if="shouldDisplayCard"
+              :data-flip-id="`collection-card-modal-${selectedCard.card.id}`"
+              :blueprint="selectedCard.card"
+              show-stats
+              :is-foil="selectedCard.isFoil"
+            />
+          </div>
+        </aside>
 
-      <Transition appear>
-        <section class="card-info surface">
-          <header>
-            <h2>{{ selectedCard.card.name }}</h2>
-            <span
-              class="rarity-badge"
-              :style="{
-                '--rarity-color': `var(--rarity-${selectedCard.card.rarity.toLowerCase()})`
-              }"
-            >
-              {{ selectedCard.card.rarity }}
-            </span>
-            <p class="metadata">
-              <span class="set-id">{{ selectedCard.card.setId }}</span>
-              <span class="separator">•</span>
-              <span class="copies-count">
-                {{ selectedCard.copiesOwned }}
-                {{ selectedCard.copiesOwned === 1 ? 'copy' : 'copies' }} owned
-              </span>
-            </p>
-          </header>
-
-          <section class="description">
-            <h3>Description</h3>
-            <CardText :text="description" />
-          </section>
-
-          <section
-            v-if="
-              'abilities' in selectedCard.card &&
-              selectedCard.card.abilities?.length
-            "
-            class="abilities"
-          >
-            <h3>Abilities</h3>
-            <ul>
-              <li
-                v-for="(ability, index) in selectedCard.card.abilities"
-                :key="index"
+        <Transition appear>
+          <section class="card-info surface">
+            <header>
+              <h2>{{ selectedCard.card.name }}</h2>
+              <span
+                class="rarity-badge"
+                :style="{
+                  '--rarity-color': `var(--rarity-${selectedCard.card.rarity.toLowerCase()})`
+                }"
               >
-                <CardText :text="ability.description" />
-              </li>
-            </ul>
-          </section>
+                {{ selectedCard.card.rarity }}
+              </span>
+              <p class="metadata">
+                <span class="set-id">{{ selectedCard.card.setId }}</span>
+                <span class="separator">•</span>
+                <span class="copies-count">
+                  {{ selectedCard.copiesOwned }}
+                  {{ selectedCard.copiesOwned === 1 ? 'copy' : 'copies' }} owned
+                </span>
+              </p>
+            </header>
 
-          <CardDetailsModalFooter :card="selectedCard" />
-        </section>
-      </Transition>
-    </article>
+            <section class="description">
+              <h3>Description</h3>
+              <CardText :text="description" />
+              <template
+                v-if="
+                  'abilities' in selectedCard.card &&
+                  selectedCard.card.abilities?.length
+                "
+              >
+                <CardText
+                  v-for="(ability, index) in selectedCard.card.abilities"
+                  :key="index"
+                  :text="ability.description"
+                />
+              </template>
+            </section>
+
+            <CardDetailsModalFooter :card="selectedCard" />
+          </section>
+        </Transition>
+      </article>
+    </Transition>
   </UiModal>
 </template>
 
@@ -285,6 +281,21 @@ const animateCardOut = async () => {
   display: flex;
   gap: var(--size-5);
   min-height: var(--size-13);
+
+  &.v-enter-active,
+  &.v-leave-active {
+    transition: all 0.2s var(--ease-3);
+  }
+
+  &.v-enter-from {
+    translate: 100% 0;
+    opacity: 0;
+  }
+
+  &.v-leave-to {
+    translate: -100% 0;
+    opacity: 0;
+  }
 }
 
 .nav-button {
@@ -424,30 +435,9 @@ const animateCardOut = async () => {
 
 .description {
   padding: var(--size-3);
-  background: var(--surface-2);
+  /* background: var(--surface-2); */
   border-radius: var(--radius-2);
   border: var(--border-size-1) solid var(--border-subtle);
-}
-
-.abilities ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: var(--size-3);
-}
-
-.abilities li {
-  padding: var(--size-3);
-  background: var(--surface-2);
-  border-radius: var(--radius-2);
-  border-inline-start: var(--border-size-3) solid var(--primary);
-  transition: background var(--ease-3) var(--speed-2);
-}
-
-.abilities li:hover {
-  background: var(--surface-3);
 }
 
 @media (max-width: 768px) {

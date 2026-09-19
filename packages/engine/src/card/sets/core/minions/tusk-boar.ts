@@ -62,7 +62,7 @@ export const tuskBoar: MinionBlueprint = {
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 3,
-  maxHp: 2,
+  maxHp: 3,
   commandment: 1,
   canPlay: () => true,
   abilities: [],

@@ -26,36 +26,6 @@ useFxEvent(FX_EVENTS.TURN_START, async event => {
 </template>
 
 <style scoped lang="postcss">
-.dual-text {
-  color: transparent;
-  position: relative;
-  --_top-color: var(--top-color, #dec7a6);
-  --_bottom-color: var(--bottom-color, #bba083);
-  &::before,
-  &::after {
-    position: absolute;
-    content: attr(data-text);
-    color: transparent;
-    inset: 0;
-  }
-  &:after {
-    background: linear-gradient(
-      var(--_top-color),
-      var(--_top-color) 50%,
-      var(--_bottom-color) 50%
-    );
-    line-height: 1.2;
-    background-clip: text;
-    background-size: 100% 1lh;
-    background-repeat: repeat-y;
-    translate: var(--dual-text-offset-x, 0) var(--dual-text-offset-y, 0);
-  }
-  &:before {
-    -webkit-text-stroke: calc(2px * var(--pixel-scale)) black;
-    translate: var(--dual-text-offset-x, 0) var(--dual-text-offset-y, 0);
-  }
-}
-
 .game-phase-indicator {
   position: fixed;
   inset: 0;

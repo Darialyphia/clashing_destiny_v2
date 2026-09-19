@@ -119,7 +119,6 @@ export const provideSandbox = (
     rewindTo,
     restart: () => rewindTo(0),
     addCardToHand(blueprintId: string) {
-      console.log(blueprintId);
       worker.postMessage({
         type: 'addCardtoHand',
         payload: { blueprintId, playerId: client.value.playerId }

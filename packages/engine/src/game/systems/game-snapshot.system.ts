@@ -464,7 +464,6 @@ export class GameSnapshotSystem extends System<{ enabled: boolean }> {
       const id = this.nextId++;
 
       const omnisicientState = this.serializer.serializeOmniscientState();
-
       if (events.length === 0 && previousId > 0) {
         const previousSnapshot = this.getOmniscientSnapshotAt(previousId);
         if (previousSnapshot.kind === 'state') {

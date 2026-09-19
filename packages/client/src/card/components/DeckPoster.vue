@@ -58,6 +58,15 @@ const artifactsCount = computed(() =>
   artifacts.value.reduce((sum, item) => sum + item.copies, 0)
 );
 
+const secrets = computed(() =>
+  groupedMainDeck.value.filter(
+    item => item.blueprint.kind === CARD_KINDS.SECRET
+  )
+);
+const secretsCount = computed(() =>
+  secrets.value.reduce((sum, item) => sum + item.copies, 0)
+);
+
 const root = useTemplateRef('root');
 const optionsBar = useTemplateRef('optionsBar');
 const saveImage = async () => {
@@ -131,6 +140,12 @@ const craftingCost = computed(() => {
           </span>
           {{ artifactsCount <= 1 ? 'Artifact' : 'Artifacts' }}
         </div>
+        <div>
+          <span class="font-bold text-3">
+            {{ secretsCount }}
+          </span>
+          {{ secretsCount <= 1 ? 'Secret' : 'Secrets' }}
+        </div>
         <div class="flex items-center">
           <CraftignShardIcon />
           {{ craftingCost }}
@@ -159,13 +174,7 @@ const craftingCost = computed(() => {
 
       <div class="listing">
         <ul>
-          <li v-for="item in minions" :key="item.blueprint.id">
-            {{ item.copies }}x
-            <span :class="item.blueprint.rarity.toLocaleLowerCase()">
-              {{ item.blueprint.name }}
-            </span>
-          </li>
-          <li v-for="item in spells" :key="item.blueprint.id">
+          <li v-for="item in groupedMainDeck" :key="item.blueprint.id">
             {{ item.copies }}x
             <span :class="item.blueprint.rarity.toLocaleLowerCase()">
               {{ item.blueprint.name }}

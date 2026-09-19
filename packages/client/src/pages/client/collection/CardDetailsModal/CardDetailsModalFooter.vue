@@ -13,6 +13,8 @@ import type { CardBlueprint } from '@game/engine/src/card/card-blueprint';
 import FancyButton from '@/ui/components/FancyButton.vue';
 import UiSpinner from '@/ui/components/UiSpinner.vue';
 import CraftignShardIcon from '@/player/components/CraftignShardIcon.vue';
+import { useToast } from '@/ui/composables/useToast';
+
 const { card } = defineProps<{
   card: {
     card: CardBlueprint;
@@ -23,6 +25,7 @@ const { card } = defineProps<{
 }>();
 
 const { data: me } = useMe();
+const { add: addToast } = useToast();
 
 const craftingCost = computed(() => {
   return CRAFTING_COST_PER_RARITY[card.card.rarity];
@@ -36,14 +39,26 @@ const decraftingReward = computed(() => {
 const { mutate: craft, isLoading: isCrafting } = useAuthedMutation(
   api.cards.craft,
   {
-    onSuccess: () => {}
+    onSuccess: () => {
+      addToast({
+        title: 'Card crafted',
+        description: `${card.card.name} was added to your collection.`,
+        variant: 'success'
+      });
+    }
   }
 );
 
 const { mutate: decraft, isLoading: isDecrafting } = useAuthedMutation(
   api.cards.decraft,
   {
-    onSuccess: () => {}
+    onSuccess: () => {
+      addToast({
+        title: 'Card disenchanted',
+        description: `${card.card.name} was disenchanted for ${decraftingReward.value} shards.`,
+        variant: 'success'
+      });
+    }
   }
 );
 </script>

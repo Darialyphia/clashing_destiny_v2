@@ -2,9 +2,12 @@
 import { TooltipProvider, ToastProvider } from 'reka-ui';
 import { provideAuth } from './auth/composables/useAuth';
 import SVGFilters from './game/components/SVGFilters.vue';
+import UiToaster from './ui/components/UiToaster.vue';
+import { provideToast } from './ui/composables/useToast';
 
 // const { loaded } = useAssets();
 provideAuth();
+provideToast();
 </script>
 
 <template>
@@ -15,6 +18,7 @@ provideAuth();
       <TooltipProvider :delay-duration="400">
         <router-view />
       </TooltipProvider>
+      <UiToaster />
     </ToastProvider>
     <div id="card-portal"></div>
     <div id="card-actions-portal"></div>

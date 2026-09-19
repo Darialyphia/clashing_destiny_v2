@@ -20,7 +20,7 @@ export const juxtaposition: SpellBlueprint<MinionCard> = {
   id: 'juxtaposition',
   name: 'Juxtaposition',
   description: dedent /*html*/ `
-  <rt-keyword>Instant<rt-keyword>. Swap the position of two minions with the same owner.
+  <rt-keyword>Instant</rt-keyword>. Swap the position of two minions with the same owner.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -84,8 +84,8 @@ export const juxtaposition: SpellBlueprint<MinionCard> = {
     const minion1Position = minion1.position!;
     const minion2Position = minion2.position!;
 
-    await minion1.moveToSpace(minion1Position);
-    await minion2.moveToSpace(minion2Position);
+    await minion1.moveToSpace(minion2Position);
+    await minion2.moveToSpace(minion1Position);
   },
   aiHints: {
     shouldPlay: () => 1

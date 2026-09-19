@@ -27,7 +27,7 @@ export const primusShieldmaster: MinionBlueprint = {
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 2,
-  maxHp: 6,
+  maxHp: 5,
   commandment: 1,
   canPlay: () => true,
   abilities: [],

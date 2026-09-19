@@ -16,6 +16,7 @@ const passAction = computed(() => {
     aria-label="Pass"
     @click="passAction.onClick()"
   />
+  <div v-else class="enemy-turn-indicator" />
 </template>
 
 <style scoped lang="postcss">
@@ -31,5 +32,13 @@ const passAction = computed(() => {
   &:disabled {
     filter: grayscale(100%) brightness(0.8);
   }
+}
+
+.enemy-turn-indicator {
+  width: 203px;
+  height: 55px;
+  background: url(@/assets/ui/enemy-turn.png);
+  color: transparent;
+  transition: filter 0.3s ease;
 }
 </style>

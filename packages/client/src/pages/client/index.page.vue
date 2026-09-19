@@ -2,7 +2,10 @@
 import { useAuthedQuery } from '@/auth/composables/useAuth';
 import { api, GIFT_STATES } from '@game/api';
 import { useLogout } from '@/auth/composables/useLogout';
-
+import { useMe } from '@/auth/composables/useMe';
+import CraftignShardIcon from '@/player/components/CraftignShardIcon.vue';
+import GodlIcon from '@/player/components/GodlIcon.vue';
+import PlayerBadge from '@/player/components/PlayerBadge.vue';
 definePage({
   name: 'ClientHome',
   meta: {
@@ -27,6 +30,8 @@ const boosterPackButtonLabel = computed(() => {
     ? `${unopenedPacks.value.packs.length} packs available`
     : `${unopenedPacks.value.packs.length} pack available`;
 });
+
+const { data: me } = useMe();
 </script>
 
 <template>
@@ -103,20 +108,25 @@ const boosterPackButtonLabel = computed(() => {
         {{ boosterPackButtonLabel }}
       </span>
     </RouterLink>
+
+    <div class="flex gap-3 absolute top-4 left-8" v-if="me">
+      <PlayerBadge :name="me.username">
+        <div class="currencies">
+          <GodlIcon />
+          <span class="dual-text" :data-text="me.wallet.gold">
+            {{ me.wallet.gold }}
+          </span>
+          <CraftignShardIcon />
+          <span class="dual-text" :data-text="me.wallet.craftingShards">
+            {{ me.wallet.craftingShards }}
+          </span>
+        </div>
+      </PlayerBadge>
+    </div>
   </div>
 </template>
 
 <style scoped lang="postcss">
-.gifts-notification {
-  margin-block-start: var(--size-8);
-  display: flex;
-  gap: var(--size-5);
-  align-items: center;
-  font-size: var(--size-4);
-  width: fit-content;
-  margin-inline: auto;
-}
-
 .client-home-page {
   transform-style: preserve-3d;
   perspective: 1300px;
@@ -125,7 +135,7 @@ const boosterPackButtonLabel = computed(() => {
 }
 
 .menu {
-  --dual-text-stroke-offset-y: -2px;
+  --dual-text-stroke-offset-y: -6px;
   position: absolute;
   top: 20%;
   left: var(--size-13);
@@ -182,5 +192,14 @@ const boosterPackButtonLabel = computed(() => {
   &:hover {
     filter: brightness(1.3) drop-shadow(0 0 5px var(--yellow-3));
   }
+}
+
+.currencies {
+  --pixel-scale: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--size-2);
+  font-size: var(--font-size-3);
+  --dual-text-stroke-offset-y: calc(-1px * var(--pixel-scale));
 }
 </style>
