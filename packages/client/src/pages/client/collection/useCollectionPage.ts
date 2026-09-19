@@ -41,6 +41,7 @@ export type CollectionContext = CardListContext & {
   >;
   selectCard: (id: string) => void;
   unselectCard: () => void;
+  deckEditorOptions: Ref<{ collapseFoil: boolean }>;
 };
 
 export const CollectionInjectionKey = Symbol(
@@ -193,7 +194,8 @@ export const provideCollectionPage = () => {
     deleteDeck: () => {
       if (!selectedDeck.value) return;
       deleteDeck({ deckId: selectedDeck.value.id });
-    }
+    },
+    deckEditorOptions: ref({ collapseFoil: false })
   };
 
   provide(CollectionInjectionKey, api);

@@ -56,7 +56,8 @@ export const cards = {
 "war-judicator": "war-judicator",
 "manaVortex": "manaVortex",
 "backstep": "backstep",
-"juxtaposition": "juxtaposition"
+"juxtaposition": "juxtaposition",
+"argeon-highmane": "argeon-highmane"
 } as const;
 
 export const collectableCards = {
@@ -110,7 +111,8 @@ export const collectableCards = {
 "war-judicator": "war-judicator",
 "manaVortex": "manaVortex",
 "backstep": "backstep",
-"juxtaposition": "juxtaposition"
+"juxtaposition": "juxtaposition",
+"argeon-highmane": "argeon-highmane"
 } as const;
 
 type CardSet = Array<{id: string; collectable: boolean; rarity: Rarity, kind: CardKind}>;
@@ -421,6 +423,12 @@ export const cardsBySet: Record<string, CardSet> = {
     "collectable": true,
     "rarity": "epic",
     "kind": "SPELL"
+  },
+  {
+    "id": "argeon-highmane",
+    "collectable": true,
+    "rarity": "legendary",
+    "kind": "MINION"
   }
 ]
 };
@@ -476,7 +484,8 @@ export const cardShortIds: Record<string, number> = {
 "war-judicator": 50,
 "manaVortex": 51,
 "backstep": 52,
-"juxtaposition": 53
+"juxtaposition": 53,
+"argeon-highmane": 54
 } as const;
 
 export const cardIdByShortId: Record<number, string> = {
@@ -530,5 +539,6 @@ export const cardIdByShortId: Record<number, string> = {
 "50": "war-judicator",
 "51": "manaVortex",
 "52": "backstep",
-"53": "juxtaposition"
+"53": "juxtaposition",
+"54": "argeon-highmane"
 } as const;

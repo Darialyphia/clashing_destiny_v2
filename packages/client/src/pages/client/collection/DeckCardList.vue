@@ -1,16 +1,10 @@
 <script setup lang="ts">
-import { useCollectionPage } from './useCollectionPage';
 import DeckCardListItems from './DeckCardListItems.vue';
-
-const { deckBuilder } = useCollectionPage();
 </script>
 
 <template>
   <div class="deck-cards">
-    <DeckCardListItems
-      :cards="deckBuilder.mainDeckCards"
-      :deck-builder="deckBuilder"
-    />
+    <DeckCardListItems />
   </div>
 </template>
 

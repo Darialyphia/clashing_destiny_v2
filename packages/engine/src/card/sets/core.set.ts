@@ -51,6 +51,7 @@ import { warJudicator } from './core/minions/war-judicator';
 import { manaVortex } from './core/spells/mana-vortex';
 import { backstep } from './core/spells/backstep';
 import { juxtaposition } from './core/spells/juxtaposition';
+import { argeonHighmane } from './core/minions/argeon-highmane';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -106,6 +107,7 @@ export const coreSet: CardSet = {
     warJudicator,
     manaVortex,
     backstep,
-    juxtaposition
+    juxtaposition,
+    argeonHighmane
   ]
 };

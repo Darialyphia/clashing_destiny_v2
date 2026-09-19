@@ -7,13 +7,10 @@ import {
 } from 'reka-ui';
 import BlueprintCard from '@/card/components/BlueprintCard.vue';
 import { assets } from '@/assets';
-import type { DeckBuilderViewModel } from '@/card/deck-builder.model';
 import type { CardBlueprint } from '@game/engine/src/card/card-blueprint';
+import { useCollectionPage } from './useCollectionPage';
 
-const { cards, deckBuilder } = defineProps<{
-  cards: DeckBuilderViewModel['mainDeckCards'];
-  deckBuilder: DeckBuilderViewModel;
-}>();
+const { deckBuilder, deckEditorOptions } = useCollectionPage();
 
 const getCardBg = (card: CardBlueprint) => {
   const main = assets[`cards/${card.art.default.main}`];
@@ -23,6 +20,33 @@ const getCardBg = (card: CardBlueprint) => {
 
   return '';
 };
+
+const cards = computed(() => {
+  if (!deckEditorOptions.value.collapseFoil)
+    return deckBuilder.value.mainDeckCards;
+  // group foil ans non foil cards who share the same blueprint id
+  // if a card only has a foil version, change isFoil to false
+  const groupedCards: Record<string, typeof deckBuilder.value.mainDeckCards> =
+    {};
+  for (const card of deckBuilder.value.mainDeckCards) {
+    const id = card.blueprint.id;
+    if (!groupedCards[id]) groupedCards[id] = [];
+    groupedCards[id].push(card);
+  }
+
+  const result: typeof deckBuilder.value.mainDeckCards = [];
+  for (const group of Object.values(groupedCards)) {
+    const nonFoil = group.find(card => !card.meta.isFoil);
+    if (nonFoil) {
+      result.push(nonFoil);
+    } else {
+      const foilCard = group[0];
+      result.push({ ...foilCard, meta: { ...foilCard.meta, isFoil: false } });
+    }
+  }
+
+  return result;
+});
 </script>
 
 <template>
@@ -65,7 +89,11 @@ const getCardBg = (card: CardBlueprint) => {
       </HoverCardTrigger>
       <HoverCardPortal>
         <HoverCardContent side="left" :side-offset="10">
-          <BlueprintCard :blueprint="card.blueprint" style="--pixel-scale: 2" />
+          <BlueprintCard
+            :blueprint="card.blueprint"
+            style="--pixel-scale: 2"
+            :is-foil="card.meta.isFoil"
+          />
         </HoverCardContent>
       </HoverCardPortal>
     </HoverCardRoot>

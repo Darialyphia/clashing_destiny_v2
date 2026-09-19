@@ -127,7 +127,7 @@ export const KEYWORDS = {
   INTIMIDATE: {
     id: 'intimidate',
     name: 'Intimidate X',
-    description: 'This unit cannot be attacked by minions that cost X or less.',
+    description: 'This unit cannot be attacked by minions with X or less attack.',
     aliases: [/intimidate [0-9]+/]
   },
   MILL: {
@@ -246,8 +246,8 @@ export const KEYWORDS = {
     aliases: []
   },
   SHIELD: {
-    id: 'barrier',
-    name: 'Barrier',
+    id: 'shield',
+    name: 'Shield',
     description: 'Prevents the next time this would be damaged.',
     aliases: []
   },
