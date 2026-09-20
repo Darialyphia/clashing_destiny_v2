@@ -7,8 +7,6 @@ import type { WalletRepository } from '../../currency/repositories/wallet.reposi
 import type { EventEmitter } from '../../shared/eventEmitter';
 import type { CardId } from '../entities/card.entity';
 import { assert, isDefined } from '@game/shared';
-import { cardsBySet } from '@game/engine/src/generated/cards';
-import { DECRAFTING_REWARD_PER_RARITY } from '../card.constants';
 import { CURRENCY_SOURCES, CURRENCY_TYPES } from '../../currency/currency.constants';
 import type { AwardCurrencyUseCase } from '../../currency/usecases/awardCurrency.usecase';
 import { CardDecraftedEvent } from '../events/cardDecrafted.event';
@@ -45,23 +43,18 @@ export class DecraftCardUseCase implements UseCase<DecraftCardInput, DecraftCard
 
     assert(
       card.isOwnedBy(session.userId),
-      new DomainError('Not authorized to decraft this card')
+      new DomainError('you are not the owner of this card')
     );
 
-    assert(input.amount > 0, new DomainError('Amount must be greater than 0'));
+    assert(input.amount > 0, new DomainError('Must decraft at least one copy'));
     assert(
       card.copiesOwned.value >= input.amount,
       new DomainError(
-        `Cannot decraft ${input.amount} copies. Only ${card.copiesOwned.value} available`
+        `Cannot decraft ${input.amount} copies of ${card.blueprintId}. Only ${card.copiesOwned.value} available`
       )
     );
 
-    const allCards = Object.values(cardsBySet).flat();
-    const blueprint = allCards.find(c => c.id === card.blueprintId);
-    assert(isDefined(blueprint), new AppError('Card blueprint not found'));
-
-    const rewardPerCopy = DECRAFTING_REWARD_PER_RARITY[blueprint.rarity];
-    const totalReward = rewardPerCopy * input.amount;
+    const totalReward = card.decraftRewardPerCopy * input.amount;
 
     card.removeCopies(input.amount);
     await this.ctx.cardRepo.save(card);
@@ -79,7 +72,8 @@ export class DecraftCardUseCase implements UseCase<DecraftCardInput, DecraftCard
       CardDecraftedEvent.EVENT_NAME,
       new CardDecraftedEvent({
         userId: session.userId,
-        cardId: card.id
+        cardId: card.id,
+        remainingCopies: card.copiesOwned.value
       })
     );
 

@@ -73,6 +73,12 @@ export const KEYWORDS = {
       'When you play this card, add a Fleeting copy of it to your hand without Echo.',
     aliases: []
   },
+  EMPOWERED: {
+    id: 'empowered',
+    name: 'Empowered',
+    description: 'This unit has an additional effect.',
+    aliases: [/empower/]
+  },
   ENHANCE: {
     id: 'enhance',
     name: 'Enhance X',
@@ -96,8 +102,7 @@ export const KEYWORDS = {
   FLEETING: {
     id: 'fleeting',
     name: 'Fleeting',
-    description:
-      'This card disappears at the end of the turn if it is in your hand. It cannot be used to pay for a mana cost.',
+    description: 'This card disappears at the end of the turn if it is in your hand.',
     aliases: []
   },
   FLANKING: {
@@ -259,9 +264,9 @@ export const KEYWORDS = {
   },
   SPELL_GUARD: {
     id: 'spell_guard',
-    name: 'Spell Guard (x)',
+    name: 'Spell Guard x',
     description: 'Adjacent allies take X less damage from enemy spells.',
-    aliases: [/spell guard \([0-9]+\)/]
+    aliases: [/spell guard [0-9]+/]
   },
   SPELLBOOST: {
     id: 'spellboost',
@@ -287,13 +292,6 @@ export const KEYWORDS = {
     name: 'Stunned',
     description: 'This unit is exhausted and has 0 attack until the end of the turn.',
     aliases: ['Stun']
-  },
-  TAUNT: {
-    id: 'taunt',
-    name: 'Taunt',
-    description:
-      'Enemy units on the same battlefield as this must attack this unit if able.',
-    aliases: []
   },
   TOUGH: {
     id: 'tough',

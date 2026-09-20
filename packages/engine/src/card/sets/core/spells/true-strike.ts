@@ -2,7 +2,6 @@ import dedent from 'dedent';
 import type { SpellBlueprint } from '../../../card-blueprint';
 import {
   defaultCardArt,
-  isArtifact,
   isMinion,
   singleEnemyMinionTargetRules,
   singleEnemyTargetRules
@@ -16,7 +15,6 @@ import {
 } from '../../../card.enums';
 import type { MinionCard } from '../../../entities/minion.entity';
 import { SpellDamage } from '../../../../utils/damage';
-import { EquippedModifier } from '../../../../modifier/modifiers/equip.modifier';
 import { ZealModifier } from '../../../../modifier/modifiers/zeal.modifier';
 
 export const trueStrike: SpellBlueprint<MinionCard> = {

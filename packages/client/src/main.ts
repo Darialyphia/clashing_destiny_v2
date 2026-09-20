@@ -25,6 +25,7 @@ import Dynamic from './shared/components/RichText/Dynamic.vue';
 import Runes from './shared/components/RichText/Runes.vue';
 import Exhaust from './shared/components/RichText/Exhaust.vue';
 import Timing from './shared/components/RichText/Timing.vue';
+import Affinity from './shared/components/RichText/Affinity.vue';
 
 gsap.install(window);
 gsap.registerPlugin(MotionPathPlugin);
@@ -56,6 +57,7 @@ app.component('rt-dynamic', Dynamic);
 app.component('rt-runes', Runes);
 app.component('rt-exhaust', Exhaust);
 app.component('rt-timing', Timing);
+app.component('rt-affinity', Affinity);
 app.mount('#app');
 
 if (import.meta.hot) {

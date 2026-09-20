@@ -63,6 +63,7 @@ export class SecretCard extends Card<
   override async payManaCost() {
     if (!this.canPayManaCost) return;
     await this.player.manaManager.spend(this.upfrontCost);
+    return this.upfrontCost;
   }
 
   get isCorrectPhaseToPlay() {

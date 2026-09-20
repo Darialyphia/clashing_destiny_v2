@@ -31,6 +31,7 @@ import type { PlayerClockState } from '../composables/useGameSocket';
 import PlayerResources from './PlayerResources.vue';
 import Deck from './Deck.vue';
 import GamePhaseIndicator from './GamePhaseIndicator.vue';
+import Debug from './Debug.vue';
 
 const { clocks } = defineProps<{
   clocks?: Record<string, PlayerClockState>;
@@ -40,7 +41,7 @@ const { clocks } = defineProps<{
 }>();
 
 const ui = useGameUi();
-const { playerId, client } = useGameClient();
+const { client } = useGameClient();
 const state = useGameState();
 const myPlayer = useMyPlayer();
 const opponent = useOpponentPlayer();
@@ -84,20 +85,10 @@ const isScreenDimmed = computed(() => {
   if (state.value.effectChain?.state === 'BUILDING') return true;
   return false;
 });
-
-const isDev = import.meta.env.DEV;
 </script>
 
 <template>
-  <div v-if="isDev" class="debug">
-    <div>You are: {{ playerId }}</div>
-    <div>Active players: {{ client.getActivePlayerIds().join(', ') }}</div>
-    <div>Game Phase: {{ state.phase.state }}</div>
-    <div>Selected Card: {{ ui.selectedCard?.id }}</div>
-    <div>Interaction State: {{ state.interaction.state }}</div>
-    <div>Hovered card id hand: {{ ui.hoveredCardInHand?.id }}</div>
-  </div>
-
+  <Debug />
   <div class="game-board-container">
     <PlayedCard />
     <ChooseCardModal />
@@ -167,24 +158,7 @@ const isDev = import.meta.env.DEV;
 :global(body:has(.game-board-container)) {
   overflow: hidden;
 }
-.debug {
-  position: fixed;
-  top: 0;
-  left: var(--size-13);
-  color: white;
-  font-size: var(--font-size-0);
-  z-index: 10;
-  background-color: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(4px);
-  padding: var(--size-4);
-  max-width: var(--size-xs);
-  @screen lt-lg {
-    font-size: var(--font-size-00);
-    padding: var(--size-2);
-    left: unset;
-    right: 0;
-  }
-}
+
 .game-board-container {
   width: 100vw;
   height: 100dvh;

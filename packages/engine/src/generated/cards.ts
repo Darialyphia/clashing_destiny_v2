@@ -57,7 +57,14 @@ export const cards = {
 "manaVortex": "manaVortex",
 "backstep": "backstep",
 "juxtaposition": "juxtaposition",
-"argeon-highmane": "argeon-highmane"
+"argeon-highmane": "argeon-highmane",
+"solarius": "solarius",
+"augury": "augury",
+"aegisBarrier": "aegisBarrier",
+"sunbreaker": "sunbreaker",
+"scintilla": "scintilla",
+"fiz": "fiz",
+"sky-burial": "sky-burial"
 } as const;
 
 export const collectableCards = {
@@ -112,7 +119,14 @@ export const collectableCards = {
 "manaVortex": "manaVortex",
 "backstep": "backstep",
 "juxtaposition": "juxtaposition",
-"argeon-highmane": "argeon-highmane"
+"argeon-highmane": "argeon-highmane",
+"solarius": "solarius",
+"augury": "augury",
+"aegisBarrier": "aegisBarrier",
+"sunbreaker": "sunbreaker",
+"scintilla": "scintilla",
+"fiz": "fiz",
+"sky-burial": "sky-burial"
 } as const;
 
 type CardSet = Array<{id: string; collectable: boolean; rarity: Rarity, kind: CardKind}>;
@@ -217,7 +231,7 @@ export const cardsBySet: Record<string, CardSet> = {
   {
     "id": "flutter-crane",
     "collectable": true,
-    "rarity": "common",
+    "rarity": "rare",
     "kind": "MINION"
   },
   {
@@ -391,7 +405,7 @@ export const cardsBySet: Record<string, CardSet> = {
   {
     "id": "sun-lion-priest",
     "collectable": true,
-    "rarity": "epic",
+    "rarity": "rare",
     "kind": "MINION"
   },
   {
@@ -403,7 +417,7 @@ export const cardsBySet: Record<string, CardSet> = {
   {
     "id": "war-judicator",
     "collectable": true,
-    "rarity": "epic",
+    "rarity": "rare",
     "kind": "MINION"
   },
   {
@@ -429,6 +443,48 @@ export const cardsBySet: Record<string, CardSet> = {
     "collectable": true,
     "rarity": "legendary",
     "kind": "MINION"
+  },
+  {
+    "id": "solarius",
+    "collectable": true,
+    "rarity": "epic",
+    "kind": "MINION"
+  },
+  {
+    "id": "augury",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "SPELL"
+  },
+  {
+    "id": "aegisBarrier",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "SPELL"
+  },
+  {
+    "id": "sunbreaker",
+    "collectable": true,
+    "rarity": "epic",
+    "kind": "MINION"
+  },
+  {
+    "id": "scintilla",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "MINION"
+  },
+  {
+    "id": "fiz",
+    "collectable": true,
+    "rarity": "rare",
+    "kind": "MINION"
+  },
+  {
+    "id": "sky-burial",
+    "collectable": true,
+    "rarity": "rare",
+    "kind": "SPELL"
   }
 ]
 };
@@ -485,7 +541,14 @@ export const cardShortIds: Record<string, number> = {
 "manaVortex": 51,
 "backstep": 52,
 "juxtaposition": 53,
-"argeon-highmane": 54
+"argeon-highmane": 54,
+"solarius": 55,
+"augury": 56,
+"aegisBarrier": 57,
+"sunbreaker": 58,
+"scintilla": 59,
+"fiz": 60,
+"sky-burial": 61
 } as const;
 
 export const cardIdByShortId: Record<number, string> = {
@@ -540,5 +603,12 @@ export const cardIdByShortId: Record<number, string> = {
 "51": "manaVortex",
 "52": "backstep",
 "53": "juxtaposition",
-"54": "argeon-highmane"
+"54": "argeon-highmane",
+"55": "solarius",
+"56": "augury",
+"57": "aegisBarrier",
+"58": "sunbreaker",
+"59": "scintilla",
+"60": "fiz",
+"61": "sky-burial"
 } as const;

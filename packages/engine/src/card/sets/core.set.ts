@@ -52,6 +52,13 @@ import { manaVortex } from './core/spells/mana-vortex';
 import { backstep } from './core/spells/backstep';
 import { juxtaposition } from './core/spells/juxtaposition';
 import { argeonHighmane } from './core/minions/argeon-highmane';
+import { solarius } from './core/minions/solarius';
+import { augury } from './core/spells/augury';
+import { aegisBarrier } from './core/spells/aegis-barrier';
+import { sunbreaker } from './core/minions/sunbreaker';
+import { scintilla } from './core/minions/scintilla';
+import { fiz } from './core/minions/fiz';
+import { skyBurial } from './core/spells/sky-burial';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -108,6 +115,13 @@ export const coreSet: CardSet = {
     manaVortex,
     backstep,
     juxtaposition,
-    argeonHighmane
+    argeonHighmane,
+    solarius,
+    augury,
+    aegisBarrier,
+    sunbreaker,
+    scintilla,
+    fiz,
+    skyBurial
   ]
 };

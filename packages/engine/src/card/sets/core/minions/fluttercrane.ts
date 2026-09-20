@@ -20,7 +20,7 @@ export const flutterCrane: MinionBlueprint = {
   setId: CARD_SETS.CORE,
   art: defaultCardArt('minions/fluttercrane'),
   kind: CARD_KINDS.MINION,
-  rarity: RARITIES.COMMON,
+  rarity: RARITIES.RARE,
   affinities: [AFFINITIES.FIRE, AFFINITIES.NEUTRAL],
   manaCost: 3,
   manaSupply: 1,

@@ -1,4 +1,4 @@
-import type { CardLocation } from '../../card/card.enums';
+import { AFFINITIES, type Affinity, type CardLocation } from '../../card/card.enums';
 import type { AnyCard } from '../../card/entities/card.entity';
 import type { Game } from '../../game/game';
 import { ModifierMixin } from '../modifier-mixin';
@@ -47,5 +47,44 @@ export class LocationToggleModifierMixin<
     super(game, () =>
       this.location.some(location => this.modifier.target.location === location)
     );
+  }
+}
+
+export class AffinitiesTogglableModifierMixin<
+  T extends AnyCard
+> extends TogglableModifierMixin<T> {
+  constructor(
+    game: Game,
+    private affinities: Affinity[]
+  ) {
+    super(game, () => {
+      const available = Object.fromEntries(
+        Object.values(AFFINITIES).map(affinity => [affinity, 0])
+      ) as Record<Affinity, number>;
+      this.modifier.target.player.cardManager.runeZone.forEach(card => {
+        card.affinities.forEach(affinity => {
+          available[affinity]++;
+        });
+      });
+      const nonNeutralCost = this.affinities.filter(
+        affinity => affinity !== AFFINITIES.NEUTRAL
+      );
+      const neutralCost = this.affinities.filter(
+        affinity => affinity === AFFINITIES.NEUTRAL
+      );
+
+      // try to pay non neutral cost first
+      for (const rune of nonNeutralCost) {
+        if (available[rune] > 0) {
+          available[rune]--;
+        } else {
+          return false;
+        }
+      }
+
+      const remaining = Object.values(available).reduce((sum, count) => sum + count, 0);
+
+      return remaining >= neutralCost.length;
+    });
   }
 }

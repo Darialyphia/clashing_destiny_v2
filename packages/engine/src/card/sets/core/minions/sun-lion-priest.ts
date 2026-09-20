@@ -25,7 +25,7 @@ export const sunlionPriest: MinionBlueprint = {
   setId: CARD_SETS.CORE,
   art: defaultCardArt('minions/war-exorcist'),
   kind: CARD_KINDS.MINION,
-  rarity: RARITIES.EPIC,
+  rarity: RARITIES.RARE,
   affinities: [AFFINITIES.LIGHT, AFFINITIES.LIGHT, AFFINITIES.NEUTRAL],
   manaCost: 5,
   manaSupply: 2,

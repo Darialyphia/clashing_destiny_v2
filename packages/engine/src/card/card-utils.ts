@@ -908,3 +908,58 @@ export const effectTargetRules = {
     };
   }
 };
+
+export const singleBattlefield = {
+  getTargets: async ({
+    game,
+    card,
+    timeoutFallback,
+    predicate = () => true,
+    label,
+    canCancel = false,
+    aiHints
+  }: {
+    game: Game;
+    card: AnyCard;
+    timeoutFallback: AnyCard[];
+    predicate: (c: DestinyCard) => boolean;
+    label: string;
+    canCancel?: boolean;
+    aiHints: {
+      shouldPick: (game: Game, player: Player, selectedCards: AnyCard[]) => number;
+    };
+  }): Promise<InteractionResult<Targets<DestinyCard>>> => {
+    const result = await game.interaction.selectCardsOnBoard<DestinyCard>({
+      player: card.player,
+      label,
+      source: card,
+      timeoutFallback,
+      canCancel,
+      aiHints,
+      isElligible(candidate) {
+        if (!isDestiny(candidate)) {
+          return false;
+        }
+
+        return predicate(candidate);
+      },
+      canCommit(selectedCards) {
+        return selectedCards.length >= 1;
+      },
+      isDone(selectedCards) {
+        return selectedCards.length === 1;
+      }
+    });
+    if (result.cancelled) {
+      return { cancelled: true as const, result: null };
+    }
+    return {
+      cancelled: false as const,
+      result: {
+        cards: result.result as DestinyCard[],
+        spaces: [],
+        effect: null
+      }
+    };
+  }
+};

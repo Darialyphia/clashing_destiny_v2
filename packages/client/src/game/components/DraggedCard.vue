@@ -4,7 +4,8 @@ import { useEventListener, useRafFn } from '@vueuse/core';
 import {
   useGameState,
   useGameClient,
-  useFxEvent
+  useFxEvent,
+  useGameUi
 } from '../composables/useGameClient';
 import {
   GAME_PHASES,
@@ -14,6 +15,7 @@ import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
 import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
 import GameCard from './GameCard.vue';
 
+const ui = useGameUi();
 const cardRotation = ref({ x: 0, y: 0 });
 const x = ref(0);
 const y = ref(0);
@@ -88,7 +90,7 @@ const draggedCard = computed(() => {
       client.value.optimisticStateManager.state.playedCardId
     ] as CardViewModel;
   } else if (state.value.phase.state == GAME_PHASES.PLAY_CARD) {
-    card = state.value.entities[state.value.phase.ctx.card] as CardViewModel;
+    card = ui.value.selectedCard;
   }
 
   if (card?.player.id !== playerId.value) card = null;

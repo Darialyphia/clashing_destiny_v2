@@ -1,6 +1,6 @@
 import dedent from 'dedent';
 import type { SpellBlueprint } from '../../../card-blueprint';
-import { anywhereTargetRules, defaultCardArt, isMinion } from '../../../card-utils';
+import { anywhereTargetRules, defaultCardArt } from '../../../card-utils';
 import {
   AFFINITIES,
   CARD_KINDS,
@@ -8,7 +8,6 @@ import {
   CARD_SPEED,
   RARITIES
 } from '../../../card.enums';
-import type { MinionCard } from '../../../entities/minion.entity';
 import { SpellDamage } from '../../../../utils/damage';
 
 export const tempest: SpellBlueprint = {
