@@ -317,6 +317,9 @@ export class GameClient {
   }
 
   cancelPlayingCard() {
+    const phase = this.state.phase;
+    if (phase.state !== GAME_PHASES.PLAY_CARD) return;
+
     const card = this.stateManager.getCard(this.state.phase.ctx.card)!;
     void this.fxAdapter.onCancelPlayCard(card, this);
 

@@ -47,12 +47,10 @@ const onMouseup = (event: MouseEvent) => {
 
 const isHovered = ref(false);
 const onMouseenter = () => {
-  if (!canSupply.value) return;
   isHovered.value = true;
 };
 
 const onMouseleave = () => {
-  if (!canSupply.value) return;
   isHovered.value = false;
 };
 </script>
@@ -60,7 +58,7 @@ const onMouseleave = () => {
 <template>
   <div
     class="supply-zone"
-    :class="{ hoverable: canSupply }"
+    :class="{ hoverable: canSupply, hovered: isHovered }"
     @mouseup="onMouseup"
     @mouseenter="onMouseenter"
     @mouseleave="onMouseleave"
@@ -96,6 +94,7 @@ const onMouseleave = () => {
   transition: box-shadow 0.3s var(--ease-2);
   display: flex;
   align-items: center;
+
   &.hoverable:hover {
     box-shadow: 0 0 35px var(--yellow-5);
   }
