@@ -20,15 +20,14 @@ import type { PlayerEventMap } from '../player/player.events';
 import { ABILITY_EVENTS, type AbilityEventMap } from '../card/events/ability.events';
 import type { TurnEventMap } from './systems/turn.system';
 import type { Player } from '../player/player.entity';
-
 import { MINION_EVENTS, type MinionCardEventMap } from '../card/events/minion.events';
-import { HERO_EVENTS, type HeroCardEventMap } from '../card/events/hero.events';
 import type { InteractionEventMap } from './systems/game-interaction.system';
 import {
   ARTIFACT_EVENTS,
   type ArtifactCardEventMap
 } from '../card/events/artifact.events';
 import { EFFECT_CHAIN_EVENTS, type EffectChainEventMap } from './effect-chain';
+import { END_PHASE_EVENTS, type EndPhaseEventMap } from './phases/end.phase';
 
 export class GameInputEvent extends TypedSerializableEvent<
   { input: Input<any> },
@@ -142,12 +141,12 @@ export type GameEventMap = Prettify<
     CardEventMap &
     CombatEventMap &
     MinionCardEventMap &
-    HeroCardEventMap &
     PlayerEventMap &
     AbilityEventMap &
     TurnEventMap &
     InteractionEventMap &
-    ArtifactCardEventMap
+    ArtifactCardEventMap &
+    EndPhaseEventMap
 >;
 
 export type GameEvent = Values<{
@@ -172,12 +171,12 @@ export const GAME_EVENTS = {
   ...CARD_EVENTS,
   ...COMBAT_EVENTS,
   ...MINION_EVENTS,
-  ...HERO_EVENTS,
   ...PLAYER_EVENTS,
   ...ABILITY_EVENTS,
   ...TURN_EVENTS,
   ...INTERACTION_EVENTS,
-  ...ARTIFACT_EVENTS
+  ...ARTIFACT_EVENTS,
+  ...END_PHASE_EVENTS
 } as const satisfies Record<string, GameEventName>;
 
 export type SerializedEvent<T extends keyof typeof GAME_EVENTS> = ReturnType<

@@ -6,199 +6,142 @@
 import type { Rarity, CardKind } from '../card/card.enums';
 
 export const cards = {
-"arcaneSight": "arcaneSight",
-"arcaneSpark": "arcaneSpark",
-"astralBall": "astralBall",
-"astralSage": "astralSage",
-"birdOfGoodLuck": "birdOfGoodLuck",
-"braveCitizen": "braveCitizen",
-"conjureFocus": "conjureFocus",
-"conjureMight": "conjureMight",
-"conjureResonance": "conjureResonance",
-"conjureWisdom": "conjureWisdom",
-"cremation": "cremation",
 "crowds-favor": "crowds-favor",
 "day-of-conquest": "day-of-conquest",
 "day-of-fortitude": "day-of-fortitude",
-"engulfInFlames": "engulfInFlames",
-"enigmaticWizard": "enigmaticWizard",
-"erinasApprentice": "erinasApprentice",
-"erina-violet-witch": "erina-violet-witch",
-"fallingStar": "fallingStar",
-"fireBall": "fireBall",
-"fireBolt": "fireBolt",
-"fireImp": "fireImp",
-"flameArchmage": "flameArchmage",
-"harold-vowed-crusader": "harold-vowed-crusader",
-"impassibleMonk": "impassibleMonk",
-"indomitableVindicator": "indomitableVindicator",
-"innerFire": "innerFire",
-"lesserFireSummoning": "lesserFireSummoning",
-"manaFueledGolem": "manaFueledGolem",
-"manaWeaverApprentice": "manaWeaverApprentice",
-"mountainProtector": "mountainProtector",
-"mysticRecall": "mysticRecall",
-"pyromancer": "pyromancer",
-"recklessRecruit": "recklessRecruit",
-"repulsorShield": "repulsorShield",
 "restrain-the-beast": "restrain-the-beast",
-"rockslideGolem": "rockslideGolem",
-"runicCatalyst": "runicCatalyst",
-"spellSiphon": "spellSiphon",
-"starconvergence": "starconvergence",
-"starSeer": "starSeer",
-"terramancer": "terramancer",
-"twinFlame": "twinFlame",
-"vineTrapper": "vineTrapper",
-"willowisp": "willowisp",
 "ashes-of-pain": "ashes-of-pain",
-"blast-sorcerer": "blast-sorcerer",
-"moltenSalamander": "moltenSalamander",
-"austerity": "austerity",
-"cosmicFlurry": "cosmicFlurry",
-"enjiOneManArmy": "enjiOneManArmy",
-"cosmicAvatar": "cosmicAvatar",
-"cosmicAvatarAlt": "cosmicAvatarAlt",
-"enjiOneManArmyFullArt": "enjiOneManArmyFullArt",
-"enjiOneManArmyAlt": "enjiOneManArmyAlt",
 "fleeting-thought": "fleeting-thought",
 "ignite-the-sky": "ignite-the-sky",
-"ancientTreant": "ancientTreant",
-"loamkinTender": "loamkinTender",
-"mosscloakQuartermaster": "mosscloakQuartermaster",
-"invigorate": "invigorate",
-"landSlide": "landSlide"
+"light-affinity": "light-affinity",
+"fire-affinity": "fire-affinity",
+"kaleos-xaan": "kaleos-xaan",
+"flamewreath": "flamewreath",
+"rythmweaver": "rythmweaver",
+"four-winds-magi": "four-winds-magi",
+"ghostLightning": "ghostLightning",
+"gorehorn": "gorehorn",
+"chakri-avatar": "chakri-avatar",
+"flutter-crane": "flutter-crane",
+"mistDragonSeal": "mistDragonSeal",
+"phoenixFire": "phoenixFire",
+"innerFocus": "innerFocus",
+"kaido-assassin": "kaido-assassin",
+"keshrai-fanblade": "keshrai-fanblade",
+"tusk-boar": "tusk-boar",
+"assassinationProtocol": "assassinationProtocol",
+"eightGates": "eightGates",
+"firestormMantra": "firestormMantra",
+"syvrel-the-exile": "syvrel-the-exile",
+"austerity": "austerity",
+"counterstrike": "counterstrike",
+"dagger-kiri": "dagger-kiri",
+"the-amber-pass": "the-amber-pass",
+"obscuring-blow": "obscuring-blow",
+"cycloneMask": "cycloneMask",
+"bloodrageMask": "bloodrageMask",
+"healing-mystic": "healing-mystic",
+"dancing-blades": "dancing-blades",
+"silverguard-knight": "silverguard-knight",
+"windblade-adept": "windblade-adept",
+"azurite-lion": "azurite-lion",
+"ironcliffe-guardian": "ironcliffe-guardian",
+"primus-fist": "primus-fist",
+"primus-shieldmaster": "primus-shieldmaster",
+"martyrdom": "martyrdom",
+"trueStrike": "trueStrike",
+"tempest": "tempest",
+"sun-lion-priest": "sun-lion-priest",
+"suntide-maiden": "suntide-maiden",
+"war-judicator": "war-judicator",
+"manaVortex": "manaVortex",
+"backstep": "backstep",
+"juxtaposition": "juxtaposition",
+"argeon-highmane": "argeon-highmane",
+"solarius": "solarius",
+"augury": "augury",
+"aegisBarrier": "aegisBarrier",
+"sunbreaker": "sunbreaker",
+"scintilla": "scintilla",
+"fiz": "fiz",
+"sky-burial": "sky-burial",
+"songweaver": "songweaver",
+"last-stand": "last-stand",
+"holy-immolation": "holy-immolation",
+"arclyte-regalia": "arclyte-regalia",
+"mistWalking": "mistWalking"
 } as const;
 
 export const collectableCards = {
-"arcaneSight": "arcaneSight",
-"arcaneSpark": "arcaneSpark",
-"astralSage": "astralSage",
-"birdOfGoodLuck": "birdOfGoodLuck",
-"braveCitizen": "braveCitizen",
-"conjureFocus": "conjureFocus",
-"conjureMight": "conjureMight",
-"conjureResonance": "conjureResonance",
-"conjureWisdom": "conjureWisdom",
-"cremation": "cremation",
 "crowds-favor": "crowds-favor",
 "day-of-conquest": "day-of-conquest",
 "day-of-fortitude": "day-of-fortitude",
-"engulfInFlames": "engulfInFlames",
-"enigmaticWizard": "enigmaticWizard",
-"erinasApprentice": "erinasApprentice",
-"erina-violet-witch": "erina-violet-witch",
-"fallingStar": "fallingStar",
-"fireBall": "fireBall",
-"fireBolt": "fireBolt",
-"fireImp": "fireImp",
-"flameArchmage": "flameArchmage",
-"harold-vowed-crusader": "harold-vowed-crusader",
-"impassibleMonk": "impassibleMonk",
-"indomitableVindicator": "indomitableVindicator",
-"innerFire": "innerFire",
-"lesserFireSummoning": "lesserFireSummoning",
-"manaFueledGolem": "manaFueledGolem",
-"manaWeaverApprentice": "manaWeaverApprentice",
-"mountainProtector": "mountainProtector",
-"mysticRecall": "mysticRecall",
-"pyromancer": "pyromancer",
-"recklessRecruit": "recklessRecruit",
-"repulsorShield": "repulsorShield",
 "restrain-the-beast": "restrain-the-beast",
-"rockslideGolem": "rockslideGolem",
-"runicCatalyst": "runicCatalyst",
-"spellSiphon": "spellSiphon",
-"starconvergence": "starconvergence",
-"starSeer": "starSeer",
-"terramancer": "terramancer",
-"twinFlame": "twinFlame",
-"vineTrapper": "vineTrapper",
 "ashes-of-pain": "ashes-of-pain",
-"blast-sorcerer": "blast-sorcerer",
-"moltenSalamander": "moltenSalamander",
-"austerity": "austerity",
-"cosmicFlurry": "cosmicFlurry",
-"enjiOneManArmy": "enjiOneManArmy",
-"cosmicAvatar": "cosmicAvatar",
 "fleeting-thought": "fleeting-thought",
 "ignite-the-sky": "ignite-the-sky",
-"ancientTreant": "ancientTreant",
-"loamkinTender": "loamkinTender",
-"mosscloakQuartermaster": "mosscloakQuartermaster",
-"invigorate": "invigorate",
-"landSlide": "landSlide"
+"light-affinity": "light-affinity",
+"fire-affinity": "fire-affinity",
+"kaleos-xaan": "kaleos-xaan",
+"flamewreath": "flamewreath",
+"rythmweaver": "rythmweaver",
+"four-winds-magi": "four-winds-magi",
+"ghostLightning": "ghostLightning",
+"gorehorn": "gorehorn",
+"chakri-avatar": "chakri-avatar",
+"flutter-crane": "flutter-crane",
+"mistDragonSeal": "mistDragonSeal",
+"phoenixFire": "phoenixFire",
+"innerFocus": "innerFocus",
+"kaido-assassin": "kaido-assassin",
+"keshrai-fanblade": "keshrai-fanblade",
+"tusk-boar": "tusk-boar",
+"assassinationProtocol": "assassinationProtocol",
+"eightGates": "eightGates",
+"firestormMantra": "firestormMantra",
+"syvrel-the-exile": "syvrel-the-exile",
+"austerity": "austerity",
+"counterstrike": "counterstrike",
+"dagger-kiri": "dagger-kiri",
+"the-amber-pass": "the-amber-pass",
+"obscuring-blow": "obscuring-blow",
+"cycloneMask": "cycloneMask",
+"bloodrageMask": "bloodrageMask",
+"healing-mystic": "healing-mystic",
+"dancing-blades": "dancing-blades",
+"silverguard-knight": "silverguard-knight",
+"windblade-adept": "windblade-adept",
+"azurite-lion": "azurite-lion",
+"ironcliffe-guardian": "ironcliffe-guardian",
+"primus-fist": "primus-fist",
+"primus-shieldmaster": "primus-shieldmaster",
+"martyrdom": "martyrdom",
+"trueStrike": "trueStrike",
+"tempest": "tempest",
+"sun-lion-priest": "sun-lion-priest",
+"suntide-maiden": "suntide-maiden",
+"war-judicator": "war-judicator",
+"manaVortex": "manaVortex",
+"backstep": "backstep",
+"juxtaposition": "juxtaposition",
+"argeon-highmane": "argeon-highmane",
+"solarius": "solarius",
+"augury": "augury",
+"aegisBarrier": "aegisBarrier",
+"sunbreaker": "sunbreaker",
+"scintilla": "scintilla",
+"fiz": "fiz",
+"sky-burial": "sky-burial",
+"songweaver": "songweaver",
+"last-stand": "last-stand",
+"holy-immolation": "holy-immolation",
+"arclyte-regalia": "arclyte-regalia",
+"mistWalking": "mistWalking"
 } as const;
 
 type CardSet = Array<{id: string; collectable: boolean; rarity: Rarity, kind: CardKind}>;
 export const cardsBySet: Record<string, CardSet> = {
 "CORE": [
-  {
-    "id": "arcaneSight",
-    "collectable": true,
-    "rarity": "common",
-    "kind": "SPELL"
-  },
-  {
-    "id": "arcaneSpark",
-    "collectable": true,
-    "rarity": "common",
-    "kind": "SPELL"
-  },
-  {
-    "id": "astralBall",
-    "collectable": false,
-    "rarity": "token",
-    "kind": "MINION"
-  },
-  {
-    "id": "astralSage",
-    "collectable": true,
-    "rarity": "epic",
-    "kind": "MINION"
-  },
-  {
-    "id": "birdOfGoodLuck",
-    "collectable": true,
-    "rarity": "epic",
-    "kind": "MINION"
-  },
-  {
-    "id": "braveCitizen",
-    "collectable": true,
-    "rarity": "common",
-    "kind": "MINION"
-  },
-  {
-    "id": "conjureFocus",
-    "collectable": true,
-    "rarity": "rare",
-    "kind": "SPELL"
-  },
-  {
-    "id": "conjureMight",
-    "collectable": true,
-    "rarity": "rare",
-    "kind": "SPELL"
-  },
-  {
-    "id": "conjureResonance",
-    "collectable": true,
-    "rarity": "rare",
-    "kind": "SPELL"
-  },
-  {
-    "id": "conjureWisdom",
-    "collectable": true,
-    "rarity": "rare",
-    "kind": "SPELL"
-  },
-  {
-    "id": "cremation",
-    "collectable": true,
-    "rarity": "common",
-    "kind": "SPELL"
-  },
   {
     "id": "crowds-favor",
     "collectable": true,
@@ -218,250 +161,16 @@ export const cardsBySet: Record<string, CardSet> = {
     "kind": "DESTINY"
   },
   {
-    "id": "engulfInFlames",
-    "collectable": true,
-    "rarity": "rare",
-    "kind": "SPELL"
-  },
-  {
-    "id": "enigmaticWizard",
-    "collectable": true,
-    "rarity": "epic",
-    "kind": "MINION"
-  },
-  {
-    "id": "erinasApprentice",
-    "collectable": true,
-    "rarity": "rare",
-    "kind": "MINION"
-  },
-  {
-    "id": "erina-violet-witch",
-    "collectable": true,
-    "rarity": "epic",
-    "kind": "HERO"
-  },
-  {
-    "id": "fallingStar",
-    "collectable": true,
-    "rarity": "rare",
-    "kind": "SPELL"
-  },
-  {
-    "id": "fireBall",
-    "collectable": true,
-    "rarity": "rare",
-    "kind": "SPELL"
-  },
-  {
-    "id": "fireBolt",
-    "collectable": true,
-    "rarity": "common",
-    "kind": "SPELL"
-  },
-  {
-    "id": "fireImp",
-    "collectable": true,
-    "rarity": "common",
-    "kind": "MINION"
-  },
-  {
-    "id": "flameArchmage",
-    "collectable": true,
-    "rarity": "epic",
-    "kind": "MINION"
-  },
-  {
-    "id": "harold-vowed-crusader",
-    "collectable": true,
-    "rarity": "epic",
-    "kind": "HERO"
-  },
-  {
-    "id": "impassibleMonk",
-    "collectable": true,
-    "rarity": "rare",
-    "kind": "MINION"
-  },
-  {
-    "id": "indomitableVindicator",
-    "collectable": true,
-    "rarity": "rare",
-    "kind": "MINION"
-  },
-  {
-    "id": "innerFire",
-    "collectable": true,
-    "rarity": "common",
-    "kind": "SPELL"
-  },
-  {
-    "id": "lesserFireSummoning",
-    "collectable": true,
-    "rarity": "common",
-    "kind": "SPELL"
-  },
-  {
-    "id": "manaFueledGolem",
-    "collectable": true,
-    "rarity": "rare",
-    "kind": "MINION"
-  },
-  {
-    "id": "manaWeaverApprentice",
-    "collectable": true,
-    "rarity": "common",
-    "kind": "MINION"
-  },
-  {
-    "id": "mountainProtector",
-    "collectable": true,
-    "rarity": "common",
-    "kind": "MINION"
-  },
-  {
-    "id": "mysticRecall",
-    "collectable": true,
-    "rarity": "common",
-    "kind": "SPELL"
-  },
-  {
-    "id": "pyromancer",
-    "collectable": true,
-    "rarity": "common",
-    "kind": "MINION"
-  },
-  {
-    "id": "recklessRecruit",
-    "collectable": true,
-    "rarity": "common",
-    "kind": "MINION"
-  },
-  {
-    "id": "repulsorShield",
-    "collectable": true,
-    "rarity": "common",
-    "kind": "SPELL"
-  },
-  {
     "id": "restrain-the-beast",
     "collectable": true,
     "rarity": "common",
     "kind": "DESTINY"
   },
   {
-    "id": "rockslideGolem",
-    "collectable": true,
-    "rarity": "common",
-    "kind": "MINION"
-  },
-  {
-    "id": "runicCatalyst",
-    "collectable": true,
-    "rarity": "common",
-    "kind": "ARTIFACT"
-  },
-  {
-    "id": "spellSiphon",
-    "collectable": true,
-    "rarity": "rare",
-    "kind": "SPELL"
-  },
-  {
-    "id": "starconvergence",
-    "collectable": true,
-    "rarity": "rare",
-    "kind": "SPELL"
-  },
-  {
-    "id": "starSeer",
-    "collectable": true,
-    "rarity": "common",
-    "kind": "MINION"
-  },
-  {
-    "id": "terramancer",
-    "collectable": true,
-    "rarity": "rare",
-    "kind": "MINION"
-  },
-  {
-    "id": "twinFlame",
-    "collectable": true,
-    "rarity": "rare",
-    "kind": "SPELL"
-  },
-  {
-    "id": "vineTrapper",
-    "collectable": true,
-    "rarity": "rare",
-    "kind": "MINION"
-  },
-  {
-    "id": "willowisp",
-    "collectable": false,
-    "rarity": "common",
-    "kind": "MINION"
-  },
-  {
     "id": "ashes-of-pain",
     "collectable": true,
     "rarity": "rare",
     "kind": "DESTINY"
-  },
-  {
-    "id": "blast-sorcerer",
-    "collectable": true,
-    "rarity": "common",
-    "kind": "MINION"
-  },
-  {
-    "id": "moltenSalamander",
-    "collectable": true,
-    "rarity": "common",
-    "kind": "MINION"
-  },
-  {
-    "id": "austerity",
-    "collectable": true,
-    "rarity": "epic",
-    "kind": "DESTINY"
-  },
-  {
-    "id": "cosmicFlurry",
-    "collectable": true,
-    "rarity": "rare",
-    "kind": "SPELL"
-  },
-  {
-    "id": "enjiOneManArmy",
-    "collectable": true,
-    "rarity": "legendary",
-    "kind": "MINION"
-  },
-  {
-    "id": "cosmicAvatar",
-    "collectable": true,
-    "rarity": "legendary",
-    "kind": "MINION"
-  },
-  {
-    "id": "cosmicAvatarAlt",
-    "collectable": false,
-    "rarity": "legendary",
-    "kind": "MINION"
-  },
-  {
-    "id": "enjiOneManArmyFullArt",
-    "collectable": false,
-    "rarity": "legendary",
-    "kind": "MINION"
-  },
-  {
-    "id": "enjiOneManArmyAlt",
-    "collectable": false,
-    "rarity": "legendary",
-    "kind": "MINION"
   },
   {
     "id": "fleeting-thought",
@@ -476,31 +185,343 @@ export const cardsBySet: Record<string, CardSet> = {
     "kind": "DESTINY"
   },
   {
-    "id": "ancientTreant",
+    "id": "light-affinity",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "RUNE"
+  },
+  {
+    "id": "fire-affinity",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "RUNE"
+  },
+  {
+    "id": "kaleos-xaan",
     "collectable": true,
     "rarity": "legendary",
     "kind": "MINION"
   },
   {
-    "id": "loamkinTender",
+    "id": "flamewreath",
+    "collectable": true,
+    "rarity": "rare",
+    "kind": "MINION"
+  },
+  {
+    "id": "rythmweaver",
     "collectable": true,
     "rarity": "common",
     "kind": "MINION"
   },
   {
-    "id": "mosscloakQuartermaster",
+    "id": "four-winds-magi",
     "collectable": true,
-    "rarity": "common",
+    "rarity": "rare",
     "kind": "MINION"
   },
   {
-    "id": "invigorate",
+    "id": "ghostLightning",
     "collectable": true,
     "rarity": "common",
     "kind": "SPELL"
   },
   {
-    "id": "landSlide",
+    "id": "gorehorn",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "MINION"
+  },
+  {
+    "id": "chakri-avatar",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "MINION"
+  },
+  {
+    "id": "flutter-crane",
+    "collectable": true,
+    "rarity": "rare",
+    "kind": "MINION"
+  },
+  {
+    "id": "mistDragonSeal",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "SPELL"
+  },
+  {
+    "id": "phoenixFire",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "SPELL"
+  },
+  {
+    "id": "innerFocus",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "SPELL"
+  },
+  {
+    "id": "kaido-assassin",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "MINION"
+  },
+  {
+    "id": "keshrai-fanblade",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "MINION"
+  },
+  {
+    "id": "tusk-boar",
+    "collectable": true,
+    "rarity": "legendary",
+    "kind": "MINION"
+  },
+  {
+    "id": "assassinationProtocol",
+    "collectable": true,
+    "rarity": "rare",
+    "kind": "SPELL"
+  },
+  {
+    "id": "eightGates",
+    "collectable": true,
+    "rarity": "epic",
+    "kind": "SPELL"
+  },
+  {
+    "id": "firestormMantra",
+    "collectable": true,
+    "rarity": "epic",
+    "kind": "SPELL"
+  },
+  {
+    "id": "syvrel-the-exile",
+    "collectable": true,
+    "rarity": "rare",
+    "kind": "MINION"
+  },
+  {
+    "id": "austerity",
+    "collectable": true,
+    "rarity": "epic",
+    "kind": "DESTINY"
+  },
+  {
+    "id": "counterstrike",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "SECRET"
+  },
+  {
+    "id": "dagger-kiri",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "MINION"
+  },
+  {
+    "id": "the-amber-pass",
+    "collectable": true,
+    "rarity": "rare",
+    "kind": "DESTINY"
+  },
+  {
+    "id": "obscuring-blow",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "SECRET"
+  },
+  {
+    "id": "cycloneMask",
+    "collectable": true,
+    "rarity": "rare",
+    "kind": "ARTIFACT"
+  },
+  {
+    "id": "bloodrageMask",
+    "collectable": true,
+    "rarity": "rare",
+    "kind": "ARTIFACT"
+  },
+  {
+    "id": "healing-mystic",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "MINION"
+  },
+  {
+    "id": "dancing-blades",
+    "collectable": true,
+    "rarity": "rare",
+    "kind": "MINION"
+  },
+  {
+    "id": "silverguard-knight",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "MINION"
+  },
+  {
+    "id": "windblade-adept",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "MINION"
+  },
+  {
+    "id": "azurite-lion",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "MINION"
+  },
+  {
+    "id": "ironcliffe-guardian",
+    "collectable": true,
+    "rarity": "rare",
+    "kind": "MINION"
+  },
+  {
+    "id": "primus-fist",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "MINION"
+  },
+  {
+    "id": "primus-shieldmaster",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "MINION"
+  },
+  {
+    "id": "martyrdom",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "SPELL"
+  },
+  {
+    "id": "trueStrike",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "SPELL"
+  },
+  {
+    "id": "tempest",
+    "collectable": true,
+    "rarity": "rare",
+    "kind": "SPELL"
+  },
+  {
+    "id": "sun-lion-priest",
+    "collectable": true,
+    "rarity": "rare",
+    "kind": "MINION"
+  },
+  {
+    "id": "suntide-maiden",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "MINION"
+  },
+  {
+    "id": "war-judicator",
+    "collectable": true,
+    "rarity": "rare",
+    "kind": "MINION"
+  },
+  {
+    "id": "manaVortex",
+    "collectable": true,
+    "rarity": "rare",
+    "kind": "SPELL"
+  },
+  {
+    "id": "backstep",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "SPELL"
+  },
+  {
+    "id": "juxtaposition",
+    "collectable": true,
+    "rarity": "epic",
+    "kind": "SPELL"
+  },
+  {
+    "id": "argeon-highmane",
+    "collectable": true,
+    "rarity": "legendary",
+    "kind": "MINION"
+  },
+  {
+    "id": "solarius",
+    "collectable": true,
+    "rarity": "epic",
+    "kind": "MINION"
+  },
+  {
+    "id": "augury",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "SPELL"
+  },
+  {
+    "id": "aegisBarrier",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "SPELL"
+  },
+  {
+    "id": "sunbreaker",
+    "collectable": true,
+    "rarity": "epic",
+    "kind": "MINION"
+  },
+  {
+    "id": "scintilla",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "MINION"
+  },
+  {
+    "id": "fiz",
+    "collectable": true,
+    "rarity": "rare",
+    "kind": "MINION"
+  },
+  {
+    "id": "sky-burial",
+    "collectable": true,
+    "rarity": "rare",
+    "kind": "SPELL"
+  },
+  {
+    "id": "songweaver",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "MINION"
+  },
+  {
+    "id": "last-stand",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "SECRET"
+  },
+  {
+    "id": "holy-immolation",
+    "collectable": true,
+    "rarity": "epic",
+    "kind": "SECRET"
+  },
+  {
+    "id": "arclyte-regalia",
+    "collectable": true,
+    "rarity": "rare",
+    "kind": "ARTIFACT"
+  },
+  {
+    "id": "mistWalking",
     "collectable": true,
     "rarity": "common",
     "kind": "SPELL"
@@ -509,131 +530,135 @@ export const cardsBySet: Record<string, CardSet> = {
 };
 
 export const cardShortIds: Record<string, number> = {
-"arcaneSight": 16,
-"arcaneSpark": 21,
-"astralBall": 34,
-"astralSage": 37,
-"birdOfGoodLuck": 28,
-"braveCitizen": 4,
-"conjureFocus": 19,
-"conjureMight": 17,
-"conjureResonance": 20,
-"conjureWisdom": 18,
-"cremation": 7,
-"crowds-favor": 30,
-"day-of-conquest": 13,
-"day-of-fortitude": 12,
-"engulfInFlames": 10,
-"enigmaticWizard": 33,
-"erinasApprentice": 32,
-"erina-violet-witch": 1,
-"fallingStar": 23,
-"fireBall": 9,
-"fireBolt": 2,
-"fireImp": 14,
-"flameArchmage": 15,
-"harold-vowed-crusader": 38,
-"impassibleMonk": 42,
-"indomitableVindicator": 35,
-"innerFire": 8,
-"lesserFireSummoning": 11,
-"manaFueledGolem": 31,
-"manaWeaverApprentice": 25,
-"mountainProtector": 40,
-"mysticRecall": 26,
-"pyromancer": 3,
-"recklessRecruit": 5,
-"repulsorShield": 22,
-"restrain-the-beast": 29,
-"rockslideGolem": 43,
-"runicCatalyst": 45,
-"spellSiphon": 39,
-"starconvergence": 27,
-"starSeer": 24,
-"terramancer": 44,
-"twinFlame": 36,
-"vineTrapper": 41,
-"willowisp": 6,
-"ashes-of-pain": 46,
-"blast-sorcerer": 47,
-"moltenSalamander": 48,
-"austerity": 49,
-"cosmicFlurry": 50,
-"enjiOneManArmy": 51,
-"cosmicAvatar": 52,
-"cosmicAvatarAlt": 53,
-"enjiOneManArmyFullArt": 54,
-"enjiOneManArmyAlt": 55,
-"fleeting-thought": 56,
-"ignite-the-sky": 57,
-"ancientTreant": 58,
-"loamkinTender": 59,
-"mosscloakQuartermaster": 60,
-"invigorate": 62,
-"landSlide": 61
+"crowds-favor": 1,
+"day-of-conquest": 2,
+"day-of-fortitude": 3,
+"restrain-the-beast": 4,
+"ashes-of-pain": 5,
+"fleeting-thought": 7,
+"ignite-the-sky": 8,
+"light-affinity": 9,
+"fire-affinity": 10,
+"kaleos-xaan": 11,
+"flamewreath": 12,
+"rythmweaver": 13,
+"four-winds-magi": 14,
+"ghostLightning": 15,
+"gorehorn": 16,
+"chakri-avatar": 17,
+"flutter-crane": 18,
+"mistDragonSeal": 19,
+"phoenixFire": 20,
+"innerFocus": 21,
+"kaido-assassin": 22,
+"keshrai-fanblade": 23,
+"tusk-boar": 24,
+"assassinationProtocol": 25,
+"eightGates": 26,
+"firestormMantra": 27,
+"syvrel-the-exile": 28,
+"austerity": 30,
+"counterstrike": 31,
+"dagger-kiri": 32,
+"the-amber-pass": 33,
+"obscuring-blow": 34,
+"cycloneMask": 35,
+"bloodrageMask": 36,
+"healing-mystic": 37,
+"dancing-blades": 38,
+"silverguard-knight": 39,
+"windblade-adept": 40,
+"azurite-lion": 41,
+"ironcliffe-guardian": 42,
+"primus-fist": 43,
+"primus-shieldmaster": 44,
+"martyrdom": 45,
+"trueStrike": 46,
+"tempest": 47,
+"sun-lion-priest": 48,
+"suntide-maiden": 49,
+"war-judicator": 50,
+"manaVortex": 51,
+"backstep": 52,
+"juxtaposition": 53,
+"argeon-highmane": 54,
+"solarius": 55,
+"augury": 56,
+"aegisBarrier": 57,
+"sunbreaker": 58,
+"scintilla": 59,
+"fiz": 60,
+"sky-burial": 61,
+"songweaver": 62,
+"last-stand": 63,
+"holy-immolation": 64,
+"arclyte-regalia": 65,
+"mistWalking": 66
 } as const;
 
 export const cardIdByShortId: Record<number, string> = {
-"1": "erina-violet-witch",
-"2": "fireBolt",
-"3": "pyromancer",
-"4": "braveCitizen",
-"5": "recklessRecruit",
-"6": "willowisp",
-"7": "cremation",
-"8": "innerFire",
-"9": "fireBall",
-"10": "engulfInFlames",
-"11": "lesserFireSummoning",
-"12": "day-of-fortitude",
-"13": "day-of-conquest",
-"14": "fireImp",
-"15": "flameArchmage",
-"16": "arcaneSight",
-"17": "conjureMight",
-"18": "conjureWisdom",
-"19": "conjureFocus",
-"20": "conjureResonance",
-"21": "arcaneSpark",
-"22": "repulsorShield",
-"23": "fallingStar",
-"24": "starSeer",
-"25": "manaWeaverApprentice",
-"26": "mysticRecall",
-"27": "starconvergence",
-"28": "birdOfGoodLuck",
-"29": "restrain-the-beast",
-"30": "crowds-favor",
-"31": "manaFueledGolem",
-"32": "erinasApprentice",
-"33": "enigmaticWizard",
-"34": "astralBall",
-"35": "indomitableVindicator",
-"36": "twinFlame",
-"37": "astralSage",
-"38": "harold-vowed-crusader",
-"39": "spellSiphon",
-"40": "mountainProtector",
-"41": "vineTrapper",
-"42": "impassibleMonk",
-"43": "rockslideGolem",
-"44": "terramancer",
-"45": "runicCatalyst",
-"46": "ashes-of-pain",
-"47": "blast-sorcerer",
-"48": "moltenSalamander",
-"49": "austerity",
-"50": "cosmicFlurry",
-"51": "enjiOneManArmy",
-"52": "cosmicAvatar",
-"53": "cosmicAvatarAlt",
-"54": "enjiOneManArmyFullArt",
-"55": "enjiOneManArmyAlt",
-"56": "fleeting-thought",
-"57": "ignite-the-sky",
-"58": "ancientTreant",
-"59": "loamkinTender",
-"60": "mosscloakQuartermaster",
-"61": "landSlide",
-"62": "invigorate"
+"1": "crowds-favor",
+"2": "day-of-conquest",
+"3": "day-of-fortitude",
+"4": "restrain-the-beast",
+"5": "ashes-of-pain",
+"7": "fleeting-thought",
+"8": "ignite-the-sky",
+"9": "light-affinity",
+"10": "fire-affinity",
+"11": "kaleos-xaan",
+"12": "flamewreath",
+"13": "rythmweaver",
+"14": "four-winds-magi",
+"15": "ghostLightning",
+"16": "gorehorn",
+"17": "chakri-avatar",
+"18": "flutter-crane",
+"19": "mistDragonSeal",
+"20": "phoenixFire",
+"21": "innerFocus",
+"22": "kaido-assassin",
+"23": "keshrai-fanblade",
+"24": "tusk-boar",
+"25": "assassinationProtocol",
+"26": "eightGates",
+"27": "firestormMantra",
+"28": "syvrel-the-exile",
+"30": "austerity",
+"31": "counterstrike",
+"32": "dagger-kiri",
+"33": "the-amber-pass",
+"34": "obscuring-blow",
+"35": "cycloneMask",
+"36": "bloodrageMask",
+"37": "healing-mystic",
+"38": "dancing-blades",
+"39": "silverguard-knight",
+"40": "windblade-adept",
+"41": "azurite-lion",
+"42": "ironcliffe-guardian",
+"43": "primus-fist",
+"44": "primus-shieldmaster",
+"45": "martyrdom",
+"46": "trueStrike",
+"47": "tempest",
+"48": "sun-lion-priest",
+"49": "suntide-maiden",
+"50": "war-judicator",
+"51": "manaVortex",
+"52": "backstep",
+"53": "juxtaposition",
+"54": "argeon-highmane",
+"55": "solarius",
+"56": "augury",
+"57": "aegisBarrier",
+"58": "sunbreaker",
+"59": "scintilla",
+"60": "fiz",
+"61": "sky-burial",
+"62": "songweaver",
+"63": "last-stand",
+"64": "holy-immolation",
+"65": "arclyte-regalia",
+"66": "mistWalking"
 } as const;

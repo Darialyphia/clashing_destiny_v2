@@ -14,17 +14,18 @@ import { nanoid } from 'nanoid';
 
 export type DeckBuilderCardPool = Array<CardBlueprint>;
 
-type DeckBuilderCardMeta = {
+export type DeckBuilderCardMeta = {
   cardId: CardId;
   isFoil: boolean;
 };
 
 const KIND_ORDER = {
-  [CARD_KINDS.HERO]: 0,
+  [CARD_KINDS.MINION]: 0,
+  [CARD_KINDS.SPELL]: 0,
+  [CARD_KINDS.ARTIFACT]: 0,
+  [CARD_KINDS.SECRET]: 0,
   [CARD_KINDS.DESTINY]: 1,
-  [CARD_KINDS.MINION]: 2,
-  [CARD_KINDS.SPELL]: 2,
-  [CARD_KINDS.ARTIFACT]: 2
+  [CARD_KINDS.RUNE]: 2
 };
 
 export type DeckBuilderDeck = ValidatableDeck<DeckBuilderCardMeta>;
@@ -129,8 +130,12 @@ export class DeckBuilderViewModel {
     }
   }
 
-  getCard(blueprintId: string) {
+  getCardByBlueprintId(blueprintId: string) {
     return this._deck.cards.find(card => card.blueprintId === blueprintId);
+  }
+
+  getCardById(cardId: string) {
+    return this._deck.cards.find(card => card.meta.cardId === cardId);
   }
 
   get validator() {
@@ -159,13 +164,6 @@ export class DeckBuilderViewModel {
       .sort((a, b) => {
         if (KIND_ORDER[a.blueprint.kind] !== KIND_ORDER[b.blueprint.kind]) {
           return KIND_ORDER[a.blueprint.kind] - KIND_ORDER[b.blueprint.kind];
-        }
-
-        if (
-          a.blueprint.kind === CARD_KINDS.HERO &&
-          b.blueprint.kind === CARD_KINDS.HERO
-        ) {
-          return a.blueprint.name.localeCompare(b.blueprint.name);
         }
 
         if (

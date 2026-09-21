@@ -475,9 +475,96 @@ onUnmounted(() => {
           </div>
 
           <blockquote style="--color: #d7ad42">
-            For both decks, cards must share an
+            For both decks, cards must either share a
+            <strong class="text-slate-200">Class</strong>
+            or an
             <strong class="text-slate-200">Affinity</strong>
-            with your Hero , or have the Neutral affinity.
+            with your Hero.
+
+            <div class="flex justify-around flex-wrap gap-2 my-3">
+              <span
+                class="affinity bg-blue-950/40 border border-blue-500/30 text-blue-400"
+              >
+                <img :src="assets[`ui/card/v2/job-flag-warrior`].path" />
+                Warrior
+              </span>
+              <span
+                class="affinity bg-purple-950/40 border border-purple-500/30 text-purple-400"
+              >
+                <img :src="assets[`ui/card/v2/job-flag-mage`].path" />
+                Mage
+              </span>
+              <span
+                class="affinity bg-red-950/40 border border-red-500/30 text-red-400"
+              >
+                <img :src="assets[`ui/card/v2/job-flag-rogue`].path" />
+                Rogue
+              </span>
+              <span
+                class="affinity bg-yellow-950/40 border border-yellow-500/30 text-yellow-400"
+              >
+                <img :src="assets[`ui/card/v2/job-flag-acolyte`].path" />
+                Acolyte
+              </span>
+              <span
+                class="affinity bg-green-950/40 border border-green-500/30 text-green-400"
+              >
+                <img :src="assets[`ui/card/v2/job-flag-ranger`].path" />
+                Ranger
+              </span>
+            </div>
+
+            <p class="text-center mb-5">
+              Classes define which Units and Artifacts you can put in your deck
+            </p>
+            <div class="flex justify-around flex-wrap gap-2 mb-3">
+              <span
+                class="affinity bg-red-950/40 border border-red-500/30 text-red-400"
+              >
+                <img :src="assets[`ui/card/v2/affinity-flag-fire`].path" />
+                Fire
+              </span>
+              <span
+                class="affinity bg-blue-950/40 border border-blue-500/30 text-blue-400"
+              >
+                <img :src="assets[`ui/card/v2/affinity-flag-water`].path" />
+                Water
+              </span>
+              <span
+                class="affinity bg-teal-950/40 border border-teal-500/30 text-teal-400"
+              >
+                <img :src="assets[`ui/card/v2/affinity-flag-air`].path" />
+                Air
+              </span>
+              <span
+                class="affinity bg-lime-950/40 border border-lime-500/30 text-lime-500"
+              >
+                <img :src="assets[`ui/card/v2/affinity-flag-earth`].path" />
+                Earth
+              </span>
+              <span
+                class="affinity bg-yellow-950/40 border border-yellow-200/30 text-yellow-200"
+              >
+                <img :src="assets[`ui/card/v2/affinity-flag-light`].path" />
+                Light
+              </span>
+              <span
+                class="affinity bg-slate-950/40 border border-slate-500/30 text-slate-400"
+              >
+                <img :src="assets[`ui/card/v2/affinity-flag-dark`].path" />
+                Dark
+              </span>
+              <span
+                class="affinity bg-purple-950/40 border border-purple-500/30 text-purple-400"
+              >
+                <img :src="assets[`ui/card/v2/affinity-flag-arcane`].path" />
+                Arcane
+              </span>
+            </div>
+
+            <p class="text-center">
+              Classes define which Spells you can put in your deck
+            </p>
           </blockquote>
         </div>
       </section>
@@ -520,59 +607,36 @@ onUnmounted(() => {
               />
             </div>
             <p class="mb-3">
-              Each deck has one Hero Card. It defines which affinities you are
-              able to use in your deck. There are 7 affinities:
+              Each deck has one Hero Card. While not present on the board,
+              Heroes play a large part in the game by determining which card can
+              be put into your deck
             </p>
-            <div class="flex justify-around flex-wrap gap-2 mb-3">
+            <p>
+              Heroes also have stats that will increase over the course of the
+              game, allowing to play stronger cards
+            </p>
+
+            <div class="flex justify-around flex-wrap gap-2 my-3">
               <span
                 class="affinity bg-red-950/40 border border-red-500/30 text-red-400"
               >
-                <img :src="assets[`ui/card/v2/affinity-flag-fire`].path" />
-                Fire
+                <img :src="assets[`ui/card/v2/might`].path" />
+                Might
+              </span>
+              <span
+                class="affinity bg-green-950/40 border border-green-500/30 text-green-400"
+              >
+                <img :src="assets[`ui/card/v2/focus`].path" />
+                Focus
               </span>
               <span
                 class="affinity bg-blue-950/40 border border-blue-500/30 text-blue-400"
               >
-                <img :src="assets[`ui/card/v2/affinity-flag-water`].path" />
-                Water
-              </span>
-              <span
-                class="affinity bg-teal-950/40 border border-teal-500/30 text-teal-400"
-              >
-                <img :src="assets[`ui/card/v2/affinity-flag-air`].path" />
-                Air
-              </span>
-              <span
-                class="affinity bg-lime-950/40 border border-lime-500/30 text-lime-500"
-              >
-                <img :src="assets[`ui/card/v2/affinity-flag-earth`].path" />
-                Earth
-              </span>
-              <span
-                class="affinity bg-yellow-950/40 border border-yellow-200/30 text-yellow-200"
-              >
-                <img :src="assets[`ui/card/v2/affinity-flag-light`].path" />
-                Light
-              </span>
-              <span
-                class="affinity bg-fuchsia-950/40 border border-fuchsia-500/30 text-fuchsia-400"
-              >
-                <img :src="assets[`ui/card/v2/affinity-flag-dark`].path" />
-                Dark
-              </span>
-              <span
-                class="affinity bg-purple-950/40 border border-purple-500/30 text-purple-400"
-              >
-                <img :src="assets[`ui/card/v2/affinity-flag-arcane`].path" />
-                Arcane
-              </span>
-              <span
-                class="affinity bg-slate-900/40 border border-slate-400/30 text-slate-300"
-              >
-                <img :src="assets[`ui/card/v2/affinity-flag-neutral`].path" />
-                Neutral
+                <img :src="assets[`ui/card/v2/wisdom`].path" />
+                Wisdom
               </span>
             </div>
+
             <blockquote style="--color: #d7ad42">
               Heroes also have an ability, whether it's a passive trigger or an
               activated ability. They are revealed at the start of the game and
@@ -738,7 +802,7 @@ onUnmounted(() => {
             The game relies on two resources to govern plays:
             <span class="game-term mana">Mana</span>
             and
-            <span class="game-term rune">Runes</span>
+            <span class="game-term rune">Hero Stats</span>
             .
           </p>
 
@@ -751,10 +815,11 @@ onUnmounted(() => {
                 Mana
               </h4>
               <p class="text-sm">
-                Each player gains 5 mana at the start of each turn. They spend
-                mana to play cards. Unspent mana carries over between turns, up
-                to a maximum cap of
-                <strong class="text-sky-300">8 mana</strong>
+                At the start of each turn, every card in your hand will give you
+                mana equal to its
+                <strong>Mana Supply</strong>
+                . To play a card, you must have enough mana to pay for its
+                <strong>Mana Cost</strong>
                 .
               </p>
             </div>
@@ -769,39 +834,16 @@ onUnmounted(() => {
                 Runes
               </h4>
               <p class="text-sm mb-2">
-                Runes are a special resource that is not automatically gained.
-                Instead you need to gain them via your
+                Your hero will start with predetermined stats for Might, Focus
+                and Wisdom. You will be able to increase these stats once per
+                turn via your
                 <strong>Resource Action</strong>
               </p>
-              <p class="text-sm mb-2">There are 4 kinds of runes:</p>
-
-              <div class="grid grid-cols-4 gap-2">
-                <div class="rune-term might">
-                  <img :src="assets['ui/card/rune-might'].path" />
-                  Might
-                </div>
-                <div class="rune-term wisdom">
-                  <img :src="assets['ui/card/rune-wisdom'].path" />
-                  Wisdom
-                </div>
-                <div class="rune-term focus">
-                  <img :src="assets['ui/card/rune-focus'].path" />
-                  Focus
-                </div>
-                <div class="rune-term resonance">
-                  <img :src="assets['ui/card/rune-resonance'].path" />
-                  Resonance
-                </div>
-              </div>
-              <p class="text-sm mt-2">
-                Most cards provide special bonuses if you possess specific
-                runes, such as cost reduction, improved stats, or supplementary
-                effects.
-              </p>
 
               <p class="text-sm mt-2">
-                In addition, some cards or effects may require you to spend one
-                or multiple runes.
+                To play a card from your hand, you will need to meet its stats
+                requirements. For example, a card may require you to have at
+                least 2 Might and 1 Focus to be played.
               </p>
             </div>
           </div>
@@ -818,7 +860,7 @@ onUnmounted(() => {
             <p class="text-sm">
               Once per turn, you are allowed to perform a Resource action. This
               action lets you either
-              <strong class="text-white">gain one rune</strong>
+              <strong class="text-white">increase one of your stats</strong>
               of your choosing, or
               <strong class="text-white">draw an additional card</strong>
               .
@@ -1029,7 +1071,7 @@ onUnmounted(() => {
                 Mulligan
               </h4>
               <p class="text-sm text-slate-400 leading-normal">
-                Play may replace one or more cards from their hand.
+                Play may replace up to two cards from their hand.
               </p>
             </div>
 
@@ -1085,13 +1127,19 @@ onUnmounted(() => {
             </h3>
             <ul class="list-disc pl-4 text-sm text-slate-350 space-y-1">
               <li>Ready all exhausted cards in play.</li>
-              <li>
-                Each player gains 5
-                <span class="game-term mana">Mana</span>
-                .
-              </li>
-              <li>Each player draws a card from their Main Deck.</li>
               <li>Resolve start-of-turn passive triggers and effects.</li>
+              <li>
+                Players may put up to 2 cards from their hand to the bottom of
+                their deck.
+              </li>
+              <li>Players draw cards until they have 5 cards in hand.</li>
+              <li>
+                Players gain
+                <span class="game-term mana">Mana</span>
+                equal to the
+                <span class="game-term rune">Mana Supply</span>
+                of all cards in their hand.
+              </li>
             </ul>
           </div>
 
@@ -2123,6 +2171,6 @@ blockquote {
   border-radius: var(--radius-2);
   font-size: var(--font-size-1);
   font-weight: 500;
-  width: var(--size-9);
+  min-width: var(--size-9);
 }
 </style>

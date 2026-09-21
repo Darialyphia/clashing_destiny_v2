@@ -2,6 +2,7 @@ import type { Values } from '@game/shared';
 
 export const GAME_PHASES = {
   DRAW: 'draw_phase',
+  SUPPLY: 'supply_phase',
   MAIN: 'main_phase',
   PLAY_CARD: 'play_card_phase',
   END: 'end_phase',
@@ -25,7 +26,8 @@ export const TURN_EVENTS = {
 export type TurnEventName = Values<typeof TURN_EVENTS>;
 
 export const GAME_PHASE_TRANSITIONS = {
-  DRAW_FOR_TURN: 'draw_for_turn',
+  DRAWN_FOR_TURN: 'drawn_for_turn',
+  SUPPLIED_MANA: 'supplied_mana',
   END_TURN: 'end_turn',
   START_TURN: 'start_turn',
   PLAYER_WON: 'player_won',
@@ -129,3 +131,20 @@ export const INTERACTION_EVENTS = {
   INTERACTION_BEFORE_CHANGE_STATE: 'interaction_before_change_state',
   INTERACTION_AFTER_CHANGE_STATE: 'interaction_after_change_state'
 } as const;
+
+export const ANIMATIONS_NAMES = {
+  IDLE: 'idle',
+  BREATHING: 'breathing',
+  ATTACK: 'attack',
+  DEATH: 'death',
+  RUN: 'run',
+  HIT: 'hit',
+  DEFAULT: 'default',
+  ACTIVE: 'active',
+  CAST_START: 'caststart',
+  CAST: 'cast',
+  CAST_LOOP: 'castloop',
+  CAST_END: 'castend',
+  PROJECTILE: 'projectile'
+} as const;
+export type AnimationName = Values<typeof ANIMATIONS_NAMES>;

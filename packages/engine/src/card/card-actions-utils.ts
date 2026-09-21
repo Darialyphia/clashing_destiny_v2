@@ -1,11 +1,20 @@
+import { isDefined } from '@game/shared';
 import type { Game } from '../game/game';
+import { GAME_PHASES } from '../game/game.enums';
+import { GAME_EVENTS } from '../game/game.events';
 import type { ModifierMixin } from '../modifier/modifier-mixin';
 import { SimpleAttackBuffModifier } from '../modifier/modifiers/simple-attack-buff.modifier';
 import { SimpleCommandmentBuffModifier } from '../modifier/modifiers/simple-commandment-modifier';
 import { SimpleHealthBuffModifier } from '../modifier/modifiers/simple-health-buff.modifier';
-import { RUNES } from '../player/player.enums';
-import type { AnyCard, Card } from './entities/card.entity';
+import type { AnyCard } from './entities/card.entity';
 import type { MinionCard } from './entities/minion.entity';
+import type { ArtifactCard } from './entities/artifact.entity';
+import {
+  RemoveOnLeaveBoardModifierMixin,
+  RemoveOnOtherModifierRemovedMixin
+} from '../modifier/mixins/remove-on-destroyed';
+import { EquippedModifier } from '../modifier/modifiers/equip.modifier';
+import type { Modifier } from '../modifier/modifier.entity';
 
 export const scry = async (game: Game, card: AnyCard, amount: number) => {
   const cards = card.player.cardManager.mainDeck.peek(amount);
@@ -53,30 +62,31 @@ export const discover = async <T extends AnyCard>(
     choices.push(...choicePool.splice(index, 1));
   }
   const result = await game.interaction.chooseCards<T, false>({
-    player: card.player,
-    minChoiceCount: 1,
-    maxChoiceCount: 1,
-    canCancel: false,
-    choices: choices.map(c => ({
-      card: c,
-      aiHints: {
-        shouldPick() {
-          return 1;
-        }
+    players: {
+      [card.player.id]: {
+        minChoiceCount: 1,
+        maxChoiceCount: 1,
+        label: 'Choose a card to add to your hand',
+        choices: choices.map(c => ({
+          card: c,
+          aiHints: { shouldPick: () => 1 }
+        })),
+        timeoutFallback: [choicePool[0]]
       }
-    })),
-    timeoutFallback: [choicePool[0]],
-    label: 'Choose a card to add to your hand'
+    },
+    canCancel: false
   });
 
   if (result.cancelled) {
     return { cancelled: true };
   }
 
-  const [selectedCard] = result.result;
-  await selectedCard.addToHand();
+  const playerResult = result.result[card.player.id];
+  for (const selectedCard of playerResult.cards) {
+    await selectedCard.addToHand();
+  }
 
-  return { cancelled: false, selectedCard, choices };
+  return { cancelled: false, cards: playerResult.cards, choices };
 };
 
 export const predict = async (game: Game, card: AnyCard) => {
@@ -89,30 +99,31 @@ export const predict = async (game: Game, card: AnyCard) => {
     choices.push(...choicePool.splice(index, 1));
   }
   const result = await game.interaction.chooseCards<AnyCard, false>({
-    player: card.player,
-    minChoiceCount: 1,
-    maxChoiceCount: 1,
-    canCancel: false,
-    choices: choices.map(c => ({
-      card: c,
-      aiHints: {
-        shouldPick() {
-          return 1;
-        }
+    players: {
+      [card.player.id]: {
+        minChoiceCount: 1,
+        maxChoiceCount: 1,
+        choices: choices.map(c => ({
+          card: c,
+          aiHints: { shouldPick: () => 1 }
+        })),
+        timeoutFallback: [choicePool[0]],
+        label: 'Choose a card to put on top of your deck'
       }
-    })),
-    timeoutFallback: [choicePool[0]],
-    label: 'Choose a card to put on top of your deck'
+    },
+    canCancel: false
   });
 
   if (result.cancelled) {
     return { cancelled: true };
   }
 
-  const [selectedCard] = result.result;
-  await selectedCard.sendToTopOfDeck();
+  const playerResult = result.result[card.player.id];
+  for (const selectedCard of playerResult.cards) {
+    await selectedCard.sendToTopOfDeck();
+  }
 
-  return { cancelled: false, selectedCard };
+  return { cancelled: false, cards: playerResult.cards };
 };
 
 export const discardFromHand = async (
@@ -128,34 +139,37 @@ export const discardFromHand = async (
   }
 
   const result = await game.interaction.chooseCards<AnyCard, false>({
-    player: card.player,
-    minChoiceCount: options.min,
-    maxChoiceCount: options.max,
-    canCancel: false,
-    choices: cards.map(c => ({
-      card: c,
-      aiHints: {
-        shouldPick() {
-          return 1;
-        }
+    players: {
+      [card.player.id]: {
+        minChoiceCount: options.min,
+        maxChoiceCount: options.max,
+        choices: cards.map(c => ({
+          card: c,
+          aiHints: { shouldPick: () => 1 }
+        })),
+        timeoutFallback: cards.slice(0, options.min),
+        label:
+          options.min === options.max
+            ? `Choose ${options.max} cards to discard`
+            : `Choose up to ${options.max} cards to discard`
       }
-    })),
-    timeoutFallback: cards.slice(0, options.min),
-    label:
-      options.min === options.max
-        ? `Choose ${options.max} cards to discard`
-        : `Choose up to ${options.max} cards to discard`
+    },
+    canCancel: false
   });
 
   if (result.cancelled) {
     return { cancelled: true };
   }
 
-  for (const card of result.result) {
-    await card.discard();
+  const playerResult = result.result[card.player.id];
+  for (const discardedCard of playerResult.cards) {
+    await discardedCard.discard();
   }
 
-  return { cancelled: false, discardedCards: result.result };
+  return {
+    cancelled: false,
+    discardedCards: playerResult.cards
+  };
 };
 
 export const askMandatoryYesNoQuestion = async ({
@@ -202,64 +216,42 @@ export const askMandatoryYesNoQuestion = async ({
   return answer.result === 'yes';
 };
 
-export const chooseColorlessRune = async ({
-  game,
-  card,
-  questionId
-}: {
-  game: Game;
-  card: AnyCard;
-  questionId: string;
-}) => {
-  const runeResult = await game.interaction.askQuestion({
-    player: card.player,
-    canCancel: false,
-    label: 'Choose a rune to consume',
-    questionId,
-    source: card,
-    choices: [
-      ...Object.values(RUNES).map(rune => ({
-        id: rune,
-        label: rune,
-        aiHints: { shouldPick: () => 0.5 }
-      }))
-    ].filter(choice => card.player.runeManager.has({ [choice.id]: 1 })),
-    timeoutFallback: RUNES.FOCUS
-  });
-
-  return runeResult;
-};
-
-export const statBuff = async (
+export const statsBuff = async (
   game: Game,
   source: AnyCard,
   card: MinionCard,
   options: {
     modifierType: string;
-    atk: number | (() => number);
-    maxHp: number | (() => number);
-    cmd: number | (() => number);
+    atk?: number | (() => number);
+    maxHp?: number | (() => number);
+    cmd?: number | (() => number);
     mixins?: () => ModifierMixin<MinionCard>[];
   }
 ) => {
-  await card.modifiers.add(
-    new SimpleAttackBuffModifier(`${options.modifierType}-atk`, game, source, {
-      amount: options.atk,
-      mixins: options.mixins?.() ?? []
-    })
-  );
+  if (isDefined(options.atk)) {
+    await card.modifiers.add(
+      new SimpleAttackBuffModifier(`${options.modifierType}-atk`, game, source, {
+        amount: options.atk,
+        mixins: options.mixins?.() ?? []
+      })
+    );
+  }
 
-  await card.modifiers.add(
-    new SimpleHealthBuffModifier(`${options.modifierType}-hp`, game, source, {
-      amount: options.maxHp,
-      mixins: options.mixins?.() ?? []
-    })
-  );
+  if (isDefined(options.maxHp)) {
+    await card.modifiers.add(
+      new SimpleHealthBuffModifier(`${options.modifierType}-hp`, game, source, {
+        amount: options.maxHp,
+        mixins: options.mixins?.() ?? []
+      })
+    );
+  }
 
-  await card.modifiers.add(
-    new SimpleCommandmentBuffModifier(`${options.modifierType}-cmd`, game, source, {
-      amount: options.cmd,
-      mixins: options.mixins?.() ?? []
-    })
-  );
+  if (isDefined(options.cmd)) {
+    await card.modifiers.add(
+      new SimpleCommandmentBuffModifier(`${options.modifierType}-cmd`, game, source, {
+        amount: options.cmd,
+        mixins: options.mixins?.() ?? []
+      })
+    );
+  }
 };

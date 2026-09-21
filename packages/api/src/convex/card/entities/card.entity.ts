@@ -1,8 +1,10 @@
-import type { Override } from '@game/shared';
+import { assert, isDefined, type Override } from '@game/shared';
 import type { Doc, Id } from '../../_generated/dataModel';
 import { Entity } from '../../shared/entity';
 import type { UserId } from '../../users/entities/user.entity';
 import { CardCopies } from '../cardCopies';
+import { cardsBySet } from '@game/engine/src/generated/cards';
+import { DECRAFTING_REWARD_PER_RARITY } from '../card.constants';
 
 export type CardDoc = Doc<'cards'>;
 export type CardId = Id<'cards'>;
@@ -22,6 +24,16 @@ export class Card extends Entity<CardId, CardData> {
   }
   get blueprintId() {
     return this.data.blueprintId;
+  }
+
+  get blueprint() {
+    const allCards = Object.values(cardsBySet).flat();
+    return allCards.find(c => c.id === this.data.blueprintId);
+  }
+
+  get decraftRewardPerCopy() {
+    assert(isDefined(this.blueprint), new Error('Card blueprint not found'));
+    return DECRAFTING_REWARD_PER_RARITY[this.blueprint.rarity];
   }
 
   get ownerId() {

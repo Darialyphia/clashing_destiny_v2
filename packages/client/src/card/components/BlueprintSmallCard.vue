@@ -1,8 +1,13 @@
 <script setup lang="ts">
 import type { CardBlueprint } from '@game/engine/src/card/card-blueprint';
 import SmallCard from './SmallCard.vue';
+import { sprites } from '@/assets';
 
 const { blueprint } = defineProps<{ blueprint: CardBlueprint }>();
+
+const sprite = computed(() => {
+  return sprites[`cards/${blueprint.art.default.sprite}`];
+});
 </script>
 
 <template>
@@ -13,6 +18,7 @@ const { blueprint } = defineProps<{ blueprint: CardBlueprint }>();
         foil: blueprint.art.default.foil,
         bg: `cards/${blueprint.art.default.bg}`,
         main: `cards/${blueprint.art.default.main}`,
+        sprite: `cards/${blueprint.art.default.sprite}`,
         isFullArt: blueprint.art.default.isFullArt
       },
       kind: blueprint.kind,
@@ -23,6 +29,7 @@ const { blueprint } = defineProps<{ blueprint: CardBlueprint }>();
       manaCost: (blueprint as any).manaCost,
       destinyCost: (blueprint as any).destinyCost
     }"
+    :sprite
   />
 </template>
 

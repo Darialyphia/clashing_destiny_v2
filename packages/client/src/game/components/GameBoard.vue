@@ -7,36 +7,23 @@ import {
   useOpponentPlayer
 } from '../composables/useGameClient';
 import BoardSpace from './BoardSpace.vue';
+import BoardCard from './BoardCard/index.vue';
 import { useWindowSize } from '@vueuse/core';
 import { config } from '@/utils/config';
 import PassButton from './PassButton.vue';
-import EffectChain from './EffectChain.vue';
-import BoardCard from './BoardCard.vue';
-import ScoreButton from './ScoreButton.vue';
-import { RUNES } from '@game/engine/src/player/player.enums';
-import {
-  DropdownMenuContent,
-  DropdownMenuPortal,
-  DropdownMenuRoot,
-  DropdownMenuTrigger
-} from 'reka-ui';
-import { INTERACTION_STATES } from '@game/engine/src/game/game.enums';
+import type { PlayerClockState } from '../composables/useGameSocket';
+import Battlefield from './Battlefield.vue';
+import RuneZone from './RuneZone.vue';
 
 const { clocks } = defineProps<{
-  clocks?: {
-    [playerId: string]: {
-      max: number;
-      remaining: number;
-      isActive: boolean;
-    };
-  };
+  clocks?: Record<string, PlayerClockState>;
 }>();
 
 const ui = useGameUi();
 const state = useGameState();
+const { client } = useGameClient();
 const myPlayer = useMyPlayer();
 const opponent = useOpponentPlayer();
-const { client } = useGameClient();
 const { height } = useWindowSize();
 const boardScale = computed(() => {
   return 1;
@@ -55,68 +42,28 @@ const boardMargin = computed(() => {
   };
 });
 
-const isResourceActionMenuOpened = ref(false);
-const canSelectHero = computed(() => {
-  if (!ui.value.isInteractivePlayer) return false;
-  if (state.value.interaction.state !== INTERACTION_STATES.IDLE) return false;
-  if (!myPlayer.value.canTakeResourceAction) return false;
-  return true;
+const pointsToWin = computed(() => state.value.config.VICTORY_POINTS_TO_WIN);
+const pointsPerColumn = computed(() =>
+  pointsToWin.value > 7 ? pointsToWin.value / 2 : 7
+);
+const hasInitiative = computed(() => {
+  return client.value.getActivePlayerIds().includes(myPlayer.value.id);
 });
 
-const pointsToWin = computed(() => state.value.config.VICTORY_POINTS_TO_WIN);
+const opponentHasInitiative = computed(() => {
+  return client.value.getActivePlayerIds().includes(opponent.value.id);
+});
 </script>
 
 <template>
   <div class="board" :id="ui.DOMSelectors.board.id">
-    <div class="minions-zone">
-      <div class="opponent-left-destiny">
-        <BoardCard
-          v-if="opponent.leftBattlefield.destinyCard"
-          :card="opponent.leftBattlefield.destinyCard"
-          @mouseenter="ui.hover(opponent.leftBattlefield.destinyCard)"
-          @mouseleave="ui.unhover()"
-        />
+    <div class="minions-zone" :id="ui.DOMSelectors.boardInner.id">
+      <div class="left-destiny">
+        <Battlefield :battlefield="myPlayer.leftBattlefield" />
       </div>
-      <div class="opponent-right-destiny">
-        <BoardCard
-          v-if="opponent.rightBattlefield.destinyCard"
-          :card="opponent.rightBattlefield.destinyCard"
-          @mouseenter="ui.hover(opponent.rightBattlefield.destinyCard)"
-          @mouseleave="ui.unhover()"
-        />
+      <div class="right-destiny">
+        <Battlefield :battlefield="myPlayer.rightBattlefield" />
       </div>
-      <div class="my-left-destiny">
-        <BoardCard
-          v-if="myPlayer.leftBattlefield.destinyCard"
-          :card="myPlayer.leftBattlefield.destinyCard"
-          @mouseenter="ui.hover(myPlayer.leftBattlefield.destinyCard)"
-          @mouseleave="ui.unhover()"
-        />
-      </div>
-      <div class="my-right-destiny">
-        <BoardCard
-          v-if="myPlayer.rightBattlefield.destinyCard"
-          :card="myPlayer.rightBattlefield.destinyCard"
-          @mouseenter="ui.hover(myPlayer.rightBattlefield.destinyCard)"
-          @mouseleave="ui.unhover()"
-        />
-      </div>
-      <ScoreButton
-        class="opponent-left-score"
-        :battlefield="opponent.leftBattlefield"
-      />
-      <ScoreButton
-        class="opponent-right-score"
-        :battlefield="opponent.rightBattlefield"
-      />
-      <ScoreButton
-        class="my-left-score"
-        :battlefield="myPlayer.leftBattlefield"
-      />
-      <ScoreButton
-        class="my-right-score"
-        :battlefield="myPlayer.rightBattlefield"
-      />
 
       <div class="opponent-base zone">
         <BoardSpace
@@ -127,6 +74,12 @@ const pointsToWin = computed(() => state.value.config.VICTORY_POINTS_TO_WIN);
       </div>
       <div class="opponent-battlefields">
         <div class="zone">
+          <div class="secret-zone">
+            <BoardCard
+              v-if="opponent.leftBattlefield.secretCard"
+              :card="opponent.leftBattlefield.secretCard"
+            />
+          </div>
           <BoardSpace
             v-for="space in opponent.leftBattlefield.spaces"
             :key="space.id"
@@ -139,10 +92,22 @@ const pointsToWin = computed(() => state.value.config.VICTORY_POINTS_TO_WIN);
             :key="space.id"
             :cell-id="space.id"
           />
+          <div class="secret-zone">
+            <BoardCard
+              v-if="opponent.rightBattlefield.secretCard"
+              :card="opponent.rightBattlefield.secretCard"
+            />
+          </div>
         </div>
       </div>
       <div class="my-battlefields">
         <div class="zone">
+          <div class="secret-zone">
+            <BoardCard
+              v-if="myPlayer.leftBattlefield.secretCard"
+              :card="myPlayer.leftBattlefield.secretCard"
+            />
+          </div>
           <BoardSpace
             v-for="space in myPlayer.leftBattlefield.spaces"
             :key="space.id"
@@ -155,6 +120,12 @@ const pointsToWin = computed(() => state.value.config.VICTORY_POINTS_TO_WIN);
             :key="space.id"
             :cell-id="space.id"
           />
+          <div class="secret-zone">
+            <BoardCard
+              v-if="myPlayer.rightBattlefield.secretCard"
+              :card="myPlayer.rightBattlefield.secretCard"
+            />
+          </div>
         </div>
       </div>
       <div class="my-base zone">
@@ -169,14 +140,22 @@ const pointsToWin = computed(() => state.value.config.VICTORY_POINTS_TO_WIN);
           <div
             v-for="(clock, userId) of clocks"
             :key="userId"
-            class="action-clock"
-            :class="{
-              active: clock.isActive,
-              warning: clock.remaining < 15
-            }"
-            :style="{ '--max': clock.max, '--remaining': clock.remaining }"
-            :data-count="clock.remaining"
-          ></div>
+            class="player-clocks"
+            :class="{ penalized: clock.isPenalized }"
+          >
+            <div
+              v-for="(stage, stageName) of [clock.primary, clock.secondary]"
+              :key="stageName"
+              class="action-clock"
+              :class="{
+                active: stage.isActive,
+                warning: stage.remaining < 15
+              }"
+              :style="{ '--max': stage.max, '--remaining': stage.remaining }"
+              :data-count="stage.remaining"
+              :data-label="stageName === 0 ? 'turn' : 'grace'"
+            ></div>
+          </div>
         </div>
         .
       </div>
@@ -190,7 +169,12 @@ const pointsToWin = computed(() => state.value.config.VICTORY_POINTS_TO_WIN);
             :class="{ empty: opponent.victoryPoints < point }"
           />
         </div>
-        <EffectChain class="effect-chain" />
+        <div
+          class="initiative-indicator opponent"
+          :class="{ active: opponentHasInitiative }"
+        />
+        <PassButton class="pass-button" />
+        <div class="initiative-indicator" :class="{ active: hasInitiative }" />
         <div class="victory-points">
           <div
             v-for="point in state.config.VICTORY_POINTS_TO_WIN"
@@ -199,86 +183,14 @@ const pointsToWin = computed(() => state.value.config.VICTORY_POINTS_TO_WIN);
             :class="{ empty: myPlayer.victoryPoints < point }"
           />
         </div>
+      </div>
 
-        <PassButton />
+      <div class="my-rune-zone">
+        <RuneZone :player="myPlayer" />
+      </div>
 
-        <DropdownMenuRoot
-          v-model:open="isResourceActionMenuOpened"
-          :side="'top'"
-          :align="'center'"
-        >
-          <DropdownMenuTrigger
-            :disabled="!canSelectHero"
-            class="resource-action-indicator"
-          />
-          <DropdownMenuPortal>
-            <DropdownMenuContent>
-              <div
-                class="resource-actions-menu"
-                v-if="isResourceActionMenuOpened"
-              >
-                <button
-                  class="resource-action might"
-                  @mouseup="
-                    () => {
-                      isResourceActionMenuOpened = false;
-                      client.takeResourceAction({
-                        type: 'rune',
-                        rune: RUNES.MIGHT
-                      });
-                    }
-                  "
-                />
-                <button
-                  class="resource-action wisdom"
-                  @mouseup="
-                    () => {
-                      isResourceActionMenuOpened = false;
-                      client.takeResourceAction({
-                        type: 'rune',
-                        rune: RUNES.WISDOM
-                      });
-                    }
-                  "
-                />
-                <button
-                  class="resource-action focus"
-                  @mouseup="
-                    () => {
-                      isResourceActionMenuOpened = false;
-                      client.takeResourceAction({
-                        type: 'rune',
-                        rune: RUNES.FOCUS
-                      });
-                    }
-                  "
-                />
-                <button
-                  class="resource-action resonance"
-                  @mouseup="
-                    () => {
-                      isResourceActionMenuOpened = false;
-                      client.takeResourceAction({
-                        type: 'rune',
-                        rune: RUNES.RESONANCE
-                      });
-                    }
-                  "
-                />
-                <button
-                  class="resource-action draw"
-                  @mouseup="
-                    () => {
-                      client.takeResourceAction({
-                        type: 'draw'
-                      });
-                    }
-                  "
-                />
-              </div>
-            </DropdownMenuContent>
-          </DropdownMenuPortal>
-        </DropdownMenuRoot>
+      <div class="opponent-rune-zone">
+        <RuneZone :player="opponent" />
       </div>
     </div>
 
@@ -299,7 +211,7 @@ const pointsToWin = computed(() => state.value.config.VICTORY_POINTS_TO_WIN);
   height: 100%;
   /* width: var(--board-width);
   height: var(--board-height); */
-  background: url(@/assets/backgrounds/battle-background-2-hirez.png);
+  background: url(@/assets/backgrounds/battle-background2.png);
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -312,38 +224,43 @@ const pointsToWin = computed(() => state.value.config.VICTORY_POINTS_TO_WIN);
 }
 
 .minions-zone {
-  width: 1350px;
-  height: 685px;
-  background: url(@/assets/ui/board.png);
+  width: 1188px;
+  height: 548px;
+  background: url(@/assets/ui/board-v2.png);
   background-size: cover;
   margin-inline: auto;
-  padding-block: 12px;
   display: flex;
   flex-direction: column;
   gap: 12px;
   position: absolute;
-  top: 50%;
+  top: 52%;
   left: 50%;
   translate: -50% calc(-50% - 40px);
+  transform-style: preserve-3d;
   .zone {
-    height: 130px;
+    transform-style: preserve-3d;
+    height: 100px;
     display: flex;
     justify-content: space-between;
+    align-items: center;
+  }
+
+  @screen lt-lg {
+    scale: 0.5;
+    transform-origin: center;
   }
 }
 
-.opponent-left-destiny,
-.my-left-destiny {
+.left-destiny {
   position: absolute;
-  top: 288px;
-  left: 175px;
+  top: 228px;
+  left: 200px;
 }
 
-.opponent-right-destiny,
-.my-right-destiny {
+.right-destiny {
   position: absolute;
-  top: 288px;
-  right: 175px;
+  top: 228px;
+  right: 195px;
 }
 
 .arrows {
@@ -428,47 +345,57 @@ const pointsToWin = computed(() => state.value.config.VICTORY_POINTS_TO_WIN);
 
 .opponent-base {
   position: absolute;
-  width: 930px;
+  top: 10px;
+  width: calc(
+    var(--card-small-v3-width) * 6 + var(--size-4) * 5 - var(--size-3) * 2
+  );
   left: 50%;
   translate: -50% 0;
 }
 
 .opponent-battlefields {
   position: absolute;
-  top: 160px;
+  top: 115px;
   display: flex;
   padding-inline: 22px;
   justify-content: space-between;
   width: 100%;
 
   .zone {
-    width: 438px;
+    width: 450px;
     padding-inline: 10px;
     position: relative;
+    display: flex;
+    justify-content: center;
+    gap: var(--size-2);
   }
 }
 
 .my-battlefields {
   position: absolute;
-  top: 395px;
+  top: 325px;
   display: flex;
   padding-inline: 22px;
   justify-content: space-between;
   width: 100%;
-
   .zone {
-    width: 438px;
+    width: 450px;
     padding-inline: 10px;
     position: relative;
+    display: flex;
+    justify-content: center;
+    gap: var(--size-2);
   }
 }
 
 .my-base {
   position: absolute;
-  width: 930px;
+  top: 430px;
+  width: calc(
+    var(--card-small-v3-width) * 6 + var(--size-4) * 5 - var(--size-3) * 2
+  );
   left: 50%;
   translate: -50% 0;
-  top: 536px;
 }
 
 .right-side {
@@ -477,42 +404,16 @@ const pointsToWin = computed(() => state.value.config.VICTORY_POINTS_TO_WIN);
   top: 288px;
 }
 
-.effect-chain {
-  flex-grow: 1;
-  width: 100%;
-  height: calc(var(--card-small-v2-height) / 2 + var(--size-4));
-}
-
-.opponent-left-score {
-  top: 298px;
-  left: 305px;
-}
-
-.my-left-score {
-  top: 338px;
-  left: 305px;
-}
-
-.opponent-right-score {
-  top: 298px;
-  right: 310px;
-}
-
-.my-right-score {
-  top: 338px;
-  right: 310px;
-}
-
 .victory-points {
   display: grid;
-  grid-template-columns: repeat(v-bind('pointsToWin'), 47px);
-  gap: 4px;
+  grid-template-columns: repeat(v-bind('pointsPerColumn'), 27px);
+  gap: 3px;
   align-items: center;
   justify-content: center;
 }
 .victory-point {
-  width: 43px;
-  height: 43px;
+  width: 27px;
+  height: 26px;
   background: url('@/assets/ui/score.png');
   &.empty {
     background: url('@/assets/ui/score-empty.png');
@@ -521,82 +422,46 @@ const pointsToWin = computed(() => state.value.config.VICTORY_POINTS_TO_WIN);
 
 .middle-side {
   position: absolute;
-  top: 390px;
+  top: 270px;
   left: 50%;
+  height: 320px;
   translate: -50% -50%;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
   gap: var(--size-2);
-  width: 350px;
+  width: 212px;
 }
 
-.resource-action-indicator {
-  width: 40px;
-  height: 40px;
-  background: url('@/assets/ui/action-rune-colorless.png') no-repeat center
-    center;
-  background-size: contain;
-  z-index: 1;
-  filter: drop-shadow(0 0 10px var(--yellow-4));
-  cursor: pointer;
-  transition: filter 0.2s ease-in-out;
-  &:disabled {
-    filter: drop-shadow(0 0 10px var(--yellow-4)) brightness(0.5);
-    cursor: not-allowed;
+.initiative-indicator {
+  width: 44px;
+  height: 23px;
+  background: url('@/assets/ui/initiative-indicator.png');
+  background-size: cover;
+  margin-block: 10px;
+  &.opponent {
+    transform: scaleY(-1);
   }
-  &:not(:disabled) {
-    animation: resource-action-indicator-float 2s infinite ease-in-out;
-    &:hover {
-      filter: drop-shadow(0 0 15px var(--yellow-3)) brightness(1.2);
-    }
+  &:not(.active) {
+    opacity: 0;
   }
 }
 
-@keyframes resource-action-indicator-float {
-  0%,
-  100% {
-    translate: 0 0;
-  }
-  50% {
-    translate: 0 -10px;
-  }
-}
-
-.resource-actions-menu {
+.my-rune-zone {
   position: absolute;
-  bottom: calc(100% + var(--size-7));
-  left: 50%;
-  translate: -50% 0;
-  display: flex;
-  gap: var(--size-4);
-  padding: var(--size-4);
-  background-color: var(--color-bg-2);
-  border-radius: var(--size-1);
-  box-shadow: var(--shadow-2);
-  background-color: hsl(0 0% 0% / 0.5);
-  backdrop-filter: blur(4px);
-}
-.resource-action {
-  width: 38px;
-  height: 42px;
-  background: transparent;
+  bottom: 10px;
+  right: -80px;
 }
 
-.might {
-  background: url('@/assets/ui/action-rune-might.png') no-repeat center center;
+.opponent-rune-zone {
+  position: absolute;
+  top: 10px;
+  right: -80px;
 }
-.wisdom {
-  background: url('@/assets/ui/action-rune-wisdom.png') no-repeat center center;
-}
-.focus {
-  background: url('@/assets/ui/action-rune-focus.png') no-repeat center center;
-}
-.resonance {
-  background: url('@/assets/ui/action-rune-resonance.png') no-repeat center
-    center;
-}
-.draw {
-  background: url('@/assets/ui/action-draw.png') no-repeat center center;
+
+.secret-zone {
+  width: var(--card-small-v3-width);
+  height: var(--card-small-v3-height);
 }
 </style>

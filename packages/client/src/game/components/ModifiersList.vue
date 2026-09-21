@@ -1,24 +1,17 @@
 <script setup lang="ts">
 import UiSimpleTooltip from '@/ui/components/UiSimpleTooltip.vue';
 import { assets } from '@/assets';
-import type { ModifierViewModel } from '@game/engine/src/client/view-models/modifier.model';
-import { useGameClient } from '../composables/useGameClient';
-import { uniqBy } from 'lodash-es';
+import { useModifierGroups } from '../composables/useModifierGroup';
+import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
 import { isDefined } from '@game/shared';
 
-const { modifiers } = defineProps<{
-  modifiers: ModifierViewModel[];
+const { card } = defineProps<{
+  card: CardViewModel;
 }>();
 
-const { playerId } = useGameClient();
-
+const modifierGroups = useModifierGroups(computed(() => card));
 const displayedModifiers = computed(() => {
-  return uniqBy(
-    modifiers.filter(mod => {
-      return isDefined(mod.icon) && mod.stacks > 0 && mod.isEnabled;
-    }),
-    'modifierType'
-  );
+  return modifierGroups.value.filter(group => isDefined(group.icon));
 });
 </script>
 
@@ -26,7 +19,7 @@ const displayedModifiers = computed(() => {
   <div class="modifiers">
     <UiSimpleTooltip
       v-for="modifier in displayedModifiers"
-      :key="modifier.id"
+      :key="modifier.key"
       use-portal
       side="right"
       :side-offset="12"
@@ -38,7 +31,9 @@ const displayedModifiers = computed(() => {
             '--pixel-scale': 0.5
           }"
           :alt="modifier.name"
-          :data-stacks="modifier.stacks > 1 ? modifier.stacks : undefined"
+          :data-stacks="
+            modifier.totalStacks > 1 ? modifier.totalStacks : undefined
+          "
           class="modifier-image"
         />
       </template>
@@ -51,16 +46,13 @@ const displayedModifiers = computed(() => {
           />
           <div class="modifier-name">{{ modifier.name }}</div>
         </div>
-        <div
-          class="modifier-description"
-          :class="{
-            ally: modifier.source.player.id === playerId,
-            enemy: modifier.source.player.id !== playerId
-          }"
-        >
+        <div class="modifier-description">
           {{ modifier.description }}
         </div>
-        <div class="modifier-source">from: {{ modifier.source.name }}</div>
+
+        <div class="modifier-source">
+          from: {{ modifier.sources.map(source => source.name).join(' / ') }}
+        </div>
       </div>
     </UiSimpleTooltip>
   </div>

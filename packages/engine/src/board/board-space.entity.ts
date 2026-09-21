@@ -10,6 +10,7 @@ import type { Game } from '../game/game';
 import type { Player } from '../player/player.entity';
 import type { AnyCard } from '../card/entities/card.entity';
 import { match } from 'ts-pattern';
+import type { SecretCard } from '../card/entities/secret.entity';
 
 export type BoardRow = BetterExtract<
   CardLocation,
@@ -121,6 +122,11 @@ export class BoardSpace
 
   get isEmpty() {
     return !this.isOccupied;
+  }
+
+  get inFront(): BoardSpace | null {
+    if (!this.battlefield) return null;
+    return this.battlefield.opponentBattlefield.spaces[this.index] ?? null;
   }
 
   placeCard(card: AnyCard) {

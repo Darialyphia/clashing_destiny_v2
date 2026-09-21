@@ -31,7 +31,7 @@ const card = computed(() => {
   if (!validInteractionStates.includes(interaction.state)) return null;
 
   const ctx = interaction.ctx;
-  if (ctx.player !== playerId.value) return null;
+  if (!('player' in ctx) || ctx.player !== playerId.value) return null;
 
   if ('source' in ctx && isDefined(ctx.source)) {
     return state.value.entities[ctx.source] as CardViewModel;

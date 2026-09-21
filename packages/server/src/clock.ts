@@ -53,6 +53,22 @@ export class Clock extends EventEmitter {
     return Math.max(this.remainingTime, 0);
   }
 
+  get maxDuration() {
+    return this.maxTime;
+  }
+
+  addTime(duration: number) {
+    if (this.isFinished) return false;
+
+    if (this.isRunning()) {
+      this.remainingTime = this.getRemainingTime();
+      this.startTime = performance.now();
+    }
+    this.remainingTime = Math.min(duration + this.remainingTime, this.maxTime);
+    this.emit('tick', this.getRemainingTime());
+    return true;
+  }
+
   get isFinished() {
     return this.getRemainingTime() <= 0;
   }

@@ -18,7 +18,8 @@ const {
   closable = true,
   usePortal = true,
   modal = true,
-  animated = true
+  animated = true,
+  transparentOverlay = false
 } = defineProps<{
   title: string;
   description: string;
@@ -27,6 +28,7 @@ const {
   usePortal?: boolean;
   modal?: boolean;
   animated?: boolean;
+  transparentOverlay?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -38,7 +40,10 @@ const emit = defineEmits<{
   <DialogRoot v-model:open="isOpened" :modal="modal">
     <DialogPortal :disabled="!usePortal">
       <Transition appear>
-        <DialogOverlay class="modal-overlay" />
+        <DialogOverlay
+          class="modal-overlay"
+          :class="{ transparent: transparentOverlay }"
+        />
       </Transition>
 
       <Transition
@@ -93,6 +98,10 @@ const emit = defineEmits<{
 
   background-color: hsl(var(--gray-12-hsl) / 0.5);
   backdrop-filter: blur(5px);
+  &.transparent {
+    background-color: transparent;
+    backdrop-filter: none;
+  }
   &:focus {
     outline: none;
   }

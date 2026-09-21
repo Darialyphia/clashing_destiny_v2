@@ -29,7 +29,10 @@ export class DestinyCard extends Card<
   }
 
   async play() {
-    await this.blueprint.onPlay(this.game, this);
+    await this.resolve(async () => {
+      await this.reveal();
+      await this.blueprint.onPlay(this.game, this);
+    });
 
     return { cancelled: false };
   }

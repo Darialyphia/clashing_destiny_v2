@@ -20,7 +20,7 @@ const canInteract = computed(() => {
   return battlefield.spaces.some(space => space.card?.equals(card));
 });
 
-const onMousedown = (e: MouseEvent) => {
+const onMouseup = (e: MouseEvent) => {
   if (e.button !== 0) return;
   if (!canInteract.value) return;
 
@@ -36,7 +36,7 @@ const onMousedown = (e: MouseEvent) => {
       win: battlefield.commandmentScore > battlefield.opponentCommandmentScore,
       lose: battlefield.commandmentScore < battlefield.opponentCommandmentScore
     }"
-    @mouseup="onMousedown"
+    @mouseup="onMouseup"
   >
     {{ battlefield.commandmentScore }}
   </button>

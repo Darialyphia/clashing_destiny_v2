@@ -23,8 +23,10 @@ export class DefenderModifier extends Modifier<MinionCard> {
       mixins: [
         new MinionInterceptorModifierMixin(game, {
           key: 'atk',
-          interceptor: (value, ctx) => {
-            if (!game.combatSystem.defender?.equals(ctx)) return value;
+          interceptor: value => {
+            if (this.game.turnSystem.initiativePlayer.equals(this.target.player)) {
+              return value;
+            }
 
             const amount = isFunction(options.amount) ? options.amount() : options.amount;
             return value + amount;

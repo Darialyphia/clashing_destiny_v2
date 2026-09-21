@@ -6,8 +6,9 @@ import { Player } from '../../player/player.entity';
 import { CARD_KINDS, CARD_LOCATIONS, type CardLocation } from '../card.enums';
 import { GAME_EVENTS } from '../../game/game.events';
 import { PlayerDrawEvent } from '../../player/player.events';
-import type { HeroCard } from '../entities/hero.entity';
 import type { DestinyCard } from '../entities/destiny.entity';
+import type { RuneCard } from '../entities/rune.entity';
+import { GAME_PHASES } from '../../game/game.enums';
 
 export type CardManagerComponentOptions = {
   maxHandSize: number;
@@ -22,13 +23,17 @@ export class CardManagerComponent {
 
   readonly destinyDeck: Deck<DestinyCard>;
 
-  readonly hero!: HeroCard;
+  readonly runeDeck: Deck<RuneCard>;
 
   readonly hand: AnyCard[] = [];
 
   readonly discardPile = new Set<AnyCard>();
 
   readonly banishPile = new Set<AnyCard>();
+
+  readonly runeZone = new Set<RuneCard>();
+
+  readonly reserve = new Set<AnyCard>();
 
   constructor(
     game: Game,
@@ -38,6 +43,7 @@ export class CardManagerComponent {
     this.game = game;
     this.mainDeck = new Deck(this.game, player);
     this.destinyDeck = new Deck(this.game, player);
+    this.runeDeck = new Deck(this.game, player);
   }
 
   private async buildCards<T extends AnyCard>(
@@ -55,22 +61,28 @@ export class CardManagerComponent {
   async init() {
     const cards = await this.buildCards<AnyCard>(this.options.deck);
     this.mainDeck.populate(
-      cards.filter(c => c.kind !== CARD_KINDS.HERO && c.kind !== CARD_KINDS.DESTINY)
+      cards.filter(c => c.kind !== CARD_KINDS.DESTINY && c.kind !== CARD_KINDS.RUNE)
     );
     this.destinyDeck.populate(
       cards.filter(c => c.kind === CARD_KINDS.DESTINY) as DestinyCard[]
     );
-
-    // @ts-expect-error ts complaining about readonly
-    this.hero = cards.find(c => c.kind === CARD_KINDS.HERO)! as HeroCard;
-    await this.hero.play();
+    this.runeDeck.populate(cards.filter(c => c.kind === CARD_KINDS.RUNE) as RuneCard[]);
 
     if (this.options.shouldShuffleDeck) {
       this.mainDeck.shuffle();
       this.destinyDeck.shuffle();
+      this.runeDeck.shuffle();
     }
 
     this.hand.push(...this.mainDeck.draw(this.game.config.INITIAL_HAND_SIZE));
+
+    await this.game.on(GAME_EVENTS.BEFORE_CHANGE_PHASE, async event => {
+      if (event.data.to === GAME_PHASES.SUPPLY) {
+        for (const card of this.reserve) {
+          await card.addToHand();
+        }
+      }
+    });
   }
 
   get isHandFull() {
@@ -114,8 +126,22 @@ export class CardManagerComponent {
     if (rightBattlefieldCard)
       return { card: rightBattlefieldCard, location: CARD_LOCATIONS.RIGHT_BATTLEFIELD };
 
+    const destinyDeckCard = this.destinyDeck.cards.find(card => card.id === id);
+    if (destinyDeckCard)
+      return { card: destinyDeckCard, location: CARD_LOCATIONS.DESTINY_DECK };
+
+    const runeDeckCard = this.runeDeck.cards.find(card => card.id === id);
+    if (runeDeckCard) return { card: runeDeckCard, location: CARD_LOCATIONS.RUNE_DECK };
+
+    const runeZoneCard = [...this.runeZone].find(card => card.id === id);
+    if (runeZoneCard) return { card: runeZoneCard, location: CARD_LOCATIONS.RUNE_ZONE };
+
+    const reserveCard = [...this.reserve].find(card => card.id === id);
+    if (reserveCard) return { card: reserveCard, location: CARD_LOCATIONS.RESERVE };
+
     return null;
   }
+
   getCardInHandAt(index: number) {
     return [...this.hand][index];
   }
@@ -194,6 +220,10 @@ export class CardManagerComponent {
     return cards;
   }
 
+  removeFromRuneZone(card: RuneCard) {
+    this.runeZone.delete(card);
+  }
+
   removeFromHand(card: AnyCard) {
     const index = this.hand.findIndex(handCard => handCard.equals(card));
     if (index === -1) return;
@@ -246,5 +276,17 @@ export class CardManagerComponent {
       return;
     }
     this.hand.push(card);
+  }
+
+  placeInRuneZone(card: RuneCard) {
+    this.runeZone.add(card);
+  }
+
+  sendToReserve(card: AnyCard) {
+    this.reserve.add(card);
+  }
+
+  removeFromReserve(card: AnyCard) {
+    this.reserve.delete(card);
   }
 }

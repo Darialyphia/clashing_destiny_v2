@@ -5,8 +5,23 @@ import { Icon } from '@iconify/vue';
 import UiModal from '@/ui/components/UiModal.vue';
 import UiButton from '@/ui/components/UiButton.vue';
 import { useClipboard } from '@vueuse/core';
-const { saveDeck, stopEditingDeck, deleteDeck, isDeleting, deckBuilder } =
-  useCollectionPage();
+import {
+  PopoverRoot,
+  PopoverTrigger,
+  PopoverPortal,
+  PopoverContent
+} from 'reka-ui';
+import UiIconButton from '@/ui/components/UiIconButton.vue';
+import UiSwitch from '@/ui/components/UiSwitch.vue';
+
+const {
+  saveDeck,
+  stopEditingDeck,
+  deleteDeck,
+  isDeleting,
+  deckBuilder,
+  deckEditorOptions
+} = useCollectionPage();
 
 const isDeleteModalOpened = ref(false);
 const isExportModalOpened = ref(false);
@@ -14,6 +29,8 @@ const isExportModalOpened = ref(false);
 const { copy, copied } = useClipboard({
   copiedDuring: 1500
 });
+
+const isMenuOpened = ref(false);
 </script>
 
 <template>
@@ -22,18 +39,28 @@ const { copy, copied } = useClipboard({
       <FancyButton text="Back" variant="error" @click="stopEditingDeck" />
       <FancyButton text="Save" variant="info" @click="saveDeck" />
 
-      <UiButton
-        class="aspect-square ml-auto"
-        @click="isExportModalOpened = true"
-      >
-        <Icon icon="mdi:export" class="export-icon" />
-      </UiButton>
-      <UiButton class="aspect-square" @click="isDeleteModalOpened = true">
-        <Icon
-          icon="material-symbols:delete-outline-sharp"
-          class="delete-icon"
-        />
-      </UiButton>
+      <UiIconButton
+        class="delete-icon"
+        icon="material-symbols:delete-outline-sharp"
+        @click="isDeleteModalOpened = true"
+      />
+      <PopoverRoot v-model:open="isMenuOpened">
+        <PopoverTrigger as-child>
+          <UiIconButton class="export-icon" icon="solar:menu-dots-bold" />
+        </PopoverTrigger>
+        <PopoverPortal>
+          <PopoverContent as-child side="top" align="center" :side-offset="10">
+            <div class="options-popover surface">
+              <button @click="isExportModalOpened = true">Export Deck</button>
+              <label class="block">
+                <span>Collapse foils</span>
+                <UiSwitch v-model="deckEditorOptions.collapseFoil" />
+              </label>
+            </div>
+          </PopoverContent>
+        </PopoverPortal>
+      </PopoverRoot>
+
       <UiModal
         v-model:is-opened="isDeleteModalOpened"
         title="Delete this deck ?"
@@ -88,22 +115,22 @@ const { copy, copied } = useClipboard({
 footer {
   position: sticky;
   bottom: 0;
-  background-color: #10181e;
 }
 
 .delete-icon {
-  width: var(--size-6);
+  --ui-icon-button-size: var(--font-size-4);
   color: var(--red-7);
+  margin-left: auto;
   &:hover {
     color: var(--red-9);
   }
 }
 
 .export-icon {
-  width: var(--size-6);
+  --ui-icon-button-size: var(--font-size-4);
   color: var(--yellow-5);
   &:hover {
-    color: var(--red-7);
+    color: var(--yellow-9);
   }
 }
 
@@ -120,5 +147,25 @@ footer {
 
 pre {
   white-space: pre-wrap;
+}
+
+.options-popover {
+  display: flex;
+  gap: var(--size-3);
+  flex-direction: column;
+  min-width: 280px;
+  > button {
+    padding: 0;
+    text-align: left;
+    &:hover {
+      color: var(--yellow-4);
+    }
+  }
+  label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--size-4);
+  }
 }
 </style>

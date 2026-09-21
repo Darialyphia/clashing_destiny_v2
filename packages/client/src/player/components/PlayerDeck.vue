@@ -1,5 +1,9 @@
 <script setup lang="ts">
-import { CARD_KINDS } from '@game/engine/src/card/card.enums';
+import {
+  AFFINITIES,
+  CARD_KINDS,
+  type Affinity
+} from '@game/engine/src/card/card.enums';
 import { CARDS_DICTIONARY } from '@game/engine/src/card/sets';
 import {
   HoverCardContent,
@@ -7,11 +11,9 @@ import {
   HoverCardRoot,
   HoverCardTrigger
 } from 'reka-ui';
-import { assets } from '@/assets';
-import type { HeroBlueprint } from '@game/engine/src/card/card-blueprint';
 import FancyButton from '@/ui/components/FancyButton.vue';
-import type { Nullable } from '@game/shared';
 import type { DeckValidationResult } from '@game/engine/src/card/validators/deck.validator';
+import { assets } from '@/assets';
 
 export type DisplayedDeck = {
   name: string;
@@ -28,17 +30,6 @@ const mainDeck = computed(() =>
     blueprint: CARDS_DICTIONARY[card.blueprintId]
   }))
 );
-
-const hero = computed(() => {
-  return deck.cards
-    .map(c => CARDS_DICTIONARY[c.blueprintId])
-    .find(c => c.kind === CARD_KINDS.HERO) as Nullable<HeroBlueprint>;
-});
-
-const affinities = computed(() => {
-  return hero.value?.affinities ?? [];
-});
-
 const minions = computed(() =>
   mainDeck.value.filter(item => item.blueprint.kind === CARD_KINDS.MINION)
 );
@@ -50,19 +41,37 @@ const spells = computed(() =>
 const artifacts = computed(() =>
   mainDeck.value.filter(item => item.blueprint.kind === CARD_KINDS.ARTIFACT)
 );
+
+const violations = computed(() =>
+  deck.isValid.result === 'failure' ? deck.isValid.violations : []
+);
+
+const affinities = computed(() => {
+  const result: Affinity[] = [];
+  for (const aff of Object.values(AFFINITIES)) {
+    if (aff === AFFINITIES.NEUTRAL) continue;
+    const max = Math.max(
+      ...mainDeck.value.map(
+        item => item.blueprint.affinities.filter(a => a === aff).length
+      )
+    );
+
+    result.push(...Array.from({ length: max }, () => aff));
+  }
+
+  return result;
+});
 </script>
 
 <template>
   <div>
-    <HoverCardRoot :open-delay="200">
+    <HoverCardRoot :open-delay="200" :close-delay="0">
       <button
-        class="player-deck"
+        class="player-deck surface"
         :class="{
           invalid: deck.isValid.result === 'failure'
         }"
-        :style="{
-          '--bg': assets[`cards/${hero?.art.default.main}`]?.css
-        }"
+        :style="{}"
       >
         <div class="deck-name">
           {{ deck.name }}
@@ -73,8 +82,11 @@ const artifacts = computed(() =>
             <img
               v-for="aff in affinities"
               :key="aff"
-              :src="assets[`ui/card/affinity-${aff.toLocaleLowerCase()}`].path"
+              :src="
+                assets[`ui/card/v3/affinity-${aff.toLocaleLowerCase()}`].path
+              "
               :alt="aff"
+              class="affinity"
             />
           </div>
         </div>
@@ -88,9 +100,11 @@ const artifacts = computed(() =>
         <HoverCardContent side="right" align="center" :side-offset="8">
           <div class="deck-details">
             <ul>
-              <li v-if="hero" :class="hero.rarity.toLocaleLowerCase()">
-                1 x {{ hero.name }}
+              <li v-for="(violation, index) in violations" :key="index">
+                <span class="invalid-label">{{ violation.reason }}</span>
               </li>
+            </ul>
+            <ul>
               <li v-for="item in minions" :key="item.blueprint.id">
                 {{ item.copies }}x
                 <span :class="item.blueprint.rarity.toLocaleLowerCase()">
@@ -133,7 +147,7 @@ const artifacts = computed(() =>
     right calc(100% + 70px);
   background-size: 200%, calc(2px * 96);
   padding: var(--size-2) var(--size-4);
-  border: solid 1px hsl(var(--color-primary-hsl) / 0.5);
+  /* border: solid 1px hsl(var(--color-primary-hsl) / 0.5); */
   &.invalid {
     border-color: var(--red-8);
     background-image:
@@ -173,8 +187,6 @@ const artifacts = computed(() =>
   border-radius: var(--radius-2);
   box-shadow: var(--shadow-3);
   color: white;
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .rare {
@@ -190,6 +202,12 @@ const artifacts = computed(() =>
 }
 
 .invalid-label {
-  color: var(--red-8);
+  color: var(--red-6);
+  font-weight: var(--font-weight-7);
+}
+
+.affinity {
+  width: 26px;
+  aspect-ratio: 1 / 1;
 }
 </style>

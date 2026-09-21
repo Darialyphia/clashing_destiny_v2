@@ -48,14 +48,14 @@
     radial-gradient(
       farthest-corner circle at var(--glare-x) var(--glare-y),
       hsla(0, 0%, 95%, 0.98) 10%,
-      hsla(177, 22%, 80%, 0.1) 30%,
+      hsla(177, 22%, 80%, 0.1) 20%,
       hsla(150, 20%, 10%, 1) 90%
     );
   mix-blend-mode: color-dodge;
   background-size:
     cover,
-    25% 25%,
-    25% 25%,
+    50% 50%,
+    50% 50%,
     cover;
   background-position:
     center center,
@@ -63,17 +63,21 @@
     55% 55%,
     center center;
   background-blend-mode: overlay, soft-light, color-burn;
-  mask: var(--foil-mask);
-  mask-size: var(--foil-mask-size, cover);
-  mask-position: var(--foil-mask-position, center);
-  mask-repeat: no-repeat;
+  mask: var(--art-mask), linear-gradient(#000 0 0);
+  mask-size:
+    calc(var(--card-v2-art-frame-width) * var(--pixel-scale) * 2),
+    calc(var(--card-v2-art-frame-height) * var(--pixel-scale) * 2);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  mask-position: var(--art-mask-position, center), center;
+  mask-repeat: no-repeat, repeat;
   transition: opacity 0.5s;
   opacity: 0;
   animation: foil-glitter 2.5s linear infinite;
 }
 
 :global(:is(.card-perspective-wrapper, .small-card):hover .foil-glitter) {
-  opacity: 0.35;
+  opacity: 0.2;
   transition-delay: 0.3s;
 }
 </style>

@@ -18,7 +18,7 @@ export class AttackAction implements CardActionRule {
       isDefined(this.client.ui.selectedCard) &&
       this.client.ui.selectedCard.canAttackAt(card) &&
       this.client.ui.selectedCard.player.id === this.client.playerId &&
-      this.client.ui.isInteractivePlayer &&
+      this.client.isActive() &&
       state.phase.state === GAME_PHASES.MAIN &&
       state.interaction.state === INTERACTION_STATES.IDLE &&
       state.combat.step === COMBAT_STEPS.DECLARE_ATTACKER

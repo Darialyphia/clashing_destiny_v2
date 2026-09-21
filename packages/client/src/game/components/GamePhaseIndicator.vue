@@ -9,11 +9,9 @@ const phase = ref<string | null>(null);
 useFxEvent(FX_EVENTS.AFTER_CHANGE_PHASE, async event => {
   if (
     event.from === GAME_PHASES.PLAY_CARD ||
-    event.to.state === GAME_PHASES.PLAY_CARD
+    event.to.state === GAME_PHASES.PLAY_CARD ||
+    event.to.state === GAME_PHASES.END
   ) {
-    return;
-  }
-  if (event.to.state === GAME_PHASES.DRAW) {
     return;
   }
 
@@ -37,36 +35,6 @@ useFxEvent(FX_EVENTS.AFTER_CHANGE_PHASE, async event => {
 </template>
 
 <style scoped lang="postcss">
-.dual-text {
-  color: transparent;
-  position: relative;
-  --_top-color: var(--top-color, #dec7a6);
-  --_bottom-color: var(--bottom-color, #bba083);
-  &::before,
-  &::after {
-    position: absolute;
-    content: attr(data-text);
-    color: transparent;
-    inset: 0;
-  }
-  &:after {
-    background: linear-gradient(
-      var(--_top-color),
-      var(--_top-color) 50%,
-      var(--_bottom-color) 50%
-    );
-    line-height: 1.2;
-    background-clip: text;
-    background-size: 100% 1lh;
-    background-repeat: repeat-y;
-    translate: var(--dual-text-offset-x, 0) var(--dual-text-offset-y, 0);
-  }
-  &:before {
-    -webkit-text-stroke: calc(2px * var(--pixel-scale)) black;
-    translate: var(--dual-text-offset-x, 0) var(--dual-text-offset-y, 0);
-  }
-}
-
 .game-phase-indicator {
   position: fixed;
   inset: 0;
@@ -74,6 +42,7 @@ useFxEvent(FX_EVENTS.AFTER_CHANGE_PHASE, async event => {
   place-content: center;
   background: rgba(0, 0, 0, 0.7);
   backdrop-filter: blur(4px);
+  overflow: hidden;
   z-index: 1000;
   pointer-events: none;
   font-family:

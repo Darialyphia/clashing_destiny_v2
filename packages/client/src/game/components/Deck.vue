@@ -1,28 +1,27 @@
 <script setup lang="ts">
 import Pile from './Pile.vue';
-const { size } = defineProps<{ size: number }>();
+const { size, offset } = defineProps<{
+  size: number;
+  offset: { x: number; y: number; z: number };
+}>();
 </script>
 
 <template>
-  <Pile :size="size" class="deck">
+  <Pile :size="size" :offset="offset" class="deck">
     <div class="card" />
   </Pile>
 </template>
 
 <style scoped lang="postcss">
 .deck {
-  height: calc(var(--pixel-scale) * var(--card-small-height));
-  width: calc(var(--pixel-scale) * var(--card-small-width));
-  --pixel-scale: 0.75;
-  @screen lt-lg {
-    --pixel-scale: 0.5;
-  }
+  height: calc(var(--pixel-scale) * var(--card-v3-height));
+  width: calc(var(--pixel-scale) * var(--card-v3-width));
 }
 
 .card {
-  background: url('@/assets/ui/card/card_backs/default-small.png') no-repeat;
+  background: url('@/assets/ui/card/v3/card-back.png') no-repeat;
   background-size: contain;
-  width: calc(var(--pixel-scale) * var(--card-small-width));
-  aspect-ratio: var(--card-small-ratio);
+  width: calc(var(--pixel-scale) * var(--card-v3-width));
+  aspect-ratio: var(--card-v3-ratio);
 }
 </style>

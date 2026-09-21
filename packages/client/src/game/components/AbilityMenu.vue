@@ -4,9 +4,9 @@ import type { CardViewModel } from '@game/engine/src/client/view-models/card.mod
 import CardText from '@/card/components/CardText.vue';
 import { isDefined } from '@game/shared';
 import { type PopoverContentProps } from 'reka-ui';
-import { useGameUi } from '../composables/useGameClient';
+import { useGameUi, useMyPlayer } from '../composables/useGameClient';
 
-const { card } = defineProps<{
+const { card, actionsSide = 'bottom' } = defineProps<{
   card: CardViewModel;
   usePortal?: boolean;
   actionsOffset?: number;
@@ -21,14 +21,16 @@ const abilities = computed(() => {
 });
 
 const ui = useGameUi();
+
+const myPlayer = useMyPlayer();
 </script>
 
 <template>
-  <div class="abilities-list">
+  <div class="abilities-list" v-if="myPlayer.equals(card.player)">
     <UiSimpleTooltip
       v-for="ability in abilities"
       :key="ability.id"
-      side="bottom"
+      :side="actionsSide"
       :side-offset="15"
       :delay="0"
       :disabled="isDefined(ui.selectedCard)"
@@ -58,15 +60,17 @@ const ui = useGameUi();
   gap: var(--size-2);
 }
 .ability {
-  width: 16px;
+  width: 32px;
   aspect-ratio: 1;
-  background: url('@/assets/ui/card/ability.png') no-repeat center/contain;
+  background: url('@/assets/ui/card/v3/ability.png');
+  background-size: cover;
   transition: filter 0.2s;
   &:hover {
     filter: drop-shadow(0 0 2px white) brightness(150%);
   }
   &:disabled {
-    background: url('@/assets/ui/card/ability-disabled.png');
+    background: url('@/assets/ui/card/v3/ability-disabled.png') no-repeat
+      center/cover;
   }
 }
 

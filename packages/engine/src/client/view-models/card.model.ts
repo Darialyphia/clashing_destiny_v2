@@ -1,5 +1,4 @@
 import type { SerializedCard } from '../../card/entities/card.entity';
-import type { SerializedHeroCard } from '../../card/entities/hero.entity';
 import type { SerializedMinionCard } from '../../card/entities/minion.entity';
 import type { SerializedSpellCard } from '../../card/entities/spell.entity';
 import type { GameClient, GameStateEntities } from '../client';
@@ -11,8 +10,7 @@ import {
   CARD_KINDS,
   type Affinity,
   type CardKind,
-  type CardSpeed,
-  type JobId
+  type CardSpeed
 } from '../../card/card.enums';
 import { UseAbilityAction } from '../actions/use-ability';
 import { INTERACTION_STATES, COMBAT_STEPS } from '../../game/game.enums';
@@ -24,13 +22,8 @@ import type { SerializedArtifactCard } from '../../card/entities/artifact.entity
 import { SelectCardOnBoardAction } from '../actions/select-card-on-board';
 import { AttackAction } from '../actions/attack';
 import { DeclareRetaliationAction } from '../actions/retaliate';
-import type { Rune } from '../../player/player.enums';
 
-type CardData =
-  | SerializedSpellCard
-  | SerializedHeroCard
-  | SerializedMinionCard
-  | SerializedArtifactCard;
+type CardData = SerializedSpellCard | SerializedMinionCard | SerializedArtifactCard;
 
 export type CardActionRule = {
   id: string;
@@ -95,7 +88,8 @@ export class CardViewModel {
       main: `cards/${this.data.art.main}`,
       bg: `cards/${this.data.art.bg}`,
       foilBg: this.data.art.foilBg ? `cards/${this.data.art.foilBg}` : undefined,
-      foilMain: this.data.art.foilMain ? `cards/${this.data.art.foilMain}` : undefined
+      foilMain: this.data.art.foilMain ? `cards/${this.data.art.foilMain}` : undefined,
+      sprite: `cards/${this.data.art.sprite}`
     };
   }
 
@@ -154,9 +148,9 @@ export class CardViewModel {
     return null;
   }
 
-  get runeCost() {
-    if ('runeCost' in this.data) {
-      return this.data.runeCost as Rune[];
+  get manaSupply() {
+    if ('manaSupply' in this.data) {
+      return this.data.manaSupply as number;
     }
     return null;
   }
@@ -168,11 +162,11 @@ export class CardViewModel {
     return null;
   }
 
-  get jobs() {
-    if ('jobs' in this.data) {
-      return this.data.jobs as JobId[];
+  get stats() {
+    if ('stats' in this.data) {
+      return this.data.stats as { might: number; focus: number; wisdom: number };
     }
-    return [];
+    return null;
   }
 
   get affinities() {
@@ -185,6 +179,7 @@ export class CardViewModel {
     }
     return null;
   }
+
   get advancedAffinity() {
     if ('advancedAffinity' in this.data) {
       return this.data.advancedAffinity as Affinity | null;
@@ -280,16 +275,24 @@ export class CardViewModel {
     return null;
   }
 
-  get baseBounty() {
-    if ('baseBounty' in this.data) {
-      return this.data.baseBounty as number;
+  get baseCommandment() {
+    if ('baseCommandment' in this.data) {
+      return this.data.baseCommandment as number;
     }
     return null;
   }
 
+  get maxDurability() {
+    if ('maxDurability' in this.data) {
+      return this.data.maxDurability as number;
+    }
+
+    return null;
+  }
+
   get durability() {
-    if ('durability' in this.data) {
-      return this.data.durability as number;
+    if ('remainingDurability' in this.data) {
+      return this.data.remainingDurability as number;
     }
 
     return null;
@@ -332,10 +335,7 @@ export class CardViewModel {
   }
 
   get canAttack() {
-    return (
-      this.player.id === this.getClient().state.currentPlayer &&
-      this.potentialAttackTargets.length > 0
-    );
+    return this.potentialAttackTargets.length > 0;
   }
 
   canAttackAt(card: CardViewModel) {
@@ -369,13 +369,13 @@ export class CardViewModel {
     const canSelect =
       state.interaction.state === INTERACTION_STATES.SELECTING_CARDS_ON_BOARD &&
       state.interaction.ctx.elligibleCards.some(id => id === this.id) &&
-      client.getActivePlayerId() === client.playerId;
+      client.getActivePlayerIds().includes(client.playerId);
 
     const canAttack =
       state.interaction.state === INTERACTION_STATES.IDLE &&
       state.combat.step === COMBAT_STEPS.DECLARE_TARGET &&
       state.combat.potentialTargets.some(id => id === this.id) &&
-      client.getActivePlayerId() === client.playerId;
+      client.getActivePlayerIds().includes(client.playerId);
 
     return canSelect || canAttack;
   }

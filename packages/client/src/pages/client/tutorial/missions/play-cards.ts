@@ -1,13 +1,4 @@
-import type { HeroCard } from '@game/engine/src/card/entities/hero.entity';
 import type { TutorialMission } from '.';
-
-const meta: {
-  allyHero: HeroCard | null;
-  enemyHero: HeroCard | null;
-} = {
-  allyHero: null,
-  enemyHero: null
-};
 
 export const playCardTutorial: TutorialMission = {
   id: 'play-card',
@@ -44,13 +35,6 @@ export const playCardTutorial: TutorialMission = {
       // client.ui.displayedElements.artifacts = false;
       // client.ui.displayedElements.destinyPhaseModal = false;
       // client.ui.displayedElements.phaseTracker = false;
-
-      meta.allyHero = game.playerSystem.player1.hero;
-      meta.allyHero.abilityManager.abilities.forEach(ability =>
-        meta.allyHero?.abilityManager.removeAbility(ability.id)
-      );
-
-      meta.enemyHero = game.playerSystem.player2.hero;
     },
     steps: {
       root: {

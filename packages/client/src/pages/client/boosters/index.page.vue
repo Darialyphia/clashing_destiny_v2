@@ -1,17 +1,18 @@
 <script setup lang="ts">
-import BoosterPackContent from '@/card/components/BoosterPackContent.vue';
+import BoosterPackContent from './BoosterPackContent.vue';
 import FancyButton from '@/ui/components/FancyButton.vue';
 import { CARDS_DICTIONARY } from '@game/engine/src/card/sets';
 import type { CardBlueprint } from '@game/engine/src/card/card-blueprint';
 import {
   useOpenBoosterPack,
   useUnopenedBoosterPacks
-} from '@/card/composables/useBoosterPack';
+} from './composables/useBoosterPack';
 
 definePage({
   name: 'Boosters',
   meta: {
-    requiresAuth: true
+    requiresAuth: true,
+    wrapperClass: 'page-blur'
   }
 });
 
@@ -64,4 +65,9 @@ const latestPackOpened = ref<
   </div>
 </template>
 
-<style scoped lang="postcss"></style>
+<style scoped lang="postcss">
+.page {
+  min-height: 100vh;
+  background-image: url('@/assets/backgrounds/main-menu-overlay.png');
+}
+</style>

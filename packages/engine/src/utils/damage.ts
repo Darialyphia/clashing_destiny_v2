@@ -23,13 +23,19 @@ export abstract class Damage {
 
   protected _isPrevented = false;
 
+  private flatModifiers: number[] = [];
+
   constructor(options: DamageOptions) {
     this._baseAmount = options.baseAmount;
     this.type = options.type;
   }
 
   get baseAmount() {
-    return this._baseAmount;
+    return this._baseAmount + this.flatModifiers.reduce((a, b) => a + b, 0);
+  }
+
+  addFlatModifier(amount: number) {
+    this.flatModifiers.push(amount);
   }
 
   prevent() {
@@ -45,8 +51,8 @@ export abstract class Damage {
 export class CombatDamage extends Damage {
   private _attacker: Attacker;
 
-  constructor(attacker: Attacker) {
-    super({ baseAmount: attacker.atk, type: DAMAGE_TYPES.COMBAT });
+  constructor(attacker: Attacker, target: AttackTarget) {
+    super({ baseAmount: attacker.getDealtDamage(target), type: DAMAGE_TYPES.COMBAT });
     this._attacker = attacker;
   }
 
@@ -66,7 +72,7 @@ export class SpellDamage extends Damage {
   getFinalAmount(target: AttackTarget): number {
     const finalAmount = super.getFinalAmount(target);
     if (this._isPrevented) return 0;
-    return finalAmount + this.source.player.hero.spellPower;
+    return finalAmount;
   }
 }
 

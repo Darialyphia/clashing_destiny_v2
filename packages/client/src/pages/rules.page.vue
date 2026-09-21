@@ -55,7 +55,7 @@ definePage({
   height: 100dvh;
   grid-template-rows: auto 1fr;
   pointer-events: auto;
-  background: url('@/assets/backgrounds/main-menu.jpg');
+  background: url('@/assets/backgrounds/main-menu.png');
   background-size: cover;
   background-attachment: fixed;
 }

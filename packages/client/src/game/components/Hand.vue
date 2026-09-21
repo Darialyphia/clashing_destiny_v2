@@ -24,30 +24,8 @@ const { client } = useGameClient();
 
 const myPlayer = useMyPlayer();
 
-const isExpanded = computed({
-  get() {
-    return playerId === myPlayer.value?.id
-      ? ui.value.isHandExpanded
-      : ui.value.isOpponentHandExpanded;
-  },
-  set(v) {
-    if (playerId === myPlayer.value?.id) {
-      ui.value.isHandExpanded = v;
-    } else {
-      ui.value.isOpponentHandExpanded = v;
-    }
-  }
-});
-
 const isMyHand = computed(() => {
   return playerId === myPlayer.value?.id;
-});
-
-onMounted(() => {
-  if (!isMyHand.value) return;
-  if (playerId === client.value.getActivePlayerId()) {
-    isExpanded.value = true;
-  }
 });
 
 useFxEvent(FX_EVENTS.CARD_ADD_TO_HAND, async () => {
@@ -112,7 +90,7 @@ const cardW = computed(() => {
   return (
     parseInt(
       getComputedStyle(document.documentElement).getPropertyValue(
-        '--card-v2-width-unitless'
+        '--card-v3-width-unitless'
       )
     ) * pixelScale.value
   );
@@ -126,7 +104,6 @@ const step = computed(() => {
     (handContainerSize.value.w - cardW.value) / (handSize.value - 1);
   return clamp(natural, 0, cardW.value);
 });
-
 const cards = computed(() => {
   if (handSize.value === 0) return [];
   const usedSpan = cardW.value + (handSize.value - 1) * step.value;
@@ -135,34 +112,36 @@ const cards = computed(() => {
   const hoveredIndexInHand = ui.value.hoveredCardInHand
     ? player.value.hand.findIndex(c => c.equals(ui.value.hoveredCardInHand!))
     : null;
+
   return player.value.hand.map((card, i) => {
     const isAfterHoveredCard =
       hoveredIndexInHand !== null && i > hoveredIndexInHand ? 1 : 0;
     return {
       card,
-      x:
-        i * step.value + offset + (isAfterHoveredCard ? cardW.value * 0.25 : 0),
+      x: i * step.value + offset + (isAfterHoveredCard ? cardW.value : 0),
       y: 0,
       z: i
     };
   });
 });
 
-const { width } = useElementBounding(() => ui.value.DOMSelectors.board.element);
+const { width } = useElementBounding(
+  () => ui.value.DOMSelectors.boardInner.element
+);
 const WIDTH_RATIO = 0.75;
 const handWidth = ref(width.value * WIDTH_RATIO);
 
 watch(width, v => {
   if (client.value.isPlayingFx) return;
-  handWidth.value = Math.max(v * WIDTH_RATIO, window.innerWidth);
+  handWidth.value = Math.min(v * WIDTH_RATIO, window.innerWidth);
 });
 </script>
 
 <template>
   <OnClickOutside
+    v-if="state.phase.state !== GAME_PHASES.DRAW"
     class="hand-wrapper"
     :options="{ ignore: [`${ui.DOMSelectors.globalActionButtons.selector} *`] }"
-    @trigger="isExpanded = false"
   >
     <section
       :id="`hand-${player.id}`"
@@ -177,6 +156,7 @@ watch(width, v => {
         '--hand-offset-y': handOffsetY
       }"
       ref="hand"
+      @mouseleave="ui.unhoverCardInHand"
     >
       <HandCard
         v-for="card in cards"
@@ -189,7 +169,7 @@ watch(width, v => {
           '--z': card.z,
           '--keyboard-shortcut-right': '50%'
         }"
-        :hover-scale="1.25"
+        :hover-scale="2"
       />
     </section>
   </OnClickOutside>
@@ -201,7 +181,7 @@ watch(width, v => {
   width: calc(1px * v-bind(handWidth));
   left: 50%;
   transform: translateX(-50%);
-  height: 50px;
+
   z-index: 10;
 }
 .hand {
@@ -210,12 +190,10 @@ watch(width, v => {
   z-index: 1;
   width: 100%;
   transition: transform 0.15s var(--ease-in-3);
+  height: 200px;
   &.opponent-hand:not(.expanded) {
     position: absolute;
     right: 0;
-  }
-  &.hoverable:hover {
-    transform: translateY(-135px);
   }
 }
 </style>

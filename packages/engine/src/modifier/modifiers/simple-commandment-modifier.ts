@@ -2,10 +2,10 @@ import { isFunction } from '@game/shared';
 import type { AnyCard } from '../../card/entities/card.entity';
 import type { MinionCard } from '../../card/entities/minion.entity';
 import type { Game } from '../../game/game';
-import { UnitInterceptorModifierMixin } from '../mixins/interceptor.mixin';
 import { RemoveOnDestroyedMixin } from '../mixins/remove-on-destroyed';
 import type { ModifierMixin } from '../modifier-mixin';
 import { Modifier } from '../modifier.entity';
+import { MinionInterceptorModifierMixin } from '../mixins/interceptor.mixin';
 
 export class SimpleCommandmentBuffModifier extends Modifier<MinionCard> {
   constructor(
@@ -21,24 +21,20 @@ export class SimpleCommandmentBuffModifier extends Modifier<MinionCard> {
   ) {
     super(modifierType, game, card, {
       isUnique: options.isUnique ?? true,
-      icon: () => {
-        const amount = isFunction(options.amount) ? options.amount() : options.amount;
-        return amount > 0 ? 'keyword-commandment-buff' : 'keyword-commandment-debuff';
-      },
       name: () => {
         const name = isFunction(options.name) ? options.name() : options.name;
         if (name) return name;
 
         const amount = isFunction(options.amount) ? options.amount() : options.amount;
-        return amount > 0 ? 'Bounty Buff' : 'Bounty Debuff';
+        return amount > 0 ? 'Commandment Buff' : 'Commandment Debuff';
       },
       description: () => {
         const amount = isFunction(options.amount) ? options.amount() : options.amount;
-        return `${amount > 0 ? '+' : '-'}${options.amount} Bounty`;
+        return `${amount > 0 ? '+' : ''}${options.amount} Commandment`;
       },
       mixins: [
         new RemoveOnDestroyedMixin(game),
-        new UnitInterceptorModifierMixin(game, {
+        new MinionInterceptorModifierMixin(game, {
           key: 'commandment',
           interceptor: value => {
             const amount = isFunction(options.amount) ? options.amount() : options.amount;

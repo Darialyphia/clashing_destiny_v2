@@ -33,7 +33,7 @@ export class AskQuestionContext {
     aiHints: { shouldPick: (game: Game, player: Player, choiceId: string) => number };
   }> = [];
 
-  readonly player: Player;
+  private _player: Player;
 
   private label: string;
 
@@ -48,7 +48,7 @@ export class AskQuestionContext {
     private options: AskQuestionContextOptions
   ) {
     this.choices = options.choices;
-    this.player = options.player;
+    this._player = options.player;
     this.label = options.label;
     this.questionId = options.questionId;
     this.source = options.source;
@@ -57,10 +57,14 @@ export class AskQuestionContext {
 
   async init() {}
 
+  get players() {
+    return [this._player];
+  }
+
   serialize() {
     return {
       questionId: this.questionId,
-      player: this.player.id,
+      players: this.players.map(p => p.id),
       source: this.source.id,
       choices: this.choices.map(choice => ({ id: choice.id, label: choice.label })),
       label: this.label,
@@ -69,7 +73,7 @@ export class AskQuestionContext {
   }
 
   async commit(player: Player, id: string | null) {
-    assert(player.equals(this.player), new InvalidPlayerError());
+    assert(player.equals(this._player), new InvalidPlayerError());
 
     this.selectedChoice = this.choices.find(
       choice => choice.id === (id ?? this.timeoutFallback)
@@ -85,7 +89,7 @@ export class AskQuestionContext {
   }
 
   async cancel(player: Player) {
-    assert(player.equals(this.player), new InvalidPlayerError());
+    assert(player.equals(this._player), new InvalidPlayerError());
     await this.game.interaction.sendTransition(
       INTERACTION_STATE_TRANSITIONS.CANCEL_ASKING_QUESTION,
       {}

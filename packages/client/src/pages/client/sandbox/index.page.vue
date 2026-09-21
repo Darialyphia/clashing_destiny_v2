@@ -1,114 +1,84 @@
 <script setup lang="ts">
 import Sandbox from '@/game/components/Sandbox.vue';
 import FancyButton from '@/ui/components/FancyButton.vue';
-import PlayerDeck from '@/player/components/PlayerDeck.vue';
-import { useDecks, type UserDeck } from '@/card/composables/useDecks';
-import AuthenticatedHeader from '@/AuthenticatedHeader.vue';
+import { type UserDeck } from '@/card/composables/useDecks';
+import DeckSelector from './DeckSelector.vue';
+import type { PlayerOptions } from '@game/engine/src/player/player.entity';
 
 definePage({
   name: 'Sandbox',
-  path: '/client/sandbox'
+  path: '/client/sandbox',
+  meta: {
+    wrapperClass: 'page-blur'
+  }
 });
-
-const { data: decks, isLoading } = useDecks();
 
 const p1Deck = ref<UserDeck | null>(null);
 const p2Deck = ref<UserDeck | null>(null);
 const isStarted = ref(false);
 
-const validDecks = computed(() => {
-  if (!decks.value) return [];
-  // return decks.value.filter(deck => deck.isValid.result === 'success');
-  return decks.value;
+const mapCard = (c: { copies: number; blueprintId: string; isFoil: boolean }) =>
+  Array.from({ length: c.copies }, () => ({
+    blueprintId: c.blueprintId,
+    isFoil: c.isFoil
+  }));
+
+const playersConfig = computed(() => {
+  if (!p1Deck.value || !p2Deck.value) return null;
+  return [
+    {
+      id: 'p1',
+      name: 'Player 1',
+      deck: {
+        cards: p1Deck.value.cards.map(mapCard).flat()
+      }
+    },
+    {
+      id: 'p2',
+      name: 'Player 2',
+      deck: {
+        cards: p2Deck.value.cards.map(mapCard).flat()
+      }
+    }
+  ] as [PlayerOptions, PlayerOptions];
 });
 </script>
 
 <template>
-  <div v-if="!isStarted" class="flex flex-col h-full">
-    <AuthenticatedHeader />
-    <div class="deck-selector">
-      <h1 class="text-3xl font-bold mb-4">Sandbox Mode</h1>
-      <p class="mb-4">Choose decks for both players:</p>
-      <p v-if="isLoading">Loading decks...</p>
-      <p v-if="!validDecks.length">
-        You don't have any valid decks yet. Create some decks in the Deck
-        Builder to get started!
-      </p>
-      <div class="grid grid-cols-2 gap-4" v-if="decks">
-        <ul class="flex flex-col gap-3">
-          <li
-            v-for="deck in validDecks"
-            :key="deck.name"
-            class="w-15"
-            :class="{ selected: p1Deck?.id === deck.id }"
-          >
-            <PlayerDeck :deck="deck" @click="p1Deck = deck" />
-          </li>
-        </ul>
-        <ul class="flex flex-col gap-3">
-          <li
-            v-for="deck in validDecks"
-            :key="deck.name"
-            class="w-15"
-            :class="{ selected: p2Deck?.id === deck.id }"
-          >
-            <PlayerDeck :deck="deck" @click="p2Deck = deck" />
-          </li>
-        </ul>
-      </div>
-      <FancyButton
-        class="mt-4 mx-auto"
-        text="Start Game"
-        size="lg"
-        :disabled="!p1Deck || !p2Deck"
-        @click="isStarted = true"
-      />
-    </div>
+  <div v-if="!isStarted" class="page">
+    <FancyButton
+      class="absolute top-10 left-8"
+      text="Back"
+      size="md"
+      :to="{ name: 'SelectMode' }"
+    />
+
+    <h1 class="dual-text" data-text="Select your Decks">Select your Decks</h1>
+
+    <DeckSelector
+      v-model:p1Deck="p1Deck"
+      v-model:p2Deck="p2Deck"
+      @start="isStarted = true"
+    />
   </div>
-  <Sandbox
-    v-else-if="p1Deck && p2Deck"
-    :players="[
-      {
-        id: 'p1',
-        name: 'Player 1',
-        deck: {
-          cards: p1Deck.cards
-            .map(c =>
-              Array.from({ length: c.copies }, () => ({
-                blueprintId: c.blueprintId,
-                isFoil: c.isFoil
-              }))
-            )
-            .flat()
-        }
-      },
-      {
-        id: 'p2',
-        name: 'Player 2',
-        deck: {
-          cards: p2Deck.cards
-            .map(c =>
-              Array.from({ length: c.copies }, () => ({
-                blueprintId: c.blueprintId,
-                isFoil: c.isFoil
-              }))
-            )
-            .flat()
-        }
-      }
-    ]"
-  />
+  <Sandbox v-else-if="playersConfig" :players="playersConfig" />
 </template>
 
 <style lang="postcss" scoped>
-.deck-selector {
-  width: fit-content;
-  margin-inline: auto;
+.page {
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  padding-top: var(--size-12);
+  background-image: url('@/assets/backgrounds/main-menu-overlay.png');
 }
 
-.selected {
-  filter: brightness(1.25);
-  outline: solid 2px var(--primary);
-  outline-offset: 5px;
+h1 {
+  font-size: var(--font-size-7);
+  font-weight: var(--font-weight-7);
+  color: var(--text-1);
+  margin-bottom: var(--size-3);
+  font-family: 'Cinzel Decorative', serif;
+  text-align: center;
 }
 </style>

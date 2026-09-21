@@ -2,6 +2,7 @@
 import { isDefined } from '@game/shared';
 import type { NetworkAdapter } from '@game/engine/src/client/client';
 import { useGameSocket } from '../composables/useGameSocket';
+import type { PlayerClockState } from '../composables/useGameSocket';
 import { provideGameClient } from '../composables/useGameClient';
 import { useFxAdapter } from '../composables/useFxAdapter';
 import { useMe } from '@/auth/composables/useMe';
@@ -40,11 +41,7 @@ socket.value.on('gameInitialState', async state => {
 });
 
 const clocks = ref<{
-  [playerId: string]: {
-    max: number;
-    remaining: number;
-    isActive: boolean;
-  };
+  [playerId: string]: PlayerClockState;
 }>({});
 
 socket.value.on('clockUpdate', updatedClocks => {

@@ -3,9 +3,6 @@ import { useCollectionPage } from './useCollectionPage';
 import BlueprintCard from '@/card/components/BlueprintCard.vue';
 import type { CardBlueprint } from '@game/engine/src/card/card-blueprint';
 import type { CardId } from '@game/api';
-import CardDetailsModal from './CardDetailsModal.vue';
-
-const { deckBuilder, isEditingDeck } = useCollectionPage();
 
 const { card } = defineProps<{
   card: {
@@ -16,29 +13,35 @@ const { card } = defineProps<{
   };
 }>();
 
+const { deckBuilder, isEditingDeck, selectCard, selectedCard } =
+  useCollectionPage();
+
 const canAddCard = computed(() => {
   if (!isEditingDeck.value) return false;
   if (card.copiesOwned === 0) return false;
 
-  return (
-    deckBuilder.value.canAdd({
+  const existing = deckBuilder.value.getCardById(card.id);
+  if (existing && card.copiesOwned <= existing.copies) {
+    return false;
+  }
+
+  return deckBuilder.value.canAdd(
+    existing ?? {
       blueprintId: card.card.id,
-      copies: card.copiesOwned,
+      copies: 0,
       meta: {
         cardId: card.id as CardId,
         isFoil: card.isFoil
       }
-    }) &&
-    card.copiesOwned > (deckBuilder.value.getCard(card.card.id)?.copies ?? 0)
+    }
   );
 });
 
-const isModalOpened = ref(false);
 const isInvisible = ref(false);
-watch(isModalOpened, opened => {
-  // we had a delay to avoid flickering when right clicking a card to see the modal
+watch(selectedCard, () => {
+  // we add a delay to avoid flickering when right clicking a card to see the modal
   // because the modal has some Flip shenanigans going on
-  if (opened) {
+  if (selectedCard.value?.id === card.id) {
     setTimeout(() => {
       isInvisible.value = true;
     }, 0);
@@ -74,16 +77,10 @@ watch(isModalOpened, opened => {
           });
         }
       "
-      @contextmenu.prevent="isModalOpened = true"
+      @contextmenu.prevent="selectCard(card.id)"
     />
 
-    <CardDetailsModal v-model:is-opened="isModalOpened" :card="card" />
-
-    <div
-      class="text-center text-xs text-yellow-50/90 select-none pointer-events-none py-2"
-    >
-      X{{ card.copiesOwned }}
-    </div>
+    <div class="copies-owned">Copies owned: {{ card.copiesOwned }}</div>
   </div>
 </template>
 
@@ -113,5 +110,15 @@ watch(isModalOpened, opened => {
 
 .collection-card:not(.disabled):hover {
   cursor: url('@/assets/ui/cursor-hover.png'), auto;
+}
+.copies-owned {
+  text-align: center;
+  font-size: var(--font-size-0);
+  user-select: none;
+  -webkit-text-stroke: 3px black;
+  paint-order: stroke fill;
+  display: grid;
+  place-items: center;
+  margin-top: var(--size-1);
 }
 </style>

@@ -11,10 +11,9 @@ import {
   type CardLocation,
   CARD_KINDS,
   type Affinity,
-  AFFINITIES,
-  type JobId,
   type CardSpeed,
-  CARD_SPEED
+  CARD_SPEED,
+  AFFINITIES
 } from '../card.enums';
 import {
   CardAddToHandevent,
@@ -35,8 +34,7 @@ import { EntityWithModifiers } from '../../modifier/entity-with-modifiers';
 import { COMBAT_STEPS, EFFECT_TYPE, INTERACTION_STATES } from '../../game/game.enums';
 import { nanoid } from 'nanoid';
 import type { BoardSpace } from '../../board/board-space.entity';
-import type { Rune } from '../../player/player.enums';
-import type { RuneCost } from '../../player/components/rune-manager.component';
+import type { RuneCard } from './rune.entity';
 
 export type CardOptions<T extends CardBlueprint = CardBlueprint> = {
   id: string;
@@ -48,7 +46,7 @@ export type AnyCard = Card<any, any, any>;
 export type CardInterceptors = {
   blueprintId: Interceptable<string>;
   manaCost: Interceptable<number | null>;
-  runeCost: Interceptable<Rune[]>;
+  manaSupply: Interceptable<number>;
   player: Interceptable<Player>;
   loyalty: Interceptable<number>;
   shouldWakeUpAtTurnStart: Interceptable<boolean>;
@@ -62,7 +60,7 @@ export type CardInterceptors = {
 export const makeCardInterceptors = (): CardInterceptors => ({
   blueprintId: new Interceptable(),
   manaCost: new Interceptable(),
-  runeCost: new Interceptable(),
+  manaSupply: new Interceptable(),
   player: new Interceptable(),
   loyalty: new Interceptable(),
   shouldWakeUpAtTurnStart: new Interceptable(),
@@ -87,7 +85,7 @@ export type SerializedCard = {
   location: CardLocation | null;
   modifiers: string[];
   manaCost: number | null;
-  runeCost: Rune[] | null;
+  manaSupply: number | null;
   keywords: string[];
   unplayableReason: string | null;
   isRevealed: boolean;
@@ -149,14 +147,6 @@ export abstract class Card<
 
   get kind() {
     return this.blueprint.kind;
-  }
-
-  get jobs() {
-    return this.blueprint.jobs;
-  }
-
-  hasJob(jobId: JobId) {
-    return this.jobs.map(j => j.id).includes(jobId);
   }
 
   get keywords() {
@@ -222,37 +212,54 @@ export abstract class Card<
     return 0;
   }
 
+  get fulfillsAffinities() {
+    const available = Object.fromEntries(
+      Object.values(AFFINITIES).map(affinity => [affinity, 0])
+    ) as Record<Affinity, number>;
+    this.player.cardManager.runeZone.forEach(card => {
+      card.affinities.forEach(affinity => {
+        available[affinity]++;
+      });
+    });
+    const nonNeutralCost = this.affinities.filter(
+      affinity => affinity !== AFFINITIES.NEUTRAL
+    );
+    const neutralCost = this.affinities.filter(
+      affinity => affinity === AFFINITIES.NEUTRAL
+    );
+
+    // try to pay non neutral cost first
+    for (const rune of nonNeutralCost) {
+      if (available[rune] > 0) {
+        available[rune]--;
+      } else {
+        return false;
+      }
+    }
+
+    const remaining = Object.values(available).reduce((sum, count) => sum + count, 0);
+
+    return remaining >= neutralCost.length;
+  }
+
   get canPayManaCost() {
     return this.player.mana >= this.manaCost;
   }
 
   async payManaCost() {
     if (!this.canPayManaCost) return;
+    const cost = this.manaCost;
     await this.player.manaManager.spend(this.manaCost);
+    return cost;
   }
 
-  get runeCost(): Rune[] {
-    if ('runeCost' in this.blueprint) {
-      const base = this.blueprint.runeCost;
+  get manaSupply(): number {
+    if ('manaSupply' in this.blueprint) {
+      const base = this.blueprint.manaSupply;
 
-      return this.interceptors.runeCost.getValue(base ?? [], {}) ?? [];
+      return Math.max(0, this.interceptors.manaSupply.getValue(base ?? null, {}) ?? 0);
     }
-    return [];
-  }
-
-  get canPayRuneCost() {
-    const cost: RuneCost = {};
-    this.runeCost.forEach(rune => {
-      cost[rune] = (cost[rune] ?? 0) + 1;
-    });
-
-    return this.player.runeManager.has(cost);
-  }
-
-  async payRuneCost() {
-    if (!this.canPayRuneCost) return;
-
-    await this.player.runeManager.remove(this.runeCost);
+    return 0;
   }
 
   get position(): BoardSpace | null {
@@ -265,21 +272,21 @@ export abstract class Card<
     );
   }
 
-  get hasUnlockedAffinity() {
-    if (this.affinities[0] === AFFINITIES.NEUTRAL) {
-      return true;
-    }
-    return this.affinities.some(affinity =>
-      this.player.unlockedAffinities.includes(affinity)
-    );
-  }
-
   protected async dispose() {
     await match(this.kind)
-      .with(CARD_KINDS.MINION, CARD_KINDS.SPELL, CARD_KINDS.ARTIFACT, async () => {
-        await this.sendToDiscardPile();
+      .with(
+        CARD_KINDS.MINION,
+        CARD_KINDS.SPELL,
+        CARD_KINDS.ARTIFACT,
+        CARD_KINDS.SECRET,
+        async () => {
+          await this.sendToDiscardPile();
+        }
+      )
+      .with(CARD_KINDS.DESTINY, async () => {
+        await this.sendToBanishPile();
       })
-      .with(CARD_KINDS.HERO, CARD_KINDS.DESTINY, async () => {
+      .with(CARD_KINDS.RUNE, async () => {
         await this.sendToBanishPile();
       })
       .exhaustive();
@@ -291,7 +298,10 @@ export abstract class Card<
   }
 
   get shouldCreateChainWhenPlayed(): boolean {
-    return this.interceptors.shouldCreateChainWhenPlayed.getValue(true, this);
+    return this.interceptors.shouldCreateChainWhenPlayed.getValue(
+      this.game.config.EFFECT_CHAIN,
+      this
+    );
   }
 
   protected async insertInChainOrExecute(
@@ -310,15 +320,14 @@ export abstract class Card<
         await this.resolve(handler);
         this.isPlayedFromHand = false;
       },
-      shouldHideTargetArrows: this.blueprint.shouldHideTargetarrows ?? false
+      shouldHideTargetArrows: this.blueprint.shouldHideTargetArrows ?? false
     };
 
     await this.payManaCost();
-    await this.payRuneCost();
 
     if (!this.shouldCreateChainWhenPlayed) {
       await effect.handler();
-      return this.game.inputSystem.askForPlayerInput();
+      return await this.game.snapshotSystem.takeSnapshot();
     }
 
     if (this.game.effectChainSystem.currentChain) {
@@ -328,7 +337,7 @@ export abstract class Card<
         // this can happen if a card is played as part of an other card effect
         // the card wiill be played while the current chain is resolving, so let's just execute it immediately
         await effect.handler();
-        return this.game.inputSystem.askForPlayerInput();
+        return await this.game.snapshotSystem.takeSnapshot();
       }
     } else {
       await this.game.effectChainSystem.createChain({
@@ -383,6 +392,15 @@ export abstract class Card<
           this.player.boardSide.remove(this);
         }
       )
+      .with(CARD_LOCATIONS.RUNE_ZONE, () => {
+        this.player.cardManager.removeFromRuneZone(this as any);
+      })
+      .with(CARD_LOCATIONS.RUNE_DECK, () => {
+        this.player.cardManager.runeDeck.pluck(this as any);
+      })
+      .with(CARD_LOCATIONS.RESERVE, () => {
+        this.player.cardManager.removeFromReserve(this);
+      })
       .exhaustive();
   }
 
@@ -399,15 +417,27 @@ export abstract class Card<
   }
 
   async sendToTopOfDeck() {
-    await this.changeLocation(CARD_LOCATIONS.MAIN_DECK, () =>
-      this.player.cardManager.mainDeck.addToTop(this)
-    );
+    if (this.kind === CARD_KINDS.RUNE) {
+      await this.changeLocation(CARD_LOCATIONS.RUNE_DECK, () =>
+        this.player.cardManager.runeDeck.addToTop(this as any)
+      );
+    } else {
+      await this.changeLocation(CARD_LOCATIONS.MAIN_DECK, () =>
+        this.player.cardManager.mainDeck.addToTop(this)
+      );
+    }
   }
 
   async sendToBottomOfDeck() {
-    await this.changeLocation(CARD_LOCATIONS.MAIN_DECK, () =>
-      this.player.cardManager.mainDeck.addToBottom(this)
-    );
+    if (this.kind === CARD_KINDS.RUNE) {
+      await this.changeLocation(CARD_LOCATIONS.RUNE_DECK, () =>
+        this.player.cardManager.runeDeck.addToBottom(this as any)
+      );
+    } else {
+      await this.changeLocation(CARD_LOCATIONS.MAIN_DECK, () =>
+        this.player.cardManager.mainDeck.addToBottom(this)
+      );
+    }
   }
 
   async shuffleIntoDeck() {
@@ -465,7 +495,9 @@ export abstract class Card<
     }
 
     return (
-      this.location === CARD_LOCATIONS.HAND && this.canPayManaCost && this.canPayRuneCost
+      this.location === CARD_LOCATIONS.HAND &&
+      this.canPayManaCost &&
+      this.fulfillsAffinities
     );
   }
 
@@ -496,8 +528,8 @@ export abstract class Card<
       return 'Cannot pay mana cost.';
     }
 
-    if (!this.canPayRuneCost) {
-      return 'Cannot pay rune cost.';
+    if (!this.fulfillsAffinities) {
+      return 'You do not have the required affinities to play this card.';
     }
 
     return 'You cannot play this card';
@@ -530,7 +562,7 @@ export abstract class Card<
         .filter(mod => mod.isEnabled)
         .map(modifier => modifier.id),
       manaCost: 'manaCost' in this.blueprint ? this.manaCost : null,
-      runeCost: 'runeCost' in this.blueprint ? this.runeCost : null,
+      manaSupply: 'manaSupply' in this.blueprint ? this.manaSupply : null,
       keywords: this.keywords.map(keyword => keyword.id),
       unplayableReason: this.unplayableReason,
       isRevealed: this.isRevealed,
@@ -557,6 +589,12 @@ export abstract class Card<
         CARD_EVENTS.CARD_ADD_TO_HAND,
         new CardAddToHandevent({ card: this, index: index ?? null })
       );
+    });
+  }
+
+  async addToReserve() {
+    await this.changeLocation(CARD_LOCATIONS.RESERVE, async () => {
+      await this.player.cardManager.sendToReserve(this);
     });
   }
 

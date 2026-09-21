@@ -22,7 +22,7 @@ const keywords = computed(() => {
         <GameCard
           :card-id="ui.hoveredCard.id"
           :is-interactive="false"
-          :pixel-scale="1.5"
+          :pixel-scale="2"
         />
         <ul>
           <li v-for="keyword in keywords" :key="keyword.id">
@@ -40,6 +40,7 @@ const keywords = computed(() => {
   color: white;
   font-size: 12px;
   border-radius: 4px;
+  width: calc(var(--card-v3-width) * 2);
 }
 
 .hovered-card {

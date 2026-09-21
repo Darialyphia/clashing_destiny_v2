@@ -1,5 +1,5 @@
 import type { AbilityBlueprint, ArtifactBlueprint } from '../card-blueprint';
-import { CARD_EVENTS } from '../card.enums';
+import { CARD_EVENTS, CARD_LOCATIONS } from '../card.enums';
 import { CardPlayEvent } from '../card.events';
 import {
   Card,
@@ -68,7 +68,7 @@ export class ArtifactCard extends Card<
 
   canPlay(): boolean {
     return this.interceptors.canPlay.getValue(
-      this.canPayManaCost && this.blueprint.canPlay(this.game, this),
+      this.canPlayBase && this.blueprint.canPlay(this.game, this),
       this
     );
   }
@@ -100,6 +100,10 @@ export class ArtifactCard extends Card<
 
   get remainingDurability(): number {
     return this.maxDurability - this.lostDurability;
+  }
+
+  get isOnBoard() {
+    return this.location === CARD_LOCATIONS.BASE;
   }
 
   get unplayableReason() {
@@ -183,6 +187,7 @@ export class ArtifactCard extends Card<
 
   async playAt(position: BoardSpace) {
     await this.resolve(async () => {
+      await this.reveal();
       await this.equip(position);
     });
   }
@@ -216,7 +221,6 @@ export class ArtifactCard extends Card<
     }
 
     await this.payManaCost();
-    await this.payRuneCost();
     await this.playAt(positionResult.result[0] as BoardSpace);
 
     return { cancelled: false };

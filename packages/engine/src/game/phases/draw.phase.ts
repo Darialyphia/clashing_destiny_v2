@@ -10,15 +10,66 @@ export class DrawPhase implements GamePhaseController, Serializable<EmptyObject>
     for (const player of this.game.playerSystem.players) {
       await player.cardManager.draw(player.cardsDrawnForTurn);
     }
-    await this.game.gamePhaseSystem.sendTransition(GAME_PHASE_TRANSITIONS.DRAW_FOR_TURN);
+  }
+
+  private async refillMana() {
+    for (const player of this.game.playerSystem.players) {
+      await player.manaManager.refill();
+    }
+  }
+
+  private async mulligan(count: number, redraw: boolean) {
+    const result = await this.game.interaction.chooseCards({
+      canCancel: false,
+      players: Object.fromEntries(
+        this.game.playerSystem.players.map(p => [
+          p.id,
+          {
+            choices: p.cardManager.hand.map(card => ({
+              card,
+              aiHints: {
+                shouldPick: () => 1
+              }
+            })),
+            minChoiceCount: 0,
+            maxChoiceCount: count,
+            label: `Choose up to ${count} cards to replace`,
+            timeoutFallback: []
+          }
+        ])
+      )
+    });
+
+    for (const { player, cards } of Object.values(result.result)) {
+      for (const card of cards) {
+        await card.sendToBottomOfDeck();
+      }
+      if (redraw) {
+        await player.cardManager.draw(cards.length);
+      }
+    }
   }
 
   async onEnter() {
-    if (this.game.turnSystem.elapsedTurns > 0) {
-      await this.game.turnSystem.startTurn();
-    }
+    await this.game.turnSystem.startTurn();
 
-    await this.drawForTurn();
+    if (this.game.turnSystem.isFirstTurn) {
+      await this.drawForTurn();
+      // this is in a setTimeout to not block game.initialize()
+      setTimeout(async () => {
+        await this.mulligan(this.game.config.START_OF_GAME_MULLIGANED_CARDS, true);
+        await this.game.snapshotSystem.takeSnapshot();
+        await this.game.gamePhaseSystem.sendTransition(
+          GAME_PHASE_TRANSITIONS.DRAWN_FOR_TURN
+        );
+      });
+    } else {
+      await this.mulligan(this.game.config.CARDS_MULLIGANED_PER_TURN, false);
+      await this.drawForTurn();
+      await this.game.gamePhaseSystem.sendTransition(
+        GAME_PHASE_TRANSITIONS.DRAWN_FOR_TURN
+      );
+    }
   }
 
   async onExit() {}

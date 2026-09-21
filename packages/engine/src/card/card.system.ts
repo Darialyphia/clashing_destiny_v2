@@ -4,21 +4,22 @@ import { System } from '../system';
 import type { AnyCard, CardOptions } from './entities/card.entity';
 import type {
   CardBlueprint,
-  HeroBlueprint,
   MinionBlueprint,
   SpellBlueprint,
   ArtifactBlueprint,
-  DestinyBlueprint
+  DestinyBlueprint,
+  RuneBlueprint,
+  SecretBlueprint
 } from './card-blueprint';
 import { SpellCard } from './entities/spell.entity';
 import { MinionCard } from './entities/minion.entity';
-import { HeroCard } from './entities/hero.entity';
 import { match } from 'ts-pattern';
 import { CARD_KINDS, CARD_LOCATIONS, type CardKind } from './card.enums';
 import { GAME_EVENTS } from '../game/game.events';
 import { ArtifactCard } from './entities/artifact.entity';
-import { isHero } from './card-utils';
 import { DestinyCard } from './entities/destiny.entity';
+import { RuneCard } from './entities/rune.entity';
+import { SecretCard } from './entities/secret.entity';
 
 export type CardSystemOptions = {
   cardPool: IndexedRecord<CardBlueprint, 'id'>;
@@ -57,8 +58,7 @@ export class CardSystem extends System<CardSystemOptions> {
       card =>
         card.location === CARD_LOCATIONS.BASE ||
         card.location === CARD_LOCATIONS.LEFT_BATTLEFIELD ||
-        card.location === CARD_LOCATIONS.RIGHT_BATTLEFIELD ||
-        isHero(card)
+        card.location === CARD_LOCATIONS.RIGHT_BATTLEFIELD
     );
   }
 
@@ -94,15 +94,6 @@ export class CardSystem extends System<CardSystemOptions> {
           } as CardOptions<MinionBlueprint>)
       )
       .with(
-        CARD_KINDS.HERO,
-        () =>
-          new HeroCard(this.game, player, {
-            id,
-            blueprint,
-            isFoil
-          } as CardOptions<HeroBlueprint>)
-      )
-      .with(
         CARD_KINDS.ARTIFACT,
         () =>
           new ArtifactCard(this.game, player, {
@@ -117,6 +108,22 @@ export class CardSystem extends System<CardSystemOptions> {
             id,
             blueprint
           } as CardOptions<DestinyBlueprint>)
+      )
+      .with(
+        CARD_KINDS.RUNE,
+        () =>
+          new RuneCard(this.game, player, {
+            id,
+            blueprint
+          } as CardOptions<RuneBlueprint>)
+      )
+      .with(
+        CARD_KINDS.SECRET,
+        () =>
+          new SecretCard(this.game, player, {
+            id,
+            blueprint
+          } as CardOptions<SecretBlueprint<any>>)
       )
       .exhaustive();
     await card.init();

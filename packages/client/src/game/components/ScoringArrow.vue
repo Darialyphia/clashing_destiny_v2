@@ -5,7 +5,6 @@ import {
   useGameState,
   useGameUi
 } from '../composables/useGameClient';
-import { waitFor } from '@game/shared';
 import Arrow from './Arrow.vue';
 import { throttle } from 'lodash-es';
 import { useEventListener } from '@vueuse/core';
@@ -24,7 +23,6 @@ useFxEvent(FX_EVENTS.PRE_AFTER_SCORE, async event => {
     state.value.scoring.scoringCard = event.card;
     state.value.scoring.scoredDestiny = event.destinyCard;
     buildScoringArrowPath();
-    await waitFor(1000);
   }
 });
 const buildArrowBetweenTwoCards = (

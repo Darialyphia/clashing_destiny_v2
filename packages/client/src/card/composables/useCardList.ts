@@ -4,9 +4,9 @@ import { KEYWORDS } from '@game/engine/src/card/card-keywords';
 import {
   AFFINITIES,
   CARD_KINDS,
+  RARITIES,
   type Affinity,
   type CardKind,
-  type JobId,
   type Rarity
 } from '@game/engine/src/card/card.enums';
 import { CARD_SET_DICTIONARY } from '@game/engine/src/card/sets';
@@ -14,6 +14,7 @@ import { isFunction, isString } from '@game/shared';
 import type { Ref, ComputedRef, InjectionKey } from 'vue';
 import { api, type CardId } from '@game/api';
 import { useAuthedQuery } from '@/auth/composables/useAuth';
+import { useUrlSearchParams } from '@vueuse/core';
 
 export type CardListContext = {
   isLoading: Ref<boolean>;
@@ -33,10 +34,6 @@ export type CardListContext = {
   hasKindFilter(kind: CardKind): boolean;
   toggleKindFilter(kind: CardKind): void;
   clearKindFilter(): void;
-
-  hasJobFilter(job: JobId): boolean;
-  toggleJobFilter(job: JobId): void;
-  clearJobFilter(): void;
 
   hasRarityFilter(rarity: Rarity): boolean;
   toggleRarityFilter(rarity: Rarity): void;
@@ -60,11 +57,12 @@ export const provideCardList = () => {
   );
 
   const KIND_ORDER = {
-    [CARD_KINDS.HERO]: 1,
-    [CARD_KINDS.MINION]: 2,
-    [CARD_KINDS.SPELL]: 3,
-    [CARD_KINDS.ARTIFACT]: 4,
-    [CARD_KINDS.DESTINY]: 5
+    [CARD_KINDS.MINION]: 0,
+    [CARD_KINDS.SPELL]: 0,
+    [CARD_KINDS.ARTIFACT]: 0,
+    [CARD_KINDS.DESTINY]: 1,
+    [CARD_KINDS.RUNE]: 2,
+    [CARD_KINDS.SECRET]: 0
   };
 
   const AFFINITY_ORDER = {
@@ -74,16 +72,77 @@ export const provideCardList = () => {
     [AFFINITIES.EARTH]: 4,
     [AFFINITIES.LIGHT]: 5,
     [AFFINITIES.DARK]: 6,
-    [AFFINITIES.ARCANE]: 7,
-    [AFFINITIES.NEUTRAL]: 8
+    [AFFINITIES.NEUTRAL]: 7
   };
 
   const kindFilter = ref(new Set<CardKind>());
-  const jobFilter = ref(new Set<JobId>());
   const rarityFilter = ref(new Set<Rarity>());
   const affinityFilter = ref(new Set<Affinity>());
   const manaCostFilter = ref<{ min: number; max: number } | null>(null);
   const includeUnowned = ref(false);
+
+  const urlParams = useUrlSearchParams<{
+    kinds?: string;
+    rarities?: string;
+    affinities?: string;
+    manaMin?: string;
+    manaMax?: string;
+    includeUnowned?: string;
+  }>('history', { removeNullishValues: true });
+
+  const parseFilterSet = <T extends string>(
+    value: string | undefined,
+    allowedValues: readonly T[]
+  ) =>
+    new Set(
+      value
+        ?.split(',')
+        .filter((item): item is T => allowedValues.includes(item as T))
+    );
+
+  const restoreFiltersFromUrl = () => {
+    kindFilter.value = parseFilterSet(
+      urlParams.kinds,
+      Object.values(CARD_KINDS)
+    );
+    rarityFilter.value = parseFilterSet(
+      urlParams.rarities,
+      Object.values(RARITIES)
+    );
+    affinityFilter.value = parseFilterSet(
+      urlParams.affinities,
+      Object.values(AFFINITIES)
+    );
+
+    const min = Number(urlParams.manaMin);
+    const max =
+      urlParams.manaMax === undefined ? Infinity : Number(urlParams.manaMax);
+    manaCostFilter.value =
+      Number.isFinite(min) && (max === Infinity || Number.isFinite(max))
+        ? { min, max }
+        : null;
+    includeUnowned.value = urlParams.includeUnowned === 'true';
+  };
+
+  const syncFiltersToUrl = () => {
+    urlParams.kinds = [...kindFilter.value].join(',') || undefined;
+    urlParams.rarities = [...rarityFilter.value].join(',') || undefined;
+    urlParams.affinities = [...affinityFilter.value].join(',') || undefined;
+    urlParams.manaMin = manaCostFilter.value?.min.toString();
+    urlParams.manaMax =
+      manaCostFilter.value?.max === Infinity
+        ? undefined
+        : manaCostFilter.value?.max.toString();
+    urlParams.includeUnowned = includeUnowned.value ? 'true' : undefined;
+  };
+
+  restoreFiltersFromUrl();
+  watch(
+    [kindFilter, rarityFilter, affinityFilter, manaCostFilter, includeUnowned],
+    syncFiltersToUrl,
+    { deep: true }
+  );
+  watch(urlParams, restoreFiltersFromUrl, { deep: true });
 
   const textFilter = ref('');
 
@@ -92,23 +151,23 @@ export const provideCardList = () => {
   );
   const cards = computed(() => {
     if (!myCollection.value) return [];
-    const base = includeUnowned.value
-      ? myCollection.value.concat(
-          allBlueprints
-            .filter(bp => {
-              return (
-                bp.collectable &&
-                !myCollection.value!.some(c => c.blueprintId === bp.id)
-              );
-            })
-            .map(bp => ({
-              id: `unowned-${bp.id}` as CardId,
-              blueprintId: bp.id,
-              isFoil: false,
-              copiesOwned: 0
-            }))
-        )
-      : myCollection.value;
+    const base = [...myCollection.value];
+    if (includeUnowned.value) {
+      const missing = allBlueprints.filter(bp => {
+        return (
+          bp.collectable &&
+          !myCollection.value!.some(c => c.blueprintId === bp.id)
+        );
+      });
+      base.push(
+        ...missing.map(bp => ({
+          id: `unowned-${bp.id}` as CardId,
+          blueprintId: bp.id,
+          isFoil: false,
+          copiesOwned: 0
+        }))
+      );
+    }
 
     return base
       .map(c => {
@@ -120,13 +179,6 @@ export const provideCardList = () => {
       .filter(({ card }) => {
         if (kindFilter.value.size > 0 && !kindFilter.value.has(card.kind)) {
           return false;
-        }
-
-        if (jobFilter.value.size > 0) {
-          const isMatch = card.jobs.some(job =>
-            jobFilter.value.has(job.id as JobId)
-          );
-          return isMatch;
         }
 
         if (
@@ -192,28 +244,8 @@ export const provideCardList = () => {
         return true;
       })
       .sort((a, b) => {
-        if (
-          a.card.kind === CARD_KINDS.HERO &&
-          b.card.kind !== CARD_KINDS.HERO
-        ) {
-          return -1;
-        }
-        if (
-          a.card.kind !== CARD_KINDS.HERO &&
-          b.card.kind === CARD_KINDS.HERO
-        ) {
-          return 1;
-        }
-
-        if (a.card.affinities.length !== b.card.affinities.length) {
-          return a.card.affinities.length - b.card.affinities.length;
-        }
-
-        if (a.card.affinities[0] !== b.card.affinities[0]) {
-          return (
-            (AFFINITY_ORDER[a.card.affinities[0]] ?? 999) -
-            (AFFINITY_ORDER[b.card.affinities[0]] ?? 999)
-          );
+        if (KIND_ORDER[a.card.kind] !== KIND_ORDER[b.card.kind]) {
+          return KIND_ORDER[a.card.kind] - KIND_ORDER[b.card.kind];
         }
         if (
           'manaCost' in a.card &&
@@ -222,9 +254,13 @@ export const provideCardList = () => {
         ) {
           return (a.card.manaCost ?? 0) - (b.card.manaCost ?? 0);
         }
-
-        if (a.card.kind !== b.card.kind) {
-          return KIND_ORDER[a.card.kind] - KIND_ORDER[b.card.kind];
+        const affinityA = a.card.affinities?.[0];
+        const affinityB = b.card.affinities?.[0];
+        if (affinityA !== affinityB) {
+          return (
+            (AFFINITY_ORDER[affinityA] ?? -1) -
+            (AFFINITY_ORDER[affinityB] ?? -1)
+          );
         }
 
         return a.card.name
@@ -252,20 +288,6 @@ export const provideCardList = () => {
     },
     clearKindFilter: () => {
       kindFilter.value.clear();
-    },
-
-    hasJobFilter(job: JobId) {
-      return jobFilter.value.has(job);
-    },
-    toggleJobFilter(job: JobId) {
-      if (jobFilter.value.has(job)) {
-        jobFilter.value.delete(job);
-      } else {
-        jobFilter.value.add(job);
-      }
-    },
-    clearJobFilter: () => {
-      jobFilter.value.clear();
     },
 
     hasRarityFilter(rarity: Rarity) {

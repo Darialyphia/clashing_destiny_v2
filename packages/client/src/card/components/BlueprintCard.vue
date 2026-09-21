@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import type { CardBlueprint } from '@game/engine/src/card/card-blueprint';
 import { formatAbilityText } from '@/utils/formatters';
-import Card from './cardV2/index.vue';
+import Card from './cardV3/index.vue';
 import { isFunction } from '@game/shared';
-import { type JobId } from '@game/engine/src/card/card.enums';
 import { provideRichTextContext } from '@/game/composables/useRichText';
+import { sprites } from '@/assets';
 
 const {
   blueprint,
@@ -24,6 +24,10 @@ const mergedFoilOptions = computed(() => ({
 provideRichTextContext({
   card: ref(null)
 });
+
+const sprite = computed(() => {
+  return sprites[`cards/${blueprint.art.default.sprite}`];
+});
 </script>
 
 <template>
@@ -38,24 +42,37 @@ provideRichTextContext({
         foil: mergedFoilOptions,
         bg: `cards/${blueprint.art.default.bg}`,
         main: `cards/${blueprint.art.default.main}`,
+        sprite: `cards/${blueprint.art.default.sprite}`,
         isFullArt: blueprint.art.default.isFullArt
       },
       kind: blueprint.kind,
       manaCost: (blueprint as any).manaCost,
-      runeCost: (blueprint as any).runeCost,
+      manaSupply: (blueprint as any).manaSupply,
       rarity: (blueprint as any).rarity,
       atk: (blueprint as any).atk,
       hp: (blueprint as any).maxHp,
+      might:
+        (blueprint as any).stats?.might ??
+        (blueprint as any).statRequirements?.might ??
+        null,
+      focus:
+        (blueprint as any).stats?.focus ??
+        (blueprint as any).statRequirements?.focus ??
+        null,
+      wisdom:
+        (blueprint as any).stats?.wisdom ??
+        (blueprint as any).statRequirements?.wisdom ??
+        null,
       durability: (blueprint as any).durability,
       abilities: (blueprint as any).abilities?.map(formatAbilityText),
       subKind: (blueprint as any).subKind,
-      jobs: blueprint.jobs.map(job => job.id as JobId),
       tags: blueprint.tags,
       affinities: blueprint.affinities,
       speed: (blueprint as any).speed,
       commandment: (blueprint as any).commandment
     }"
     :is-tilt-enabled="isTiltEnabled"
+    :sprite="sprite"
   />
 </template>
 

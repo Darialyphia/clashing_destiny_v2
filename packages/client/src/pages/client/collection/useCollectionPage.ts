@@ -3,7 +3,7 @@ import {
   type CardListContext
 } from '@/card/composables/useCardList';
 import { DeckBuilderViewModel } from '@/card/deck-builder.model';
-import { StandardDeckValidator } from '@game/engine/src/card/validators/deck.validator';
+import { StandardDeckValidator } from '@game/engine/src/card/validators/standard.validator';
 import type { Ref, InjectionKey } from 'vue';
 import { keyBy } from 'lodash-es';
 import { useSafeInject } from '@/shared/composables/useSafeInject';
@@ -16,6 +16,7 @@ import {
 } from '@/card/composables/useDecks';
 import type { Nullable } from '@game/shared';
 import type { DeckId } from '@game/api';
+import type { CardBlueprint } from '@game/engine/src/card/card-blueprint';
 
 export type CollectionContext = CardListContext & {
   viewMode: Ref<'expanded' | 'compact'>;
@@ -30,6 +31,17 @@ export type CollectionContext = CardListContext & {
   deleteDeck: () => void;
   isDeleting: Ref<boolean>;
   cardScale: Ref<[number]>;
+  selectedCard: Ref<
+    Nullable<{
+      card: CardBlueprint;
+      id: string;
+      isFoil: boolean;
+      copiesOwned: number;
+    }>
+  >;
+  selectCard: (id: string) => void;
+  unselectCard: () => void;
+  deckEditorOptions: Ref<{ collapseFoil: boolean }>;
 };
 
 export const CollectionInjectionKey = Symbol(
@@ -45,9 +57,6 @@ export const provideCollectionPage = () => {
     toggleKindFilter,
     clearKindFilter,
     textFilter,
-    hasJobFilter,
-    toggleJobFilter,
-    clearJobFilter,
     hasRarityFilter,
     toggleRarityFilter,
     clearRarityFilter,
@@ -63,7 +72,7 @@ export const provideCollectionPage = () => {
   const deckBuilder = ref(
     new DeckBuilderViewModel(
       cardPool,
-      new StandardDeckValidator(keyBy(cardPool, 'id'))
+      new StandardDeckValidator({ cardPool: keyBy(cardPool, 'id') })
     )
   ) as Ref<DeckBuilderViewModel>;
 
@@ -112,7 +121,35 @@ export const provideCollectionPage = () => {
 
   const viewMode = ref<'expanded' | 'compact'>('expanded');
 
+  const selectedCard = ref<
+    Nullable<{
+      card: CardBlueprint;
+      id: string;
+      isFoil: boolean;
+      copiesOwned: number;
+    }>
+  >(null);
+
+  const selectCard = (id: string) => {
+    const card = cards.value.find(c => c.id === id);
+
+    if (!card) return;
+    selectedCard.value = {
+      card: cardPool.find(bp => bp.id === card.blueprintId)!,
+      id: card.id,
+      isFoil: card.isFoil,
+      copiesOwned: card.copiesOwned
+    };
+  };
+
+  const unselectCard = () => {
+    selectedCard.value = null;
+  };
+
   const api: CollectionContext = {
+    selectedCard,
+    selectCard,
+    unselectCard,
     isLoading: computed(() => isLoading.value || isLoadingDecks.value),
     cards,
     includeUnowned,
@@ -120,9 +157,6 @@ export const provideCollectionPage = () => {
     hasKindFilter,
     toggleKindFilter,
     clearKindFilter,
-    hasJobFilter,
-    toggleJobFilter,
-    clearJobFilter,
     hasRarityFilter,
     toggleRarityFilter,
     clearRarityFilter,
@@ -137,7 +171,7 @@ export const provideCollectionPage = () => {
     isDeleting: isDeletingDeck,
     deckBuilder,
     decks,
-    cardScale: ref([1]),
+    cardScale: ref([2]),
     createDeck: () => createDeck({}),
     editDeck: id => {
       selectedDeckId.value = id;
@@ -160,7 +194,8 @@ export const provideCollectionPage = () => {
     deleteDeck: () => {
       if (!selectedDeck.value) return;
       deleteDeck({ deckId: selectedDeck.value.id });
-    }
+    },
+    deckEditorOptions: ref({ collapseFoil: false })
   };
 
   provide(CollectionInjectionKey, api);

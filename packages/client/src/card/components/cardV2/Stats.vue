@@ -6,11 +6,14 @@ const {} = defineProps<{
   hp: number | null;
   commandment: number | null;
   durability: number | null;
+  might: number | null;
+  focus: number | null;
+  wisdom: number | null;
 }>();
 </script>
 
 <template>
-  <div class="stats">
+  <div class="stats left">
     <div class="stat commandment" v-if="isDefined(commandment)">
       <div class="stat-value" :data-text="commandment">
         {{ commandment }}
@@ -32,6 +35,24 @@ const {} = defineProps<{
       </div>
     </div>
   </div>
+
+  <div class="stats right">
+    <div class="stat might" v-if="isDefined(might)">
+      <div class="stat-value" :data-text="might">
+        {{ might }}
+      </div>
+    </div>
+    <div class="stat focus" v-if="isDefined(focus)">
+      <div class="stat-value" :data-text="focus">
+        {{ focus }}
+      </div>
+    </div>
+    <div class="stat wisdom" v-if="isDefined(wisdom)">
+      <div class="stat-value" :data-text="wisdom">
+        {{ wisdom }}
+      </div>
+    </div>
+  </div>
 </template>
 
 <style scoped lang="postcss">
@@ -41,7 +62,14 @@ const {} = defineProps<{
   gap: calc(2px * var(--pixel-scale));
   position: absolute;
   top: calc(75px * var(--pixel-scale));
-  left: calc(5px * var(--pixel-scale));
+
+  &.left {
+    left: calc(5px * var(--pixel-scale));
+  }
+
+  &.right {
+    right: calc(5px * var(--pixel-scale));
+  }
 }
 
 .stat {
@@ -86,6 +114,27 @@ const {} = defineProps<{
   width: calc(29px * var(--pixel-scale));
   height: calc(30px * var(--pixel-scale));
   background-image: url('@/assets/ui/card/v2/durability.png');
+  background-size: cover;
+}
+
+.might {
+  width: calc(33px * var(--pixel-scale));
+  height: calc(30px * var(--pixel-scale));
+  background-image: url('@/assets/ui/card/v2/might.png');
+  background-size: cover;
+}
+
+.focus {
+  width: calc(33px * var(--pixel-scale));
+  height: calc(30px * var(--pixel-scale));
+  background-image: url('@/assets/ui/card/v2/focus.png');
+  background-size: cover;
+}
+
+.wisdom {
+  width: calc(33px * var(--pixel-scale));
+  height: calc(30px * var(--pixel-scale));
+  background-image: url('@/assets/ui/card/v2/wisdom.png');
   background-size: cover;
 }
 </style>

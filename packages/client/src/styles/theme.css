@@ -150,6 +150,20 @@
   --card-small-v2-ratio: var(--card-small-v2-width-unitless) /
     var(--card-small-v2-height-unitless);
 
+  --card-v3-width-unitless: 127;
+  --card-v3-height-unitless: 184;
+  --card-v3-width: calc(var(--card-v3-width-unitless) * 1px);
+  --card-v3-height: calc(var(--card-v3-height-unitless) * 1px);
+  --card-v3-ratio: var(--card-v3-width-unitless) /
+    var(--card-v3-height-unitless);
+
+  --card-small-v3-width-unitless: 97;
+  --card-small-v3-height-unitless: 81;
+  --card-small-v3-width: calc(var(--card-small-v3-width-unitless) * 1px);
+  --card-small-v3-height: calc(var(--card-small-v3-height-unitless) * 1px);
+  --card-small-v3-ratio: var(--card-small-v3-width-unitless) /
+    var(--card-small-v3-height-unitless);
+
   --card-small-width-unitless: 142;
   --card-small-height-unitless: 129;
   --card-small-width: calc(var(--card-small-width-unitless) * 1px);

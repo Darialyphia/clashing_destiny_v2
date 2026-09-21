@@ -3,7 +3,6 @@ import { defaultInputSchema, Input } from '../input';
 import { assert, isDefined } from '@game/shared';
 import { GAME_PHASES } from '../../game/game.enums';
 import { IllegalAbilityError, UnknownAbilityError } from '../input-errors';
-import { HeroCard } from '../../card/entities/hero.entity';
 import { MinionCard } from '../../card/entities/minion.entity';
 import { match, P } from 'ts-pattern';
 import type { Ability, AbilityOwner } from '../../card/entities/ability.entity';
@@ -30,14 +29,9 @@ export class DeclareUseCardAbilityInput extends Input<typeof schema> {
   private get ability() {
     if (!this.card) return null;
     return match(this.card)
-      .with(
-        P.instanceOf(MinionCard),
-        P.instanceOf(HeroCard),
-        P.instanceOf(ArtifactCard),
-        card => {
-          return card.abilityManager.getAbility(this.payload.abilityId);
-        }
-      )
+      .with(P.instanceOf(MinionCard), P.instanceOf(ArtifactCard), card => {
+        return card.abilityManager.getAbility(this.payload.abilityId);
+      })
       .otherwise(() => null);
   }
 

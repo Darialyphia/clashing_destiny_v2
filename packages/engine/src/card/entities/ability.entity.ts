@@ -7,7 +7,6 @@ import {
   type Targets
 } from '../card-blueprint';
 import { EFFECT_TYPE, GAME_PHASES, type GamePhase } from '../../game/game.enums';
-import type { HeroCard } from './hero.entity';
 import type { MinionCard } from './minion.entity';
 import { Entity } from '../../entity';
 import { Interceptable } from '../../utils/interceptable';
@@ -19,7 +18,7 @@ import {
 import { nanoid } from 'nanoid';
 import type { ArtifactCard } from './artifact.entity';
 
-export type AbilityOwner = MinionCard | HeroCard | ArtifactCard;
+export type AbilityOwner = MinionCard | ArtifactCard;
 
 export type AbilityInterceptors<T extends AbilityOwner> = {
   manaCost: Interceptable<number, Ability<T>>;
@@ -56,7 +55,10 @@ export class Ability<T extends AbilityOwner>
   }
 
   get shouldCreateChain(): boolean {
-    return this.interceptors.shouldCreateChain.getValue(true, this);
+    return this.interceptors.shouldCreateChain.getValue(
+      this.game.config.EFFECT_CHAIN,
+      this
+    );
   }
 
   get canUseDuringChain(): boolean {
@@ -80,7 +82,7 @@ export class Ability<T extends AbilityOwner>
     );
   }
 
-  private async resolveEffect() {
+  private async resolveEffect(onResolved?: () => MaybePromise<void>) {
     await this.game.emit(
       ABILITY_EVENTS.ABILITY_BEFORE_USE,
       new AbilityBeforeUseEvent({ card: this.card, abilityId: this.abilityId })
@@ -94,6 +96,10 @@ export class Ability<T extends AbilityOwner>
     );
 
     this.targets = null;
+
+    if (onResolved) {
+      await onResolved();
+    }
   }
 
   protected async insertInChainOrExecute(
@@ -109,7 +115,7 @@ export class Ability<T extends AbilityOwner>
         handler: async () => {
           await this.resolveEffect();
         },
-        shouldHideTargetArrows: this.blueprint.shouldHideTargetarrows ?? false
+        shouldHideTargetArrows: this.blueprint.shouldHideTargetArrows ?? false
       };
 
       if (this.game.effectChainSystem.currentChain) {
@@ -122,7 +128,7 @@ export class Ability<T extends AbilityOwner>
         });
       }
     } else {
-      await this.resolveEffect();
+      await this.resolveEffect(onResolved);
     }
   }
 

@@ -10,7 +10,6 @@ import type {
   MinionCard,
   MinionCardInterceptors
 } from '../../card/entities/minion.entity';
-import type { HeroCard, HeroCardInterceptors } from '../../card/entities/hero.entity';
 import type { SpellCard, SpellCardInterceptors } from '../../card/entities/spell.entity';
 import type { AnyCard, CardInterceptors } from '../../card/entities/card.entity';
 import type { Player, PlayerInterceptors } from '../../player/player.entity';
@@ -74,18 +73,6 @@ export class CardInterceptorModifierMixin<
 export class MinionInterceptorModifierMixin<
   TKey extends keyof MinionCardInterceptors
 > extends InterceptorModifierMixin<MinionCardInterceptors, TKey, MinionCard> {}
-
-export class HeroInterceptorModifierMixin<
-  TKey extends keyof HeroCardInterceptors
-> extends InterceptorModifierMixin<HeroCardInterceptors, TKey, HeroCard> {}
-
-export class UnitInterceptorModifierMixin<
-  TKey extends keyof MinionCardInterceptors | keyof HeroCardInterceptors
-> extends InterceptorModifierMixin<
-  MinionCardInterceptors & HeroCardInterceptors,
-  TKey,
-  MinionCard | HeroCard
-> {}
 
 export class SpellInterceptorModifierMixin<
   TKey extends keyof SpellCardInterceptors

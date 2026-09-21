@@ -4,20 +4,18 @@ import { assert, isDefined, type MaybePromise, type Serializable } from '@game/s
 import type { AnyCard } from '../card/entities/card.entity';
 import { NotEnoughManaError } from '../card/card-errors';
 import { CardTrackerComponent } from './components/cards-tracker.component';
+import { EventTracker } from './components/event-tracker.component';
 import { Interceptable } from '../utils/interceptable';
 import type { Ability, AbilityOwner } from '../card/entities/ability.entity';
 import { EntityWithModifiers } from '../modifier/entity-with-modifiers';
 import { cloneDeep } from 'lodash-es';
 import { ManaManagerComponent } from './components/mana-manager.component';
-import type { Affinity } from '../card/card.enums';
 import { isMinion } from '../card/card-utils';
-import { RuneManagerComponent } from './components/rune-manager.component';
-import type { Rune } from './player.enums';
 import { match } from 'ts-pattern';
 import { BoardSide, type SerializedBoardSide } from '../board/board-side.entity';
 import { GAME_EVENTS } from '../game/game.events';
-import { CardEffectTriggeredEvent } from '../card/card.events';
 import { PlayerGainVictoryPointEvent } from './player.events';
+import type { Affinity } from '../card/card.enums';
 
 export type PlayerOptions = {
   id: string;
@@ -38,33 +36,23 @@ export type SerializedPlayer = {
   maxMana: number;
   currentMana: number;
   manaRegen: number;
-  hero: string;
-  unlockedAffinities: Affinity[];
   boardSide: SerializedBoardSide;
-  runes: Record<Rune, number>;
-  canTakeResourceAction: boolean;
   victoryPoints: number;
+  runeZone: string[];
+  affinities: Affinity[];
 };
 
 export type PlayerInterceptors = {
   cardsDrawnForTurn: Interceptable<number>;
   manaRegen: Interceptable<number>;
-  maxMana: Interceptable<number>;
-  unlockedAffinities: Interceptable<Affinity[]>;
-  maxResourceActionsPerTurn: Interceptable<number>;
 };
 
 const makeInterceptors = (): PlayerInterceptors => {
   return {
     cardsDrawnForTurn: new Interceptable(),
-    manaRegen: new Interceptable(),
-    maxMana: new Interceptable(),
-    unlockedAffinities: new Interceptable<Affinity[]>(),
-    maxResourceActionsPerTurn: new Interceptable<number>()
+    manaRegen: new Interceptable()
   };
 };
-
-export type PlayerResourceAction = { type: 'rune'; rune: Rune } | { type: 'draw' };
 
 export class Player
   extends EntityWithModifiers<PlayerInterceptors>
@@ -74,12 +62,9 @@ export class Player
 
   readonly cardTracker: CardTrackerComponent;
 
-  readonly runeManager: RuneManagerComponent;
+  readonly eventTracker: EventTracker;
 
-  readonly manaManager = new ManaManagerComponent(this.game, this, {
-    manaRegen: this.interceptors.manaRegen,
-    maxMana: this.interceptors.maxMana
-  });
+  readonly manaManager = new ManaManagerComponent(this.game, this);
 
   readonly boardSide: BoardSide;
 
@@ -89,8 +74,6 @@ export class Player
 
   hasPassedThisTurn = false;
 
-  resourceActionsTakenThisTurn: PlayerResourceAction[] = [];
-
   constructor(game: Game, options: PlayerOptions) {
     super(options.id, game, makeInterceptors());
     this.options = cloneDeep(options);
@@ -98,12 +81,12 @@ export class Player
     this.boardSide = new BoardSide(this.game, this);
 
     this.cardTracker = new CardTrackerComponent(game, this);
+    this.eventTracker = new EventTracker(game);
     this.cardManager = new CardManagerComponent(game, this, {
       maxHandSize: this.game.config.MAX_HAND_SIZE,
       shouldShuffleDeck: true,
       deck: options.deck.cards
     });
-    this.runeManager = new RuneManagerComponent(game, this);
   }
 
   async init() {
@@ -139,10 +122,14 @@ export class Player
       );
     }
 
-    return this.interceptors.cardsDrawnForTurn.getValue(
-      this.game.config.CARDS_DRAWN_PER_TURN,
-      {}
-    );
+    const base = match(this.game.config.CARD_DRAW_MODE)
+      .with('fixed', () => this.game.config.CARDS_DRAWN_PER_TURN)
+      .with('threshold', () =>
+        Math.max(0, this.game.config.CARDS_DRAWN_PER_TURN - this.cardManager.hand.length)
+      )
+      .exhaustive();
+
+    return this.interceptors.cardsDrawnForTurn.getValue(base, {});
   }
 
   get isPlayer1() {
@@ -151,14 +138,6 @@ export class Player
 
   get opponent() {
     return this.game.playerSystem.players.find(p => !p.equals(this))!;
-  }
-
-  get hero() {
-    return this.cardManager.hero;
-  }
-
-  get enemyHero() {
-    return this.opponent.hero;
   }
 
   get minionsInBase() {
@@ -191,47 +170,11 @@ export class Player
   }
 
   get allCardsInPlay() {
-    return [this.hero, ...this.minionsInBase, ...this.minionsInBattlefield].filter(
-      isDefined
-    );
+    return [...this.minionsInBase, ...this.minionsInBattlefield].filter(isDefined);
   }
 
   get enemyMinions() {
     return this.opponent.minions;
-  }
-
-  get unlockedAffinities() {
-    return this.interceptors.unlockedAffinities.getValue(this.hero.affinities, {});
-  }
-
-  get maxResourceActionsPerTurn() {
-    return this.interceptors.maxResourceActionsPerTurn.getValue(
-      this.game.config.MAX_RESOURCE_ACTIONS_PER_TURN,
-      {}
-    );
-  }
-
-  get canTakeResourceAction() {
-    return this.resourceActionsTakenThisTurn.length < this.maxResourceActionsPerTurn;
-  }
-
-  async takeResourceAction(action: PlayerResourceAction) {
-    await this.game.emit(
-      GAME_EVENTS.CARD_EFFECT_TRIGGERED,
-      new CardEffectTriggeredEvent({
-        card: this.hero,
-        message: `Player ${this.options.name} took a resource action: ${action.type}`
-      })
-    );
-    this.resourceActionsTakenThisTurn.push(action);
-    await match(action)
-      .with({ type: 'rune' }, async ({ rune }) => {
-        await this.runeManager.add([rune]);
-      })
-      .with({ type: 'draw' }, async () => {
-        await this.cardManager.draw(1);
-      })
-      .exhaustive();
   }
 
   get isInteractive() {
@@ -263,10 +206,6 @@ export class Player
       if (card.shouldWakeUpAtTurnStart) {
         await card.wakeUp();
       }
-    }
-    if (this.game.turnSystem.elapsedTurns > 0) {
-      await this.manaManager.gain(this.manaManager.manaRegen);
-      this.resourceActionsTakenThisTurn = [];
     }
   }
 
@@ -318,12 +257,12 @@ export class Player
       currentMana: this.mana,
       maxMana: this.maxMana,
       manaRegen: this.manaRegen,
-      hero: this.hero.id,
-      unlockedAffinities: this.unlockedAffinities,
       boardSide: this.boardSide.serialize(),
-      runes: this.runeManager.runes,
-      canTakeResourceAction: this.canTakeResourceAction,
-      victoryPoints: this.victoryPoints
+      victoryPoints: this.victoryPoints,
+      runeZone: Array.from(this.cardManager.runeZone).map(card => card.id),
+      affinities: Array.from(this.cardManager.runeZone)
+        .map(card => card.affinities)
+        .flat()
     };
   }
 }

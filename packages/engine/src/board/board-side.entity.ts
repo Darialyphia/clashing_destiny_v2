@@ -113,6 +113,12 @@ export class BoardSide
           ) ?? [])
         ].filter(isDefined);
       }),
+      ...(this.leftBattlefield.secretCard
+        ? [this.leftBattlefield.secretCard as AnyCard]
+        : []),
+      ...(this.rightBattlefield.secretCard
+        ? [this.rightBattlefield.secretCard as AnyCard]
+        : []),
       ...this.leftBattlefield.spaces.flatMap(space => {
         return [
           space.card,
@@ -170,30 +176,16 @@ export class BoardSide
     }
   }
 
-  removeFromLeftBattlefield(card: AnyCard) {
-    const space = this._leftBattlefield.spaces.find(space => space.card?.equals(card));
-    if (space) {
-      space.removeCard();
-    }
-  }
-
-  removeFromRightBattlefield(card: AnyCard) {
-    const space = this._rightBattlefield.spaces.find(space => space.card?.equals(card));
-    if (space) {
-      space.removeCard();
-    }
-  }
-
   remove(card: AnyCard) {
     match(card.kind)
-      .with(CARD_KINDS.HERO, CARD_KINDS.SPELL, () => {})
+      .with(CARD_KINDS.SPELL, CARD_KINDS.RUNE, () => {})
       .with(CARD_KINDS.ARTIFACT, () => {
         this.removeFromBase(card);
       })
-      .with(CARD_KINDS.MINION, () => {
+      .with(CARD_KINDS.MINION, CARD_KINDS.SECRET, () => {
         this.removeFromBase(card);
-        this.removeFromLeftBattlefield(card);
-        this.removeFromRightBattlefield(card);
+        this._leftBattlefield.remove(card);
+        this._rightBattlefield.remove(card);
       })
       .with(CARD_KINDS.DESTINY, () => {
         if (this.leftBattlefield.destinyCard?.equals(card)) {
@@ -215,6 +207,9 @@ export class BoardSide
       return this.leftBattlefield.destinyCard;
     }
 
+    if (this.leftBattlefield.secretCard?.id === cardId) {
+      return this.leftBattlefield.secretCard;
+    }
     return (
       this.leftBattlefield.spaces
         .map(space => space.card)
@@ -227,6 +222,9 @@ export class BoardSide
       return this.rightBattlefield.destinyCard;
     }
 
+    if (this.rightBattlefield.secretCard?.id === cardId) {
+      return this.rightBattlefield.secretCard;
+    }
     return (
       this.rightBattlefield.spaces
         .map(space => space.card)
@@ -250,6 +248,21 @@ export class BoardSide
     return this.isInLeftBattlefield(cardId) || this.isInRightBattlefield(cardId);
   }
 
+  get hasEmptySpaceInBattlefield() {
+    return (
+      this.leftBattlefield.spaces.some(space => space.isEmpty) ||
+      this.rightBattlefield.spaces.some(space => space.isEmpty)
+    );
+  }
+
+  get hasEmptySpaceInBase() {
+    return this.base.some(space => space.isEmpty);
+  }
+
+  get hasEmptySpace() {
+    return this.hasEmptySpaceInBattlefield || this.hasEmptySpaceInBase;
+  }
+
   private async moveToBattlefield(
     card: MinionCard,
     battleField: BetterExtract<BoardRow, 'left_battlefield' | 'right_battlefield'>,
@@ -268,7 +281,7 @@ export class BoardSide
         to: newPos
       })
     );
-    this.removeFromBase(card);
+    this.remove(card);
     // place minion at the right index on the battlefield. If the space is already occupied, shift the other minions to the right until the end or until we hit an unoccupied board space
     newPos.placeCard(card);
 
@@ -292,8 +305,7 @@ export class BoardSide
         to: newPos
       })
     );
-    this.removeFromLeftBattlefield(card);
-    this.removeFromRightBattlefield(card);
+    this.remove(card);
 
     newPos.placeCard(card);
 
@@ -311,7 +323,6 @@ export class BoardSide
     const card = this.getAllCardsInPlay().find(card => card.id === id);
     if (!card) return;
     if (!isMinion(card)) return;
-
     await match(zone)
       .with(CARD_LOCATIONS.BASE, () => this.moveToBase(card, index))
       .with(CARD_LOCATIONS.LEFT_BATTLEFIELD, () =>

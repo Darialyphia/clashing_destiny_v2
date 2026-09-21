@@ -17,6 +17,7 @@ import { CorruptedGamephaseContextError, WrongGamePhaseError } from '../game-err
 import { PlayCardPhase } from '../phases/play-card.phase';
 import { IllegalCardPlayedError } from '../../input/input-errors';
 import { EndPhase } from '../phases/end.phase';
+import { SupplyPhase } from '../phases/supply.phase';
 
 export type GamePhaseEventMap = {
   [GAME_PHASE_EVENTS.BEFORE_CHANGE_PHASE]: GamePhaseBeforeChangeEvent;
@@ -27,6 +28,10 @@ export type GamePhaseContext =
   | {
       state: BetterExtract<GamePhase, 'draw_phase'>;
       ctx: DrawPhase;
+    }
+  | {
+      state: BetterExtract<GamePhase, 'supply_phase'>;
+      ctx: SupplyPhase;
     }
   | {
       state: BetterExtract<GamePhase, 'main_phase'>;
@@ -51,6 +56,10 @@ export type SerializedGamePhaseContext =
       ctx: ReturnType<DrawPhase['serialize']>;
     }
   | {
+      state: BetterExtract<GamePhase, 'supply_phase'>;
+      ctx: ReturnType<SupplyPhase['serialize']>;
+    }
+  | {
       state: BetterExtract<GamePhase, 'main_phase'>;
       ctx: ReturnType<MainPhase['serialize']>;
     }
@@ -72,6 +81,7 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
 
   readonly ctxDictionary = {
     [GAME_PHASES.DRAW]: DrawPhase,
+    [GAME_PHASES.SUPPLY]: SupplyPhase,
     [GAME_PHASES.MAIN]: MainPhase,
     [GAME_PHASES.PLAY_CARD]: PlayCardPhase,
     [GAME_PHASES.END]: EndPhase,
@@ -86,7 +96,12 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
     this.addTransitions([
       stateTransition(
         GAME_PHASES.DRAW,
-        GAME_PHASE_TRANSITIONS.DRAW_FOR_TURN,
+        GAME_PHASE_TRANSITIONS.DRAWN_FOR_TURN,
+        GAME_PHASES.SUPPLY
+      ),
+      stateTransition(
+        GAME_PHASES.SUPPLY,
+        GAME_PHASE_TRANSITIONS.SUPPLIED_MANA,
         GAME_PHASES.MAIN
       ),
       stateTransition(GAME_PHASES.MAIN, GAME_PHASE_TRANSITIONS.END_TURN, GAME_PHASES.END),
@@ -200,7 +215,7 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
     assert(this.can(GAME_PHASE_TRANSITIONS.PLAYER_WON), new WrongGamePhaseError());
     this._winners = players;
     await this.sendTransition(GAME_PHASE_TRANSITIONS.PLAYER_WON);
-    await this.game.inputSystem.askForPlayerInput();
+    await this.game.snapshotSystem.takeSnapshot();
   }
 
   async playCard(id: string, player: Player) {

@@ -31,10 +31,11 @@ export type CardEvent = Values<typeof CARD_EVENTS>;
 
 export const CARD_KINDS = {
   MINION: 'MINION',
-  HERO: 'HERO',
   SPELL: 'SPELL',
   ARTIFACT: 'ARTIFACT',
-  DESTINY: 'DESTINY'
+  DESTINY: 'DESTINY',
+  RUNE: 'RUNE',
+  SECRET: 'SECRET'
 } as const;
 export type CardKind = Values<typeof CARD_KINDS>;
 
@@ -48,8 +49,6 @@ export type ArtifactKind = Values<typeof ARTIFACT_KINDS>;
 export const CARD_SPEED = {
   SLOW: 'SLOW',
   FAST: 'FAST'
-  // BURST: 'BURST'
-  // WARP: 'WARP'
 } as const;
 export type CardSpeed = Values<typeof CARD_SPEED>;
 
@@ -89,73 +88,28 @@ export type CardTint = {
   opacity: number;
 };
 
-export type Job = {
-  id: string;
-  name: string;
-  shortName: string;
-};
-
-export const JOBS = {
-  WARRIOR: {
-    id: 'warrior',
-    name: 'Warrior',
-    shortName: 'Warrior'
-  },
-  MAGE: {
-    id: 'mage',
-    name: 'Mage',
-    shortName: 'Mage'
-  },
-  ROGUE: {
-    id: 'rogue',
-    name: 'Rogue',
-    shortName: 'Rogue'
-  },
-  ACOLYTE: {
-    id: 'acolyte',
-    name: 'Acolyte',
-    shortName: 'Acolyte'
-  },
-  RANGER: {
-    id: 'ranger',
-    name: 'Ranger',
-    shortName: 'Ranger'
-  },
-  TAMER: {
-    id: 'tamer',
-    name: 'Tamer',
-    shortName: 'Tamer'
-  }
-} as const satisfies Record<string, Job>;
-export type JobId = Values<typeof JOBS>['id'];
-export const getJobById = (id: JobId): Job => {
-  const job = Object.values(JOBS).find(job => job.id === id);
-  if (!job) {
-    throw new Error(`Invalid job id: ${id}`);
-  }
-  return job;
-};
-
 export const CARD_LOCATIONS = {
   HAND: 'hand',
   MAIN_DECK: 'mainDeck',
   DESTINY_DECK: 'destinyDeck',
+  RUNE_DECK: 'runeDeck',
+  RUNE_ZONE: 'runeZone',
   DISCARD_PILE: 'discardPile',
   BANISH_PILE: 'banishPile',
   BASE: 'base',
   LEFT_BATTLEFIELD: 'left_battlefield',
-  RIGHT_BATTLEFIELD: 'right_battlefield'
+  RIGHT_BATTLEFIELD: 'right_battlefield',
+  RESERVE: 'reserve'
 } as const;
 export type CardLocation = Values<typeof CARD_LOCATIONS>;
 
 export const AFFINITIES = {
-  NEUTRAL: 'Neutral',
-  FIRE: 'Fire',
-  WATER: 'Water',
-  EARTH: 'Earth',
-  AIR: 'Air',
-  LIGHT: 'Light',
-  DARK: 'Dark',
-  ARCANE: 'Arcane'
+  FIRE: 'Songhai',
+  WATER: 'Vanar',
+  EARTH: 'Magmar',
+  AIR: 'Vetruvian',
+  LIGHT: 'Lyonar',
+  DARK: 'Abyssian',
+  NEUTRAL: 'Neutral'
 } as const;
 export type Affinity = Values<typeof AFFINITIES>;

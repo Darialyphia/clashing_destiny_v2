@@ -1,6 +1,7 @@
 import { Server, Socket } from 'socket.io';
 import type {
   GameStateSnapshot,
+  PatchBasedSnapshotDiff,
   SerializedOmniscientState,
   SerializedPlayerState,
   SnapshotDiff
@@ -8,6 +9,7 @@ import type {
 import type { SerializedInput } from '@game/engine/src/input/input-system';
 import type { HttpServer } from './http';
 import type { UserId } from '@game/api';
+import type { ClockState } from './clock-manager';
 
 type SocketData = {
   user: any;
@@ -19,17 +21,8 @@ export type EmittedEvents = {
     snapshot: GameStateSnapshot<SerializedPlayerState | SerializedOmniscientState>;
     history: SerializedInput[];
   }) => void;
-  gameSnapshot: (snapshot: GameStateSnapshot<SnapshotDiff>) => void;
-  clockUpdate: (
-    clocks: Record<
-      UserId,
-      {
-        max: number;
-        remaining: number;
-        isActive: boolean;
-      }
-    >
-  ) => void;
+  gameSnapshot: (snapshot: GameStateSnapshot<PatchBasedSnapshotDiff>) => void;
+  clockUpdate: (clocks: ClockState) => void;
   error: (message: string) => void;
 };
 

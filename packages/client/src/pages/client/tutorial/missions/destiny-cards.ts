@@ -1,13 +1,4 @@
-import type { HeroCard } from '@game/engine/src/card/entities/hero.entity';
 import type { TutorialMission } from '.';
-
-const meta: {
-  allyHero: HeroCard | null;
-  enemyHero: HeroCard | null;
-} = {
-  allyHero: null,
-  enemyHero: null
-};
 
 export const destinyCardsTutorial: TutorialMission = {
   id: 'play-card',
@@ -40,16 +31,10 @@ export const destinyCardsTutorial: TutorialMission = {
     config: {
       SHUFFLE_DECK_ON_GAME_START: false
     },
-    async setup(game) {
+    async setup() {
       // client.ui.displayedElements.artifacts = false;
       // client.ui.displayedElements.destinyPhaseModal = false;
       // client.ui.displayedElements.phaseTracker = false;
-
-      meta.allyHero = game.playerSystem.player1.hero;
-      meta.allyHero.abilityManager.abilities.forEach(ability =>
-        meta.allyHero?.abilityManager.removeAbility(ability.id)
-      );
-      meta.enemyHero = game.playerSystem.player2.hero;
     },
     steps: {
       root: {

@@ -11,7 +11,7 @@ export class SelectSpaceOnBoardAction implements BoardCellClickRule {
     return (
       state.interaction.state === INTERACTION_STATES.SELECTING_SPACE_ON_BOARD &&
       state.interaction.ctx.elligibleSpaces.some(space => space.id === cell.id) &&
-      this.client.ui.isInteractivePlayer
+      this.client.isActive()
     );
   }
 

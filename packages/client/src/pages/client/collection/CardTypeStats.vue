@@ -16,9 +16,6 @@ const getCountByKind = (kind: CardKind) => {
 
 const mainDeckCount = computed(() => {
   return deckBuilder.value.cards.reduce((acc, card) => {
-    if (card.blueprint.kind === CARD_KINDS.DESTINY) {
-      return acc;
-    }
     if ('copies' in card) {
       return acc + ((card.copies as number) ?? 1);
     }
@@ -50,6 +47,10 @@ const mainDeckCount = computed(() => {
         <span>{{ getCountByKind(CARD_KINDS.DESTINY) }}</span>
         Destinies
       </div>
+      <div>
+        <span>{{ getCountByKind(CARD_KINDS.RUNE) }}</span>
+        Affinities
+      </div>
     </div>
   </div>
 </template>
@@ -57,7 +58,7 @@ const mainDeckCount = computed(() => {
 <style scoped lang="postcss">
 .kind-counts {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: var(--size-2);
   justify-items: center;
   font-size: var(--font-size-00);

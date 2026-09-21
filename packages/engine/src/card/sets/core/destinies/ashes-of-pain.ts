@@ -11,7 +11,6 @@ import {
 import { CardAuraModifierMixin } from '../../../../modifier/mixins/aura.mixin';
 import type { DestinyCard } from '../../../entities/destiny.entity';
 import { WhileOnBattlefieldModifier } from '../../../../modifier/modifiers/while-on-board.modifier';
-import { isDefined } from '@game/shared';
 import { OnScoreModifier } from '../../../../modifier/modifiers/on-score.modifier';
 import type { MinionCard } from '../../../entities/minion.entity';
 import { AbilityDamage } from '../../../../utils/damage';
@@ -30,7 +29,6 @@ export const ashesOfPain: DestinyBlueprint = {
   rarity: RARITIES.RARE,
   art: defaultCardArt('placeholder'),
   speed: CARD_SPEED.SLOW,
-  jobs: [],
   affinities: [AFFINITIES.NEUTRAL],
   tags: [],
   async onInit(game, card) {

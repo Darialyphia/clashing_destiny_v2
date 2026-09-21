@@ -25,6 +25,7 @@ export class DeepDiffer {
     for (const key in current) {
       const currentValue = current[key];
       const previousValue = previous[key];
+
       const path = basePath ? `${basePath}.${key}` : key;
 
       // Property didn't exist before - it's an add
@@ -150,6 +151,8 @@ export class DeepDiffer {
    * Check if array contains only string IDs
    */
   private isIdArray(arr: any[]): arr is string[] {
+    const set = new Set(arr);
+    if (set.size !== arr.length) return false; // Duplicates not allowed
     return arr.every(item => typeof item === 'string');
   }
 

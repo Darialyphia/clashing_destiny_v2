@@ -1,6 +1,11 @@
 <script setup lang="ts">
 import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
-import { useGameState, useGameUi } from '../composables/useGameClient';
+import {
+  useGameClient,
+  useGameState,
+  useGameUi,
+  useMyPlayer
+} from '../composables/useGameClient';
 import GameCard from './GameCard.vue';
 import { GAME_PHASES } from '@game/engine/src/game/game.enums';
 import CardBack from '@/card/components/CardBack.vue';
@@ -8,7 +13,7 @@ const {
   card,
   isInteractive,
   hoverYOffset = 0,
-  hoverScale = 1.5
+  hoverScale = 2
 } = defineProps<{
   card?: CardViewModel;
   isInteractive: boolean;
@@ -18,8 +23,9 @@ const {
 
 const ui = useGameUi();
 const state = useGameState();
+const { client } = useGameClient();
 
-const DRAG_THRESHOLD_PX = 60;
+const DRAG_THRESHOLD_PX = 30;
 
 const isShaking = ref(false);
 const violationWarning = ref('');
@@ -48,7 +54,7 @@ const onMousemove = (e: MouseEvent) => {
 
 const onMouseDown = (e: MouseEvent) => {
   if (!card) return;
-  if (!ui.value.isInteractivePlayer) return;
+  if (!client.value.isActive()) return;
 
   if (!card.canPlay) return playViolationAnimation();
 
@@ -64,9 +70,24 @@ const isDisabled = computed(() => {
 
 const isVisible = computed(() => {
   if (state.value.phase.state !== GAME_PHASES.PLAY_CARD) return true;
-  if (ui.value.optimisticState.isCancellingPlayCard) return true;
+  if (client.value.optimisticStateManager.state.isCancellingPlayCard)
+    return true;
   return state.value.phase.ctx.card !== card?.id;
 });
+
+const myPlayer = useMyPlayer();
+const onMouseenter = () => {
+  if (!card) return;
+  if (card.player.equals(myPlayer.value)) {
+    ui.value.hoverCardInHand(card);
+  }
+};
+const onMouseleave = () => {
+  if (!card) return;
+  if (card.player.equals(myPlayer.value)) {
+    ui.value.unhoverCardInHand();
+  }
+};
 </script>
 
 <template>
@@ -90,14 +111,13 @@ const isVisible = computed(() => {
 
     <GameCard
       v-if="card && isVisible"
-      :id="ui.DOMSelectors.cardInHand(card.id, card.player.id).id"
       :card-id="card.id"
       actions-side="top"
       :actions-offset="15"
       :is-interactive="isInteractive"
       show-disabled-message
-      @mouseenter="ui.hoverCardInHand(card)"
-      @mouseleave="ui.unhoverCardInHand()"
+      @mouseenter="onMouseenter()"
+      @mouseleave="onMouseleave()"
     />
     <CardBack v-else-if="!card" class="hand-card-flipped" />
   </div>

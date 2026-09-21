@@ -18,7 +18,7 @@ export class SelectCardOnBoardAction implements CardActionRule {
       this.client.isActive() &&
       state.interaction.state === INTERACTION_STATES.SELECTING_CARDS_ON_BOARD &&
       state.interaction.ctx.elligibleCards.includes(card.id) &&
-      this.client.playerId === this.client.getActivePlayerId()
+      this.client.isActive()
     );
   }
 

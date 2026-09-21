@@ -91,6 +91,16 @@ export class PlayerViewModel {
     return this.data.victoryPoints;
   }
 
+  get runeZone() {
+    return this.data.runeZone.map(cardId => {
+      return this.getEntities()[cardId] as CardViewModel;
+    });
+  }
+
+  get affinities() {
+    return this.data.affinities;
+  }
+
   get base() {
     return this.data.boardSide.base.map(spaceId => {
       return this.getEntities()[spaceId] as BoardSpaceViewModel;
@@ -107,9 +117,12 @@ export class PlayerViewModel {
       spaces: this.data.boardSide.leftBattlefield.spaces.map(spaceId => {
         return this.getEntities()[spaceId] as BoardSpaceViewModel;
       }),
-      destinyCard: this.data.boardSide.leftBattlefield.destinyCard
+      destinyCard: this.getEntities()[
+        this.data.boardSide.leftBattlefield.destinyCard
+      ] as CardViewModel,
+      secretCard: this.data.boardSide.leftBattlefield.secretCard
         ? (this.getEntities()[
-            this.data.boardSide.leftBattlefield.destinyCard
+            this.data.boardSide.leftBattlefield.secretCard
           ] as CardViewModel)
         : null
     };
@@ -125,17 +138,15 @@ export class PlayerViewModel {
       spaces: this.data.boardSide.rightBattlefield.spaces.map(spaceId => {
         return this.getEntities()[spaceId] as BoardSpaceViewModel;
       }),
-      destinyCard: this.data.boardSide.rightBattlefield.destinyCard
+      destinyCard: this.getEntities()[
+        this.data.boardSide.rightBattlefield.destinyCard
+      ] as CardViewModel,
+      secretCard: this.data.boardSide.rightBattlefield.secretCard
         ? (this.getEntities()[
-            this.data.boardSide.rightBattlefield.destinyCard
+            this.data.boardSide.rightBattlefield.secretCard
           ] as CardViewModel)
         : null
     };
-  }
-
-  get hero() {
-    if (!this.data.hero) return null;
-    return this.getEntities()[this.data.hero] as CardViewModel;
   }
 
   get mana() {
@@ -144,13 +155,5 @@ export class PlayerViewModel {
 
   get maxMana() {
     return this.data.maxMana;
-  }
-
-  get runes() {
-    return this.data.runes;
-  }
-
-  get canTakeResourceAction() {
-    return this.data.canTakeResourceAction;
   }
 }

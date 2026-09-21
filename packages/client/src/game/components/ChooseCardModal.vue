@@ -1,13 +1,22 @@
 <script setup lang="ts">
 import UiModal from '@/ui/components/UiModal.vue';
 import FancyButton from '@/ui/components/FancyButton.vue';
-import { useGameClient, useGameState } from '../composables/useGameClient';
+import {
+  useFxEvent,
+  useGameClient,
+  useGameState
+} from '../composables/useGameClient';
 import GameCard from './GameCard.vue';
 import { INTERACTION_STATES } from '@game/engine/src/game/game.enums';
+import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
+import { isDefined } from '@game/shared';
+import { useIsMobile } from '@/shared/composables/useIsMobile';
 
 const { client, playerId } = useGameClient();
-const _isOpened = ref(false);
 const state = useGameState();
+const _isOpened = ref(
+  state.value.interaction.state === INTERACTION_STATES.CHOOSING_CARDS
+);
 
 const isOpened = computed({
   get() {
@@ -17,18 +26,28 @@ const isOpened = computed({
     _isOpened.value = value;
   }
 });
-watchEffect(() => {
-  _isOpened.value =
-    state.value.interaction.state === INTERACTION_STATES.CHOOSING_CARDS &&
-    playerId.value === client.value.getActivePlayerId();
+
+useFxEvent(FX_EVENTS.INTERACTION_AFTER_CHANGE_STATE, event => {
+  const { to } = event;
+  if (to.state !== INTERACTION_STATES.CHOOSING_CARDS) {
+    _isOpened.value = false;
+    return;
+  }
+
+  if (to.ctx.initialPlayers?.includes(playerId.value)) {
+    _isOpened.value = true;
+  }
 });
+
 const isShowingBoard = ref(false);
 
 const displayedCards = computed(() => {
   if (state.value.interaction.state !== INTERACTION_STATES.CHOOSING_CARDS)
     return [];
 
-  return state.value.interaction.ctx.choices;
+  return (
+    state.value.interaction.ctx.playerConfig[playerId.value]?.choices ?? []
+  );
 });
 
 const selectedIndices = ref<number[]>([]);
@@ -36,65 +55,123 @@ watch(_isOpened, () => {
   selectedIndices.value = [];
 });
 
-const label = computed(() => {
+const ctx = computed(() => {
   if (state.value.interaction.state !== INTERACTION_STATES.CHOOSING_CARDS)
-    return '';
-  return state.value.interaction.ctx.label;
+    return null;
+  return state.value.interaction.ctx;
+});
+const label = computed(() => {
+  if (!ctx.value) return '';
+  return ctx.value.playerConfig[playerId.value]?.label ?? '';
 });
 
 const minChoices = computed(() => {
-  if (state.value.interaction.state !== INTERACTION_STATES.CHOOSING_CARDS)
-    return 0;
-  return state.value.interaction.ctx.minChoiceCount;
+  if (!ctx.value) return 0;
+  return ctx.value.playerConfig[playerId.value]?.minChoiceCount ?? 0;
 });
 
 const maxChoices = computed(() => {
-  if (state.value.interaction.state !== INTERACTION_STATES.CHOOSING_CARDS)
-    return 0;
-  return state.value.interaction.ctx.maxChoiceCount;
+  if (!ctx.value) return 0;
+  return ctx.value.playerConfig[playerId.value]?.maxChoiceCount ?? 0;
 });
+
+const isWaiting = computed(() => {
+  if (!ctx.value) {
+    return false;
+  }
+  if (!ctx.value.initialPlayers.includes(playerId.value)) {
+    return false;
+  }
+  return (
+    !ctx.value.players.includes(playerId.value) ||
+    isDefined(
+      client.value.optimisticStateManager.state.chooseCardSelection[
+        playerId.value
+      ]
+    )
+  );
+});
+const confirm = () => {
+  client.value.chooseCards(selectedIndices.value);
+  selectedIndices.value = [];
+  // If only one player needed to choose cards, close immediately
+  if (ctx.value?.initialPlayers.length === 1) {
+    _isOpened.value = false;
+  }
+};
+const handleCardClick = (index: number, event: MouseEvent) => {
+  if (maxChoices.value > 1 || isWaiting.value) return;
+
+  event.preventDefault();
+  selectedIndices.value = [index];
+  confirm();
+};
+
+const isMobile = useIsMobile();
 </script>
 
 <template>
   <UiModal
     v-model:is-opened="isOpened"
-    title="Destiny Phase"
-    description="You may choose to play one Destiny card"
+    :title="label"
+    :description="`Select up to ${maxChoices} cards`"
     :closable="false"
     :style="{
-      '--ui-modal-size': 'var(--size-lg)'
+      '--ui-modal-size': 'var(--size-xl)'
     }"
   >
     <div class="content">
-      <p class="text-5 mb-4" v-if="!isShowingBoard">
+      <p
+        class="title text-center dual-text"
+        v-if="!isShowingBoard"
+        :data-text="`${label} (${selectedIndices.length}/${maxChoices})`"
+        style="--dual-text-stroke-offset-y: -5px"
+      >
         {{ label }} ({{ selectedIndices.length }}/{{ maxChoices }})
       </p>
       <div class="card-list fancy-scrollbar">
-        <label v-for="(card, index) in displayedCards" :key="card">
-          <GameCard :key="card" :card-id="card" :interactive="false" />
+        <label
+          v-for="(card, index) in displayedCards"
+          :key="card"
+          @click="handleCardClick(index, $event)"
+        >
+          <GameCard
+            :key="card"
+            :card-id="card"
+            :interactive="false"
+            :pixel-scale="isMobile ? 1 : 2"
+            class="choose-card-item"
+            :style="{ '--animation-delay': `${index * 75}ms` }"
+          />
           <input
             type="checkbox"
             class="hidden"
             :value="index"
             v-model="selectedIndices"
             :disabled="
-              selectedIndices.length >= maxChoices &&
-              !selectedIndices.includes(index)
+              isWaiting ||
+              (selectedIndices.length >= maxChoices &&
+                !selectedIndices.includes(index))
             "
           />
         </label>
       </div>
       <footer class="flex mt-7 gap-10 justify-center">
         <FancyButton
-          v-if="!isShowingBoard"
+          v-if="!isShowingBoard && !isWaiting && maxChoices > 1"
           variant="info"
           text="Confirm"
-          :disabled="selectedIndices.length < minChoices"
-          @click="
-            _isOpened = false;
-            client.chooseCards(selectedIndices);
-          "
+          :disabled="selectedIndices.length < minChoices || isWaiting"
+          @click="confirm"
         />
+        <p
+          v-if="isWaiting"
+          class="waiting dual-text"
+          data-text="Waiting for Opponent to make their choice..."
+          style="--dual-text-stroke-offset-y: -5px"
+        >
+          Waiting for Opponent to make their choice...
+        </p>
       </footer>
     </div>
   </UiModal>
@@ -115,18 +192,22 @@ const maxChoices = computed(() => {
   right: var(--size-8);
   z-index: 50;
   pointer-events: auto;
+
+  @screen lt-lg {
+    bottom: var(--size-6);
+    right: unset;
+    left: var(--size-6);
+  }
 }
 .card-list {
-  --pixel-scale: 1;
-  display: grid;
-  grid-template-columns: repeat(
-    auto-fit,
-    minmax(calc(var(--pixel-scale) * var(--card-v2-width)), 1fr)
-  );
-  justify-items: center;
-  row-gap: var(--size-4);
+  --pixel-scale: 2;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--size-4) var(--size-5);
   max-height: 60dvh;
   overflow-y: auto;
+  padding-block: var(--size-4);
   > * {
     transition: all 0.2s var(--ease-2);
   }
@@ -146,5 +227,37 @@ const maxChoices = computed(() => {
   > label:has(input:disabled) {
     filter: grayscale(0.75);
   }
+}
+
+.title {
+  font-size: var(--font-size-6);
+  font-weight: var(--font-weight-7);
+  margin-bottom: var(--size-4);
+  color: transparent;
+  text-align: center;
+}
+.waiting {
+  text-align: center;
+  font-size: var(--font-size-5);
+  font-weight: var(--font-weight-7);
+  color: transparent;
+}
+
+@keyframes choose-card-reveal {
+  0% {
+    transform: rotateY(180deg);
+  }
+  100% {
+    transform: rotateY(0deg);
+  }
+}
+
+.choose-card-item {
+  perspective: 1000px;
+}
+.choose-card-item:deep(.game-card) {
+  transform: rotateY(180deg);
+  animation: choose-card-reveal 0.3s ease-in-out forwards;
+  animation-delay: var(--animation-delay);
 }
 </style>

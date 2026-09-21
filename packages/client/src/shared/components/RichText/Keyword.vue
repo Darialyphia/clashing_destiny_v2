@@ -24,19 +24,45 @@ const keyword = computed(() => {
     );
   });
 });
+
+const textContent = computed(() => el.value?.textContent || '');
+
+const value = computed(() => {
+  if (!keyword.value) return '';
+
+  const namePattern = keyword.value.name.replace('X', '(.+)');
+  const match = textContent.value.match(new RegExp(`^${namePattern}$`, 'i'));
+
+  return match?.[1] || '';
+});
+
+const nameWithValues = computed(() => {
+  if (!keyword.value) return '';
+
+  return keyword.value.name.replace(' X', ` ${value.value}`);
+});
+
+const descriptionWithValues = computed(() => {
+  if (!keyword.value) return '';
+
+  return keyword.value.description
+    .replaceAll(' X ', ` ${value.value} `)
+    .replace(/\+X/, `+${value.value}`)
+    .replace(/\-X/, `-${value.value}`);
+});
 </script>
 
 <template>
   <HoverCardRoot :open-delay="250" :close-delay="0">
     <HoverCardTrigger>
-      <rt-trigger color="blue" ref="el"><slot /></rt-trigger>
+      <span ref="el" class="keyword"><slot /></span>
     </HoverCardTrigger>
     <HoverCardPortal>
       <HoverCardContent class="z-10" side="top">
         <article>
           <div class="keyword-card" v-if="keyword">
-            <div class="font-600">{{ keyword.name }}</div>
-            <p class="text-0">{{ keyword.description }}</p>
+            <div class="font-600">{{ nameWithValues }}</div>
+            <p class="text-0">{{ descriptionWithValues }}</p>
           </div>
         </article>
       </HoverCardContent>
@@ -46,16 +72,16 @@ const keyword = computed(() => {
 
 <style scoped lang="postcss">
 .keyword {
-  font-weight: 700;
-  /* font-style: italic; */
+  font-weight: var(--font-weight-7);
+  color: hsl(from currentColor h s calc(l - 20));
+  color: #f8eabb;
 }
 
 .keyword-card {
   max-width: 30ch;
   padding: var(--size-3);
-  color: var(--text-1);
   background-color: black;
-  color: #efef9f;
+  color: #f8eabb;
   padding: var(--size-2) var(--size-3);
   font-family: var(--font-system-ui);
   font-size: 14px;

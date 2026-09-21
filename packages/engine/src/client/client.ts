@@ -22,6 +22,8 @@ import type { AbilityViewModel } from './view-models/ability.model';
 import type { BoardSpaceViewModel } from './view-models/board-space.model';
 import { EFFECT_CHAIN_STATES } from '../game/effect-chain';
 import type { Rune } from '../player/player.enums';
+import { OptimisticStateManager } from './controllers/optimistic-state.controller';
+import { GAME_PHASES } from '../game/game.enums';
 
 export const GAME_TYPES = {
   LOCAL: 'local',
@@ -69,6 +71,8 @@ export class GameClient {
 
   readonly stateManager: ClientStateController;
 
+  readonly optimisticStateManager: OptimisticStateManager;
+
   readonly ui: UiController;
 
   readonly networkAdapter: NetworkAdapter;
@@ -106,6 +110,7 @@ export class GameClient {
     this.networkAdapter = options.networkAdapter;
     this.fxAdapter = options.fxAdapter;
     this.stateManager = new ClientStateController(this);
+    this.optimisticStateManager = new OptimisticStateManager(this);
     this.ui = new UiController(this);
     this.gameType = options.gameType;
     this.playerId = options.playerId;
@@ -158,18 +163,18 @@ export class GameClient {
     this._processingUpdate = false;
   }
 
-  getActivePlayerId() {
+  getActivePlayerIds() {
     if (
       this.stateManager.state.effectChain &&
       this.stateManager.state.effectChain.state === EFFECT_CHAIN_STATES.BUILDING
     ) {
-      return this.stateManager.state.effectChain.player;
+      return [this.stateManager.state.effectChain.player];
     }
-    return this.stateManager.state.interaction.ctx.player;
+    return this.stateManager.state.interaction.ctx.players;
   }
 
   isActive() {
-    return this.getActivePlayerId() === this.playerId;
+    return this.getActivePlayerIds().includes(this.playerId);
   }
 
   async initialize(
@@ -204,6 +209,10 @@ export class GameClient {
     await this.sync();
   }
 
+  triggerStateUpdate() {
+    void this.emitter.emit('update', {});
+  }
+
   async update(snapshot: GameStateSnapshot<PatchBasedSnapshotDiff>) {
     if (snapshot.id <= this.lastSnapshotId) {
       console.log(
@@ -231,6 +240,7 @@ export class GameClient {
       for (const event of snapshot.events) {
         await this.stateManager.onEvent(event);
         await this.ui.onEvent(event);
+        await this.optimisticStateManager.onEvent(event);
         await this.fx.emit(event.eventName, event.event);
         await this.emitter.emit('update', {});
       }
@@ -238,6 +248,7 @@ export class GameClient {
 
       if (isStateSnapshot) {
         this.stateManager.update(snapshot.state);
+        this.optimisticStateManager.onUpdate();
       }
 
       this.ui.update();
@@ -285,8 +296,7 @@ export class GameClient {
   }
 
   declarePlayCard(card: CardViewModel) {
-    this.ui.optimisticState.playedCardId = card.id;
-
+    this.optimisticStateManager.startPlayingCard(card.id);
     this.dispatch({
       type: 'declarePlayCard',
       payload: {
@@ -297,9 +307,13 @@ export class GameClient {
   }
 
   cancelInteraction() {
+    if (this.state.phase.state === GAME_PHASES.PLAY_CARD) {
+      const card = this.stateManager.getCard(this.state.phase.ctx.card)!;
+      void this.fxAdapter.onCancelPlayCard(card, this);
+    }
     this.dispatch({
       type: 'cancelInteraction',
-      payload: { playerId: this.state.currentPlayer }
+      payload: { playerId: this.playerId }
     });
   }
 
@@ -332,6 +346,7 @@ export class GameClient {
   }
 
   chooseCards(indices: number[]) {
+    this.optimisticStateManager.chooseCards(this.playerId, indices);
     this.dispatch({
       type: 'chooseCards',
       payload: {
@@ -375,16 +390,6 @@ export class GameClient {
       type: 'commitSpaceSelection',
       payload: {
         playerId: this.playerId
-      }
-    });
-  }
-
-  takeResourceAction(action: { type: 'rune'; rune: Rune } | { type: 'draw' }) {
-    this.dispatch({
-      type: 'takeResourceAction',
-      payload: {
-        playerId: this.playerId,
-        action
       }
     });
   }

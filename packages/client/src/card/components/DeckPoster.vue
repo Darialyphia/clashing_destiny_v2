@@ -10,7 +10,6 @@ import {
   CRAFTING_COST_PER_RARITY,
   FOIL_CRAFTING_COST_MULTIPLIER
 } from '@game/api';
-import { isDefined } from '@game/shared';
 
 const { mainDeck, name } = defineProps<{
   mainDeck: Array<{
@@ -21,26 +20,51 @@ const { mainDeck, name } = defineProps<{
   name: string;
 }>();
 
-const hero = computed(() =>
-  mainDeck.find(item => item.blueprint.kind === CARD_KINDS.HERO)
-);
+const groupedMainDeck = computed(() => {
+  const groups = new Map<string, (typeof mainDeck)[number]>();
+
+  for (const item of mainDeck) {
+    const existing = groups.get(item.blueprint.id);
+    if (existing) {
+      existing.copies += item.copies;
+    } else {
+      groups.set(item.blueprint.id, { ...item });
+    }
+  }
+
+  return [...groups.values()];
+});
+
 const minions = computed(() =>
-  mainDeck.filter(item => item.blueprint.kind === CARD_KINDS.MINION)
+  groupedMainDeck.value.filter(
+    item => item.blueprint.kind === CARD_KINDS.MINION
+  )
 );
 const minionsCount = computed(() =>
   minions.value.reduce((sum, item) => sum + item.copies, 0)
 );
 const spells = computed(() =>
-  mainDeck.filter(item => item.blueprint.kind === CARD_KINDS.SPELL)
+  groupedMainDeck.value.filter(item => item.blueprint.kind === CARD_KINDS.SPELL)
 );
 const spellsCount = computed(() =>
   spells.value.reduce((sum, item) => sum + item.copies, 0)
 );
 const artifacts = computed(() =>
-  mainDeck.filter(item => item.blueprint.kind === CARD_KINDS.ARTIFACT)
+  groupedMainDeck.value.filter(
+    item => item.blueprint.kind === CARD_KINDS.ARTIFACT
+  )
 );
 const artifactsCount = computed(() =>
   artifacts.value.reduce((sum, item) => sum + item.copies, 0)
+);
+
+const secrets = computed(() =>
+  groupedMainDeck.value.filter(
+    item => item.blueprint.kind === CARD_KINDS.SECRET
+  )
+);
+const secretsCount = computed(() =>
+  secrets.value.reduce((sum, item) => sum + item.copies, 0)
 );
 
 const root = useTemplateRef('root');
@@ -50,7 +74,9 @@ const saveImage = async () => {
   optionsBar.value!.style.display = 'none';
   root.value.style.maxHeight = 'none';
   await nextTick();
+  console.time('deck-poster-download');
   const dataUrl = await domToPng(root.value);
+  console.timeEnd('deck-poster-download');
   const link = document.createElement('a');
   link.href = dataUrl;
   link.download = `${name}-deck-poster.png`;
@@ -75,12 +101,6 @@ const craftingCost = computed(() => {
     return sum + cost * item.copies;
   }, 0);
 });
-
-const allCards = computed(() =>
-  [hero.value, ...minions.value, ...spells.value, ...artifacts.value].filter(
-    isDefined
-  )
-);
 </script>
 
 <template>
@@ -120,6 +140,12 @@ const allCards = computed(() =>
           </span>
           {{ artifactsCount <= 1 ? 'Artifact' : 'Artifacts' }}
         </div>
+        <div>
+          <span class="font-bold text-3">
+            {{ secretsCount }}
+          </span>
+          {{ secretsCount <= 1 ? 'Secret' : 'Secrets' }}
+        </div>
         <div class="flex items-center">
           <CraftignShardIcon />
           {{ craftingCost }}
@@ -131,7 +157,7 @@ const allCards = computed(() =>
       <div>
         <section>
           <div
-            v-for="item in allCards"
+            v-for="item in groupedMainDeck"
             :key="item.blueprint.id"
             class="card-wrapper"
           >
@@ -148,13 +174,7 @@ const allCards = computed(() =>
 
       <div class="listing">
         <ul>
-          <li v-for="item in minions" :key="item.blueprint.id">
-            {{ item.copies }}x
-            <span :class="item.blueprint.rarity.toLocaleLowerCase()">
-              {{ item.blueprint.name }}
-            </span>
-          </li>
-          <li v-for="item in spells" :key="item.blueprint.id">
+          <li v-for="item in groupedMainDeck" :key="item.blueprint.id">
             {{ item.copies }}x
             <span :class="item.blueprint.rarity.toLocaleLowerCase()">
               {{ item.blueprint.name }}
@@ -173,10 +193,11 @@ const allCards = computed(() =>
   overflow: auto;
 
   &.full {
-    --pixel-scale: 1;
+    --pixel-scale: 1.5;
   }
   &.condensed {
     --pixel-scale: 1;
+    width: 75%;
   }
 }
 /* the modern-screenshot library seems to not understand the backface-visibility css rule */
@@ -215,6 +236,7 @@ section {
 .content {
   display: grid;
   grid-template-columns: 1fr var(--size-13);
+  gap: var(--size-3);
 }
 
 .listing {

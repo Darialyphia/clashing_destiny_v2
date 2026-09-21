@@ -1,6 +1,12 @@
 <script setup lang="ts">
-import { useCard, useFxEvent, useGameUi } from '../composables/useGameClient';
-import Card from '@/card/components/cardV2/index.vue';
+import {
+  useCard,
+  useFxEvent,
+  useGameUi,
+  useMyPlayer
+} from '../composables/useGameClient';
+import type { AnimationName } from '@game/engine/src/game/game.enums';
+import Card from '@/card/components/cardV3/index.vue';
 import SmallCard from '@/card/components/SmallCard.vue';
 import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
 import { waitFor } from '@game/shared';
@@ -8,9 +14,9 @@ import { refAutoReset } from '@vueuse/core';
 import CardActionsPopover from './CardActionsPopover.vue';
 import type { PopoverContentProps } from 'reka-ui';
 import { CARD_LOCATIONS } from '@game/engine/src/card/card.enums';
-import CardModifiers from './CardModifiers.vue';
 import { formatAbilityText } from '@/utils/formatters';
 import { provideRichTextContext } from '../composables/useRichText';
+import { sprites } from '@/assets';
 const {
   cardId,
   actionsOffset = -50,
@@ -20,13 +26,14 @@ const {
   isInteractive = true,
   showStats = false,
   useActionsPortal = true,
-  showModifiers = false,
   showActionEmptyState = true,
   actionsPortalTarget = '#card-actions-portal',
-  modifiersPosition = 'top',
   canTilt = false,
   overrides = {},
-  pixelScale = 1
+  pixelScale = 1,
+  animationSequence,
+  spriteScale = 1,
+  repeatAnimation = true
 } = defineProps<{
   cardId: string;
   actionsOffset?: number;
@@ -44,12 +51,15 @@ const {
   canTilt?: boolean;
   overrides?: Record<string, any>;
   pixelScale?: number | null;
+  animationSequence?: AnimationName[];
+  spriteScale?: number;
+  repeatAnimation?: boolean;
 }>();
 
 const emit = defineEmits<{
-  modifiersMouseEnter: [];
-  modifiersMouseLeave: [];
+  artSequenceEnd: [{ animationSequence: string[] }];
 }>();
+
 const card = useCard(computed(() => cardId));
 
 const ui = useGameUi();
@@ -64,6 +74,10 @@ const onAbilityUse = async (e: { card: string }) => {
 useFxEvent(FX_EVENTS.ABILITY_BEFORE_USE, onAbilityUse);
 useFxEvent(FX_EVENTS.CARD_EFFECT_TRIGGERED, onAbilityUse);
 
+const myPlayer = useMyPlayer();
+const isFaceDown = computed(
+  () => !card.value.isRevealed && !card.value.player.equals(myPlayer.value)
+);
 const classes = computed(() => {
   return [
     card.value.keywords.map(kw => kw.toLowerCase()),
@@ -72,7 +86,8 @@ const classes = computed(() => {
       disabled:
         !card.value.canPlay && card.value.location === CARD_LOCATIONS.HAND,
       selected: ui.value.selectedCard?.equals(card.value),
-      'is-using-ability': isUsingAbility.value
+      'is-using-ability': isUsingAbility.value,
+      flipped: isFaceDown.value
     }
   ];
 });
@@ -80,14 +95,14 @@ const classes = computed(() => {
 provideRichTextContext({
   card
 });
+
+const sprite = computed(() => {
+  return sprites[card.value.art.sprite];
+});
 </script>
 
 <template>
-  <div
-    class="game-card-container"
-    :data-game-card="card.id"
-    :data-flip-id="`card_${card.id}`"
-  >
+  <div v-if="card" class="game-card-container" :data-game-card="card.id">
     <CardActionsPopover
       :card-id="card.id"
       :is-interactive="isInteractive"
@@ -103,6 +118,7 @@ provideRichTextContext({
         :style="{ '--pixel-scale': pixelScale }"
         :is-animated="true"
         :id="card.id"
+        :data-flip-id="`card_${card.id}`"
         :card="{
           id: card.id,
           art: overrides.art ?? card.art,
@@ -112,28 +128,33 @@ provideRichTextContext({
           rarity: overrides.rarity ?? card.rarity,
           manaCost: overrides.manaCost ?? card.manaCost,
           baseManaCost: overrides.baseManaCost ?? card.baseManaCost,
-          runeCost: overrides.runeCost ?? card.runeCost,
+          manaSupply: overrides.manaSupply ?? card.manaSupply,
           hp: overrides.hp ?? card.maxHp,
           atk: overrides.atk ?? card.atk,
           durability: overrides.durability ?? card.durability,
           abilities: card.abilities
             .filter(ability => !ability.isHiddenOnCard)
             .map(a => formatAbilityText(a)),
-          jobs: overrides.jobs ?? card.jobs,
           subKind: overrides.subKind ?? card.subKind,
           affinities: overrides.affinities ?? card.affinities,
           speed: overrides.speed ?? card.speed,
-          commandment: overrides.commandment ?? card.commandment
+          commandment: overrides.commandment ?? card.commandment,
+          might: overrides.might ?? card.stats?.might,
+          focus: overrides.focus ?? card.stats?.focus,
+          wisdom: overrides.wisdom ?? card.stats?.wisdom
         }"
         :is-foil="card.isFoil"
         class="game-card big"
         :class="classes"
         :max-tilt-angle="0"
+        :sprite="sprite"
+        :animation-sequence="animationSequence"
       />
       <SmallCard
         v-else-if="variant === 'small'"
         :style="{ '--pixel-scale': pixelScale }"
         :id="card.id"
+        :data-flip-id="`card_${card.id}_small`"
         :card="{
           id: card.id,
           art: overrides.art ?? card.art,
@@ -145,20 +166,17 @@ provideRichTextContext({
           maxHp: overrides.maxHp ?? card.maxHp,
           durability: overrides.durability ?? card.durability,
           commandment: overrides.commandment ?? card.commandment,
-          baseBounty: overrides.baseBounty ?? card.baseBounty
+          baseCommandment: overrides.baseCommandment ?? card.baseCommandment
         }"
         class="game-card small"
         :class="classes"
         :show-stats="showStats"
         :is-foil="card.isFoil"
-      />
-
-      <CardModifiers
-        v-if="showModifiers"
-        :position="modifiersPosition"
-        :card="card"
-        @modifiers-mouse-enter="emit('modifiersMouseEnter')"
-        @modifiers-mouse-leave="emit('modifiersMouseLeave')"
+        :sprite="sprite"
+        :animation-sequence="animationSequence"
+        :sprite-scale="spriteScale"
+        :repeat-animation="repeatAnimation"
+        @art-sequence-end="emit('artSequenceEnd', $event)"
       />
 
       <!-- <div class="damage" v-if="damageTaken > 0">
@@ -213,6 +231,11 @@ provideRichTextContext({
 .game-card-container {
   position: relative;
   transform: translateZ(1px);
+  transform-style: preserve-3d;
+
+  &:deep(> div) {
+    transform-style: preserve-3d;
+  }
 }
 
 .game-card {
@@ -235,6 +258,9 @@ provideRichTextContext({
       inset: 0;
       background-color: hsl(200 100% 50% / 0.25);
     }
+  }
+  &.small.flipped {
+    transform: rotateY(180deg);
   }
 }
 

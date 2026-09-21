@@ -27,6 +27,7 @@ useFxEvent(FX_EVENTS.CARD_BEFORE_PLAY, async event => {
             :card-id="card.id"
             :interactive="false"
             :auto-scale="false"
+            :pixel-scale="2"
           />
         </div>
       </Transition>
@@ -40,7 +41,7 @@ useFxEvent(FX_EVENTS.CARD_BEFORE_PLAY, async event => {
   position: fixed;
   top: var(--size-10);
   left: 50%;
-  transform: translateX(-50%);
+  transform: translateX(-25%);
   width: calc(var(--pixel-scale) * var(--card-v2-width));
   height: calc(var(--pixel-scale) * var(--card-v2-height));
   pointer-events: none;

@@ -9,18 +9,25 @@ import {
 import type { Player } from '../../player/player.entity';
 import { INTERACTION_STATE_TRANSITIONS } from '../game.enums';
 
-export type ChoosingCardsContextOptions<T extends boolean = boolean> = {
-  player: Player;
-  choices: Array<{
-    card: AnyCard;
-    aiHints: {
-      shouldPick: (game: Game, player: Player) => number;
-    };
-  }>;
+type PlayerId = Player['id'];
+
+type CardChoices = Array<{
+  card: AnyCard;
+  aiHints: {
+    shouldPick: (game: Game, player: Player) => number;
+  };
+}>;
+
+type ChooseCardPlayerConfig = {
+  choices: CardChoices;
   minChoiceCount: number;
   maxChoiceCount: number;
   label: string;
   timeoutFallback: AnyCard[];
+};
+
+export type ChoosingCardsContextOptions<T extends boolean = boolean> = {
+  players: Record<PlayerId, ChooseCardPlayerConfig>;
   canCancel: T;
 };
 export class ChoosingCardsContext {
@@ -33,76 +40,90 @@ export class ChoosingCardsContext {
     return instance;
   }
 
-  private selectedCards: AnyCard[] = [];
-
-  private choices: Array<{
-    card: AnyCard;
-    aiHints: {
-      shouldPick: (game: Game, player: Player) => number;
-    };
-  }> = [];
-
-  readonly minChoiceCount: number;
-
-  readonly maxChoiceCount: number;
-
-  readonly player: Player;
-
-  private label: string;
-
-  private timeoutFallback: AnyCard[];
+  private selectedCards: Record<PlayerId, AnyCard[]> = {};
+  private committedPlayers = new Set<PlayerId>();
 
   private constructor(
     private game: Game,
     private options: ChoosingCardsContextOptions
   ) {
-    this.choices = options.choices;
-    this.minChoiceCount = options.minChoiceCount;
-    this.maxChoiceCount = options.maxChoiceCount;
-    this.player = options.player;
-    this.label = options.label;
-    this.timeoutFallback = options.timeoutFallback;
+    for (const playerId of Object.keys(this.options.players)) {
+      this.selectedCards[playerId] = [];
+    }
   }
 
   async init() {}
 
   serialize() {
     return {
-      player: this.player.id,
-      choices: this.choices.map(choice => choice.card.id),
-      minChoiceCount: this.minChoiceCount,
-      maxChoiceCount: this.maxChoiceCount,
-      label: this.label,
+      players: Object.keys(this.options.players).filter(
+        playerId => !this.committedPlayers.has(playerId)
+      ),
+      initialPlayers: Object.keys(this.options.players),
+      playerConfig: Object.fromEntries(
+        Object.entries(this.options.players).map(([playerId, config]) => [
+          playerId,
+          {
+            choices: config.choices.map(choice => choice.card.id),
+            minChoiceCount: config.minChoiceCount,
+            maxChoiceCount: config.maxChoiceCount,
+            label: config.label,
+            selected: this.selectedCards[playerId].map(card => card.id) ?? []
+          }
+        ])
+      ),
       canCancel: this.options.canCancel
     };
   }
 
   async commit(player: Player, indices: number[] | null) {
-    assert(player.equals(this.player), new InvalidPlayerError());
+    const playerId = player.id;
+    const playerConfig = this.options.players[playerId];
+    assert(playerConfig, new InvalidPlayerError());
+    assert(!this.committedPlayers.has(playerId), new InvalidPlayerError());
     if (isDefined(indices)) {
       assert(
-        indices.length >= this.minChoiceCount,
-        new NotEnoughCardsError(this.minChoiceCount, indices.length)
+        indices.length >= playerConfig.minChoiceCount,
+        new NotEnoughCardsError(playerConfig.minChoiceCount, indices.length)
       );
       assert(
-        indices.length <= this.maxChoiceCount,
-        new TooManyCardsError(this.maxChoiceCount, indices.length)
+        indices.length <= playerConfig.maxChoiceCount,
+        new TooManyCardsError(playerConfig.maxChoiceCount, indices.length)
       );
 
-      this.selectedCards.push(...indices.map(index => this.choices[index].card));
+      this.selectedCards[playerId] = indices.map(
+        index => playerConfig.choices[index].card
+      );
     } else {
-      this.selectedCards.push(...this.timeoutFallback);
+      this.selectedCards[playerId] = [...playerConfig.timeoutFallback];
+    }
+    this.committedPlayers.add(playerId);
+
+    if (this.committedPlayers.size < Object.keys(this.options.players).length) {
+      await this.game.snapshotSystem.takeSnapshot();
+      return;
     }
 
     await this.game.interaction.sendTransition(
       INTERACTION_STATE_TRANSITIONS.COMMIT_CHOOSING_CARDS,
       {}
     );
-    this.game.inputSystem.unpause({ cancelled: false, result: this.selectedCards });
+    this.game.inputSystem.unpause({
+      cancelled: false,
+      result: Object.fromEntries(
+        Object.entries(this.selectedCards).map(([playerId, cards]) => [
+          playerId,
+          {
+            player: this.game.playerSystem.getPlayerById(playerId)!,
+            cards
+          }
+        ])
+      )
+    });
   }
 
   async cancel(player: Player) {
-    assert(player.equals(this.player), new InvalidPlayerError());
+    assert(this.options.players[player.id], new InvalidPlayerError());
     await this.game.interaction.sendTransition(
       INTERACTION_STATE_TRANSITIONS.CANCEL_CHOOSING_CARDS,
       {}
@@ -111,7 +132,19 @@ export class ChoosingCardsContext {
     this.game.inputSystem.unpause({ cancelled: true, result: null });
   }
 
-  getChoices() {
-    return [...this.choices];
+  getChoices(player: Player) {
+    assert(this.options.players[player.id], new InvalidPlayerError());
+    return [...this.options.players[player.id].choices];
+  }
+
+  getPlayerConfig(player: Player) {
+    assert(this.options.players[player.id], new InvalidPlayerError());
+    return this.options.players[player.id];
+  }
+
+  get players() {
+    return Object.keys(this.options.players).map(
+      id => this.game.playerSystem.getPlayerById(id)!
+    );
   }
 }

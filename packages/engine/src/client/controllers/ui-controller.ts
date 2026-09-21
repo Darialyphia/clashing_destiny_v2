@@ -4,7 +4,6 @@ import type { CardViewModel } from '../view-models/card.model';
 import type { GameClientState } from './state-controller';
 import { CommitCardSelectionGlobalAction } from '../actions/commit-card-selection';
 import { PassGlobalAction } from '../actions/pass';
-import type { AbilityViewModel } from '../view-models/ability.model';
 import { GAME_EVENTS, type SerializedStarEvent } from '../../game/game.events';
 import type { BoardSpaceViewModel } from '../view-models/board-space.model';
 import { SelectSpaceOnBoardAction } from '../actions/select-space-on-board';
@@ -22,11 +21,6 @@ export type GlobalActionRule = {
   onClick: () => void;
   getLabel(state: GameClientState): string;
   variant: 'primary' | 'error' | 'info';
-};
-
-export type UiOptimisticState = {
-  playedCardId: string | null;
-  isCancellingPlayCard: boolean;
 };
 
 export class DOMSelector {
@@ -74,13 +68,9 @@ export class UiController {
 
   private onResetCallbacks: Array<() => void> = [];
 
-  optimisticState: UiOptimisticState = {
-    playedCardId: null,
-    isCancellingPlayCard: false
-  };
-
   DOMSelectors = {
     board: new DOMSelector('board'),
+    boardInner: new DOMSelector('board-inner'),
     effectChain: new DOMSelector('effect-chain'),
     playedCardZone: new DOMSelector('played-card'),
     heroHealthIndicator: (playerId: string) =>
@@ -257,17 +247,7 @@ export class UiController {
     this._draggedCard = null;
   }
 
-  get isInteractivePlayer() {
-    return this.client.playerId === this.client.getActivePlayerId();
-  }
-
-  clearOptimisticState() {
-    this.optimisticState.playedCardId = null;
-  }
-
   update() {
-    this.clearOptimisticState();
-
     if (this.selectedCard?.isExhausted) {
       this.unselect();
     }
@@ -339,10 +319,10 @@ export class UiController {
   }
 
   get explainerMessage() {
-    const activePlayerId = this.client.getActivePlayerId();
+    const activePlayerIds = this.client.getActivePlayerIds();
     const state = this.client.state;
 
-    if (activePlayerId !== this.client.playerId) {
+    if (!activePlayerIds.includes(this.client.playerId)) {
       return 'Waiting for opponent...';
     }
 
@@ -352,14 +332,6 @@ export class UiController {
     ) {
       const card = state.entities[state.phase.ctx.card] as CardViewModel;
       return `Put cards in the Destiny Zone (${this.selectedManaCostIndices.length} / ${card?.manaCost})`;
-    }
-
-    if (
-      state.interaction.state === INTERACTION_STATES.USING_ABILITY &&
-      state.interaction.ctx.player === this.client.playerId
-    ) {
-      const ability = state.entities[state.interaction.ctx.ability] as AbilityViewModel;
-      return `Put cards in the Destiny Zone (${this.selectedManaCostIndices.length} / ${ability?.manaCost})`;
     }
 
     if (state.interaction.state === INTERACTION_STATES.SELECTING_CARDS_ON_BOARD) {

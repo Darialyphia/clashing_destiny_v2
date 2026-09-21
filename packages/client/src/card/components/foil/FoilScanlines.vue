@@ -63,12 +63,20 @@
   mask-repeat: no-repeat;
   position: absolute;
   inset: 0;
+  opacity: 0;
+  will-change: opacity;
   &::before {
     content: '';
     position: absolute;
     inset: 0;
-    mask-image: var(--foil-mask);
-    mask-size: cover;
+    mask: var(--art-mask), linear-gradient(#000 0 0);
+    mask-size:
+      calc(var(--card-v2-art-frame-width) * var(--pixel-scale) * 2),
+      calc(var(--card-v2-art-frame-height) * var(--pixel-scale) * 2);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    mask-position: var(--art-mask-position, center), center;
+    mask-repeat: no-repeat, repeat;
     background-image:
       repeating-linear-gradient(
         90deg,
@@ -105,8 +113,14 @@
     content: '';
     position: absolute;
     inset: 0;
-    mask-image: var(--foil-mask);
-    mask-size: cover;
+    mask: var(--art-mask), linear-gradient(#000 0 0);
+    mask-size:
+      calc(var(--card-v2-art-frame-width) * var(--pixel-scale) * 2),
+      calc(var(--card-v2-art-frame-height) * var(--pixel-scale) * 2);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    mask-position: var(--art-mask-position, center), center;
+    mask-repeat: no-repeat, repeat;
     background-image: radial-gradient(
       farthest-corner circle at var(--glare-x) var(--glare-y),
       hsla(0, 0%, 90%, 0.8) 0%,
@@ -120,7 +134,20 @@
   }
 }
 
+@keyframes foil-scanlines-pulse {
+  0% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 8;
+  }
+  100% {
+    opacity: 0.64;
+  }
+}
+
 :global(:is(.card-perspective-wrapper, .small-card):hover .foil-scanlines) {
   opacity: 1;
+  animation: foil-scanlines-pulse 2.2s ease-in-out infinite alternate;
 }
 </style>

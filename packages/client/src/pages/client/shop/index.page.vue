@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { useMe } from '@/auth/composables/useMe';
-import AuthenticatedHeader from '@/AuthenticatedHeader.vue';
 import GodlIcon from '@/player/components/GodlIcon.vue';
 import FancyButton from '@/ui/components/FancyButton.vue';
 import { BOOSTER_PACKS_CATALOG, type BoosterPackCatalogEntry } from '@game/api';
@@ -10,7 +9,8 @@ definePage({
   name: 'Shop',
   path: '/client/shop',
   meta: {
-    requiresAuth: true
+    requiresAuth: true,
+    wrapperClass: 'page-blur'
   }
 });
 
@@ -27,7 +27,12 @@ const openPurchaseModal = (pack: BoosterPackCatalogEntry) => {
 
 <template>
   <div v-if="me" class="shop-page">
-    <AuthenticatedHeader />
+    <FancyButton
+      class="absolute top-10 left-8"
+      text="Back"
+      size="md"
+      :to="{ name: 'ClientHome' }"
+    />
     <main class="container">
       <header class="page-header">
         <h1>Shop</h1>
@@ -71,7 +76,7 @@ const openPurchaseModal = (pack: BoosterPackCatalogEntry) => {
 <style scoped lang="postcss">
 .shop-page {
   min-height: 100vh;
-  background: var(--surface-1);
+  background-image: url('@/assets/backgrounds/main-menu-overlay.png');
 }
 
 .page-header {

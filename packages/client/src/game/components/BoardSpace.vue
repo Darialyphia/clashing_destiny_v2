@@ -5,13 +5,13 @@ import {
   useGameUi
 } from '../composables/useGameClient';
 import { useCellTargeting } from '../composables/useCellTargeting';
-import { useBoardCardDragSelection } from '../composables/useBoardCardDragSelection';
+import { useBoardCardDragSelection } from './BoardCard/useBoardCardDragSelection';
 import { useBoardSpaceArrowPath } from '../composables/useBoardSpaceArrowPath';
 import { useCardMoveFx } from '../composables/useCardMoveFx';
 import Arrow from './Arrow.vue';
 import type { BoardSpaceViewModel } from '@game/engine/src/client/view-models/board-space.model';
 import { useCellHighlights } from '../composables/useCellHighlights';
-import BoardCard from './BoardCard.vue';
+import BoardCard from './BoardCard/index.vue';
 
 const { cellId } = defineProps<{
   cellId: string;
@@ -39,7 +39,7 @@ const handleMouseup = (e: MouseEvent) => {
 <template>
   <div
     :id="ui.DOMSelectors.boardSpace(cell.id).id"
-    class="minion-cell"
+    class="board-cell"
     :class="{
       'is-targetable': isTargetable && !client.isPlayingFx,
       'is-targeted': isTargeted && !client.isPlayingFx,
@@ -47,14 +47,6 @@ const handleMouseup = (e: MouseEvent) => {
       'can-attack': canAttack && !client.isPlayingFx,
       'is-moving-unit': isMovingUnit
     }"
-    @mouseenter="
-      () => {
-        if (cell.card) {
-          ui.hover(cell.card);
-        }
-      }
-    "
-    @mouseleave="ui.unhover()"
     @mouseup.stop="handleMouseup"
     @mousedown="dragSelection.onMousedown"
   >
@@ -79,9 +71,9 @@ const handleMouseup = (e: MouseEvent) => {
 </template>
 
 <style scoped lang="postcss">
-.minion-cell {
-  width: 148px;
-  height: 130px;
+.board-cell {
+  width: var(--card-small-v3-width);
+  height: var(--card-small-v3-height);
   background: url('@/assets/ui/board-small-card-slot.png') no-repeat center
     center;
   transition:
@@ -91,6 +83,7 @@ const handleMouseup = (e: MouseEvent) => {
   display: grid;
   place-content: center;
   position: relative;
+  transform-style: preserve-3d;
   &.is-in-aoe,
   &.can-attack {
     background-image: url('@/assets/ui/board-small-card-slot-in-aoe.png');
@@ -109,7 +102,6 @@ const handleMouseup = (e: MouseEvent) => {
   &.can-move-to {
     background-image: url('@/assets/ui/board-small-card-slot-targetable.png');
     filter: drop-shadow(0 0 6px var(--blue-9));
-    translate: 0 -8px;
 
     &:hover {
       filter: drop-shadow(0 0 12px var(--cyan-1)) brightness(250%);

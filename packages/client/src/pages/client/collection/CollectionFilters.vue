@@ -21,6 +21,7 @@ import {
 import UiSwitch from '@/ui/components/UiSwitch.vue';
 import { SliderRange, SliderRoot, SliderThumb, SliderTrack } from 'reka-ui';
 import { Icon } from '@iconify/vue';
+import UiTextInput from '@/ui/components/UiTextInput.vue';
 
 const {
   textFilter,
@@ -85,7 +86,7 @@ const cardKinds: Array<{
 const affinities: Array<{ id: Affinity; img: string; label: string }> =
   Object.values(AFFINITIES).map(affinity => ({
     id: affinity,
-    img: assets[`ui/card/affinity-${affinity.toLocaleLowerCase()}`].path,
+    img: assets[`ui/card/v3/affinity-${affinity.toLocaleLowerCase()}`].path,
     label: uppercaseFirstLetter(affinity.toLocaleLowerCase())
   }));
 
@@ -142,11 +143,10 @@ const toggleMinManaCostFilter = (cost: number) => {
       <SliderThumb class="card-scale-thumb" />
     </SliderRoot>
 
-    <input
+    <UiTextInput
       v-model="textFilter"
-      type="text"
-      placeholder="Search cards..."
       class="search-input"
+      placeholder="Search cards..."
     />
 
     <PopoverRoot v-model:open="isFiltersOpen">
@@ -332,21 +332,11 @@ const toggleMinManaCostFilter = (cost: number) => {
   flex: 1;
   margin-left: auto;
   max-width: 400px;
-  padding: var(--size-2) var(--size-4);
-  border-radius: var(--radius-pill);
-  border: solid var(--border-size-1) #d1c6c2;
-  background-color: var(--color-gray-1);
-  color: var(--color-gray-9);
   transition: border-color 0.2s var(--ease-1);
 
   &::placeholder {
     color: var(--color-gray-6);
     font-style: italic;
-  }
-
-  &:focus {
-    border-color: #ffb270;
-    outline: none;
   }
 }
 

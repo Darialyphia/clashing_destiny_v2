@@ -55,7 +55,9 @@
   animation: foil-oil 5s linear infinite;
 }
 
-:global(:is(.card-perspective-wrapper, .small-card):hover .foil-oil) {
+:global(
+  :is(.card-perspective-wrapper, .small-card, .deck-item):hover .foil-oil
+) {
   opacity: 0.25;
   transition-delay: 0.3s;
 }

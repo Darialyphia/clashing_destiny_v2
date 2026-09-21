@@ -1,16 +1,14 @@
 <script setup lang="ts">
 import type { CardArt } from '@game/engine/src/card/card-blueprint';
 import { assets } from '@/assets';
-import { CARD_KINDS, type CardKind } from '@game/engine/src/card/card.enums';
 
-const { kind, art } = defineProps<{
-  kind: CardKind;
+const { art } = defineProps<{
   art: CardArt;
 }>();
 
 const artBgImage = computed(() => {
-  if (kind === CARD_KINDS.HERO || art.isFullArt || art.bg.includes('-alt')) {
-    return assets[art.bg].css;
+  if (art.isFullArt || art.bg?.includes('-alt')) {
+    return assets[art.bg!].css;
   }
 
   return assets['cards/placeholder-spell-bg'].css;
@@ -42,6 +40,7 @@ const artMainImage = computed(() => {
   height: calc(var(--card-v2-art-frame-height) * var(--pixel-scale) * 2);
   left: calc(2px * var(--pixel-scale));
   top: calc(2px * var(--pixel-scale));
+  overflow: hidden;
 
   &:not(.full-art) {
     mask-image: url('@/assets/ui/card/masks/card-art-v2.png');
@@ -64,12 +63,24 @@ const artMainImage = computed(() => {
   }
 }
 
+.full-art ::after {
+  content: '';
+  background-image: v-bind(artMainImage), v-bind(artBgImage);
+  background-size: cover;
+  background-position: center;
+  position: absolute;
+  inset: 0;
+  mix-blend-mode: plus-lighter;
+  filter: blur(calc(var(--pixel-scale) * 7px));
+  animation: full-art-glow 2s var(--ease-3) infinite alternate;
+}
+
 @keyframes full-art-glow {
   from {
     opacity: 0.25;
   }
   to {
-    opacity: 1;
+    opacity: 0.75;
   }
 }
 
@@ -88,19 +99,6 @@ const artMainImage = computed(() => {
   width: 100%;
   position: absolute;
   inset: 0;
-  .full-art & {
-    &::after {
-      content: '';
-      background-image: v-bind(artBgImage);
-      background-size: cover;
-      background-position: center;
-      position: absolute;
-      inset: 0;
-      mix-blend-mode: plus-lighter;
-      filter: blur(calc(var(--pixel-scale) * 7px));
-      animation: full-art-glow 2s var(--ease-3) infinite alternate;
-    }
-  }
 }
 
 .art-main-shadow {

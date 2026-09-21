@@ -340,10 +340,10 @@ export class GameInteractionSystem
   async selectCardsOnBoard<T extends AnyCard>(
     options: SelectingCardOnBoardContextOptions
   ) {
-    this.dispatch(INTERACTION_STATE_TRANSITIONS.START_SELECTING_CARDS_ON_BOARD);
-    this._ctx = await this.ctxDictionary[
-      INTERACTION_STATES.SELECTING_CARDS_ON_BOARD
-    ].create(this.game, options);
+    await this.sendTransition(
+      INTERACTION_STATE_TRANSITIONS.START_SELECTING_CARDS_ON_BOARD,
+      options
+    );
 
     return this.game.inputSystem.pause<InteractionResult<T[]>>();
   }
@@ -379,14 +379,16 @@ export class GameInteractionSystem
     options: ChoosingCardsContextOptions<TCancellable>
   ) {
     type ReturnValue = TCancellable extends true
-      ? InteractionResult<T[]>
-      : InteractionResult<T[]> & { cancelled: false };
+      ? InteractionResult<Record<string, { player: Player; cards: T[] }>>
+      : InteractionResult<Record<string, { player: Player; cards: T[] }>> & {
+          cancelled: false;
+        };
 
-    this.dispatch(INTERACTION_STATE_TRANSITIONS.START_CHOOSING_CARDS);
-    this._ctx = await this.ctxDictionary[INTERACTION_STATES.CHOOSING_CARDS].create(
-      this.game,
+    await this.sendTransition(
+      INTERACTION_STATE_TRANSITIONS.START_CHOOSING_CARDS,
       options
     );
+
     return this.game.inputSystem.pause<ReturnValue>();
   }
 
@@ -397,31 +399,30 @@ export class GameInteractionSystem
       ? InteractionResult<Effect>
       : InteractionResult<Effect> & { cancelled: false };
 
-    this.dispatch(INTERACTION_STATE_TRANSITIONS.START_CHOOSING_CHAIN_EFFECT);
-    this._ctx = await this.ctxDictionary[INTERACTION_STATES.CHOOSING_CHAIN_EFFECT].create(
-      this.game,
+    await this.sendTransition(
+      INTERACTION_STATE_TRANSITIONS.START_CHOOSING_CHAIN_EFFECT,
       options
     );
+
     return this.game.inputSystem.pause<ReturnValue>();
   }
 
   async rearrangeCards<T extends Record<string, AnyCard[]> = Record<string, AnyCard[]>>(
     options: RearrangeCardsContextOptions
   ) {
-    this.dispatch(INTERACTION_STATE_TRANSITIONS.START_REARRANGING_CARDS);
-    this._ctx = await this.ctxDictionary[INTERACTION_STATES.REARRANGING_CARDS].create(
-      this.game,
+    await this.sendTransition(
+      INTERACTION_STATE_TRANSITIONS.START_REARRANGING_CARDS,
       options
     );
     return this.game.inputSystem.pause<InteractionResult<T>>();
   }
 
   async askQuestion<T extends string = string>(options: AskQuestionContextOptions) {
-    this.dispatch(INTERACTION_STATE_TRANSITIONS.START_ASKING_QUESTION);
-    this._ctx = await this.ctxDictionary[INTERACTION_STATES.ASK_QUESTION].create(
-      this.game,
+    await this.sendTransition(
+      INTERACTION_STATE_TRANSITIONS.START_ASKING_QUESTION,
       options
     );
+
     return this.game.inputSystem.pause<InteractionResult<T>>();
   }
 
@@ -434,11 +435,8 @@ export class GameInteractionSystem
     assert(this.isInteractive(options.player), new IllegalCardPlayedError());
 
     assert(options.ability.canUse, new IllegalCardPlayedError());
-    this.dispatch(INTERACTION_STATE_TRANSITIONS.START_USING_ABILITY);
-    this._ctx = await this.ctxDictionary[INTERACTION_STATES.USING_ABILITY].create(
-      this.game,
-      options
-    );
+    await this.sendTransition(INTERACTION_STATE_TRANSITIONS.START_USING_ABILITY, options);
+
     await this.game.emit(
       GAME_EVENTS.CARD_DECLARE_USE_ABILITY,
       new CardDeclareUseAbilityEvent({
@@ -446,7 +444,9 @@ export class GameInteractionSystem
         abilityId: options.ability.abilityId
       })
     );
-    await this._ctx.commit(this._ctx.player);
+    // this is a bit of a hack where we immediately commit the interaction state
+    // previous iterations of the game had some cost to be paid manually when using an ability
+    await (this._ctx as UseAbilityContext).commit(this._ctx.players[0]);
   }
 
   onInteractionEnd() {
@@ -475,8 +475,8 @@ export class InteractionAfterChangeEvent extends TypedSerializableEvent<
       from: this.data.from,
       to: {
         state: this.data.to.state,
-        ctx: this.data.to.ctx.serialize() as any // Type assertion to match SerializedInteractionStateContext
-      }
+        ctx: this.data.to.ctx.serialize()
+      } as unknown as SerializedInteractionContext
     };
   }
 }

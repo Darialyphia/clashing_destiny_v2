@@ -21,14 +21,14 @@ export class EffectChainSystem extends System<never> {
       async () => {
         await opts.onResolved?.();
         this._currentChain = null;
-        await this.game.inputSystem.askForPlayerInput();
+        await this.game.snapshotSystem.takeSnapshot();
       }
     );
 
     if (opts.initialEffect) {
       await this._currentChain.addEffect(opts.initialEffect, opts.initialPlayer);
     }
-    await this.game.inputSystem.askForPlayerInput();
+    await this.game.snapshotSystem.takeSnapshot();
 
     return this.currentChain;
   }

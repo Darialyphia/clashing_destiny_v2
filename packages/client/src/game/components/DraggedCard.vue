@@ -1,18 +1,16 @@
 <script setup lang="ts">
-import { isDefined, lerp } from '@game/shared';
+import { lerp } from '@game/shared';
 import { useEventListener, useRafFn } from '@vueuse/core';
 import {
-  useGameUi,
   useGameState,
   useGameClient,
-  useFxEvent
+  useFxEvent,
+  useGameUi
 } from '../composables/useGameClient';
 import {
   GAME_PHASES,
   INTERACTION_STATES
 } from '@game/engine/src/game/game.enums';
-import { Flip } from 'gsap/Flip';
-import UiButton from '@/ui/components/UiButton.vue';
 import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
 import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
 import GameCard from './GameCard.vue';
@@ -64,44 +62,7 @@ const rotationAnimation = useRafFn(() => {
 });
 
 const state = useGameState();
-const isPinned = ref(false);
-const isPinning = ref(false);
-const { client } = useGameClient();
-
-const container = useTemplateRef<HTMLDivElement>('container');
-watchEffect(() => {
-  const shouldPin = !isDefined(ui.value.selectedCard);
-  if (shouldPin === isPinned.value) return;
-
-  if (shouldPin) {
-    if (!container.value) return;
-
-    const flipState = Flip.getState(container.value);
-    isPinning.value = true;
-    isPinned.value = shouldPin;
-    window.requestAnimationFrame(() => {
-      Flip.from(flipState, {
-        targets: container.value,
-        duration: 0.25,
-        absolute: true,
-        ease: Power1.easeOut,
-        onComplete() {
-          isPinning.value = false;
-        }
-      });
-    });
-  } else {
-    isPinned.value = shouldPin;
-  }
-});
-
-watch(isPinned, pinned => {
-  if (pinned) {
-    rotationAnimation.pause();
-  } else {
-    rotationAnimation.resume();
-  }
-});
+const { client, playerId } = useGameClient();
 
 const isHidden = ref(false);
 useFxEvent(FX_EVENTS.PRE_CARD_BEFORE_PLAY, () => {
@@ -112,6 +73,9 @@ useFxEvent(FX_EVENTS.INTERACTION_AFTER_CHANGE_STATE, event => {
     isHidden.value = true;
   }
 });
+useFxEvent(FX_EVENTS.CARD_BEFORE_PLAY, () => {
+  isHidden.value = true;
+});
 const unsub = client.value.onUpdateCompleted(() => {
   isHidden.value = false;
 });
@@ -120,15 +84,26 @@ onBeforeUnmount(() => {
 });
 
 const draggedCard = computed(() => {
-  if (state.value.phase.state !== GAME_PHASES.PLAY_CARD) return null;
+  let card: CardViewModel | null = null;
+  if (client.value.optimisticStateManager.state.playedCardId) {
+    card = state.value.entities[
+      client.value.optimisticStateManager.state.playedCardId
+    ] as CardViewModel;
+  } else if (state.value.phase.state == GAME_PHASES.PLAY_CARD) {
+    card = ui.value.selectedCard;
+  }
 
-  const card = state.value.entities[
-    state.value.phase.ctx.card
-  ] as CardViewModel;
-
-  if (!card) return null;
+  if (card?.player.id !== playerId.value) card = null;
 
   return card;
+});
+
+watch(draggedCard, draggedCard => {
+  if (draggedCard) {
+    rotationAnimation.resume();
+  } else {
+    rotationAnimation.pause();
+  }
 });
 </script>
 
@@ -138,10 +113,6 @@ const draggedCard = computed(() => {
     ref="container"
     id="dragged-card"
     data-flip-id="dragged-card"
-    :class="{
-      'is-pinned': isPinned,
-      'is-pinning': isPinning
-    }"
     :style="{
       '--pixel-scale': 1,
       '--x': `${x}px`,
@@ -153,28 +124,6 @@ const draggedCard = computed(() => {
       :card-id="draggedCard.id"
       :is-interactive="false"
     />
-    <Transition>
-      <div
-        v-if="
-          isPinned &&
-          !isPinning &&
-          (state.interaction.state ===
-            INTERACTION_STATES.SELECTING_SPACE_ON_BOARD ||
-            state.interaction.state ===
-              INTERACTION_STATES.SELECTING_CARDS_ON_BOARD) &&
-          state.interaction.ctx.canCancel
-        "
-        class="flex flex-col gap-3 mt-3"
-        @mouseup.stop
-      >
-        <UiButton
-          class="primary-button w-full pointer-events-auto"
-          @click="client.cancelInteraction()"
-        >
-          Cancel
-        </UiButton>
-      </div>
-    </Transition>
   </div>
 </template>
 
@@ -185,28 +134,11 @@ const draggedCard = computed(() => {
   z-index: 99;
   transform-style: preserve-3d;
   transform-origin: center center;
-
-  &:not(.is-pinned) {
-    top: 0;
-    left: 0;
-    transform: translateY(var(--y)) translateX(calc(-50% + var(--x)))
-      rotateX(calc(1deg * v-bind('cardRotation.x')))
-      rotateY(calc(1deg * v-bind('cardRotation.y')));
-  }
-  &.is-pinned {
-    top: var(--size-11);
-    right: var(--size-13);
-  }
-}
-
-.v-enter-active {
-  transition:
-    opacity 0.2s var(--ease-in-2),
-    transform 0.2s var(--ease-in-2);
-}
-
-.v-enter-from {
-  opacity: 0;
-  transform: translateX(2rem);
+  top: 0;
+  left: 0;
+  transform: translateZ(2px) translateY(var(--y))
+    translateX(calc(-50% + var(--x)))
+    rotateX(calc(1deg * v-bind('cardRotation.x')))
+    rotateY(calc(1deg * v-bind('cardRotation.y')));
 }
 </style>

@@ -7,24 +7,18 @@ import {
   useOpponentPlayer
 } from '../composables/useGameClient';
 import PlayedCard from './PlayedCard.vue';
-import SVGFilters from './SVGFilters.vue';
 import ChooseCardModal from './ChooseCardModal.vue';
 import { useGameKeyboardControls } from '../composables/useGameKeyboardControls';
 import GameErrorModal from './GameErrorModal.vue';
 import AnswerQuestionModal from './AnswerQuestionModal.vue';
-import UiModal from '@/ui/components/UiModal.vue';
-import FancyButton from '@/ui/components/FancyButton.vue';
+import GameMenu from './GameMenu.vue';
 import Camera from './Camera.vue';
 import Hand from './Hand.vue';
 import DraggedCard from './DraggedCard.vue';
-import { useKeyboardControl } from '@/shared/composables/useKeyboardControl';
-import { useSettingsStore } from '@/shared/composables/useSettings';
 import { useEventListener, usePageLeave } from '@vueuse/core';
 import { INTERACTION_STATES } from '@game/engine/src/game/game.enums';
-
-import PlayerInfos from './PlayerInfos.vue';
 import HoveredCardInfos from './HoveredCardnfos.vue';
-import BoardCard from './BoardCard.vue';
+import PlayerInfos from './PlayerInfos.vue';
 import CombatArrows from './CombatArrows.vue';
 import TurnIndicator from './TurnIndicator.vue';
 import RearrangeCardsModal from './RearrangeCardsModal.vue';
@@ -33,22 +27,21 @@ import GameBoard from './GameBoard.vue';
 import OpponentHand from './OpponentHand.vue';
 import ScoringArrow from './ScoringArrow.vue';
 import InteractionArrows from './InteractionArrows.vue';
+import type { PlayerClockState } from '../composables/useGameSocket';
+import PlayerResources from './PlayerResources.vue';
+import Deck from './Deck.vue';
+import GamePhaseIndicator from './GamePhaseIndicator.vue';
+import Debug from './Debug.vue';
 
 const { clocks } = defineProps<{
-  clocks?: {
-    [playerId: string]: {
-      max: number;
-      remaining: number;
-      isActive: boolean;
-    };
-  };
+  clocks?: Record<string, PlayerClockState>;
   options: {
     teachingMode: boolean;
   };
 }>();
 
 const ui = useGameUi();
-const { playerId } = useGameClient();
+const { client } = useGameClient();
 const state = useGameState();
 const myPlayer = useMyPlayer();
 const opponent = useOpponentPlayer();
@@ -59,22 +52,15 @@ useGameKeyboardControls();
 // const myClock = computed(() => clocks?.[myPlayer.value.id]);
 // const opponentClock = computed(() => clocks?.[opponentPlayer.value.id]);
 
-const isGameSettingsOpened = ref(false);
-const settings = useSettingsStore();
-
-useKeyboardControl(
-  'keydown',
-  settings.settings.bindings.openSettings.control,
-  () => {
-    isGameSettingsOpened.value = !isGameSettingsOpened.value;
-  }
-);
-
 const isOutOfScreen = usePageLeave();
 
 const resetUiState = async () => {
   await nextTick();
-  return ui.value.reset();
+  const actionTaken = ui.value.reset();
+  if (actionTaken) {
+    client.value.optimisticStateManager.cancelPlayingCard();
+  }
+  return actionTaken;
 };
 
 watch(isOutOfScreen, out => {
@@ -102,15 +88,8 @@ const isScreenDimmed = computed(() => {
 </script>
 
 <template>
-  <div class="debug">
-    <div>You are: {{ playerId }}</div>
-    <div>Game Phase: {{ state.phase.state }}</div>
-    <div>Selected Card: {{ ui.selectedCard?.id }}</div>
-    <div>Interaction State: {{ state.interaction.state }}</div>
-    <div>Chain: {{ state.effectChain?.state }}</div>
-  </div>
+  <Debug />
   <div class="game-board-container">
-    <SVGFilters />
     <PlayedCard />
     <ChooseCardModal />
     <CombatArrows />
@@ -121,7 +100,19 @@ const isScreenDimmed = computed(() => {
     <Camera>
       <GameBoard :clocks="clocks" />
     </Camera>
-    <DraggedCard />
+
+    <div class="my-deck">
+      <Deck
+        :size="myPlayer.remainingCardsInMainDeck"
+        :offset="{ x: -0.25, y: -0.5, z: 0.5 }"
+      />
+    </div>
+    <div class="opponent-deck">
+      <Deck
+        :size="opponent.remainingCardsInMainDeck"
+        :offset="{ x: -0.25, y: -0.5, z: 0.25 }"
+      />
+    </div>
   </div>
 
   <HoveredCardInfos class="hovered-cell-infos" />
@@ -137,59 +128,27 @@ const isScreenDimmed = computed(() => {
 
   <div class="opponent-hand">
     <OpponentHand
+      :is-revealed="options.teachingMode"
       :player-id="opponent.id"
-      :teaching-mode="options.teachingMode"
     />
   </div>
 
-  <div class="opponent-player">
-    <PlayerInfos :player="opponent" />
-    <div class="surface mr-8">
-      <BoardCard
-        v-if="opponent.hero"
-        :card="opponent.hero"
-        variant="default"
-        :pixel-scale="0.5"
-        @mouseenter="ui.hover(opponent.hero)"
-        @mouseleave="ui.unhover()"
-      />
-    </div>
-  </div>
+  <PlayerResources class="my-resources" :player="myPlayer" />
+  <PlayerResources class="opponent-resources" :player="opponent" />
 
-  <div class="my-player">
-    <div class="surface mr-8">
-      <BoardCard
-        v-if="myPlayer.hero"
-        :card="myPlayer.hero"
-        variant="default"
-        :pixel-scale="0.5"
-        @mouseenter="ui.hover(myPlayer.hero)"
-        @mouseleave="ui.unhover()"
-      />
-    </div>
-    <PlayerInfos :player="myPlayer" />
-  </div>
+  <PlayerInfos class="opponent-player" :player="opponent" inverted />
+  <PlayerInfos class="my-player" :player="myPlayer" />
 
-  <button
-    aria-label="Settings"
-    class="settings-button"
-    @click="isGameSettingsOpened = true"
-  />
+  <DraggedCard />
 
-  <!-- <GamePhaseIndicator /> -->
-  <TurnIndicator />
-
-  <UiModal
-    v-model:is-opened="isGameSettingsOpened"
-    title="Menu"
-    description="Game settings"
-    :style="{ '--ui-modal-size': 'var(--size-xs)' }"
-  >
-    <div class="game-board-menu">
-      <FancyButton text="Close" @click="isGameSettingsOpened = false" />
+  <GameMenu>
+    <template #menu>
       <slot name="menu" />
-    </div>
-  </UiModal>
+    </template>
+  </GameMenu>
+  <TurnIndicator />
+  <GamePhaseIndicator />
+
   <slot name="board-additional" />
 
   <GameErrorModal />
@@ -199,18 +158,7 @@ const isScreenDimmed = computed(() => {
 :global(body:has(.game-board-container)) {
   overflow: hidden;
 }
-.debug {
-  position: fixed;
-  top: 0;
-  right: var(--size-12);
-  color: white;
-  font-size: var(--font-size-0);
-  z-index: 10;
-  background-color: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(4px);
-  padding: var(--size-4);
-  max-width: var(--size-xs);
-}
+
 .game-board-container {
   width: 100vw;
   height: 100dvh;
@@ -219,46 +167,27 @@ const isScreenDimmed = computed(() => {
   position: relative;
   transform-style: preserve-3d;
   perspective: 1500px;
+  background: black;
 }
 
 .my-hand {
   position: fixed;
   width: 100%;
-  bottom: 195px;
+  bottom: 185px;
   left: 0;
-}
 
-:global(.my-hand:has(.hand-card:hover)) {
-  z-index: 10;
+  @screen lt-lg {
+    bottom: 90px;
+  }
 }
 
 .opponent-hand {
   position: fixed;
   width: 100%;
-  top: 6%;
+  top: 0%;
   left: 0;
-}
-
-.settings-button {
-  --pixel-scale: 2;
-  position: fixed;
-  right: var(--size-8);
-  bottom: var(--size-6);
-  width: calc(32px * var(--pixel-scale));
-  aspect-ratio: 1;
-  background: url('@/assets/ui/settings-icon.png');
-  background-size: cover;
-  z-index: 2;
-  &:hover {
-    filter: brightness(1.2);
-  }
-}
-
-.game-board-menu {
-  display: grid;
-  gap: var(--size-2);
-  > * {
-    width: 100%;
+  @media (max-height: 920px) {
+    top: -5%;
   }
 }
 
@@ -286,22 +215,27 @@ const isScreenDimmed = computed(() => {
 
 .my-player {
   position: absolute;
-  left: 0;
-  bottom: 55px;
-  display: flex;
-  gap: var(--size-2);
-  flex-direction: column;
-  align-items: center;
+  left: var(--size-6);
+  bottom: var(--size-3);
+}
+.my-resources {
+  position: absolute;
+  right: 140px;
+  top: 50.5%;
+  width: 200px;
 }
 
 .opponent-player {
   position: absolute;
-  left: 0;
-  top: 55px;
-  display: flex;
-  flex-direction: column;
-  gap: var(--size-2);
-  align-items: center;
+  right: var(--size-6);
+  top: var(--size-3);
+}
+
+.opponent-resources {
+  position: absolute;
+  right: 140px;
+  top: 43%;
+  width: 200px;
 }
 
 .hovered-cell-infos {
@@ -310,5 +244,48 @@ const isScreenDimmed = computed(() => {
   top: 45%;
   translate: 0 -50%;
   z-index: 2;
+}
+
+.my-deck {
+  --pixel-scale: 1.25;
+  perspective: 1500px;
+  perspective-origin: -2000px 2000px;
+  position: absolute;
+  right: var(--size-10);
+  bottom: -20px;
+  transform-style: preserve-3d;
+  rotate: -30deg;
+
+  @screen lt-lg {
+    scale: 0.5;
+    right: -40px;
+    bottom: -100px;
+  }
+
+  > * > * {
+    border-bottom: #73473a 1px solid;
+    border-left: #af7d48 1px solid;
+  }
+}
+.opponent-deck {
+  --pixel-scale: 1.25;
+  perspective: 1500px;
+  perspective-origin: 3000px 2000px;
+  position: absolute;
+  right: var(--size-10);
+  top: -20px;
+  transform-style: preserve-3d;
+  rotate: 30deg;
+
+  @screen lt-lg {
+    scale: 0.5;
+    right: -40px;
+    top: -100px;
+  }
+
+  > * > * {
+    border-right: #73473a 1px solid;
+    border-bottom: #af7d48 1px solid;
+  }
 }
 </style>

@@ -236,7 +236,7 @@ export class Modifier<T extends ModifierTarget>
   async removeSource(source: AnyCard) {
     this._sources.delete(source);
     if (this._sources.size === 0) {
-      return this.remove();
+      return this.target.modifiers.remove(this);
     }
   }
 

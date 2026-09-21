@@ -8,7 +8,7 @@ import autoImport from 'unplugin-auto-import/vite';
 import vueRouter from 'unplugin-vue-router/vite';
 import { VueRouterAutoImports } from 'unplugin-vue-router';
 import unoCSS from 'unocss/vite';
-import icons from 'unplugin-icons/vite';
+// import icons from 'unplugin-icons/vite';
 import markdown, { Mode } from 'vite-plugin-markdown';
 import { isCustomElement, transformAssetUrls } from 'vue3-pixi/compiler';
 
@@ -106,7 +106,7 @@ export default defineConfig({
       }
     }),
     unoCSS(),
-    icons({}),
+    // icons({}),
     // assetpackPlugin(),
     // @ts-expect-error
     markdown.default({

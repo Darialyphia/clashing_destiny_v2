@@ -36,8 +36,3 @@ export class NotEnoughManaError extends InputError {
     super('Not enough mana.');
   }
 }
-export class NoTalentSlotAvailableError extends InputError {
-  constructor() {
-    super('No talent slot available.');
-  }
-}

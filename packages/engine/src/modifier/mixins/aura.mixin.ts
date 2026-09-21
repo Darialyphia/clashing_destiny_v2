@@ -8,6 +8,8 @@ export type AuraOptions<TCandidate extends ModifierTarget> = {
   isElligible(candidate: TCandidate): boolean;
   getModifiers: (candidate: TCandidate) => Modifier<TCandidate>[];
   getCandidates: () => TCandidate[];
+  onGainAura?: (candidate: TCandidate) => void;
+  onLoseAura?: (candidate: TCandidate) => void;
 };
 
 class AuraModifierMixin<
@@ -47,6 +49,7 @@ class AuraModifierMixin<
         for (const mod of modifierstoRemove) {
           await mod.removeSource(this.source);
         }
+        this.options.onLoseAura?.(candidate);
         continue;
       }
 
@@ -56,13 +59,14 @@ class AuraModifierMixin<
         for (const mod of modifiers) {
           await candidate.modifiers.add(mod);
         }
+        this.options.onGainAura?.(candidate);
         continue;
       }
     }
   }
 
   private async cleanup() {
-    this.game.off('*', this.checkAura);
+    this.game.off('*', async () => await this.checkAura());
     for (const id of this.modifiersPerCandidateId.keys()) {
       const modifierstoRemove = this.modifiersPerCandidateId.get(id)!;
       this.modifiersPerCandidateId.delete(id);
@@ -77,7 +81,7 @@ class AuraModifierMixin<
     this.modifier = modifier;
     this.isApplied = true;
 
-    this.game.on('*', this.checkAura);
+    this.game.on('*', async () => await this.checkAura());
   }
 
   async onRemoved() {

@@ -5,12 +5,10 @@ import type {
   CardSetId,
   Rarity,
   Tag,
-  Job,
   Affinity,
   CardSpeed
 } from './card.enums';
 import { type AnyCard } from './entities/card.entity';
-import type { HeroCard } from './entities/hero.entity';
 import type { MinionCard } from './entities/minion.entity';
 import type { SpellCard } from './entities/spell.entity';
 import type { Ability, AbilityOwner } from './entities/ability.entity';
@@ -20,7 +18,10 @@ import type { BoardSpace } from '../board/board-space.entity';
 import type { DestinyCard } from './entities/destiny.entity';
 import type { Effect } from '../game/effect-chain';
 import type { Nullable } from '@game/shared';
-import type { Rune } from '../player/player.enums';
+import type { RuneCard } from './entities/rune.entity';
+import type { GameEventMap } from '../game/game.events';
+import type { EventMapWithStarEvent } from '../utils/typed-emitter';
+import type { SecretCard } from './entities/secret.entity';
 
 export type CardArt = {
   foil: {
@@ -35,8 +36,15 @@ export type CardArt = {
     noBackground?: boolean;
     noFrame?: boolean;
     brightShine?: boolean;
+    auroraBorder?: boolean;
+    crt?: boolean;
+    rain?: boolean;
+    starField?: boolean;
+    emboss?: boolean;
+    blueSpark?: boolean;
   };
-  bg: string;
+  sprite: string;
+  bg?: string;
   main: string;
   foilBg?: string;
   foilMain?: string;
@@ -57,7 +65,7 @@ export type CardBlueprintBase = {
   // eslint-disable-next-line @typescript-eslint/ban-types
   tags: (Tag | (string & {}))[];
   affinities: Affinity[];
-  shouldHideTargetarrows?: boolean;
+  shouldHideTargetArrows?: boolean;
 };
 
 export type AbilityBlueprint<TCard extends AbilityOwner, TCardTarget extends AnyCard> = {
@@ -68,7 +76,7 @@ export type AbilityBlueprint<TCard extends AbilityOwner, TCardTarget extends Any
   label: string;
   isHiddenOnCard?: boolean;
   shouldExhaust?: boolean;
-  shouldHideTargetarrows?: boolean;
+  shouldHideTargetArrows?: boolean;
   getTargets: (
     game: Game,
     card: TCard
@@ -125,12 +133,11 @@ export const serializeTargets = (targets: Targets): SerializedTargets => {
 export type MinionBlueprint = CardBlueprintBase & {
   kind: Extract<CardKind, typeof CARD_KINDS.MINION>;
   manaCost: number;
-  runeCost: Rune[];
+  manaSupply: number;
   maxHp: number;
   atk: number;
   commandment: number;
-  abilities: AbilityBlueprint<MinionCard, any>[];
-  jobs: Job[];
+  abilities: AbilityBlueprint<MinionCard, AnyCard>[];
   canPlay: (game: Game, card: MinionCard) => boolean;
   onInit: (game: Game, card: MinionCard) => Promise<void>;
   onPlay: (game: Game, card: MinionCard) => Promise<void>;
@@ -145,9 +152,8 @@ export type MinionBlueprint = CardBlueprintBase & {
 export type SpellBlueprint<T extends AnyCard = AnyCard> = CardBlueprintBase & {
   kind: Extract<CardKind, typeof CARD_KINDS.SPELL>;
   manaCost: number;
-  runeCost: Rune[];
+  manaSupply: number;
   speed: CardSpeed;
-  jobs: Job[];
   onInit: (game: Game, card: SpellCard) => Promise<void>;
   onPlay: (game: Game, card: SpellCard, targets: Targets<T>) => Promise<void>;
   canPlay: (game: Game, card: SpellCard) => boolean;
@@ -157,24 +163,12 @@ export type SpellBlueprint<T extends AnyCard = AnyCard> = CardBlueprintBase & {
   };
 };
 
-export type HeroBlueprint = CardBlueprintBase & {
-  kind: Extract<CardKind, typeof CARD_KINDS.HERO>;
-  jobs: Job[];
-  onInit: (game: Game, card: HeroCard) => Promise<void>;
-  onPlay: (game: Game, card: HeroCard, originalCard: HeroCard) => Promise<void>;
-  abilities: AbilityBlueprint<HeroCard, any>[];
-  aiHints: {
-    shouldPlay: (game: Game, card: HeroCard) => number;
-  };
-};
-
 export type ArtifactBlueprint = CardBlueprintBase & {
   manaCost: number;
-  runeCost: Rune[];
+  manaSupply: number;
   kind: Extract<CardKind, typeof CARD_KINDS.ARTIFACT>;
-  jobs: Job[];
   durability: number;
-  abilities: AbilityBlueprint<ArtifactCard, any>[];
+  abilities: AbilityBlueprint<ArtifactCard, AnyCard>[];
   onInit: (game: Game, card: ArtifactCard) => Promise<void>;
   canPlay: (game: Game, card: ArtifactCard) => boolean;
   onPlay: (game: Game, card: ArtifactCard) => Promise<void>;
@@ -185,14 +179,55 @@ export type ArtifactBlueprint = CardBlueprintBase & {
 
 export type DestinyBlueprint = CardBlueprintBase & {
   kind: Extract<CardKind, typeof CARD_KINDS.DESTINY>;
-  jobs: Job[];
   onInit: (game: Game, card: DestinyCard) => Promise<void>;
   onPlay: (game: Game, card: DestinyCard) => Promise<void>;
 };
 
+export type RuneBlueprint = CardBlueprintBase & {
+  kind: Extract<CardKind, typeof CARD_KINDS.RUNE>;
+  onInit: (game: Game, card: RuneCard) => Promise<void>;
+  onPlay: (game: Game, card: RuneCard) => Promise<void>;
+};
+
+export type SecretBlueprint<
+  TEvent extends keyof EventMapWithStarEvent<GameEventMap>,
+  T extends AnyCard = AnyCard
+> = CardBlueprintBase & {
+  kind: Extract<CardKind, typeof CARD_KINDS.SECRET>;
+  manaCost: number;
+  manaSupply: number;
+  onInit: (game: Game, card: SecretCard) => Promise<void>;
+  onTrigger: (
+    game: Game,
+    card: SecretCard,
+    event: EventMapWithStarEvent<GameEventMap>[TEvent],
+    targets: Targets<T>
+  ) => Promise<void>;
+  canPlay: (game: Game, card: SecretCard) => boolean;
+  getTargets: (game: Game, card: SecretCard) => Promise<InteractionResult<Targets<T>>>;
+  trigger: {
+    eventName: TEvent;
+    filter: (
+      game: Game,
+      card: SecretCard,
+      event: EventMapWithStarEvent<GameEventMap>[TEvent]
+    ) => boolean;
+  };
+  aiHints: {
+    shouldPlay: (game: Game, card: SecretCard) => number;
+  };
+};
+
+export const defineSecretBlueprint = <
+  TEvent extends keyof EventMapWithStarEvent<GameEventMap>
+>(
+  blueprint: SecretBlueprint<TEvent, AnyCard>
+) => blueprint;
+
 export type CardBlueprint =
   | SpellBlueprint<any>
   | MinionBlueprint
-  | HeroBlueprint
   | ArtifactBlueprint
-  | DestinyBlueprint;
+  | DestinyBlueprint
+  | RuneBlueprint
+  | SecretBlueprint<any, any>;

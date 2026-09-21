@@ -1,5 +1,4 @@
 import { type Values } from '@game/shared';
-import { JOBS, type JobId } from './card.enums';
 
 export type Keyword = {
   id: string;
@@ -12,8 +11,14 @@ export const KEYWORDS = {
   ATTACKER: {
     id: 'attacker',
     name: 'Attacker X',
-    description: 'This unit has +X power when attacking.',
+    description: 'This unit has +X Attack while you have the initiative.',
     aliases: [/attacker [0-9]+/]
+  },
+  BACKSTAB: {
+    id: 'backstab',
+    name: 'Backstab X',
+    description: 'This unit deals X extra damage when attacking an exhausted minion.',
+    aliases: [/backstab [0-9]+/]
   },
   BLAST: {
     id: 'blast',
@@ -27,24 +32,6 @@ export const KEYWORDS = {
     name: 'Burn X',
     description: 'This takes X damage at the start of every turn.',
     aliases: [/burn [0-9]+/, /burn/]
-  },
-  INSTANT: {
-    id: 'instant',
-    name: 'Instant',
-    description: 'You do not lose initiative after playing this card.',
-    aliases: []
-  },
-  INSTANT_ATTACK: {
-    id: 'instant-attack',
-    name: 'Instant Attack',
-    description: 'You do not lose initiative after this minion attacks.',
-    aliases: []
-  },
-  INSTANT_MOVE: {
-    id: 'instant-move',
-    name: 'Instant Move',
-    description: 'You do not lose initiative after this minion moves.',
-    aliases: []
   },
   CLEAVE: {
     id: 'cleave',
@@ -63,7 +50,7 @@ export const KEYWORDS = {
   DEFENDER: {
     id: 'defender',
     name: 'Defender X',
-    description: 'This unit has +X attack when counterattacking.',
+    description: 'This unit has +X attack while your opponent has the initiative.',
     aliases: [/defender [0-9]+/]
   },
   DISCOVER: {
@@ -86,17 +73,36 @@ export const KEYWORDS = {
       'When you play this card, add a Fleeting copy of it to your hand without Echo.',
     aliases: []
   },
+  EMPOWERED: {
+    id: 'empowered',
+    name: 'Empowered',
+    description: 'This unit has an additional effect.',
+    aliases: [/empower/, /disempower/, /disempowered/]
+  },
+  ENHANCE: {
+    id: 'enhance',
+    name: 'Enhance X',
+    description:
+      'If you have X mana, spend it to play this card and gain an additional effect.',
+    aliases: [/enhance [0-9]+/]
+  },
   EPHEMERAL: {
     id: 'ephemeral',
     name: 'Ephemeral',
     description: 'This card is banished at the end of the turn if it is on the board.',
     aliases: []
   },
+  EQUIP: {
+    id: 'equip',
+    name: 'Equip',
+    description:
+      'Equip this artifact to an ally minion, granting it bonus effects. Can only be equiped to one target at a time. When the equipped minion takes damage, this loses 1 durability.',
+    aliases: [/equipped/]
+  },
   FLEETING: {
     id: 'fleeting',
     name: 'Fleeting',
-    description:
-      'This card disappears at the end of the turn if it is in your hand. It cannot be used to pay for a mana cost.',
+    description: 'This card disappears at the end of the turn if it is in your hand.',
     aliases: []
   },
   FLANKING: {
@@ -105,10 +111,28 @@ export const KEYWORDS = {
     description: 'This minion can move between battlefields.',
     aliases: []
   },
+  INSTANT: {
+    id: 'instant',
+    name: 'Instant',
+    description: 'You do not lose initiative after playing this card.',
+    aliases: []
+  },
+  INSTANT_ATTACK: {
+    id: 'instant-attack',
+    name: 'Instant Attack',
+    description: 'You do not lose initiative after this minion attacks.',
+    aliases: []
+  },
+  INSTANT_MOVE: {
+    id: 'instant-move',
+    name: 'Instant Move',
+    description: 'You do not lose initiative after this minion moves.',
+    aliases: []
+  },
   INTIMIDATE: {
     id: 'intimidate',
     name: 'Intimidate X',
-    description: 'This unit cannot be attacked by minions that cost X or less.',
+    description: 'This unit cannot be attacked by minions with X or less attack.',
     aliases: [/intimidate [0-9]+/]
   },
   MILL: {
@@ -132,7 +156,8 @@ export const KEYWORDS = {
   ON_ENGAGE: {
     id: 'on-engage',
     name: 'On Engage',
-    description: 'Does something when this moves from the base to the battlefield.',
+    description:
+      'Does something when this moves or is moved from the base to the battlefield.',
     aliases: []
   },
   ON_ENTER: {
@@ -151,13 +176,14 @@ export const KEYWORDS = {
   ON_MOVE: {
     id: 'on-move',
     name: 'On Move',
-    description: 'Does something when this card moves.',
+    description: 'Does something when this card moves or is moved.',
     aliases: ['on move to base', 'on move to battlefield']
   },
   ON_RETREAT: {
     id: 'on-retreat',
     name: 'On Retreat',
-    description: 'Does something when this moves from the battlefield to the base.',
+    description:
+      'Does something when this moves or is moved from the battlefield to the base.',
     aliases: []
   },
   ON_SCORE: {
@@ -185,6 +211,12 @@ export const KEYWORDS = {
     name: 'Protector',
     description:
       'Enemies on the same battlefield as this can only attack this unit if able.',
+    aliases: []
+  },
+  RESERVE: {
+    id: 'reserve',
+    name: 'Reserve',
+    description: 'Draw a card at the start of next turn, before the Supply phase.',
     aliases: []
   },
   REGENERATION: {
@@ -219,8 +251,8 @@ export const KEYWORDS = {
     aliases: []
   },
   SHIELD: {
-    id: 'barrier',
-    name: 'Barrier',
+    id: 'shield',
+    name: 'Shield',
     description: 'Prevents the next time this would be damaged.',
     aliases: []
   },
@@ -230,17 +262,11 @@ export const KEYWORDS = {
     description: 'This cards loses all abilities.',
     aliases: ['silence']
   },
-  SLOW: {
-    id: 'slow',
-    name: 'Slow',
-    description: 'This unit gives initiative to the opponent after moving',
-    aliases: []
-  },
   SPELL_GUARD: {
     id: 'spell_guard',
-    name: 'Spell Guard (x)',
+    name: 'Spell Guard x',
     description: 'Adjacent allies take X less damage from enemy spells.',
-    aliases: [/spell guard \([0-9]+\)/]
+    aliases: [/spell guard [0-9]+/]
   },
   SPELLBOOST: {
     id: 'spellboost',
@@ -255,17 +281,10 @@ export const KEYWORDS = {
     description: 'Increase the damage of your spells by X.',
     aliases: [/spellpower [0-9]+/, 'spellpower']
   },
-  SPLASH_ATTACK: {
-    id: 'splash_attack',
-    name: 'Splash Attack',
-    description: 'When this unit attacks, it damages all enemies on that battlefield.',
-    aliases: []
-  },
   STEALTH: {
     id: 'stealth',
     name: 'Stealth',
-    description:
-      'This unit cannot be targeted by attacks as long as it is not exhausted.',
+    description: 'This unit cannot be attacked or targeted  as long as it is awake.',
     aliases: []
   },
   STUNNED: {
@@ -273,13 +292,6 @@ export const KEYWORDS = {
     name: 'Stunned',
     description: 'This unit is exhausted and has 0 attack until the end of the turn.',
     aliases: ['Stun']
-  },
-  TAUNT: {
-    id: 'taunt',
-    name: 'Taunt',
-    description:
-      'Enemy units on the same battlefield as this must attack this unit if able.',
-    aliases: []
   },
   TOUGH: {
     id: 'tough',
@@ -302,7 +314,7 @@ export const KEYWORDS = {
   VIGILANT: {
     id: 'vigilant',
     name: 'Vigilant',
-    description: 'This unit does not exhaust when it retaliates.',
+    description: 'This minion can retaliate while exhausted.',
     aliases: []
   },
   VULNERABLE: {
@@ -317,17 +329,13 @@ export const KEYWORDS = {
     description: 'At the start of the turn, this unit loses X Attack and X Health.',
     aliases: [/wither [0-9]+/]
   },
-  ...Object.fromEntries(
-    Object.values(JOBS).map(job => [
-      `${job.id.toUpperCase()}_BONUS` as `${Uppercase<JobId>}_BONUS`,
-      {
-        id: `${job.id}_mastery`,
-        name: `${job.name} Bonus`,
-        description: `This card has a bonus effect if its owner is playing a ${job.name} hero.`,
-        aliases: []
-      }
-    ]) as [`${Uppercase<JobId>}_BONUS`, Keyword][]
-  )
+  ZEAL: {
+    id: 'zeal',
+    name: 'Zeal X',
+    description:
+      'This unit gains an effect while on a battlefield that has at least X influence.',
+    aliases: [/zeal [0-9]+/]
+  }
 };
 
 export type KeywordName = Values<typeof KEYWORDS>['name'];
@@ -335,3 +343,14 @@ export type KeywordId = Values<typeof KEYWORDS>['id'];
 
 export const getKeywordById = (id: KeywordId): Keyword | undefined =>
   Object.values(KEYWORDS).find(k => k.id === id);
+
+export const getKeywordByIdOrAlias = (idOrAlias: string): Keyword | undefined =>
+  Object.values(KEYWORDS).find(
+    k =>
+      k.id === idOrAlias ||
+      k.aliases.some(alias =>
+        alias instanceof RegExp
+          ? alias.test(idOrAlias.toLocaleLowerCase())
+          : alias === idOrAlias
+      )
+  );

@@ -8,6 +8,7 @@ export class CardDecraftedEvent {
     readonly data: {
       userId: UserId;
       cardId: CardId;
+      remainingCopies: number;
     }
   ) {}
 }

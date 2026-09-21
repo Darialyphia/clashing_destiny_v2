@@ -3,25 +3,32 @@ import { PLAYER_EVENTS } from '../player.enums';
 import type { Player } from '../player.entity';
 import { PlayerManaChangeEvent } from '../player.events';
 import type { Interceptable } from '../../utils/interceptable';
+import { GAME_EVENTS } from '../../game/game.events';
+import { GAME_PHASES } from '../../game/game.enums';
 
 export type ManaInterceptors = {
   maxMana: Interceptable<number>;
-  manaRegen: Interceptable<number>;
 };
 
 export class ManaManagerComponent {
   private _mana = 0;
-  private _baseMaxMana = 0;
+
+  private _maxMana = 0;
 
   constructor(
     private game: Game,
-    private player: Player,
-    private interceptors: ManaInterceptors
+    private player: Player
   ) {}
 
   init() {
-    this._baseMaxMana = this.game.config.MAX_MANA;
-    this._mana = this.manaRegen;
+    this.game.on(GAME_EVENTS.AFTER_CHANGE_PHASE, async event => {
+      if (
+        event.data.to.state === GAME_PHASES.MAIN &&
+        event.data.from === GAME_PHASES.SUPPLY
+      ) {
+        this._maxMana = this.manaRegen;
+      }
+    });
   }
 
   get mana() {
@@ -29,15 +36,25 @@ export class ManaManagerComponent {
   }
 
   get maxMana() {
-    return this.interceptors.maxMana.getValue(this._baseMaxMana, {});
+    return this._maxMana;
   }
 
   get manaRegen() {
-    return this.interceptors.manaRegen.getValue(this.game.config.MANA_REGEN_PER_TURN, {});
+    return this.player.cardManager.hand
+      .map(card => card.manaSupply)
+      .reduce((a, b) => a + b, 0);
   }
 
-  refill() {
-    this._mana = this.maxMana;
+  async refill() {
+    await this.game.emit(
+      PLAYER_EVENTS.PLAYER_BEFORE_MANA_CHANGE,
+      new PlayerManaChangeEvent({ player: this.player, amount: this.manaRegen })
+    );
+    this._mana = this.manaRegen;
+    await this.game.emit(
+      PLAYER_EVENTS.PLAYER_AFTER_MANA_CHANGE,
+      new PlayerManaChangeEvent({ player: this.player, amount: this.manaRegen })
+    );
   }
 
   async spend(amount: number) {

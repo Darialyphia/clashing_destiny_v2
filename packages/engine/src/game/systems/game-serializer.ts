@@ -1,5 +1,6 @@
 import type { Game } from '../game';
 import type { Config } from '../../config';
+import type { SerializedTurnState } from './turn.system';
 import { GAME_EVENTS, type GameStarEvent } from '../game.events';
 import type {
   CardPlayEvent,
@@ -9,7 +10,6 @@ import type {
 import type { SerializedModifier } from '../../modifier/modifier.entity';
 import type { SerializedPlayer } from '../../player/player.entity';
 import type { SerializedMinionCard } from '../../card/entities/minion.entity';
-import type { SerializedHeroCard } from '../../card/entities/hero.entity';
 import type { SerializedSpellCard } from '../../card/entities/spell.entity';
 import type { SerializedGamePhaseContext } from './game-phase.system';
 import type { SerializedInteractionContext } from './game-interaction.system';
@@ -29,7 +29,6 @@ import type { SerializedScoringState } from './scoring.system';
 
 export type SerializedEntity =
   | SerializedMinionCard
-  | SerializedHeroCard
   | SerializedSpellCard
   | SerializedPlayer
   | SerializedModifier
@@ -46,8 +45,7 @@ export type SerializedOmniscientState = {
   phase: SerializedGamePhaseContext;
   interaction: SerializedInteractionContext;
   players: string[];
-  currentPlayer: string;
-  turnCount: number;
+  turn: SerializedTurnState;
   combat: SerializedCombatState;
   scoring: SerializedScoringState;
   effectChain: SerializedEffectChain | null;
@@ -60,8 +58,7 @@ export type SnapshotDiff = {
   removedEntities: string[];
   phase: SerializedGamePhaseContext;
   interaction: SerializedInteractionContext;
-  turnCount: number;
-  currentPlayer: string;
+  turn: SerializedTurnState;
   players: string[];
   combat: SerializedCombatState;
   scoring: SerializedScoringState;
@@ -142,8 +139,7 @@ export class GameSerializer {
       removedEntities: removedEntityIds,
       phase: state.phase,
       interaction: state.interaction,
-      turnCount: state.turnCount,
-      currentPlayer: state.currentPlayer,
+      turn: state.turn,
       players: state.players,
       config: this.getObjectDiff(state.config, prevState.config),
       combat: state.combat,
@@ -188,8 +184,7 @@ export class GameSerializer {
       phase: this.game.gamePhaseSystem.serialize(),
       interaction: this.game.interaction.serialize(),
       players: this.game.playerSystem.players.map(player => player.id),
-      currentPlayer: this.game.interaction.interactivePlayer.id,
-      turnCount: this.game.turnSystem.elapsedTurns,
+      turn: this.game.turnSystem.serialize(),
       combat: this.game.combatSystem.serialize(),
       scoring: this.game.scoringSystem.serialize(),
       effectChain: this.game.effectChainSystem.serialize()
@@ -204,7 +199,11 @@ export class GameSerializer {
 
     // Remove entities that the player shouldn't have access to in order to prevent cheating
     const shouldBeSeen = (cardId: string) => {
-      if (state.interaction.ctx.player === playerId) {
+      const interactionContext = state.interaction.ctx;
+      const isActivePlayer = this.game.activePlayers.some(
+        player => player.id === playerId
+      );
+      if (isActivePlayer) {
         // add card from buckets when rearrangign cards since they could come from a hidden source (like deck or opponent's hand)
         if (state.interaction.state === INTERACTION_STATES.REARRANGING_CARDS) {
           const buckets = state.interaction.ctx.buckets;
@@ -216,7 +215,8 @@ export class GameSerializer {
         }
         // same thing
         if (state.interaction.state === INTERACTION_STATES.CHOOSING_CARDS) {
-          const choices = state.interaction.ctx.choices;
+          if (!('playerConfig' in interactionContext)) return false;
+          const choices = interactionContext.playerConfig[playerId]?.choices ?? [];
           if (choices.includes(cardId)) {
             return true;
           }
@@ -312,8 +312,7 @@ export class GameSerializer {
       ),
       phase: state.phase,
       interaction: state.interaction,
-      turnCount: state.turnCount,
-      currentPlayer: state.currentPlayer,
+      turn: state.turn,
       players: state.players,
       combat: state.combat,
       scoring: state.scoring,

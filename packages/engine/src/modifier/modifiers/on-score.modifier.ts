@@ -21,7 +21,6 @@ export class OnScoreModifier extends Modifier<MinionCard> {
     super(KEYWORDS.ON_SCORE.id, game, source, {
       name: KEYWORDS.ON_SCORE.name,
       description: KEYWORDS.ON_SCORE.description,
-      icon: 'icons/keyword-on-attack',
       mixins: [
         new KeywordModifierMixin(game, KEYWORDS.ON_SCORE),
         new GameEventModifierMixin(game, {

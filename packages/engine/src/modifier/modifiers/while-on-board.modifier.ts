@@ -16,7 +16,7 @@ type WhileOnBoardOptions<T extends MinionCard | ArtifactCard | DestinyCard> = {
   icon?: string | (() => string);
 };
 export class WhileOnBoardModifier<
-  T extends MinionCard | ArtifactCard
+  T extends MinionCard | ArtifactCard | DestinyCard
 > extends Modifier<T> {
   constructor(
     modifierType: string,

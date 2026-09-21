@@ -30,8 +30,9 @@ const isFoilControlsDrawerOpen = ref(false);
 
 const hasPlaceholderArt = (card: CardBlueprint) => {
   const art = card.art.default;
+
   return Boolean(
-    art.bg.includes('placeholder') || art.main.includes('placeholder')
+    art.bg?.includes('placeholder') || art.main.includes('placeholder')
   );
 };
 
@@ -153,18 +154,6 @@ const updateFoilOption = (key: string, value: boolean | undefined) => {
           <h2>Foil Effects</h2>
           <div class="foil-controls">
             <label class="control-item">
-              <UiSwitch v-model="foilOptions.foilLayer" />
-              <span>Foil art</span>
-            </label>
-            <label class="control-item">
-              <UiSwitch v-model="foilOptions.noBackground" />
-              <span>No background</span>
-            </label>
-            <label class="control-item">
-              <UiSwitch v-model="foilOptions.noFrame" />
-              <span>No frame</span>
-            </label>
-            <label class="control-item">
               <UiSwitch v-model="foilOptions.sheen" />
               <span>Sheen</span>
             </label>
@@ -191,6 +180,30 @@ const updateFoilOption = (key: string, value: boolean | undefined) => {
             <label class="control-item">
               <UiSwitch v-model="foilOptions.glitter" />
               <span>Glitter</span>
+            </label>
+            <label class="control-item">
+              <UiSwitch v-model="foilOptions.crt" />
+              <span>CRT</span>
+            </label>
+            <label class="control-item">
+              <UiSwitch v-model="foilOptions.brightShine" />
+              <span>Bright Shine</span>
+            </label>
+            <label class="control-item">
+              <UiSwitch v-model="foilOptions.auroraBorder" />
+              <span>Aurora Border</span>
+            </label>
+            <label class="control-item">
+              <UiSwitch v-model="foilOptions.rain" />
+              <span>Rain</span>
+            </label>
+            <label class="control-item">
+              <UiSwitch v-model="foilOptions.starField" />
+              <span>Star Field</span>
+            </label>
+            <label class="control-item">
+              <UiSwitch v-model="foilOptions.emboss" />
+              <span>Emboss</span>
             </label>
           </div>
         </div>

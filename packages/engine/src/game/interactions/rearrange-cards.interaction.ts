@@ -29,7 +29,7 @@ export class RearrangeCardsContext {
 
   readonly source: AnyCard;
 
-  readonly player: Player;
+  private _player: Player;
 
   private label: string;
 
@@ -39,15 +39,19 @@ export class RearrangeCardsContext {
   ) {
     this.buckets = options.buckets;
     this.source = options.source;
-    this.player = options.player;
+    this._player = options.player;
     this.label = options.label;
   }
 
   async init() {}
 
+  get players() {
+    return [this._player];
+  }
+
   serialize() {
     return {
-      player: this.player.id,
+      players: this.players.map(player => player.id),
       label: this.label,
       source: this.source.id,
       buckets: this.buckets.map(bucket => ({
@@ -60,7 +64,7 @@ export class RearrangeCardsContext {
   }
 
   async commit(player: Player, buckets: Array<{ id: string; cards: string[] }> | null) {
-    assert(player.equals(this.player), new InvalidPlayerError());
+    assert(player.equals(this._player), new InvalidPlayerError());
     const bucketsToUse =
       buckets ??
       this.buckets.map(bucket => ({
@@ -90,7 +94,7 @@ export class RearrangeCardsContext {
   }
 
   async cancel(player: Player) {
-    assert(player.equals(this.player), new InvalidPlayerError());
+    assert(player.equals(this._player), new InvalidPlayerError());
     await this.game.interaction.sendTransition(
       INTERACTION_STATE_TRANSITIONS.CANCEL_REARRANGING_CARDS,
       {}

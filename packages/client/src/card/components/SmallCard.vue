@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { isDefined } from '@game/shared';
+import { isDefined, type Nullable } from '@game/shared';
 import { CARD_KINDS, type CardKind } from '@game/engine/src/card/card.enums';
 import CardGlare from './CardGlare.vue';
 import { useCardTilt } from '../composables/useCardtilt';
@@ -11,13 +11,20 @@ import FoilLightGradient from './foil/FoilLightGradient.vue';
 import FoilGoldenGlare from './foil/FoilGoldenGlare.vue';
 import FoilBrightShine from './foil/FoilBrightShine.vue';
 import FoilGlitter from './foil/FoilGlitter.vue';
-import { assets } from '@/assets';
+import { type SpriteData } from '@/assets';
 import type { CardArt } from '@game/engine/src/card/card-blueprint';
+import { match } from 'ts-pattern';
+import { ANIMATIONS_NAMES } from '@game/engine/src/game/game.enums.js';
+import { useSprite } from '@/shared/composables/useSprite.js';
 
 const {
   card,
   isFoil,
-  showStats = false
+  showStats = false,
+  sprite,
+  animationSequence,
+  spriteScale = 1,
+  repeatAnimation = true
 } = defineProps<{
   card: {
     id: string;
@@ -30,13 +37,21 @@ const {
     maxHp?: number | null;
     baseMaxHp?: number | null;
     commandment?: number | null;
-    baseBounty?: number | null;
+    baseCommandment?: number | null;
     durability?: number | null;
     manaCost?: number | null;
     destinyCost?: number | null;
   };
   isFoil?: boolean;
   showStats?: boolean;
+  sprite: Nullable<SpriteData>;
+  animationSequence?: string[];
+  spriteScale?: number;
+  repeatAnimation?: boolean;
+}>();
+
+const emit = defineEmits<{
+  artSequenceEnd: [{ animationSequence: string[] }];
 }>();
 
 const root = useTemplateRef('card');
@@ -44,22 +59,35 @@ const { pointerStyle } = useCardTilt(root, {
   maxAngle: 10,
   isEnabled: ref(true)
 });
+const _animationSequence = computed(() => {
+  if (animationSequence) return animationSequence;
 
-const artBgImage = computed(() => {
-  if (
-    card.kind === CARD_KINDS.HERO ||
-    card.art.isFullArt ||
-    card.art.bg.includes('-alt')
-  ) {
-    return assets[card.art.bg].css;
-  }
-
-  return assets['cards/placeholder-spell-bg'].css;
+  return match(card.kind)
+    .with(CARD_KINDS.MINION, () => [ANIMATIONS_NAMES.BREATHING])
+    .with(
+      CARD_KINDS.SPELL,
+      CARD_KINDS.ARTIFACT,
+      CARD_KINDS.DESTINY,
+      CARD_KINDS.RUNE,
+      CARD_KINDS.SECRET,
+      () => [ANIMATIONS_NAMES.DEFAULT]
+    )
+    .exhaustive();
 });
 
-const artMainImage = computed(() => {
-  return assets[card.art.main].css;
+const { activeFrameRect, bgPosition, imageBg, on } = useSprite({
+  animationSequence: _animationSequence,
+  sprite: computed(() => sprite ?? null),
+  kind: computed(() => card.kind),
+  scale: spriteScale,
+  repeat: computed(() => repeatAnimation),
+  scalePositionByPixelScale: true
 });
+
+const onSequenceEnd = (e: { animationSequence: string[] }) => {
+  emit('artSequenceEnd', e);
+};
+on('sequenceEnd', onSequenceEnd);
 </script>
 
 <template>
@@ -70,26 +98,37 @@ const artMainImage = computed(() => {
     ref="card"
   >
     <div class="card-front">
-      <div class="image">
-        <div class="art-bg" />
+      <div
+        class="art"
+        v-if="sprite"
+        :style="{
+          '--bg-position': bgPosition,
+          '--width': `${activeFrameRect.width}px`,
+          '--height': `${activeFrameRect.height}px`,
+          '--sprite-scale': spriteScale,
+          '--background-width': `calc(${sprite?.sheetSize.w ?? 0}px * var(--sprite-scale) * var(--pixel-scale))`,
+          '--background-height': `calc(${sprite?.sheetSize.h ?? 0}px * var(--sprite-scale) * var(--pixel-scale))`
+        }"
+      >
         <FoilScanlines v-if="isFoil && card.art.foil.scanlines" />
         <FoilGlitter v-if="isFoil && card.art.foil.glitter" />
-        <div class="art-main" />
+        <div class="sprite" />
         <FoilBrightShine v-if="isFoil && card.art.foil.brightShine" />
-        <div class="art-frame" />
       </div>
 
       <template v-if="showStats">
         <div
           v-if="isDefined(card.commandment)"
-          class="commandment"
+          class="stat commandment"
           :class="{
             buffed:
-              isDefined(card.baseBounty) && card.commandment > card.baseBounty,
+              isDefined(card.baseCommandment) &&
+              card.commandment > card.baseCommandment,
             debuffed:
-              isDefined(card.baseBounty) && card.commandment < card.baseBounty
+              isDefined(card.baseCommandment) &&
+              card.commandment < card.baseCommandment
           }"
-          data-label="Bounty"
+          data-label="Commandment"
         >
           <div class="dual-text" :data-text="card.commandment">
             {{ card.commandment }}
@@ -122,6 +161,12 @@ const artMainImage = computed(() => {
           </div>
         </div>
 
+        <div v-if="isDefined(card.durability)" class="stat durability">
+          <div class="dual-text" :data-text="card.durability">
+            {{ card.durability }}
+          </div>
+        </div>
+
         <div
           v-if="isDefined(card.durability) && showStats"
           class="stat durability"
@@ -130,15 +175,8 @@ const artMainImage = computed(() => {
             {{ card.durability }}
           </div>
         </div>
-        <div
-          v-if="isDefined(card.countdown) && showStats"
-          class="stat countdown"
-        >
-          <div class="dual-text" :data-text="card.countdown">
-            {{ card.countdown }}
-          </div>
-        </div>
       </template>
+
       <template v-if="isFoil">
         <FoilSheen v-if="card.art.foil.sheen" />
         <FoilOil v-if="card.art.foil.oil" />
@@ -161,8 +199,8 @@ const artMainImage = computed(() => {
   --foil-oil-x: calc(1px * v-bind('pointerStyle?.foilOilX'));
   --foil-oil-y: calc(1px * v-bind('pointerStyle?.foilOilY'));
   --foil-animated-toggle: ;
-  width: calc(var(--card-small-v2-width) * var(--pixel-scale));
-  height: calc(var(--card-small-v2-height) * var(--pixel-scale));
+  width: calc(var(--card-small-v3-width) * var(--pixel-scale));
+  height: calc(var(--card-small-v3-height) * var(--pixel-scale));
   display: grid;
   font-family: 'Lato', sans-serif;
   transform-style: preserve-3d;
@@ -178,10 +216,15 @@ const artMainImage = computed(() => {
     grid-column: 1;
     grid-row: 1;
   }
+
+  &.destiny {
+    overflow: hidden;
+  }
 }
 
 .card-front {
   backface-visibility: hidden;
+  background: url('@/assets/ui/card/v3/card-front-small.png');
   background-size: cover;
   color: #fcffcb;
   font-size: 16px;
@@ -194,7 +237,7 @@ const artMainImage = computed(() => {
 .card-back {
   transform: rotateY(0.5turn);
   backface-visibility: hidden;
-  background: url('@/assets/ui/card/card_backs/default-small.png');
+  background: url('@/assets/ui/card/v3/card-back-small.png');
   background-size: cover;
   --glare-mask: url('@/assets/ui/card/card_backs/default-small.png');
 }
@@ -216,29 +259,13 @@ const artMainImage = computed(() => {
   background: url('@/assets/ui/card/v2/art-frame.png');
   background-size: cover;
 }
-.art-main {
-  position: absolute;
-  inset: 0;
-  background: v-bind(artMainImage);
-  background-position: center;
-  background-repeat: no-repeat;
-}
-
-.art-bg {
-  position: absolute;
-  inset: 0;
-  background: v-bind(artBgImage);
-  background-position: center;
-  background-repeat: no-repeat;
-}
 
 .stat {
-  width: calc(40px * var(--pixel-scale));
-  height: calc(26px * var(--pixel-scale));
+  width: calc(32px * var(--pixel-scale));
+  height: calc(20px * var(--pixel-scale));
   background-repeat: no-repeat;
   background-size: cover;
   position: absolute;
-  bottom: calc(0px * var(--pixel-scale));
   font-size: calc(var(--pixel-scale) * 14px);
   text-align: right;
   font-weight: var(--font-weight-9);
@@ -258,34 +285,47 @@ const artMainImage = computed(() => {
 }
 
 .atk {
-  background-image: url('@/assets/ui/card/power.png');
-  left: 0;
+  background-image: url('@/assets/ui/card/v3/attack.png');
+  left: calc(1px * var(--pixel-scale));
+  bottom: calc(1px * var(--pixel-scale));
+  padding-left: calc(25px * var(--pixel-scale));
+
   --dual-text-offset-y: calc(4px * var(--pixel-scale));
   --dual-text-offset-x: calc(-8px * var(--pixel-scale));
 }
 
 .hp {
-  background-image: url('@/assets/ui/card/health.png');
-  right: 0;
+  background-image: url('@/assets/ui/card/v3/health.png');
+  right: calc(1px * var(--pixel-scale));
+  bottom: calc(1px * var(--pixel-scale));
   text-align: right;
   padding-left: calc(18px * var(--pixel-scale));
   --dual-text-offset-y: calc(4px * var(--pixel-scale));
   --dual-text-offset-x: calc(-2px * var(--pixel-scale));
 }
-.durability {
-  background-image: url('@/assets/ui/card/durability.png');
-  right: 0;
-  padding-right: 0px;
-  padding-left: 2px;
+
+.commandment {
+  background-image: url('@/assets/ui/card/v3/commandment.png');
+  right: calc(1px * var(--pixel-scale));
+  top: calc(0px * var(--pixel-scale));
+  text-align: right;
+  padding-left: calc(18px * var(--pixel-scale));
+  --dual-text-offset-y: calc(4px * var(--pixel-scale));
+  --dual-text-offset-x: calc(-2px * var(--pixel-scale));
 }
 
-.countdown {
-  background-image: url('@/assets/ui/card/countdown.png');
-  right: 0;
+.durability {
+  background-image: url('@/assets/ui/card/v3/durability.png');
+  right: calc(1px * var(--pixel-scale));
+  bottom: calc(1px * var(--pixel-scale));
+  text-align: right;
+  padding-left: calc(18px * var(--pixel-scale));
+  --dual-text-offset-y: calc(4px * var(--pixel-scale));
+  --dual-text-offset-x: calc(-2px * var(--pixel-scale));
 }
 
 .mana-cost {
-  background-image: url('@/assets/ui/mana-cost.png');
+  background-image: url('@/assets/ui/card/v3/mana-cost.png');
   background-repeat: no-repeat;
   background-size: cover;
   width: calc(22px * var(--pixel-scale));
@@ -303,19 +343,34 @@ const artMainImage = computed(() => {
   scale: 2;
 }
 
-.commandment {
+.small-card:not(:hover) .art {
+  z-index: 1;
+}
+.art {
   position: absolute;
-  top: calc(-1px * var(--pixel-scale));
-  left: calc(-1px * var(--pixel-scale));
-  background-image: url('@/assets/ui/card/commandment.png');
-  font-weight: var(--font-weight-7);
-  padding-top: calc(3px * var(--pixel-scale));
-  width: calc(30px * var(--pixel-scale));
-  height: calc(28px * var(--pixel-scale));
-  font-size: calc(var(--pixel-scale) * 14px);
-  .dual-text::before {
-    transform: translateY(-3px);
+  width: calc(var(--pixel-scale) * var(--width));
+  height: calc(var(--pixel-scale) * var(--height));
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: calc(10px * var(--pixel-scale));
+  pointer-events: none;
+  transform-style: preserve-3d;
+
+  .spell &,
+  .rune &,
+  .artifact & {
+    transform: translateX(-50%) translateY(calc(-12px * var(--pixel-scale)));
   }
-  padding-left: calc(8px * var(--pixel-scale));
+}
+
+.sprite {
+  position: absolute;
+  inset: 0;
+  background: v-bind(imageBg);
+  background-position: var(--bg-position);
+  background-repeat: no-repeat;
+  background-size: var(--background-width) var(--background-height);
+  translate: calc(var(--parallax-x, 0)) var(--parallax-y, 0) !important;
+  pointer-events: none;
 }
 </style>
