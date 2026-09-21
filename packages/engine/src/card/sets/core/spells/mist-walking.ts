@@ -18,28 +18,29 @@ import { SimpleAttackBuffModifier } from '../../../../modifier/modifiers/simple-
 import { SimpleCommandmentBuffModifier } from '../../../../modifier/modifiers/simple-commandment-modifier';
 import { SimpleHealthBuffModifier } from '../../../../modifier/modifiers/simple-health-buff.modifier';
 import { RemoveOnLeaveBoardModifierMixin } from '../../../../modifier/mixins/remove-on-destroyed';
-import { SimpleStatsBuffModifier } from '../../../../modifier/modifiers/simple-stats-modifier';
+import { InstantModifier } from '../../../../modifier/modifiers/instant.modifier';
 
-export const mistDragonSeal: SpellBlueprint<MinionCard> = {
-  id: 'mistDragonSeal',
-  name: 'Mist Dragon Seal',
+export const mistWalking: SpellBlueprint<MinionCard> = {
+  id: 'mistWalking',
+  name: 'Mist Walking',
   description: dedent /*html*/ `
-  Move an ally minion to a battlefield. It gains +1/+1/+1.
+  <rt-keyword>Instant</rt-keyword>.
+  Move an ally minion.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
-  art: defaultCardArt('spells/mist-dragon-seal'),
+  art: defaultCardArt('spells/mist-walking'),
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.COMMON,
-  affinities: [AFFINITIES.FIRE, AFFINITIES.NEUTRAL],
-  manaCost: 3,
+  affinities: [AFFINITIES.FIRE, AFFINITIES.FIRE],
+  manaCost: 2,
   manaSupply: 2,
   speed: CARD_SPEED.FAST,
   tags: [],
   shouldHideTargetArrows: true,
   canPlay: (game, card) =>
     singleAllyMinionTargetRules.canPlay(game, card) &&
-    card.player.boardSide.hasEmptySpaceInBattlefield,
+    card.player.boardSide.hasEmptySpace,
   getTargets: async (game, card) => {
     const minionToMove = await singleAllyMinionTargetRules.getTargets({
       game,
@@ -56,10 +57,7 @@ export const mistDragonSeal: SpellBlueprint<MinionCard> = {
     const destination = await emptyBoardSpaceTargetRules.getTargets({
       game,
       card,
-      predicate: space =>
-        space.player.equals(card.player) &&
-        (space.position.zone === CARD_LOCATIONS.LEFT_BATTLEFIELD ||
-          space.position.zone === CARD_LOCATIONS.RIGHT_BATTLEFIELD),
+      predicate: space => space.player.equals(card.player),
       label: 'Select a space to move the minion to.'
     });
 
@@ -74,7 +72,9 @@ export const mistDragonSeal: SpellBlueprint<MinionCard> = {
       }
     };
   },
-  async onInit() {},
+  async onInit(game, card) {
+    await card.modifiers.add(new InstantModifier(game, card));
+  },
   async onPlay(game, card, targets) {
     const target = targets.cards[0];
     if (!target) return;
@@ -83,15 +83,6 @@ export const mistDragonSeal: SpellBlueprint<MinionCard> = {
     if (!destination) return;
 
     await target.move(destination.position.zone, destination.position.index);
-
-    await target.modifiers.add(
-      new SimpleStatsBuffModifier('mist-dragon-seal-stats-buff', game, card, {
-        atk: 1,
-        hp: 1,
-        cmd: 1,
-        mixins: [new RemoveOnLeaveBoardModifierMixin(game)]
-      })
-    );
   },
   aiHints: {
     shouldPlay: () => 1

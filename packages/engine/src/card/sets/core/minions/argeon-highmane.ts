@@ -24,7 +24,7 @@ export const argeonHighmane: MinionBlueprint = {
   name: 'Argeon Highmane',
   description: dedent /*html*/ `
   <rt-keyword>Shield</rt-keyword>.
-  <rt-location locations="battlefield"></rt-location> Your minions on that battlefield have <rt-keyword>Intimidate 2</rt-keyword>.
+  <rt-location locations="battlefield"></rt-location> Your minions at that battlefield have <rt-keyword>Intimidate 2</rt-keyword>.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,

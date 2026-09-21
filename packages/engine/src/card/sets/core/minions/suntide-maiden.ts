@@ -8,7 +8,6 @@ import {
   CARD_SPEED,
   AFFINITIES
 } from '../../../card.enums';
-import { SimpleAttackBuffModifier } from '../../../../modifier/modifiers/simple-attack-buff.modifier';
 import { ZealModifier } from '../../../../modifier/modifiers/zeal.modifier';
 import { isDefined } from '@game/shared';
 

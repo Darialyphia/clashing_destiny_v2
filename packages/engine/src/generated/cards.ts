@@ -64,7 +64,12 @@ export const cards = {
 "sunbreaker": "sunbreaker",
 "scintilla": "scintilla",
 "fiz": "fiz",
-"sky-burial": "sky-burial"
+"sky-burial": "sky-burial",
+"songweaver": "songweaver",
+"last-stand": "last-stand",
+"holy-immolation": "holy-immolation",
+"arclyte-regalia": "arclyte-regalia",
+"mistWalking": "mistWalking"
 } as const;
 
 export const collectableCards = {
@@ -126,7 +131,12 @@ export const collectableCards = {
 "sunbreaker": "sunbreaker",
 "scintilla": "scintilla",
 "fiz": "fiz",
-"sky-burial": "sky-burial"
+"sky-burial": "sky-burial",
+"songweaver": "songweaver",
+"last-stand": "last-stand",
+"holy-immolation": "holy-immolation",
+"arclyte-regalia": "arclyte-regalia",
+"mistWalking": "mistWalking"
 } as const;
 
 type CardSet = Array<{id: string; collectable: boolean; rarity: Rarity, kind: CardKind}>;
@@ -485,6 +495,36 @@ export const cardsBySet: Record<string, CardSet> = {
     "collectable": true,
     "rarity": "rare",
     "kind": "SPELL"
+  },
+  {
+    "id": "songweaver",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "MINION"
+  },
+  {
+    "id": "last-stand",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "SECRET"
+  },
+  {
+    "id": "holy-immolation",
+    "collectable": true,
+    "rarity": "epic",
+    "kind": "SECRET"
+  },
+  {
+    "id": "arclyte-regalia",
+    "collectable": true,
+    "rarity": "rare",
+    "kind": "ARTIFACT"
+  },
+  {
+    "id": "mistWalking",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "SPELL"
   }
 ]
 };
@@ -548,7 +588,12 @@ export const cardShortIds: Record<string, number> = {
 "sunbreaker": 58,
 "scintilla": 59,
 "fiz": 60,
-"sky-burial": 61
+"sky-burial": 61,
+"songweaver": 62,
+"last-stand": 63,
+"holy-immolation": 64,
+"arclyte-regalia": 65,
+"mistWalking": 66
 } as const;
 
 export const cardIdByShortId: Record<number, string> = {
@@ -610,5 +655,10 @@ export const cardIdByShortId: Record<number, string> = {
 "58": "sunbreaker",
 "59": "scintilla",
 "60": "fiz",
-"61": "sky-burial"
+"61": "sky-burial",
+"62": "songweaver",
+"63": "last-stand",
+"64": "holy-immolation",
+"65": "arclyte-regalia",
+"66": "mistWalking"
 } as const;

@@ -77,7 +77,7 @@ export const KEYWORDS = {
     id: 'empowered',
     name: 'Empowered',
     description: 'This unit has an additional effect.',
-    aliases: [/empower/]
+    aliases: [/empower/, /disempower/, /disempowered/]
   },
   ENHANCE: {
     id: 'enhance',
@@ -314,7 +314,7 @@ export const KEYWORDS = {
   VIGILANT: {
     id: 'vigilant',
     name: 'Vigilant',
-    description: 'This unit can retaliate while exhausted.',
+    description: 'This minion can retaliate while exhausted.',
     aliases: []
   },
   VULNERABLE: {

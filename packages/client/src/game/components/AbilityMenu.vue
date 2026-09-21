@@ -4,7 +4,7 @@ import type { CardViewModel } from '@game/engine/src/client/view-models/card.mod
 import CardText from '@/card/components/CardText.vue';
 import { isDefined } from '@game/shared';
 import { type PopoverContentProps } from 'reka-ui';
-import { useGameUi } from '../composables/useGameClient';
+import { useGameUi, useMyPlayer } from '../composables/useGameClient';
 
 const { card, actionsSide = 'bottom' } = defineProps<{
   card: CardViewModel;
@@ -21,10 +21,12 @@ const abilities = computed(() => {
 });
 
 const ui = useGameUi();
+
+const myPlayer = useMyPlayer();
 </script>
 
 <template>
-  <div class="abilities-list">
+  <div class="abilities-list" v-if="myPlayer.equals(card.player)">
     <UiSimpleTooltip
       v-for="ability in abilities"
       :key="ability.id"

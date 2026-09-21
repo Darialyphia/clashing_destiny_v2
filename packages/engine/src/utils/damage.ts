@@ -23,13 +23,19 @@ export abstract class Damage {
 
   protected _isPrevented = false;
 
+  private flatModifiers: number[] = [];
+
   constructor(options: DamageOptions) {
     this._baseAmount = options.baseAmount;
     this.type = options.type;
   }
 
   get baseAmount() {
-    return this._baseAmount;
+    return this._baseAmount + this.flatModifiers.reduce((a, b) => a + b, 0);
+  }
+
+  addFlatModifier(amount: number) {
+    this.flatModifiers.push(amount);
   }
 
   prevent() {

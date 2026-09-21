@@ -31,7 +31,7 @@ export const obscuringBlow = defineSecretBlueprint({
   kind: CARD_KINDS.SECRET,
   rarity: RARITIES.COMMON,
   affinities: [AFFINITIES.FIRE],
-  manaCost: 4,
+  manaCost: 3,
   manaSupply: 2,
   speed: CARD_SPEED.FAST,
   tags: [],

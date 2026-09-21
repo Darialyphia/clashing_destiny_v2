@@ -59,6 +59,11 @@ import { sunbreaker } from './core/minions/sunbreaker';
 import { scintilla } from './core/minions/scintilla';
 import { fiz } from './core/minions/fiz';
 import { skyBurial } from './core/spells/sky-burial';
+import { songweaver } from './core/minions/songweaver';
+import { lastStand } from './core/secrets/last-stand';
+import { holyImmolation } from './core/secrets/holy-immolation';
+import { arclyteRegalia } from './core/artifacts/arclyte-regalia';
+import { mistWalking } from './core/spells/mist-walking';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -122,6 +127,11 @@ export const coreSet: CardSet = {
     sunbreaker,
     scintilla,
     fiz,
-    skyBurial
+    skyBurial,
+    songweaver,
+    lastStand,
+    holyImmolation,
+    arclyteRegalia,
+    mistWalking
   ]
 };
