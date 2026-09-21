@@ -18,7 +18,7 @@ export class DeclarePlayCardInput extends Input<typeof schema> {
   async impl() {
     const card = this.player.cardManager.getCardInHandById(this.payload.id);
     assert(isDefined(card), new IllegalCardPlayedError());
-    assert(card.canPlay(), new IllegalCardPlayedError());
+
     await this.game.gamePhaseSystem.playCard(this.payload.id, this.player);
   }
 }

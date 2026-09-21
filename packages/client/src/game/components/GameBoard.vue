@@ -14,6 +14,7 @@ import PassButton from './PassButton.vue';
 import type { PlayerClockState } from '../composables/useGameSocket';
 import Battlefield from './Battlefield.vue';
 import RuneZone from './RuneZone.vue';
+import SupplyZone from './SupplyZone.vue';
 
 const { clocks } = defineProps<{
   clocks?: Record<string, PlayerClockState>;
@@ -192,6 +193,14 @@ const opponentHasInitiative = computed(() => {
       <div class="opponent-rune-zone">
         <RuneZone :player="opponent" />
       </div>
+
+      <div class="my-supply-zone">
+        <SupplyZone :player="myPlayer" />
+      </div>
+
+      <div class="opponent-supply-zone">
+        <SupplyZone :player="opponent" />
+      </div>
     </div>
 
     <div id="card-actions-portal" class="absolute"></div>
@@ -224,7 +233,7 @@ const opponentHasInitiative = computed(() => {
 }
 
 .minions-zone {
-  width: 1188px;
+  width: 1348px;
   height: 548px;
   background: url(@/assets/ui/board-v2.png);
   background-size: cover;
@@ -254,13 +263,13 @@ const opponentHasInitiative = computed(() => {
 .left-destiny {
   position: absolute;
   top: 228px;
-  left: 200px;
+  left: 325px;
 }
 
 .right-destiny {
   position: absolute;
   top: 228px;
-  right: 195px;
+  right: 320px;
 }
 
 .arrows {
@@ -357,7 +366,7 @@ const opponentHasInitiative = computed(() => {
   position: absolute;
   top: 115px;
   display: flex;
-  padding-inline: 22px;
+  padding-inline: 102px;
   justify-content: space-between;
   width: 100%;
 
@@ -375,7 +384,7 @@ const opponentHasInitiative = computed(() => {
   position: absolute;
   top: 325px;
   display: flex;
-  padding-inline: 22px;
+  padding-inline: 102px;
   justify-content: space-between;
   width: 100%;
   .zone {
@@ -458,6 +467,17 @@ const opponentHasInitiative = computed(() => {
   position: absolute;
   top: 10px;
   right: -80px;
+}
+
+.my-supply-zone {
+  position: absolute;
+  bottom: 10px;
+  left: 20px;
+}
+.opponent-supply-zone {
+  position: absolute;
+  top: 15px;
+  left: 20px;
 }
 
 .secret-zone {

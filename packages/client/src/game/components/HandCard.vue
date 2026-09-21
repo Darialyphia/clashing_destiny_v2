@@ -56,7 +56,7 @@ const onMouseDown = (e: MouseEvent) => {
   if (!card) return;
   if (!client.value.isActive()) return;
 
-  if (!card.canPlay) return playViolationAnimation();
+  // if (!card.canPlay) return playViolationAnimation();
 
   ui.value.select(card);
   startY = e.clientY;

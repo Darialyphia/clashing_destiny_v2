@@ -99,7 +99,8 @@ export const CARD_LOCATIONS = {
   BASE: 'base',
   LEFT_BATTLEFIELD: 'left_battlefield',
   RIGHT_BATTLEFIELD: 'right_battlefield',
-  RESERVE: 'reserve'
+  RESERVE: 'reserve',
+  SUPPLY: 'supply'
 } as const;
 export type CardLocation = Values<typeof CARD_LOCATIONS>;
 

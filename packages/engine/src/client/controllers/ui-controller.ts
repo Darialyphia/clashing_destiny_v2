@@ -155,6 +155,13 @@ export class UiController {
       actionTaken = true;
     }
 
+    const canCancelPlaying =
+      this.client.state.phase.state === GAME_PHASES.PLAY_CARD &&
+      !this.client.state.phase.ctx.canPlay;
+    if (canCancelPlaying) {
+      this.client.cancelPlayingCard();
+      actionTaken = true;
+    }
     this.onResetCallbacks.forEach(cb => cb());
 
     if (this.selectedCard) {
@@ -234,17 +241,18 @@ export class UiController {
     this._draggedCard = null;
   }
 
-  async onBoardSpaceClick(cell: BoardSpaceViewModel) {
+  onBoardSpaceClick(cell: BoardSpaceViewModel) {
     const state = this.client.state;
     for (const rule of this.boardSpaceClickRules) {
       if (rule.predicate(cell, state)) {
         rule.handler(cell);
-        return;
+        return true;
       }
     }
     this.unselect();
-    if (!this._draggedCard) return;
+    if (!this._draggedCard) return false;
     this._draggedCard = null;
+    return false;
   }
 
   update() {

@@ -223,7 +223,6 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
 
     const card = player.cardManager.getCardInHandById(id);
     assert(card, new IllegalCardPlayedError());
-    assert(card.canPlay(), new IllegalCardPlayedError());
     await this.sendTransition(GAME_PHASE_TRANSITIONS.START_PLAYING_CARD);
     return (this._ctx as PlayCardPhase).play(player, card);
   }

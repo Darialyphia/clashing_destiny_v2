@@ -139,7 +139,7 @@ const isMobile = useIsMobile();
             :key="card"
             :card-id="card"
             :interactive="false"
-            :pixel-scale="isMobile ? 1 : 2"
+            :pixel-scale="isMobile ? 1 : 1.5"
             class="choose-card-item"
             :style="{ '--animation-delay': `${index * 75}ms` }"
           />

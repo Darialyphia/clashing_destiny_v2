@@ -11,9 +11,6 @@ const affinityArray = computed(() => {
     .split(',')
     .map(r => r.trim()) as string[];
 });
-watchEffect(() => {
-  console.log(affinityArray.value);
-});
 </script>
 
 <template>

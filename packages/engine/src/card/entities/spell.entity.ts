@@ -58,7 +58,7 @@ export class SpellCard extends Card<
   }
 
   get isCorrectPhaseToPlay() {
-    return this.game.gamePhaseSystem.getContext().state === GAME_PHASES.MAIN;
+    return this.game.gamePhaseSystem.getContext().state === GAME_PHASES.PLAY_CARD;
   }
 
   canPlay() {

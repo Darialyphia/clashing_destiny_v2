@@ -14,8 +14,9 @@ import { isMinion } from '../card/card-utils';
 import { match } from 'ts-pattern';
 import { BoardSide, type SerializedBoardSide } from '../board/board-side.entity';
 import { GAME_EVENTS } from '../game/game.events';
-import { PlayerGainVictoryPointEvent } from './player.events';
+import { PlayerAddSupplyEvent, PlayerGainVictoryPointEvent } from './player.events';
 import type { Affinity } from '../card/card.enums';
+import { PLAYER_EVENTS } from './player.enums';
 
 export type PlayerOptions = {
   id: string;
@@ -237,6 +238,30 @@ export class Player
 
   canSpendMana(amount: number) {
     return this.mana >= amount;
+  }
+
+  async supplyCard(card: AnyCard) {
+    await this.game.emit(
+      GAME_EVENTS.PLAYER_BEFORE_ADD_SUPPLY,
+      new PlayerAddSupplyEvent({ player: this, card })
+    );
+
+    await card.removeFromCurrentLocation();
+    await this.cardManager.sendToSupply(card);
+    await this.manaManager.gain(card.manaSupply);
+
+    await this.game.emit(
+      GAME_EVENTS.PLAYER_AFTER_ADD_SUPPLY,
+      new PlayerAddSupplyEvent({ player: this, card })
+    );
+  }
+
+  async recollectSupply() {
+    const supply = Array.from(this.cardManager.supply);
+    for (const card of supply) {
+      await card.removeFromCurrentLocation();
+      await card.addToHand();
+    }
   }
 
   serialize() {

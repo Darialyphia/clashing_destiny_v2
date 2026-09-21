@@ -57,6 +57,10 @@ export class ManaManagerComponent {
     );
   }
 
+  empty() {
+    this._mana = 0;
+  }
+
   async spend(amount: number) {
     if (amount === 0) return;
     await this.game.emit(

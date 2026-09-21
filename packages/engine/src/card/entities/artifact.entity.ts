@@ -21,6 +21,7 @@ import {
 import type { BoardSpace } from '../../board/board-space.entity';
 import { AbilityManagerComponent } from '../components/abilities-manager.component';
 import type { Ability } from './ability.entity';
+import { GAME_PHASES } from '../../game/game.enums';
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type SerializedArtifactCard = SerializedCard & {
@@ -66,9 +67,15 @@ export class ArtifactCard extends Card<
     this.abilityManager = new AbilityManagerComponent<ArtifactCard>(game, this);
   }
 
+  get isCorrectPhaseToPlay() {
+    return this.game.gamePhaseSystem.getContext().state === GAME_PHASES.PLAY_CARD;
+  }
+
   canPlay(): boolean {
     return this.interceptors.canPlay.getValue(
-      this.canPlayBase && this.blueprint.canPlay(this.game, this),
+      this.isCorrectPhaseToPlay &&
+        this.canPlayBase &&
+        this.blueprint.canPlay(this.game, this),
       this
     );
   }

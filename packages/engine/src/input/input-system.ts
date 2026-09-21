@@ -37,6 +37,8 @@ import { SelectSpaceOnBoardInput } from './inputs/select-space-on-board.input';
 import { ChooseChainEffectsInput } from './inputs/choose-chain-effect';
 import { DeclareRetaliationInput } from './inputs/declare-retaliation.input';
 import { ScoreInput } from './inputs/score.input';
+import { SupplyCardInput } from './inputs/supply-card.input';
+import { CancelPlayingCardInput } from './inputs/cancel-playing-card.input';
 
 type GenericInputMap = Record<string, Constructor<Input<DefaultSchema>>>;
 
@@ -68,7 +70,9 @@ const inputMap = validateinputMap({
   selectSpaceOnBoard: SelectSpaceOnBoardInput,
   chooseChainEffects: ChooseChainEffectsInput,
   declareRetaliation: DeclareRetaliationInput,
-  score: ScoreInput
+  score: ScoreInput,
+  supplyCard: SupplyCardInput,
+  cancelPlayingCard: CancelPlayingCardInput
 });
 
 type InputMap = typeof inputMap;

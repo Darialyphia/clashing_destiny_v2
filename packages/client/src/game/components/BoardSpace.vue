@@ -28,11 +28,12 @@ const dragSelection = useBoardCardDragSelection(cell, canSelectUnit);
 const { path, pathColor } = useBoardSpaceArrowPath(cell);
 const { isMovingUnit } = useCardMoveFx(cell);
 
-const handleMouseup = (e: MouseEvent) => {
+const handleMouseup = async (e: MouseEvent) => {
   if (e.button !== 0) return;
   dragSelection.onMouseup();
 
-  ui.value.onBoardSpaceClick(cell.value);
+  const actionTaken = ui.value.onBoardSpaceClick(cell.value);
+  if (actionTaken) e.stopPropagation();
 };
 </script>
 
@@ -47,7 +48,7 @@ const handleMouseup = (e: MouseEvent) => {
       'can-attack': canAttack && !client.isPlayingFx,
       'is-moving-unit': isMovingUnit
     }"
-    @mouseup.stop="handleMouseup"
+    @mouseup="handleMouseup"
     @mousedown="dragSelection.onMousedown"
   >
     <BoardCard

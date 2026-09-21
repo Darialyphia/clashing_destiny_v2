@@ -14,6 +14,12 @@ export class SupplyPhase implements GamePhaseController, Serializable<EmptyObjec
     }
   }
 
+  private async emptyMana() {
+    for (const player of this.game.playerSystem.players) {
+      await player.manaManager.empty();
+    }
+  }
+
   private async selectRuneFromRuneDeck(
     players: { player: Player; choices: RuneCard[] }[]
   ) {
@@ -75,7 +81,8 @@ export class SupplyPhase implements GamePhaseController, Serializable<EmptyObjec
   }
 
   async onEnter() {
-    await this.refillMana();
+    // await this.refillMana();
+    await this.emptyMana();
     await this.gainRunes();
 
     await this.game.gamePhaseSystem.sendTransition(GAME_PHASE_TRANSITIONS.SUPPLIED_MANA);

@@ -97,6 +97,12 @@ export class PlayerViewModel {
     });
   }
 
+  get supplyZone() {
+    return this.data.boardSide.supply.map(cardId => {
+      return this.getEntities()[cardId] as CardViewModel;
+    });
+  }
+
   get affinities() {
     return this.data.affinities;
   }

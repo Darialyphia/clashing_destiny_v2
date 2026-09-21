@@ -21,7 +21,6 @@ import { TypedEventEmitter } from '../utils/typed-emitter';
 import type { AbilityViewModel } from './view-models/ability.model';
 import type { BoardSpaceViewModel } from './view-models/board-space.model';
 import { EFFECT_CHAIN_STATES } from '../game/effect-chain';
-import type { Rune } from '../player/player.enums';
 import { OptimisticStateManager } from './controllers/optimistic-state.controller';
 import { GAME_PHASES } from '../game/game.enums';
 
@@ -317,6 +316,16 @@ export class GameClient {
     });
   }
 
+  cancelPlayingCard() {
+    const card = this.stateManager.getCard(this.state.phase.ctx.card)!;
+    void this.fxAdapter.onCancelPlayCard(card, this);
+
+    this.dispatch({
+      type: 'cancelPlayingCard',
+      payload: { playerId: this.playerId }
+    });
+  }
+
   commitCardSelection() {
     this.dispatch({
       type: 'commitCardSelection',
@@ -409,6 +418,18 @@ export class GameClient {
       payload: {
         playerId: this.playerId,
         minionId
+      }
+    });
+  }
+
+  supplyCard() {
+    this.optimisticStateManager.finishPlayingCard();
+    this.ui.unselect();
+
+    this.dispatch({
+      type: 'supplyCard',
+      payload: {
+        playerId: this.playerId
       }
     });
   }

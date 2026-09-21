@@ -30,6 +30,7 @@ export type SerializedBoardSide = {
   base: string[];
   leftBattlefield: SerializedBattlefield;
   rightBattlefield: SerializedBattlefield;
+  supply: string[];
 };
 
 export type SerializedBoard = {
@@ -346,7 +347,8 @@ export class BoardSide
       },
       base: this.base.map(space => space.id),
       leftBattlefield: this.leftBattlefield.serialize(),
-      rightBattlefield: this.rightBattlefield.serialize()
+      rightBattlefield: this.rightBattlefield.serialize(),
+      supply: Array.from(this.player.cardManager.supply).map(card => card.id)
     };
   }
 }

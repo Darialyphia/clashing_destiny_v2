@@ -50,20 +50,34 @@ export class DrawPhase implements GamePhaseController, Serializable<EmptyObject>
     }
   }
 
+  private async recollectSupply() {
+    for (const player of this.game.playerSystem.players) {
+      await player.recollectSupply();
+    }
+  }
+
   async onEnter() {
     await this.game.turnSystem.startTurn();
 
     if (this.game.turnSystem.isFirstTurn) {
       await this.drawForTurn();
-      // this is in a setTimeout to not block game.initialize()
       setTimeout(async () => {
-        await this.mulligan(this.game.config.START_OF_GAME_MULLIGANED_CARDS, true);
-        await this.game.snapshotSystem.takeSnapshot();
-        await this.game.gamePhaseSystem.sendTransition(
-          GAME_PHASE_TRANSITIONS.DRAWN_FOR_TURN
-        );
+        if (this.game.config.START_OF_GAME_MULLIGANED_CARDS > 0) {
+          // this is in a setTimeout to not block game.initialize()
+          await this.mulligan(this.game.config.START_OF_GAME_MULLIGANED_CARDS, true);
+          await this.game.snapshotSystem.takeSnapshot();
+          await this.game.gamePhaseSystem.sendTransition(
+            GAME_PHASE_TRANSITIONS.DRAWN_FOR_TURN
+          );
+        } else {
+          await this.game.snapshotSystem.takeSnapshot();
+          await this.game.gamePhaseSystem.sendTransition(
+            GAME_PHASE_TRANSITIONS.DRAWN_FOR_TURN
+          );
+        }
       });
     } else {
+      await this.recollectSupply();
       await this.mulligan(this.game.config.CARDS_MULLIGANED_PER_TURN, false);
       await this.drawForTurn();
       await this.game.gamePhaseSystem.sendTransition(

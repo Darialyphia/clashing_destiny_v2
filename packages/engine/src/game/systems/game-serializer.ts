@@ -255,7 +255,9 @@ export class GameSerializer {
         card.location === CARD_LOCATIONS.BASE ||
         card.location === CARD_LOCATIONS.LEFT_BATTLEFIELD ||
         card.location === CARD_LOCATIONS.RIGHT_BATTLEFIELD ||
-        card.location === CARD_LOCATIONS.DISCARD_PILE
+        card.location === CARD_LOCATIONS.DISCARD_PILE ||
+        card.location === CARD_LOCATIONS.SUPPLY ||
+        card.location === CARD_LOCATIONS.RUNE_ZONE
       ) {
         return;
       }

@@ -35,6 +35,8 @@ export class CardManagerComponent {
 
   readonly reserve = new Set<AnyCard>();
 
+  readonly supply = new Set<AnyCard>();
+
   constructor(
     game: Game,
     private player: Player,
@@ -288,5 +290,13 @@ export class CardManagerComponent {
 
   removeFromReserve(card: AnyCard) {
     this.reserve.delete(card);
+  }
+
+  sendToSupply(card: AnyCard) {
+    this.supply.add(card);
+  }
+
+  removeFromSupply(card: AnyCard) {
+    this.supply.delete(card);
   }
 }

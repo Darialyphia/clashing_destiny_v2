@@ -401,6 +401,9 @@ export abstract class Card<
       .with(CARD_LOCATIONS.RESERVE, () => {
         this.player.cardManager.removeFromReserve(this);
       })
+      .with(CARD_LOCATIONS.SUPPLY, () => {
+        this.player.cardManager.removeFromSupply(this);
+      })
       .exhaustive();
   }
 

@@ -58,7 +58,9 @@ const inputLabels: Record<SerializedInput['type'], string> = {
   score: 'Score',
   selectCardOnBoard: 'Select Card On Board',
   selectSpaceOnBoard: 'Select Space On Board',
-  surrender: 'Surrender'
+  surrender: 'Surrender',
+  supplyCard: 'Add card to supply',
+  cancelPlayingCard: 'Cancel Playing Card'
 };
 </script>
 

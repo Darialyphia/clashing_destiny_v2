@@ -174,7 +174,6 @@ export class Game implements Serializable<SerializedGame> {
 
     await this.emit(GAME_EVENTS.READY, new GameReadyEvent({}));
     await this.gamePhaseSystem.startGame();
-
     // @FIXME startGame starts a non awaited Promise and this can cause race conditions with hisory replay expecting a different interaction state
     await waitFor(200);
     if (this.options.history) {
