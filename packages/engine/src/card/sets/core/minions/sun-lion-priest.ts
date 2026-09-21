@@ -9,7 +9,10 @@ import {
   CARD_SPEED,
   AFFINITIES
 } from '../../../card.enums';
-import { WhileOnBoardModifier } from '../../../../modifier/modifiers/while-on-board.modifier';
+import {
+  WhileOnBaseModifier,
+  WhileOnBoardModifier
+} from '../../../../modifier/modifiers/while-on-board.modifier';
 import { GameEventModifierMixin } from '../../../../modifier/mixins/game-event.mixin';
 import { MinionCard } from '../../../entities/minion.entity';
 import { ZealModifier } from '../../../../modifier/modifiers/zeal.modifier';
@@ -19,7 +22,7 @@ export const sunlionPriest: MinionBlueprint = {
   id: 'sun-lion-priest',
   name: 'Sunlion Priest',
   description: dedent /*html*/ `
-  <rt-timing>Once per turn</rt-timing> When a minion with <rt-keyword>Zeal</rt-keyword> is destroyed, summon a random <rt-keyword>Zeal</rt-keyword> minion that costs less from your deck in your base.
+  <rt-location locations="base"></rt-location> When a minion with <rt-keyword>Zeal</rt-keyword> is destroyed, draw a card.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -38,7 +41,7 @@ export const sunlionPriest: MinionBlueprint = {
   abilities: [],
   async onInit(game, card) {
     await card.modifiers.add(
-      new WhileOnBoardModifier<MinionCard>('sun-lion-priest', game, card, {
+      new WhileOnBaseModifier<MinionCard>('sun-lion-priest', game, card, {
         mixins: [
           new GameEventModifierMixin(game, {
             eventName: GAME_EVENTS.CARD_AFTER_DESTROY,
@@ -59,22 +62,7 @@ export const sunlionPriest: MinionBlueprint = {
                 })
               );
 
-              const candidates = card.player.cardManager.mainDeck.cards
-                .filter(isMinion)
-                .filter(
-                  c =>
-                    c.modifiers.has(ZealModifier) && c.manaCost < event.data.card.manaCost
-                );
-              if (!candidates.length) return;
-              const index = game.rngSystem.nextInt(candidates.length);
-              const selectedCard = candidates[index];
-              const availableSpaces = card.player.boardSide.base.filter(
-                space => space.isEmpty
-              );
-              if (!availableSpaces.length) return;
-              await selectedCard.playImmediatelyAt(availableSpaces[0], {
-                shouldExhaust: false
-              });
+              await card.player.cardManager.draw(1);
             }
           })
         ]

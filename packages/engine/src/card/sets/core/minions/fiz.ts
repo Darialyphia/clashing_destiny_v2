@@ -27,7 +27,7 @@ export const fiz: MinionBlueprint = {
   art: defaultCardArt('minions/fiz'),
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.RARE,
-  manaCost: 2,
+  manaCost: 1,
   manaSupply: 1,
   speed: CARD_SPEED.SLOW,
   tags: [],

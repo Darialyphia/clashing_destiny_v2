@@ -22,7 +22,7 @@ export const windbladeAdept: MinionBlueprint = {
   art: defaultCardArt('minions/windblade-adept'),
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.COMMON,
-  manaCost: 3,
+  manaCost: 2,
   manaSupply: 1,
   speed: CARD_SPEED.SLOW,
   tags: [],

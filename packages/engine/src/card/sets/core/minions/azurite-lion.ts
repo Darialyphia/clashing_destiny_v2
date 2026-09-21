@@ -9,7 +9,6 @@ import {
   AFFINITIES
 } from '../../../card.enums';
 import { FlankingModifier } from '../../../../modifier/modifiers/flanking.modifier';
-import { AttackerModifier } from '../../../../modifier/modifiers/attacker.modifier';
 
 export const azuriteLion: MinionBlueprint = {
   id: 'azurite-lion',
@@ -23,7 +22,7 @@ export const azuriteLion: MinionBlueprint = {
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.COMMON,
   affinities: [AFFINITIES.LIGHT],
-  manaCost: 4,
+  manaCost: 3,
   manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],

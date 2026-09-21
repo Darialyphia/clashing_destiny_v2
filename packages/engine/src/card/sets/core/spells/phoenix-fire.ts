@@ -27,7 +27,7 @@ export const phoenixFire: SpellBlueprint<MinionCard> = {
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.COMMON,
   affinities: [AFFINITIES.FIRE],
-  manaCost: 3,
+  manaCost: 2,
   manaSupply: 2,
   speed: CARD_SPEED.FAST,
   tags: [],

@@ -1,11 +1,6 @@
 import dedent from 'dedent';
 import type { SpellBlueprint } from '../../../card-blueprint';
-import {
-  anywhereTargetRules,
-  defaultCardArt,
-  isMinion,
-  isSpell
-} from '../../../card-utils';
+import { anywhereTargetRules, defaultCardArt, isSpell } from '../../../card-utils';
 import {
   AFFINITIES,
   CARD_KINDS,
@@ -27,7 +22,7 @@ export const manaVortex: SpellBlueprint = {
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.RARE,
   affinities: [AFFINITIES.FIRE],
-  manaCost: 2,
+  manaCost: 1,
   manaSupply: 2,
   speed: CARD_SPEED.FAST,
   tags: [],

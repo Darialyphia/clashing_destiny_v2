@@ -22,7 +22,7 @@ export const healingMystic: MinionBlueprint = {
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.COMMON,
   affinities: [AFFINITIES.NEUTRAL],
-  manaCost: 3,
+  manaCost: 2,
   manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],

@@ -7,8 +7,7 @@ import {
   CARD_KINDS,
   RARITIES,
   CARD_SPEED,
-  AFFINITIES,
-  CARD_LOCATIONS
+  AFFINITIES
 } from '../../../card.enums';
 import { OverwhelmModifier } from '../../../../modifier/modifiers/overwhelm.modifier';
 import { GAME_EVENTS } from '../../../../game/game.events';
@@ -18,7 +17,6 @@ import { Modifier } from '../../../../modifier/modifier.entity';
 import { GameEventModifierMixin } from '../../../../modifier/mixins/game-event.mixin';
 import { TogglableModifierMixin } from '../../../../modifier/mixins/togglable.mixin';
 import type { AnyCard } from '../../../entities/card.entity';
-import { SimpleManacostModifier } from '../../../../modifier/modifiers/simple-manacost-modifier';
 import { MinionInterceptorModifierMixin } from '../../../../modifier/mixins/interceptor.mixin';
 
 const getTotalDamageDealtThisTurn = (card: AnyCard) => {
@@ -57,7 +55,7 @@ export const tuskBoar: MinionBlueprint = {
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.LEGENDARY,
   affinities: [AFFINITIES.FIRE, AFFINITIES.FIRE],
-  manaCost: 4,
+  manaCost: 3,
   manaSupply: 1,
   speed: CARD_SPEED.SLOW,
   tags: [],

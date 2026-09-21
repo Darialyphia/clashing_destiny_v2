@@ -8,13 +8,8 @@ import {
   CARD_SPEED,
   AFFINITIES
 } from '../../../card.enums';
-import { SimpleAttackBuffModifier } from '../../../../modifier/modifiers/simple-attack-buff.modifier';
-import { ZealModifier } from '../../../../modifier/modifiers/zeal.modifier';
 import { ShieldModifier } from '../../../../modifier/modifiers/shield.modifier';
-import {
-  WhileOnBattlefieldModifier,
-  WhileOnBoardModifier
-} from '../../../../modifier/modifiers/while-on-board.modifier';
+import { WhileOnBattlefieldModifier } from '../../../../modifier/modifiers/while-on-board.modifier';
 import { CardAuraModifierMixin } from '../../../../modifier/mixins/aura.mixin';
 import type { MinionCard } from '../../../entities/minion.entity';
 import { IntimidateModifier } from '../../../../modifier/modifiers/intimidate.modifier';
@@ -31,7 +26,7 @@ export const argeonHighmane: MinionBlueprint = {
   art: defaultCardArt('minions/argeon-highmane'),
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.LEGENDARY,
-  manaCost: 6,
+  manaCost: 5,
   manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],

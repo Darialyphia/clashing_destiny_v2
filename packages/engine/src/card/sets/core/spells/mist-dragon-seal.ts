@@ -14,9 +14,6 @@ import {
   RARITIES
 } from '../../../card.enums';
 import type { MinionCard } from '../../../entities/minion.entity';
-import { SimpleAttackBuffModifier } from '../../../../modifier/modifiers/simple-attack-buff.modifier';
-import { SimpleCommandmentBuffModifier } from '../../../../modifier/modifiers/simple-commandment-modifier';
-import { SimpleHealthBuffModifier } from '../../../../modifier/modifiers/simple-health-buff.modifier';
 import { RemoveOnLeaveBoardModifierMixin } from '../../../../modifier/mixins/remove-on-destroyed';
 import { SimpleStatsBuffModifier } from '../../../../modifier/modifiers/simple-stats-modifier';
 
@@ -32,7 +29,7 @@ export const mistDragonSeal: SpellBlueprint<MinionCard> = {
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.COMMON,
   affinities: [AFFINITIES.FIRE, AFFINITIES.NEUTRAL],
-  manaCost: 3,
+  manaCost: 2,
   manaSupply: 2,
   speed: CARD_SPEED.FAST,
   tags: [],

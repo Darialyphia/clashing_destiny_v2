@@ -23,7 +23,7 @@ export const ghostLightning: SpellBlueprint = {
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.COMMON,
   affinities: [AFFINITIES.FIRE],
-  manaCost: 2,
+  manaCost: 1,
   manaSupply: 2,
   speed: CARD_SPEED.FAST,
   tags: [],

@@ -29,7 +29,7 @@ export const kaleosXaan: MinionBlueprint = {
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.LEGENDARY,
   affinities: [AFFINITIES.FIRE, AFFINITIES.FIRE, AFFINITIES.FIRE],
-  manaCost: 6,
+  manaCost: 5,
   manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],

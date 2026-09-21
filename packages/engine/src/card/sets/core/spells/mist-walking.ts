@@ -8,16 +8,11 @@ import {
 import {
   AFFINITIES,
   CARD_KINDS,
-  CARD_LOCATIONS,
   CARD_SETS,
   CARD_SPEED,
   RARITIES
 } from '../../../card.enums';
 import type { MinionCard } from '../../../entities/minion.entity';
-import { SimpleAttackBuffModifier } from '../../../../modifier/modifiers/simple-attack-buff.modifier';
-import { SimpleCommandmentBuffModifier } from '../../../../modifier/modifiers/simple-commandment-modifier';
-import { SimpleHealthBuffModifier } from '../../../../modifier/modifiers/simple-health-buff.modifier';
-import { RemoveOnLeaveBoardModifierMixin } from '../../../../modifier/mixins/remove-on-destroyed';
 import { InstantModifier } from '../../../../modifier/modifiers/instant.modifier';
 
 export const mistWalking: SpellBlueprint<MinionCard> = {
@@ -33,7 +28,7 @@ export const mistWalking: SpellBlueprint<MinionCard> = {
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.COMMON,
   affinities: [AFFINITIES.FIRE, AFFINITIES.FIRE],
-  manaCost: 2,
+  manaCost: 1,
   manaSupply: 2,
   speed: CARD_SPEED.FAST,
   tags: [],

@@ -14,14 +14,14 @@ export const warJudicator: MinionBlueprint = {
   id: 'war-judicator',
   name: 'War Judicator',
   description: dedent /*html*/ `
-  <rt-keyword>Zeal 4</rt-keyword>: <rt-keyword>Reserve</rt-keyword> a card.
+  <rt-keyword>Zeal 4</rt-keyword>: draw a card.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
   art: defaultCardArt('minions/war-judicator'),
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.RARE,
-  manaCost: 6,
+  manaCost: 5,
   manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
@@ -37,9 +37,7 @@ export const warJudicator: MinionBlueprint = {
         amount: 4,
         zealedModifiers: [],
         onGainZeal: async () => {
-          for (const topCard of card.player.cardManager.mainDeck.peek(1)) {
-            await topCard.addToReserve();
-          }
+          await card.player.cardManager.draw(1);
         }
       })
     );

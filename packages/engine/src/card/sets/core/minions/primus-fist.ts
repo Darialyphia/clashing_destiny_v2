@@ -1,6 +1,6 @@
 import dedent from 'dedent';
 import type { MinionBlueprint } from '../../../card-blueprint';
-import { defaultCardArt, isMinion, singleMinionTargetRules } from '../../../card-utils';
+import { defaultCardArt, isMinion } from '../../../card-utils';
 import {
   CARD_SETS,
   CARD_KINDS,
@@ -23,7 +23,7 @@ export const primusFist: MinionBlueprint = {
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.COMMON,
   affinities: [AFFINITIES.NEUTRAL, AFFINITIES.NEUTRAL],
-  manaCost: 3,
+  manaCost: 2,
   manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],

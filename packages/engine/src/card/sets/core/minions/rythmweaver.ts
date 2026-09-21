@@ -23,7 +23,7 @@ export const rythmweaver: MinionBlueprint = {
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.COMMON,
   affinities: [AFFINITIES.FIRE],
-  manaCost: 2,
+  manaCost: 1,
   manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],

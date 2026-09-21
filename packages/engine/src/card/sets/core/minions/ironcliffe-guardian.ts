@@ -9,7 +9,6 @@ import {
   AFFINITIES
 } from '../../../card.enums';
 import { ProtectorModifier } from '../../../../modifier/modifiers/protector.modifier';
-import { VigilantModifier } from '../../../../modifier/modifiers/vigilant.modifier';
 
 export const ironcliffeGuardian: MinionBlueprint = {
   id: 'ironcliffe-guardian',
@@ -23,7 +22,7 @@ export const ironcliffeGuardian: MinionBlueprint = {
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.RARE,
   affinities: [AFFINITIES.LIGHT, AFFINITIES.LIGHT, AFFINITIES.NEUTRAL],
-  manaCost: 7,
+  manaCost: 6,
   manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],

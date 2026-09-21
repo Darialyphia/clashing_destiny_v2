@@ -24,7 +24,7 @@ export const silverGuardKnight: MinionBlueprint = {
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.COMMON,
   affinities: [AFFINITIES.LIGHT],
-  manaCost: 3,
+  manaCost: 2,
   manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
