@@ -57,7 +57,6 @@ export class PlayCardPhase
     if (this._card.canPlay()) {
       await this.playCard();
     } else {
-      console.log(this._card.unplayableReason);
       await card.removeFromCurrentLocation();
     }
   }

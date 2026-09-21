@@ -141,6 +141,9 @@ export class CardManagerComponent {
     const reserveCard = [...this.reserve].find(card => card.id === id);
     if (reserveCard) return { card: reserveCard, location: CARD_LOCATIONS.RESERVE };
 
+    const supplyCard = [...this.supply].find(card => card.id === id);
+    if (supplyCard) return { card: supplyCard, location: CARD_LOCATIONS.SUPPLY };
+
     return null;
   }
 
