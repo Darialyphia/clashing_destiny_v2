@@ -460,24 +460,24 @@ const opponentHasInitiative = computed(() => {
 .my-rune-zone {
   position: absolute;
   bottom: 10px;
-  right: -80px;
+  right: 0px;
 }
 
 .opponent-rune-zone {
   position: absolute;
   top: 10px;
-  right: -80px;
+  right: 0px;
 }
 
 .my-supply-zone {
   position: absolute;
   bottom: 10px;
-  left: 20px;
+  left: -40px;
 }
 .opponent-supply-zone {
   position: absolute;
   top: 15px;
-  left: 20px;
+  left: -40px;
 }
 
 .secret-zone {

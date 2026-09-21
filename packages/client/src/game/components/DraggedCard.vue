@@ -7,10 +7,7 @@ import {
   useFxEvent,
   useGameUi
 } from '../composables/useGameClient';
-import {
-  GAME_PHASES,
-  INTERACTION_STATES
-} from '@game/engine/src/game/game.enums';
+import { INTERACTION_STATES } from '@game/engine/src/game/game.enums';
 import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
 import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
 import GameCard from './GameCard.vue';
@@ -85,12 +82,13 @@ onBeforeUnmount(() => {
 
 const draggedCard = computed(() => {
   let card: CardViewModel | null = null;
+
   if (client.value.optimisticStateManager.state.playedCardId) {
     card = state.value.entities[
       client.value.optimisticStateManager.state.playedCardId
     ] as CardViewModel;
-  } else if (state.value.phase.state == GAME_PHASES.PLAY_CARD) {
-    card = ui.value.selectedCard;
+  } else {
+    card = ui.value.draggedCard;
   }
 
   if (card?.player.id !== playerId.value) card = null;

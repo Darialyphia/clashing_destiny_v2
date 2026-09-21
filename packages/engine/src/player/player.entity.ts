@@ -247,6 +247,7 @@ export class Player
     );
 
     await card.removeFromCurrentLocation();
+    await card.reveal();
     await this.cardManager.sendToSupply(card);
     await this.manaManager.gain(card.manaSupply);
 
@@ -261,6 +262,7 @@ export class Player
     for (const card of supply) {
       await card.removeFromCurrentLocation();
       await card.addToHand();
+      await card.hide();
     }
   }
 

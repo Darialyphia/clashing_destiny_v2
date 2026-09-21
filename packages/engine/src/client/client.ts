@@ -425,7 +425,7 @@ export class GameClient {
   supplyCard() {
     this.optimisticStateManager.finishPlayingCard();
     this.ui.unselect();
-
+    this.ui.stopDraggingCard();
     this.dispatch({
       type: 'supplyCard',
       payload: {

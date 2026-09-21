@@ -28,7 +28,6 @@ import OpponentHand from './OpponentHand.vue';
 import ScoringArrow from './ScoringArrow.vue';
 import InteractionArrows from './InteractionArrows.vue';
 import type { PlayerClockState } from '../composables/useGameSocket';
-import PlayerResources from './PlayerResources.vue';
 import Deck from './Deck.vue';
 import GamePhaseIndicator from './GamePhaseIndicator.vue';
 import Debug from './Debug.vue';
@@ -133,8 +132,8 @@ const isScreenDimmed = computed(() => {
     />
   </div>
 
-  <PlayerResources class="my-resources" :player="myPlayer" />
-  <PlayerResources class="opponent-resources" :player="opponent" />
+  <!-- <PlayerResources class="my-resources" :player="myPlayer" />
+  <PlayerResources class="opponent-resources" :player="opponent" /> -->
 
   <PlayerInfos class="opponent-player" :player="opponent" inverted />
   <PlayerInfos class="my-player" :player="myPlayer" />
@@ -218,12 +217,12 @@ const isScreenDimmed = computed(() => {
   left: var(--size-6);
   bottom: var(--size-3);
 }
-.my-resources {
+/* .my-resources {
   position: absolute;
   right: 140px;
   top: 50.5%;
   width: 200px;
-}
+} */
 
 .opponent-player {
   position: absolute;
@@ -231,12 +230,12 @@ const isScreenDimmed = computed(() => {
   top: var(--size-3);
 }
 
-.opponent-resources {
+/* .opponent-resources {
   position: absolute;
   right: 140px;
   top: 43%;
   width: 200px;
-}
+} */
 
 .hovered-cell-infos {
   position: absolute;

@@ -157,7 +157,7 @@ export class UiController {
 
     const canCancelPlaying =
       this.client.state.phase.state === GAME_PHASES.PLAY_CARD &&
-      !this.client.state.phase.ctx.canPlay;
+      !this.client.state.phase.ctx.isPlayingCard;
     if (canCancelPlaying) {
       this.client.cancelPlayingCard();
       actionTaken = true;
@@ -194,12 +194,6 @@ export class UiController {
 
   get draggedCard() {
     return this._draggedCard;
-  }
-
-  playDraggedCard() {
-    if (!this._draggedCard) return;
-    this._draggedCard.play();
-    this._draggedCard = null;
   }
 
   get playedCardId() {

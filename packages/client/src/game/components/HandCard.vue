@@ -30,21 +30,22 @@ const DRAG_THRESHOLD_PX = 30;
 const isShaking = ref(false);
 const violationWarning = ref('');
 
-const playViolationAnimation = () => {
-  isShaking.value = true;
-  violationWarning.value =
-    card?.unplayableReason || 'You cannot play this card.';
+// const playViolationAnimation = () => {
+//   isShaking.value = true;
+//   violationWarning.value =
+//     card?.unplayableReason || 'You cannot play this card.';
 
-  setTimeout(() => {
-    violationWarning.value = '';
-    isShaking.value = false;
-  }, 2500);
-};
+//   setTimeout(() => {
+//     violationWarning.value = '';
+//     isShaking.value = false;
+//   }, 2500);
+// };
 
 let startY = 0;
 const onMousemove = (e: MouseEvent) => {
   if (!card) return;
   const deltaY = startY - e.clientY;
+  console.log(deltaY, !!ui.value.draggedCard);
   if (deltaY >= DRAG_THRESHOLD_PX && !ui.value.draggedCard) {
     ui.value.startDraggingCard(card);
     card.play();
@@ -60,7 +61,6 @@ const onMouseDown = (e: MouseEvent) => {
 
   ui.value.select(card);
   startY = e.clientY;
-
   document.body.addEventListener('mousemove', onMousemove);
 };
 

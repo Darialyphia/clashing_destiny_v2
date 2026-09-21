@@ -46,12 +46,12 @@ const onMouseup = (event: MouseEvent) => {
 };
 
 const isHovered = ref(false);
-const onMouseenter = (event: MouseEvent) => {
+const onMouseenter = () => {
   if (!canSupply.value) return;
   isHovered.value = true;
 };
 
-const onMouseleave = (event: MouseEvent) => {
+const onMouseleave = () => {
   if (!canSupply.value) return;
   isHovered.value = false;
 };
@@ -65,7 +65,10 @@ const onMouseleave = (event: MouseEvent) => {
     @mouseenter="onMouseenter"
     @mouseleave="onMouseleave"
   >
-    <div v-for="card in player.supplyZone" :key="card.id">
+    <div class="player-mana">
+      <rt-mana>{{ player.mana }}</rt-mana>
+    </div>
+    <div v-for="card in player.supplyZone" :key="card.id" class="supply-card">
       <InspectableCard :card-id="card.id" side="top" align="center">
         <GameCard :card-id="card.id" variant="small" />
       </InspectableCard>
@@ -87,19 +90,26 @@ const onMouseleave = (event: MouseEvent) => {
 
 <style scoped>
 .supply-zone {
-  width: 280px;
+  width: 350px;
   position: relative;
   height: var(--card-small-v3-height);
   transition: box-shadow 0.3s var(--ease-2);
-  > * {
-    position: absolute;
-    top: 0;
-    left: calc((var(--child-index) - 1) * 50px);
-  }
-
+  display: flex;
+  align-items: center;
   &.hoverable:hover {
     box-shadow: 0 0 35px var(--yellow-5);
   }
+}
+
+.supply-card {
+  position: absolute;
+  top: 0;
+  left: calc(10px + (var(--child-index) - 1) * 50px);
+}
+
+.player-mana {
+  scale: 2;
+  translate: -15px 0;
 }
 
 .supply-indicator {
