@@ -37,7 +37,7 @@ export const KEYWORDS = {
     id: 'cleave',
     name: 'Cleave X',
     description:
-      'When this attacks, it also deals X damage to all other minions on the same battlefield.',
+      'When this attacks, it also deals X damage to all other enemies on the same battlefield.',
     aliases: [/cleave [0-9]+/]
   },
   CHANNEL: {

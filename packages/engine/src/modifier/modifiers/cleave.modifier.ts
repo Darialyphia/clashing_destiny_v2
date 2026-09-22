@@ -35,7 +35,7 @@ export class CleaveModifier extends Modifier<MinionCard> {
             const battlefield = this.target.battlefield;
             if (!battlefield) return;
 
-            const targets = battlefield.allSpaces
+            const targets = battlefield.opponentSpaces
               .map(space => space.card)
               .filter(isDefined)
               .filter(isMinion)
@@ -48,7 +48,7 @@ export class CleaveModifier extends Modifier<MinionCard> {
               GAME_EVENTS.CARD_EFFECT_TRIGGERED,
               new CardEffectTriggeredEvent({
                 card: this.target,
-                message: `${this.target.blueprint.name} deals ${amount} cleave damage to all other minions on the battlefield`
+                message: `${this.target.blueprint.name} deals ${amount} cleave damage to all other enemies on the battlefield`
               })
             );
 

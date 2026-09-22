@@ -9,7 +9,6 @@ import {
   CARD_SPEED
 } from '../../../card.enums';
 import { isDefined } from '@game/shared';
-import { BurnModifier } from '../../../../modifier/modifiers/burn.modifier';
 import { OnMoveModifier } from '../../../../modifier/modifiers/on-move.modifier';
 import { FlankingModifier } from '../../../../modifier/modifiers/flanking.modifier';
 import { AbilityDamage } from '../../../../utils/damage';
@@ -19,7 +18,7 @@ export const flamewreath: MinionBlueprint = {
   name: 'Flamewreath',
   description: dedent /*html*/ `
   <rt-keyword>Flanking</rt-keyword><br/>
-  <rt-trigger>On Move</rt-trigger> Deal 1 damage to all enemies here.
+  <rt-trigger>On Move</rt-trigger> Deal 2 damage to all enemies here.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -32,7 +31,7 @@ export const flamewreath: MinionBlueprint = {
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 2,
-  maxHp: 4,
+  maxHp: 3,
   commandment: 2,
   canPlay: () => true,
   abilities: [],
@@ -49,7 +48,7 @@ export const flamewreath: MinionBlueprint = {
             .filter(isMinion);
 
           for (const enemy of enemies) {
-            await enemy?.takeDamage(card, new AbilityDamage(1));
+            await enemy?.takeDamage(card, new AbilityDamage(2));
           }
         }
       })

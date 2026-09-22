@@ -13,6 +13,8 @@ const {
   currentStepTextBox,
   currentStepError,
   next,
+  canRetry,
+  retry,
   isFinished,
   nextMission
 } = useTutorial(options);
@@ -75,6 +77,13 @@ const RECT_PADDING = 15;
         text="Next"
         class="mt-4 ml-auto"
         @click="next"
+      />
+      <FancyButton
+        v-if="currentStepError && canRetry"
+        text="Retry"
+        class="mt-4 ml-auto"
+        variant="error"
+        @click="retry"
       />
       <FancyButton
         v-if="isFinished"

@@ -18,7 +18,7 @@ export const aegisBarrier: SpellBlueprint<MinionCard> = {
   name: 'Aegis Barrier',
   description: dedent /*html*/ `
   Give an ally minion <rt-keyword>Shield</rt-keyword>.
-  <rt-affinity affinities="${AFFINITIES.LIGHT},${AFFINITIES.LIGHT},${AFFINITIES.LIGHT}"></rt-affinity> <rt-keyword>Instant</rt-keyword>.
+  <rt-affinity affinities="${AFFINITIES.LIGHT},${AFFINITIES.LIGHT},${AFFINITIES.LIGHT},${AFFINITIES.NEUTRAL}"></rt-affinity> <rt-keyword>Instant</rt-keyword>.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -48,7 +48,8 @@ export const aegisBarrier: SpellBlueprint<MinionCard> = {
           new AffinitiesTogglableModifierMixin(game, [
             AFFINITIES.LIGHT,
             AFFINITIES.LIGHT,
-            AFFINITIES.LIGHT
+            AFFINITIES.LIGHT,
+            AFFINITIES.NEUTRAL
           ])
         ]
       })

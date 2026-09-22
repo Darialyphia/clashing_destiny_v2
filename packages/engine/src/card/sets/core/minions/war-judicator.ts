@@ -16,7 +16,7 @@ export const warJudicator: MinionBlueprint = {
   id: 'war-judicator',
   name: 'War Judicator',
   description: dedent /*html*/ `
-  <rt-keyword>Zeal 4</rt-keyword>: draw a card and increase its supply by 1.
+  <rt-keyword>Zeal 5</rt-keyword>: draw a card and increase its supply by 1.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -36,7 +36,7 @@ export const warJudicator: MinionBlueprint = {
   async onInit(game, card) {
     await card.modifiers.add(
       new ZealModifier(game, card, {
-        amount: 4,
+        amount: 5,
         zealedModifiers: [],
         onGainZeal: async () => {
           const [drawnCard] = await card.player.cardManager.draw(1);

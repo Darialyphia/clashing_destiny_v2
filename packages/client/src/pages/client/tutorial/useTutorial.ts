@@ -45,6 +45,7 @@ export type UseTutorialOptions = Pick<
     'id'
   >;
   setup: (game: Game, client: GameClient) => Promise<void>;
+  reset?: (game: Game, client: GameClient) => MaybePromise<void>;
   config?: Partial<Config>;
   next?: string;
 };
@@ -105,6 +106,7 @@ export const useTutorial = (options: UseTutorialOptions) => {
       null) as Nullable<ClientTutorialTextBox>;
   });
   const currentStepError = ref<string | null>(null);
+  let isDisposed = false;
 
   tutorial.value = new Tutorial(
     game,
@@ -115,8 +117,10 @@ export const useTutorial = (options: UseTutorialOptions) => {
           ...step,
           async onEnter(game, newStep) {
             await currentStepTextBox.value?.onLeave?.(game, client.value);
+            if (isDisposed) return;
             currentStep.value = newStep;
             currentStepTextboxIndex.value = 0;
+            currentStepError.value = null;
             await step.onEnter?.(game, newStep, client.value);
             await currentStepTextBox.value?.onEnter?.(game, client.value, next);
           },
@@ -129,34 +133,51 @@ export const useTutorial = (options: UseTutorialOptions) => {
     )
   );
 
-  client.value.onUpdate(() => {
+  const stopClientUpdate = client.value.onUpdate(() => {
     triggerRef(tutorial);
   });
 
   (async function () {
     await game.initialize();
+    if (isDisposed) return;
     await options.setup(game, client.value);
+    if (isDisposed) return;
     await game.snapshotSystem.takeSnapshot();
 
     client.value.initialize(game.snapshotSystem.getOmniscientSnapshotAt(0));
-    tutorial.value.initialize(client.value);
+    await tutorial.value.initialize(client.value);
+    if (options.reset) {
+      tutorial.value.setCheckpoint(options.reset);
+    }
   })();
 
-  const next = async () => {
+  const advanceTextBox = async () => {
     await currentStepTextBox.value?.onLeave?.(game, client.value);
+    if (isDisposed) return;
     currentStepTextboxIndex.value++;
     await currentStepTextBox.value?.onEnter?.(game, client.value, next);
   };
+
+  const next = advanceTextBox;
+
+  onUnmounted(() => {
+    isDisposed = true;
+    stopClientUpdate?.();
+    tutorial.value.dispose();
+  });
 
   return {
     client,
     currentStep,
     currentStepTextBox,
     currentStepError,
-    async next() {
-      await currentStepTextBox.value?.onLeave?.(game, client.value);
-      currentStepTextboxIndex.value++;
-      await currentStepTextBox.value?.onEnter?.(game, client.value, next);
+    next: advanceTextBox,
+    progress: computed(() => tutorial.value.progress),
+    attemptCount: computed(() => tutorial.value.attemptCount),
+    status: computed(() => tutorial.value.status),
+    canRetry: computed(() => tutorial.value.hasCheckpoint),
+    async retry() {
+      await tutorial.value.resetToCheckpoint();
     },
     nextMission: options.next,
     isFinished: computed(() => {

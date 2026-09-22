@@ -12,12 +12,15 @@ import {
 import type { MinionCard } from '../../../entities/minion.entity';
 import { SimpleCommandmentBuffModifier } from '../../../../modifier/modifiers/simple-commandment-modifier';
 import { UntilEndOfTurnModifierMixin } from '../../../../modifier/mixins/until-end-of-turn.mixin';
+import { AffinitiesTogglableModifierMixin } from '../../../../modifier/mixins/togglable.mixin';
+import { InstantModifier } from '../../../../modifier/modifiers/instant.modifier';
 
 export const innerFocus: SpellBlueprint<MinionCard> = {
   id: 'innerFocus',
   name: 'Inner Focus',
   description: dedent /*html*/ `
-  Wake up an ally minion. If it is in your base, give it +1 Commandment this turn.
+  Wake up an ally minion.
+  <rt-affinity affinities="${AFFINITIES.FIRE},${AFFINITIES.FIRE},${AFFINITIES.FIRE},${AFFINITIES.NEUTRAL}"></rt-affinity> <rt-keyword>Instant</rt-keyword>.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -25,7 +28,7 @@ export const innerFocus: SpellBlueprint<MinionCard> = {
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.COMMON,
   affinities: [AFFINITIES.FIRE, AFFINITIES.FIRE],
-  manaCost: 3,
+  manaCost: 2,
   manaSupply: 2,
   speed: CARD_SPEED.FAST,
   tags: [],
@@ -40,20 +43,25 @@ export const innerFocus: SpellBlueprint<MinionCard> = {
         shouldPick: () => 1
       }
     }),
-  async onInit() {},
+  async onInit(game, card) {
+    await card.modifiers.add(
+      new InstantModifier(game, card, {
+        mixins: [
+          new AffinitiesTogglableModifierMixin(game, [
+            AFFINITIES.FIRE,
+            AFFINITIES.FIRE,
+            AFFINITIES.FIRE,
+            AFFINITIES.NEUTRAL
+          ])
+        ]
+      })
+    );
+  },
   async onPlay(game, card, targets) {
     const [target] = targets.cards;
     if (!target) return;
 
     await target.wakeUp();
-    if (target.location === CARD_LOCATIONS.BASE) {
-      await target.modifiers.add(
-        new SimpleCommandmentBuffModifier('inner-focus', game, card, {
-          amount: 1,
-          mixins: [new UntilEndOfTurnModifierMixin(game)]
-        })
-      );
-    }
   },
   aiHints: {
     shouldPlay: () => 1

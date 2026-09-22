@@ -12,6 +12,15 @@ export type TutorialStepValidationResult =
       errorMessage: string;
     };
 
+export type TutorialStatus = 'initializing' | 'active' | 'finished' | 'disposed';
+
+export type TutorialCheckpoint = {
+  id: string;
+  stepId: string;
+  stepIndex: number;
+  reset: (game: Game, client: GameClient) => MaybePromise<void>;
+};
+
 export type TutorialTextBox = {
   onEnter?: (game: Game, client: GameClient, next: () => void) => MaybePromise<void>;
   onLeave?: (game: Game, client: GameClient) => MaybePromise<void>;
@@ -37,6 +46,18 @@ export type TutorialStep = {
 export class Tutorial {
   private currentStepId: string;
 
+  private currentStepIndex = 0;
+
+  private isDispatching = false;
+
+  private _status: TutorialStatus = 'initializing';
+
+  private _attemptCount = 0;
+
+  private _lastError: string | null = null;
+
+  private checkpoint: TutorialCheckpoint | null = null;
+
   isFinished = false;
 
   private client!: GameClient;
@@ -56,29 +77,106 @@ export class Tutorial {
     return this.steps[this.currentStepId];
   }
 
+  get status() {
+    return this._status;
+  }
+
+  get attemptCount() {
+    return this._attemptCount;
+  }
+
+  get lastError() {
+    return this._lastError;
+  }
+
+  get progress() {
+    return {
+      current: this.currentStepIndex + 1,
+      total: Object.keys(this.steps).length
+    };
+  }
+
+  get hasCheckpoint() {
+    return this.checkpoint !== null;
+  }
+
   async initialize(client: GameClient) {
+    if (this._status !== 'initializing') return;
     this.client = client;
     await this.currentStep.onEnter?.(this.game, this.currentStep);
+    this._status = 'active';
   }
 
   async dispatch(input: SerializedInput) {
-    if (this.isFinished) return;
+    if (this._status !== 'active' || this.isDispatching) return;
+
+    this.isDispatching = true;
+    this._attemptCount++;
     const step = this.steps[this.currentStepId];
     const result = step.validate(input);
 
-    if (result.status === 'success') {
-      await this.game.dispatch(input);
-      const next = step.next(input);
-      await step.onSuccess?.(this.game, input, next ? this.steps[next] : null);
+    try {
+      if (result.status === 'success') {
+        this._lastError = null;
+        await this.game.dispatch(input);
+        const next = step.next(input);
+        await step.onSuccess?.(this.game, input, next ? this.steps[next] : null);
 
-      if (isDefined(next)) {
-        this.currentStepId = next;
-        await this.currentStep.onEnter?.(this.game, this.currentStep);
-      } else {
-        this.isFinished = true;
+        if (isDefined(next)) {
+          this.currentStepId = next;
+          this.currentStepIndex++;
+          await this.currentStep.onEnter?.(this.game, this.currentStep);
+        } else {
+          this.isFinished = true;
+          this._status = 'finished';
+        }
+      } else if (result.status === 'error') {
+        this._lastError = result.errorMessage;
+        await step.onFail?.(this.game, input, result.errorMessage);
       }
-    } else if (result.status === 'error') {
-      await step.onFail?.(this.game, input, result.errorMessage);
+    } finally {
+      this.isDispatching = false;
     }
+  }
+
+  setCheckpoint(reset: TutorialCheckpoint['reset'], id = this.currentStepId) {
+    if (this._status !== 'active') return;
+
+    this.checkpoint = {
+      id,
+      stepId: this.currentStepId,
+      stepIndex: this.currentStepIndex,
+      reset
+    };
+  }
+
+  async resetToCheckpoint() {
+    if (
+      (this._status !== 'active' && this._status !== 'finished') ||
+      this.isDispatching ||
+      this.checkpoint === null
+    ) {
+      return false;
+    }
+
+    this.isDispatching = true;
+    try {
+      await this.checkpoint.reset(this.game, this.client);
+      this.currentStepId = this.checkpoint.stepId;
+      this.currentStepIndex = this.checkpoint.stepIndex;
+      this._attemptCount = 0;
+      this._lastError = null;
+      this.isFinished = false;
+      this._status = 'active';
+      await this.currentStep.onEnter?.(this.game, this.currentStep);
+      return true;
+    } finally {
+      this.isDispatching = false;
+    }
+  }
+
+  dispose() {
+    this._status = 'disposed';
+    this.isDispatching = false;
   }
 }
