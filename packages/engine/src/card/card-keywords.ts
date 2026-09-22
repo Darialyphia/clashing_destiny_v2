@@ -293,6 +293,12 @@ export const KEYWORDS = {
     description: 'This unit is exhausted and has 0 attack until the end of the turn.',
     aliases: ['Stun']
   },
+  TACTIC: {
+    id: 'tactic',
+    name: 'Tactic X',
+    description: 'This card can be played from your supply zone for X.',
+    aliases: [/tactic [0-9]+/]
+  },
   TOUGH: {
     id: 'tough',
     name: 'Tough X',
