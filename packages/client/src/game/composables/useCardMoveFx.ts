@@ -19,7 +19,11 @@ export const useCardMoveFx = (cell: Ref<BoardSpaceViewModel>) => {
       isMovingUnit.value = true;
       // Get the old position before any DOM changes
       const oldElement = ui.value.DOMSelectors.cardOnBoard(event.card).element;
-      const oldRect = oldElement!.getBoundingClientRect();
+      const oldRect = oldElement?.getBoundingClientRect();
+      if (!oldRect) {
+        isMovingUnit.value = false;
+        return;
+      }
 
       cell.value.update({
         card: event.card

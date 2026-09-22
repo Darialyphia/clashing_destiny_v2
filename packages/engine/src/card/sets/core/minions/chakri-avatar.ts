@@ -13,14 +13,18 @@ import { GameEventModifierMixin } from '../../../../modifier/mixins/game-event.m
 import { MinionCard } from '../../../entities/minion.entity';
 import { GAME_EVENTS } from '../../../../game/game.events';
 import { CardEffectTriggeredEvent } from '../../../card.events';
-import { SimpleAttackBuffModifier } from '../../../../modifier/modifiers/simple-attack-buff.modifier';
-import { SimpleCommandmentBuffModifier } from '../../../../modifier/modifiers/simple-commandment-modifier';
+import { EmpoweredModifier } from '../../../../modifier/modifiers/empowered.modifier';
+import { UntilEndOfTurnModifierMixin } from '../../../../modifier/mixins/until-end-of-turn.mixin';
+import { SimpleStatsBuffModifier } from '../../../../modifier/modifiers/simple-stats-modifier';
+import { TogglableModifierMixin } from '../../../../modifier/mixins/togglable.mixin';
+import { IntimidateModifier } from '../../../../modifier/modifiers/intimidate.modifier';
 
 export const chakriAvatar: MinionBlueprint = {
   id: 'chakri-avatar',
   name: 'Chakri Avatar',
   description: dedent /*html*/ `
-  When you play a spell, I gain +1/+1/+0.
+  When I see you play 2 spells in a turn, <rt-keyword>Empower</rt-keyword> me until the end of the turn.
+  While <rt-keyword>Empowered</rt-keyword>, I have +2/+2/+0 and <rt-keyword>Intimidate 2</rt-keyword>.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -43,8 +47,14 @@ export const chakriAvatar: MinionBlueprint = {
         mixins: [
           new GameEventModifierMixin(game, {
             eventName: GAME_EVENTS.CARD_AFTER_PLAY,
+            frequencyPerGameTurn: 1,
             filter(event) {
-              return isSpell(event.data.card) && event.data.card.isAlly(card);
+              return (
+                isSpell(event.data.card) &&
+                event.data.card.isAlly(card) &&
+                card.player.cardTracker.getCardsPlayedThisTurnOfKind(CARD_KINDS.SPELL)
+                  .length === 2
+              );
             },
             async handler() {
               await game.emit(
@@ -54,18 +64,34 @@ export const chakriAvatar: MinionBlueprint = {
                   message: 'Chakri Avatar effect triggered.'
                 })
               );
+
               await card.modifiers.add(
-                new SimpleAttackBuffModifier('chakri-avatar-atk', game, card, {
-                  amount: 1
-                })
-              );
-              await card.modifiers.add(
-                new SimpleCommandmentBuffModifier('chakri-avatar-cmd', game, card, {
-                  amount: 1
+                new EmpoweredModifier(game, card, {
+                  mixins: [new UntilEndOfTurnModifierMixin(game)]
                 })
               );
             }
           })
+        ]
+      })
+    );
+
+    await card.modifiers.add(
+      new SimpleStatsBuffModifier('chakri-avatar-empowered-buff', game, card, {
+        atk: 2,
+        hp: 0,
+        cmd: 2,
+        mixins: [
+          new TogglableModifierMixin(game, () => card.modifiers.has(EmpoweredModifier))
+        ]
+      })
+    );
+
+    await card.modifiers.add(
+      new IntimidateModifier(game, card, {
+        level: 2,
+        mixins: [
+          new TogglableModifierMixin(game, () => card.modifiers.has(EmpoweredModifier))
         ]
       })
     );
