@@ -9,6 +9,7 @@ import InspectableCard from '@/card/components/InspectableCard.vue';
 import { useBoardCardAnimationSequence } from './useBoardCardAnimationSequence';
 import { useBoardCardFxEvents } from './useBoardCardFx';
 import { useBoardCardInteraction } from './useBoardCardInteraction';
+import SpriteFX from '../SpriteFX.vue';
 
 const {
   card,
@@ -140,6 +141,48 @@ const isHovered = ref(false);
         :actions-side="variant === 'small' ? 'bottom' : 'top'"
       />
     </Transition>
+
+    <SpriteFX
+      v-if="latestDamageAmount"
+      class="fx-container"
+      :sprites="[
+        {
+          spriteId: 'fx/impact',
+          animationSequence: ['impactorangebig'],
+          scale: 1.5,
+          offset: {
+            x: 0,
+            y: 0
+          }
+        },
+        {
+          spriteId: 'fx/collision',
+          animationSequence: ['collisionsparksblue'],
+          scale: 1.5,
+          offset: {
+            x: -10,
+            y: 10
+          }
+        }
+      ]"
+    />
+
+    <SpriteFX
+      v-if="latestHealAmount"
+      class="fx-container"
+      :sprites="[
+        {
+          spriteId: 'fx/fx_heal',
+          animationSequence: ['default'],
+          scale: 1.5,
+          offset: {
+            x: 0,
+            y: -20
+          }
+        }
+      ]"
+    />
+
     <Transition>
       <div class="heal" v-if="latestHealAmount">{{ latestHealAmount }}</div>
     </Transition>
@@ -319,23 +362,12 @@ const isHovered = ref(false);
   }
 }
 
-.retaliate-button {
+.fx-container {
   position: absolute;
-  top: -25%;
-  left: 50%;
-  translate: -50% -50%;
-  width: calc(24px * var(--pixel-scale));
-  height: calc(19px * var(--pixel-scale));
-  border: none;
-  cursor: pointer;
-  background: url('@/assets/ui/retaliate.png') no-repeat center center;
-  background-size: cover;
-  transform: translateZ(2px);
-  transition: filter 0.3s var(--ease-2);
-  &:hover {
-    filter: brightness(1.2) drop-shadow(0 0 6px var(--yellow-3));
-  }
+  inset: 0;
+  transform: translateZ(10px);
 }
+
 @keyframes drop {
   0% {
     scale: 2;
