@@ -63,8 +63,14 @@ export const useBoardCardFxEvents = (
   });
 
   const isTakingDamage = ref(false);
+  const latestDamageAmount = ref<number | null>(null);
   useFxEvent(FX_EVENTS.CARD_BEFORE_TAKE_DAMAGE, async event => {
     if (event.card !== card.id) return;
+
+    latestDamageAmount.value = event.amount;
+    setTimeout(() => {
+      latestDamageAmount.value = null;
+    }, 1000);
 
     if (!unitEl.value) return;
     isTakingDamage.value = true;
@@ -79,6 +85,36 @@ export const useBoardCardFxEvents = (
     await until(isTakingDamage).toBe(false);
     return new Promise(resolve => {
       onHit();
+      const stop = onSequenceEnd(() => {
+        resolve();
+        stop();
+      });
+    });
+  });
+
+  const isGettingHealed = ref(false);
+  const latestHealAmount = ref<number | null>(null);
+  useFxEvent(FX_EVENTS.MINION_AFTER_HEAL, async event => {
+    if (event.card.id !== card.id) return;
+
+    if (!unitEl.value) return;
+    isGettingHealed.value = true;
+
+    latestHealAmount.value = event.amount;
+    setTimeout(() => {
+      latestHealAmount.value = null;
+    }, 1000);
+
+    unitEl.value.addEventListener(
+      'animationend',
+      () => {
+        isGettingHealed.value = false;
+      },
+      { once: true }
+    );
+
+    await until(isGettingHealed).toBe(false);
+    return new Promise(resolve => {
       const stop = onSequenceEnd(() => {
         resolve();
         stop();
@@ -121,6 +157,9 @@ export const useBoardCardFxEvents = (
     isBeingPlayed,
     DROP_DURATION,
     isAttacking,
-    isTakingDamage
+    isTakingDamage,
+    isGettingHealed,
+    latestDamageAmount,
+    latestHealAmount
   };
 };

@@ -77,10 +77,8 @@ const onMouseleave = () => {
         class="supply-indicator"
         v-if="canSupply && ui.selectedCard && isHovered"
       >
-        <div>
-          +
-          <rt-mana>{{ ui.selectedCard.manaSupply }}</rt-mana>
-        </div>
+        +
+        {{ ui.selectedCard.manaSupply }}
       </div>
     </transition>
   </div>
@@ -95,8 +93,14 @@ const onMouseleave = () => {
   display: flex;
   align-items: center;
 
-  &.hoverable:hover {
-    box-shadow: 0 0 35px var(--yellow-5);
+  &.hoverable {
+    --shadow-color: var(--orange-4);
+    filter: drop-shadow(0 0 6px var(--shadow-color));
+    box-shadow: 0 0px 20px 0 var(--shadow-color);
+
+    &:hover {
+      --shadow-color: var(--yellow-2);
+    }
   }
 }
 
@@ -113,15 +117,14 @@ const onMouseleave = () => {
 
 .supply-indicator {
   position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  font-weight: bold;
-  color: var(--white);
-  -webkit-text-stroke: 2px var(--black);
+  top: 0;
+  left: -25px;
+  font-weight: var(--font-weight-9);
+  font-size: 32px;
+  color: var(--green-5);
+  -webkit-text-stroke: 4px black;
   paint-order: stroke fill;
-  scale: 2;
-  transform: translateY(-30px);
+  transform: translateY(-50px);
 
   &.v-enter-active,
   &.v-leave-active {

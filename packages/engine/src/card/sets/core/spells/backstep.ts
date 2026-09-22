@@ -35,13 +35,16 @@ export const backstep: SpellBlueprint<MinionCard> = {
   tags: [],
   shouldHideTargetArrows: true,
   canPlay: (game, card) =>
-    singleAllyMinionTargetRules.canPlay(game, card, minion => minion.isOnBattlefield) &&
-    card.player.boardSide.hasEmptySpaceInBase,
+    singleAllyMinionTargetRules.canPlay(
+      game,
+      card,
+      minion => minion.isOnBattlefield && minion.canMove
+    ) && card.player.boardSide.hasEmptySpaceInBase,
   getTargets: async (game, card) => {
     const minionToMove = await singleAllyMinionTargetRules.getTargets({
       game,
       card,
-      predicate: minion => minion.isOnBattlefield,
+      predicate: minion => minion.isOnBattlefield && minion.canMove,
       timeoutFallback: singleAllyMinionTargetRules.defaultTimeoutFallback(game, card),
       canCancel: true,
       aiHints: {

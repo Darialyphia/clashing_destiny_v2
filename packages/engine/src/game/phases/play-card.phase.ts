@@ -5,6 +5,7 @@ import { InvalidPlayerError } from '../game-error';
 import type { AnyCard } from '../../card/entities/card.entity';
 import type { GamePhaseController } from './game-phase';
 import { GAME_PHASE_TRANSITIONS } from '../game.enums';
+import { CARD_LOCATIONS } from '../../card/card.enums';
 
 export class PlayCardPhase
   implements GamePhaseController, Serializable<{ card: string; player: string }>
@@ -81,28 +82,36 @@ export class PlayCardPhase
     );
   }
 
+  get hasBeenSupplied() {
+    return this._card.location === CARD_LOCATIONS.SUPPLY;
+  }
+
   async supply() {
     await this._player.supplyCard(this._card);
 
     if (this.isPlayingCard) {
       const interactionContext = this.game.interaction.getContext();
       await interactionContext.ctx.cancel(this._player);
+    } else {
+      await this.game.gamePhaseSystem.sendTransition(
+        GAME_PHASE_TRANSITIONS.CANCEL_PLAYING_CARD
+      );
     }
-
-    await this.game.gamePhaseSystem.sendTransition(
-      GAME_PHASE_TRANSITIONS.CANCEL_PLAYING_CARD
-    );
   }
 
   private async onCancelDuringPlay() {
     this._isPlayingCard = false;
-    await this._player.manaManager.gain(this.manaCost);
+    if (!this.hasBeenSupplied) {
+      await this._player.manaManager.gain(this.manaCost);
+    }
     this.card.isPlayedFromHand = false;
     return this.cancel(this._player);
   }
 
   async cancel(player: Player) {
-    await this.card.addToHand(this.indexInHand);
+    if (!this.hasBeenSupplied) {
+      await this.card.addToHand(this.indexInHand);
+    }
     assert(player.equals(this._player), new InvalidPlayerError());
     await this.game.gamePhaseSystem.sendTransition(
       GAME_PHASE_TRANSITIONS.CANCEL_PLAYING_CARD

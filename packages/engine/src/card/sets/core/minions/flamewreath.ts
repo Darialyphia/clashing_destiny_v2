@@ -1,6 +1,6 @@
 import dedent from 'dedent';
 import type { MinionBlueprint } from '../../../card-blueprint';
-import { defaultCardArt } from '../../../card-utils';
+import { defaultCardArt, isMinion } from '../../../card-utils';
 import {
   CARD_SETS,
   CARD_KINDS,
@@ -12,13 +12,14 @@ import { isDefined } from '@game/shared';
 import { BurnModifier } from '../../../../modifier/modifiers/burn.modifier';
 import { OnMoveModifier } from '../../../../modifier/modifiers/on-move.modifier';
 import { FlankingModifier } from '../../../../modifier/modifiers/flanking.modifier';
+import { AbilityDamage } from '../../../../utils/damage';
 
 export const flamewreath: MinionBlueprint = {
   id: 'flamewreath',
   name: 'Flamewreath',
   description: dedent /*html*/ `
   <rt-keyword>Flanking</rt-keyword><br/>
-  <rt-trigger>On Move</rt-trigger> I Inflict <rt-keyword>Burn 2</rt-keyword> to all enemies here.
+  <rt-trigger>On Move</rt-trigger> Deal 1 damage to all enemies here.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -44,9 +45,11 @@ export const flamewreath: MinionBlueprint = {
 
           const enemies = card
             .battlefield!.opponentSpaces.map(space => space.card)
-            .filter(isDefined);
+            .filter(isDefined)
+            .filter(isMinion);
+
           for (const enemy of enemies) {
-            await enemy?.modifiers.add(new BurnModifier(game, card, { stacks: 2 }));
+            await enemy?.takeDamage(card, new AbilityDamage(1));
           }
         }
       })

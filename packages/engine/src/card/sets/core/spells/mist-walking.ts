@@ -34,12 +34,13 @@ export const mistWalking: SpellBlueprint<MinionCard> = {
   tags: [],
   shouldHideTargetArrows: true,
   canPlay: (game, card) =>
-    singleAllyMinionTargetRules.canPlay(game, card) &&
+    singleAllyMinionTargetRules.canPlay(game, card, minion => minion.canMove) &&
     card.player.boardSide.hasEmptySpace,
   getTargets: async (game, card) => {
     const minionToMove = await singleAllyMinionTargetRules.getTargets({
       game,
       card,
+      predicate: minion => minion.canMove,
       timeoutFallback: singleAllyMinionTargetRules.defaultTimeoutFallback(game, card),
       canCancel: true,
       aiHints: {

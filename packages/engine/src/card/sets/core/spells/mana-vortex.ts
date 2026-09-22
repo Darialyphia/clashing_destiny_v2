@@ -28,7 +28,8 @@ export const manaVortex: SpellBlueprint = {
   tags: [],
   shouldHideTargetArrows: true,
   canPlay: () => true,
-  getTargets: (game, card) => anywhereTargetRules.getTargets({ game, card }),
+  getTargets: (game, card) =>
+    anywhereTargetRules.getTargets({ game, card, canCancel: true }),
   async onInit() {},
   async onPlay(game, card) {
     await card.player.cardManager.draw(1);

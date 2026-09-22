@@ -30,6 +30,7 @@
     "dev": "tsx ./src/scripts/dev-card-sets.ts",
     "test": "vitest",
     "type-check": "tsc --noEmit",
+    "test:type-check": "tsc --project tsconfig.test.json",
     "lint": "eslint ./src --fix",
     "fix-circular-deps": "dpdm -T --no-tree ./src/**/*.ts",
     "generate-cards": "tsx ./src/scripts/generate-card-dict.ts"

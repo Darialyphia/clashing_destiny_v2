@@ -182,6 +182,7 @@ export class ClientStateController {
     event: SerializedEvent<'INTERACTION_AFTER_CHANGE_STATE'>;
   }) {
     this.state.interaction = event.event.to;
+    this.state = { ...this.state };
   }
 
   private async onMinionSummoned(event: { event: SerializedEvent<'MINION_SUMMONED'> }) {

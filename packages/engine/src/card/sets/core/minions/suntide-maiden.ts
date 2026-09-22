@@ -43,7 +43,6 @@ export const suntideMaiden: MinionBlueprint = {
               .map(space => space.card)
               .filter(isDefined)
               .filter(isMinion) ?? [];
-
           for (const minion of minionstoHeal) {
             await minion.heal(3);
           }

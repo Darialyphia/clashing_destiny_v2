@@ -12,7 +12,9 @@ import {
 import {
   GameSnapshotSystem,
   type GameStateSnapshot,
-  type PatchBasedSnapshotDiff
+  type PatchBasedSnapshotDiff,
+  type SerializedOmniscientState,
+  type SerializedPlayerState
 } from './systems/game-snapshot.system';
 import { PlayerSystem } from '../player/player.system';
 import { GAME_EVENTS, GameReadyEvent, type GameEventMap } from './game.events';
@@ -237,7 +239,7 @@ export class Game implements Serializable<SerializedGame> {
   }
 
   subscribeOmniscient(cb: (snapshot: GameStateSnapshot<PatchBasedSnapshotDiff>) => void) {
-    this.on(GAME_EVENTS.NEW_SNAPSHOT, e =>
+    return this.on(GAME_EVENTS.NEW_SNAPSHOT, e =>
       cb(this.snapshotSystem.getOmniscientPatchDiffSnapshotAt(e.data.id))
     );
   }
@@ -246,8 +248,25 @@ export class Game implements Serializable<SerializedGame> {
     id: string,
     cb: (snapshot: GameStateSnapshot<PatchBasedSnapshotDiff>) => void
   ) {
-    this.on(GAME_EVENTS.NEW_SNAPSHOT, e =>
+    return this.on(GAME_EVENTS.NEW_SNAPSHOT, e =>
       cb(this.snapshotSystem.getPlayerPatchDiffSnapshotAt(id, e.data.id))
+    );
+  }
+
+  subscribeOmniscientState(
+    cb: (snapshot: GameStateSnapshot<SerializedOmniscientState>) => void
+  ) {
+    return this.on(GAME_EVENTS.NEW_SNAPSHOT, e =>
+      cb(this.snapshotSystem.getOmniscientSnapshotAt(e.data.id))
+    );
+  }
+
+  subscribePlayerState(
+    id: string,
+    cb: (snapshot: GameStateSnapshot<SerializedPlayerState>) => void
+  ) {
+    return this.on(GAME_EVENTS.NEW_SNAPSHOT, e =>
+      cb(this.snapshotSystem.getSnapshotForPlayerAt(id, e.data.id))
     );
   }
 

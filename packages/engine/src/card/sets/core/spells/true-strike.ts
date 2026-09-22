@@ -34,14 +34,14 @@ export const trueStrike: SpellBlueprint<MinionCard> = {
   speed: CARD_SPEED.FAST,
   tags: [],
   canPlay: (game, card) =>
-    singleEnemyMinionTargetRules.canPlay(game, card, minion => minion.isOnBattlefield),
+    singleEnemyMinionTargetRules.canPlay(game, card, minion => minion.isEnemy(card)),
   getTargets: (game, card) =>
     singleEnemyMinionTargetRules.getTargets({
       game,
       card,
       timeoutFallback: singleEnemyTargetRules.defaultTimeoutFallback(game, card),
       canCancel: true,
-      predicate: minion => minion.isOnBattlefield,
+      predicate: minion => minion.isEnemy(card),
       aiHints: {
         shouldPick: () => 1
       }

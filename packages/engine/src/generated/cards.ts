@@ -415,7 +415,7 @@ export const cardsBySet: Record<string, CardSet> = {
   {
     "id": "sun-lion-priest",
     "collectable": true,
-    "rarity": "rare",
+    "rarity": "epic",
     "kind": "MINION"
   },
   {

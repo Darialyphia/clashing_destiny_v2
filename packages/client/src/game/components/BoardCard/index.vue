@@ -60,13 +60,18 @@ onMounted(() => {
 
 const unitEl = useTemplateRef('unit');
 
-const { isBeingPlayed, DROP_DURATION, isAttacking, isTakingDamage } =
-  useBoardCardFxEvents(card, unitEl, {
-    onAttack: playAttackAnimationSequence,
-    onDestroy: playDeathAnimationSequence,
-    onHit: playHitSequence,
-    onSequenceEnd: addOnAnimationSequenceEndCallback
-  });
+const {
+  isBeingPlayed,
+  DROP_DURATION,
+  isAttacking,
+  isTakingDamage,
+  isGettingHealed
+} = useBoardCardFxEvents(card, unitEl, {
+  onAttack: playAttackAnimationSequence,
+  onDestroy: playDeathAnimationSequence,
+  onHit: playHitSequence,
+  onSequenceEnd: addOnAnimationSequenceEndCallback
+});
 
 const shouldScaleSprite = computed(() => {
   return card.kind !== CARD_KINDS.DESTINY;
@@ -89,6 +94,7 @@ const isHovered = ref(false);
         'is-being-played': isBeingPlayed,
         'is-attacking': isAttacking,
         'is-taking-damage': isTakingDamage,
+        'is-getting-healed': isGettingHealed,
         'has-ability': hasAvailableAbilities,
         'is-shaking': isShaking,
         'is-targetable': isTargetable,
@@ -186,10 +192,13 @@ const isHovered = ref(false);
   }
 
   &.is-taking-damage {
-    animation:
-      unit-take-damage 0.3s ease-in-out,
-      unit-take-damage-shake 0.3s linear;
-    &::after {
+    &:deep(.sprite) {
+      animation:
+        unit-take-damage 0.3s ease-in-out,
+        unit-take-damage-shake 0.3s linear;
+    }
+
+    /* &::after {
       content: '';
       position: absolute;
       inset: 0;
@@ -197,6 +206,12 @@ const isHovered = ref(false);
       opacity: 0.8;
       mix-blend-mode: multiply;
       pointer-events: none;
+    } */
+  }
+
+  &.is-getting-healed {
+    &:deep(.sprite) {
+      animation: unit-get-healed 0.3s ease-in-out;
     }
   }
 
@@ -288,6 +303,13 @@ const isHovered = ref(false);
   50% {
     filter: sepia(100%) hue-rotate(-40deg) brightness(75%) saturate(180%)
       drop-shadow(0 0 10px red);
+  }
+}
+
+@keyframes unit-get-healed {
+  50% {
+    filter: sepia(0%) hue-rotate(30deg) brightness(125%) saturate(180%)
+      drop-shadow(0 0 10px lime);
   }
 }
 

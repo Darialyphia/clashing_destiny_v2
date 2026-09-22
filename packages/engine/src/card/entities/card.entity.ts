@@ -413,6 +413,12 @@ export abstract class Card<
     );
   }
 
+  async sendToSupply() {
+    await this.changeLocation(CARD_LOCATIONS.SUPPLY, () =>
+      this.originalPlayer.cardManager.sendToSupply(this)
+    );
+  }
+
   async sendToBanishPile() {
     await this.changeLocation(CARD_LOCATIONS.BANISH_PILE, () =>
       this.originalPlayer.cardManager.sendToBanishPile(this)

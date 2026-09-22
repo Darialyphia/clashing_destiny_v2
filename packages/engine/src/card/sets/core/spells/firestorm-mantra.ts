@@ -22,7 +22,7 @@ export const firestormMantra: SpellBlueprint<DestinyCard> = {
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.EPIC,
   affinities: [AFFINITIES.FIRE, AFFINITIES.FIRE, AFFINITIES.FIRE],
-  manaCost: 4,
+  manaCost: 2,
   manaSupply: 2,
   speed: CARD_SPEED.FAST,
   tags: [],
@@ -32,6 +32,7 @@ export const firestormMantra: SpellBlueprint<DestinyCard> = {
       game,
       card,
       timeoutFallback: [],
+      canCancel: true,
       aiHints: { shouldPick: () => 1 }
     }),
   async onInit() {},

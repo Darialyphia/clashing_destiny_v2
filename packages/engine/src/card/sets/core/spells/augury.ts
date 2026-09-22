@@ -31,6 +31,7 @@ export const augury: SpellBlueprint<DestinyCard> = {
     singleBattlefield.getTargets({
       game,
       card,
+      canCancel: true,
       predicate: () => true,
       aiHints: { shouldPick: () => 1 },
       label: 'Select a battlefield',

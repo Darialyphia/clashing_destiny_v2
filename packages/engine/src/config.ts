@@ -52,7 +52,7 @@ export const defaultConfig: Config = {
   INITIAL_HAND_SIZE: 0,
   MAX_HAND_SIZE: 8,
   SHUFFLE_DECK_ON_GAME_START: true,
-  CARDS_DRAWN_PER_TURN: 5,
+  CARDS_DRAWN_PER_TURN: 6,
   CARD_DRAW_MODE: 'threshold',
 
   CARDS_MULLIGANED_PER_TURN: 2,

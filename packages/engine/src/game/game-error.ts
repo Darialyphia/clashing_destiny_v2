@@ -41,6 +41,12 @@ export class UnableToCommitError extends GameError {
   }
 }
 
+export class UnableToCancelError extends GameError {
+  constructor() {
+    super('Unable to cancel');
+  }
+}
+
 export class NotEnoughCardsError extends GameError {
   constructor(expected: number, received: number) {
     super(`Not enough cards selected, expected ${expected}, received ${received}`);

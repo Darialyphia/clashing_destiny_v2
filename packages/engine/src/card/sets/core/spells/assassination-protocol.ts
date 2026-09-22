@@ -8,7 +8,6 @@ import {
 import {
   AFFINITIES,
   CARD_KINDS,
-  CARD_LOCATIONS,
   CARD_SETS,
   CARD_SPEED,
   RARITIES
@@ -35,15 +34,18 @@ export const assassinationProtocol: SpellBlueprint<MinionCard> = {
   speed: CARD_SPEED.FAST,
   tags: [],
   canPlay: (game, card) =>
-    singleAllyMinionTargetRules.canPlay(game, card, minion => minion.manaCost <= 3) &&
-    card.player.boardSide.hasEmptySpaceInBattlefield,
+    singleAllyMinionTargetRules.canPlay(
+      game,
+      card,
+      minion => minion.manaCost <= 3 && minion.canMove
+    ) && card.player.boardSide.hasEmptySpaceInBattlefield,
   getTargets: async (game, card) => {
     const minionToMove = await singleAllyMinionTargetRules.getTargets({
       game,
       card,
       timeoutFallback: singleAllyMinionTargetRules.defaultTimeoutFallback(game, card),
       canCancel: true,
-      predicate: minion => minion.manaCost <= 3,
+      predicate: minion => minion.manaCost <= 3 && minion.canMove,
       aiHints: {
         shouldPick: () => 1
       }

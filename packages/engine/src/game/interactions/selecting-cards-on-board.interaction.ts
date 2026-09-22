@@ -5,7 +5,11 @@ import type { Player } from '../../player/player.entity';
 import type { Game } from '../game';
 
 import { INTERACTION_STATE_TRANSITIONS } from '../game.enums';
-import { InvalidPlayerError, UnableToCommitError } from '../game-error';
+import {
+  InvalidPlayerError,
+  UnableToCancelError,
+  UnableToCommitError
+} from '../game-error';
 
 export type SelectingCardOnBoardContextOptions = {
   player: Player;
@@ -107,6 +111,7 @@ export class SelectingCardOnBoardContext {
 
   async cancel(player: Player) {
     assert(player.equals(this._player), new InvalidPlayerError());
+    assert(this.options.canCancel, new UnableToCancelError());
     await this.game.interaction.sendTransition(
       INTERACTION_STATE_TRANSITIONS.CANCEL_SELECTING_CARDS_ON_BOARD,
       {}

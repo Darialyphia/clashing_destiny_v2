@@ -37,7 +37,9 @@ export const juxtaposition: SpellBlueprint<MinionCard> = {
     minionTargetRules.canPlay(game, card, {
       min: 2,
       predicate: minion =>
-        minion.player.minions.filter(minion => minion.canBeTargeted(card)).length >= 2
+        minion.player.minions.filter(
+          minion => minion.canBeTargeted(card) && minion.canMove
+        ).length >= 2
     }),
   getTargets: async (game, card) => {
     const minion1 = await singleMinionTargetRules.getTargets({
@@ -45,6 +47,7 @@ export const juxtaposition: SpellBlueprint<MinionCard> = {
       card,
       timeoutFallback: singleAllyMinionTargetRules.defaultTimeoutFallback(game, card),
       canCancel: true,
+      predicate: minion => minion.canMove,
       aiHints: {
         shouldPick: () => 1
       }
@@ -55,7 +58,7 @@ export const juxtaposition: SpellBlueprint<MinionCard> = {
     const minion2 = await singleMinionTargetRules.getTargets({
       game,
       card,
-      predicate: minion => minion.isAlly(minion1.result.cards[0]),
+      predicate: minion => minion.isAlly(minion1.result.cards[0]) && minion.canMove,
       timeoutFallback: singleAllyMinionTargetRules.defaultTimeoutFallback(game, card),
       canCancel: true,
       aiHints: {
@@ -81,11 +84,7 @@ export const juxtaposition: SpellBlueprint<MinionCard> = {
     const [minion1, minion2] = targets.cards;
     if (!minion1 || !minion2) return;
 
-    const minion1Position = minion1.position!;
-    const minion2Position = minion2.position!;
-
-    await minion1.moveToSpace(minion2Position);
-    await minion2.moveToSpace(minion1Position);
+    await minion1.player.boardSide.swapMinionPositions(minion1, minion2);
   },
   aiHints: {
     shouldPlay: () => 1

@@ -335,6 +335,50 @@ export class BoardSide
       .exhaustive();
   }
 
+  async swapMinionPositions(first: MinionCard, second: MinionCard) {
+    if (first.equals(second)) return;
+    if (!first.canMove || !second.canMove) return;
+
+    const firstPosition = first.position;
+    const secondPosition = second.position;
+    if (!firstPosition || !secondPosition) return;
+    if (
+      !this.allSpaces.includes(firstPosition) ||
+      !this.allSpaces.includes(secondPosition)
+    ) {
+      return;
+    }
+
+    await this.game.emit(
+      GAME_EVENTS.CARD_BEFORE_MOVE,
+      new CardBeforeMoveEvent({ card: first, to: secondPosition })
+    );
+    await this.game.emit(
+      GAME_EVENTS.CARD_BEFORE_MOVE,
+      new CardBeforeMoveEvent({ card: second, to: firstPosition })
+    );
+
+    firstPosition.placeCard(second);
+    secondPosition.placeCard(first);
+
+    await this.game.emit(
+      GAME_EVENTS.CARD_AFTER_MOVE,
+      new CardAfterMoveEvent({
+        card: first,
+        from: firstPosition,
+        to: secondPosition
+      })
+    );
+    await this.game.emit(
+      GAME_EVENTS.CARD_AFTER_MOVE,
+      new CardAfterMoveEvent({
+        card: second,
+        from: secondPosition,
+        to: firstPosition
+      })
+    );
+  }
+
   serialize(): SerializedBoardSide {
     return {
       playerId: this.player.id,

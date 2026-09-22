@@ -1,6 +1,6 @@
 import dedent from 'dedent';
 import type { MinionBlueprint } from '../../../card-blueprint';
-import { defaultCardArt } from '../../../card-utils';
+import { defaultCardArt, isSpell } from '../../../card-utils';
 import {
   CARD_SETS,
   CARD_KINDS,
@@ -14,7 +14,7 @@ export const flutterCrane: MinionBlueprint = {
   id: 'flutter-crane',
   name: 'Flutter Crane',
   description: dedent /*html*/ `
-  <rt-trigger>On Move</rt-trigger> draw a card.
+  <rt-timing>Once per turn</rt-timing><rt-trigger>On Move</rt-trigger> Add a spell in your Supply to your hand.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -34,8 +34,31 @@ export const flutterCrane: MinionBlueprint = {
   async onInit(game, card) {
     await card.modifiers.add(
       new OnMoveModifier(game, card, {
+        frequencyPerGameTurn: 1,
         async handler() {
-          await card.player.cardManager.draw(1);
+          const spellsInSupply = [...card.player.cardManager.supply].filter(isSpell);
+          if (!spellsInSupply.length) return;
+
+          const spellToAdd = await game.interaction.chooseCards({
+            canCancel: false,
+            players: {
+              [card.player.id]: {
+                label: 'Choose a spell to add to your hand',
+                choices: spellsInSupply.map(spell => ({
+                  card: spell,
+                  aiHints: { shouldPick: () => 1 }
+                })),
+                minChoiceCount: 1,
+                maxChoiceCount: 1,
+                timeoutFallback: [spellsInSupply[0]]
+              }
+            }
+          });
+
+          if (spellToAdd.cancelled) return;
+
+          const [spell] = spellToAdd.result[card.player.id].cards;
+          await spell.addToHand();
         }
       })
     );
