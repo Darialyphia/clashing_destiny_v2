@@ -9,6 +9,7 @@
     "preview": "vite preview",
     "build-only": "vite build",
     "profile": "vite --profile --open",
+    "debug-transforms": "vite --debug transform",
     "type-check": "vue-tsc --build --force",
     "lint": "eslint . --fix",
     "format": "prettier --write src/"

@@ -44,9 +44,9 @@ export const tuskBoar: MinionBlueprint = {
   dynamicDescription(game, card) {
     const totalDamageDealt = getTotalDamageDealtThisTurn(card);
     return dedent /*html*/ `
-  <rt-keyword>Overwhelm</rt-keyword>, <rt-keyword>Instant Move</rt-keyword>,
-  This costs 0 if you have dealt 4 (${Math.max(0, 4 - totalDamageDealt)} left!) or more damage this turn.
-  <rt-timing>End of Turn</rt-timing>Return this to your hand.
+  <rt-keyword>Overwhelm</rt-keyword>, <rt-keyword>Instant Move</rt-keyword>.
+  I cost 0 if you have dealt (${Math.max(0, 4 - totalDamageDealt)} left!) or more damage this turn.
+  <rt-timing>End of Turn</rt-timing>Return me to your hand.
     `;
   },
   collectable: true,

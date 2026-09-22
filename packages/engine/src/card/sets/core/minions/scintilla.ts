@@ -17,7 +17,7 @@ export const scintilla: MinionBlueprint = {
   id: 'scintilla',
   name: 'Scintilla',
   description: dedent /*html*/ `
-  While <rt-keyword>Empowered</rt-keyword>, this has +1/+1/+1 and <rt-keyword>Instant Move</rt-keyword>.
+  While <rt-keyword>Empowered</rt-keyword>, I have +1/+1/+1 and <rt-keyword>Instant Move</rt-keyword>.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -37,7 +37,7 @@ export const scintilla: MinionBlueprint = {
     {
       id: 'scintilla-empower',
       label: 'Empower Scintilla',
-      description: 'Empower this.',
+      description: 'Empower me.',
       manaCost: 2,
       canUse: (game, card) => !card.modifiers.has(EmpoweredModifier),
       getTargets: (game, card) =>

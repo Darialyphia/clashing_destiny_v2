@@ -14,14 +14,13 @@ import { MinionCard } from '../../../entities/minion.entity';
 import { GAME_EVENTS } from '../../../../game/game.events';
 import { CardEffectTriggeredEvent } from '../../../card.events';
 import { SimpleAttackBuffModifier } from '../../../../modifier/modifiers/simple-attack-buff.modifier';
-import { UntilEndOfTurnModifierMixin } from '../../../../modifier/mixins/until-end-of-turn.mixin';
 import { SimpleCommandmentBuffModifier } from '../../../../modifier/modifiers/simple-commandment-modifier';
 
 export const chakriAvatar: MinionBlueprint = {
   id: 'chakri-avatar',
   name: 'Chakri Avatar',
   description: dedent /*html*/ `
-  When you play a spell, this gains +1/+1/+0.
+  When you play a spell, I gain +1/+1/+0.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,

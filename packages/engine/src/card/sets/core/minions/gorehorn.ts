@@ -17,7 +17,7 @@ export const gorehorn: MinionBlueprint = {
   name: 'Gorehorn',
   description: dedent /*html*/ `
   <rt-keyword>Overwhelm</rt-keyword>.
-  <rt-affinity affinities="Songhai,Songhai,Songhai"></rt-affinity> This has +0/+1/+1.
+  <rt-affinity affinities="Songhai,Songhai,Songhai"></rt-affinity> I have +0/+1/+1.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,

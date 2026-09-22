@@ -1,7 +1,7 @@
 import dedent from 'dedent';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import { GAME_EVENTS } from '../../../../game/game.events';
-import { defaultCardArt, isMinion } from '../../../card-utils';
+import { defaultCardArt } from '../../../card-utils';
 import {
   CARD_SETS,
   CARD_KINDS,
@@ -9,26 +9,22 @@ import {
   CARD_SPEED,
   AFFINITIES
 } from '../../../card.enums';
-import {
-  WhileOnBaseModifier,
-  WhileOnBoardModifier
-} from '../../../../modifier/modifiers/while-on-board.modifier';
+import { WhileOnBattlefieldModifier } from '../../../../modifier/modifiers/while-on-board.modifier';
 import { GameEventModifierMixin } from '../../../../modifier/mixins/game-event.mixin';
 import { MinionCard } from '../../../entities/minion.entity';
-import { ZealModifier } from '../../../../modifier/modifiers/zeal.modifier';
 import { CardEffectTriggeredEvent } from '../../../card.events';
 
 export const sunlionPriest: MinionBlueprint = {
   id: 'sun-lion-priest',
   name: 'Sunlion Priest',
   description: dedent /*html*/ `
-  <rt-location locations="base"></rt-location> When a minion with <rt-keyword>Zeal</rt-keyword> is destroyed, draw a card.
+  <rt-location locations="battlefield"></rt-location> When you win a round here by 3 or more influence, gain an additional Victory Point.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
   art: defaultCardArt('minions/war-exorcist'),
   kind: CARD_KINDS.MINION,
-  rarity: RARITIES.RARE,
+  rarity: RARITIES.EPIC,
   affinities: [AFFINITIES.LIGHT, AFFINITIES.LIGHT, AFFINITIES.NEUTRAL],
   manaCost: 5,
   manaSupply: 2,
@@ -41,19 +37,18 @@ export const sunlionPriest: MinionBlueprint = {
   abilities: [],
   async onInit(game, card) {
     await card.modifiers.add(
-      new WhileOnBaseModifier<MinionCard>('sun-lion-priest', game, card, {
+      new WhileOnBattlefieldModifier<MinionCard>('sun-lion-priest', game, card, {
         mixins: [
           new GameEventModifierMixin(game, {
-            eventName: GAME_EVENTS.CARD_AFTER_DESTROY,
-            frequencyPerGameTurn: 1,
+            eventName: GAME_EVENTS.BATTLEFIELD_SCORED,
             filter(event) {
               return (
-                event.data.card.isAlly(card) &&
-                isMinion(event.data.card) &&
-                event.data.card.modifiers.has(ZealModifier)
+                event.data.winner.player.equals(card.player) &&
+                event.data.battledield.zone === card.location &&
+                event.data.winner.score - event.data.loser.score >= 3
               );
             },
-            async handler(event) {
+            async handler() {
               await game.emit(
                 GAME_EVENTS.CARD_EFFECT_TRIGGERED,
                 new CardEffectTriggeredEvent({
@@ -62,7 +57,7 @@ export const sunlionPriest: MinionBlueprint = {
                 })
               );
 
-              await card.player.cardManager.draw(1);
+              await card.player.gainVictoryPoints(1);
             }
           })
         ]

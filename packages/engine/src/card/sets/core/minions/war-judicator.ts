@@ -9,12 +9,14 @@ import {
   AFFINITIES
 } from '../../../card.enums';
 import { ZealModifier } from '../../../../modifier/modifiers/zeal.modifier';
+import { Modifier } from '../../../../modifier/modifier.entity';
+import { SimpleSupplyModifier } from '../../../../modifier/modifiers/simple-supply-modifier';
 
 export const warJudicator: MinionBlueprint = {
   id: 'war-judicator',
   name: 'War Judicator',
   description: dedent /*html*/ `
-  <rt-keyword>Zeal 4</rt-keyword>: draw a card.
+  <rt-keyword>Zeal 4</rt-keyword>: draw a card and increase its supply by 1.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -37,7 +39,13 @@ export const warJudicator: MinionBlueprint = {
         amount: 4,
         zealedModifiers: [],
         onGainZeal: async () => {
-          await card.player.cardManager.draw(1);
+          const [drawnCard] = await card.player.cardManager.draw(1);
+          if (!drawnCard) return;
+          await drawnCard.modifiers.add(
+            new SimpleSupplyModifier('war-judicator-supply-buff', game, drawnCard, {
+              amount: 1
+            })
+          );
         }
       })
     );

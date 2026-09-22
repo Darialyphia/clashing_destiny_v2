@@ -15,7 +15,7 @@ export const windbladeAdept: MinionBlueprint = {
   id: 'windblade-adept',
   name: 'Windblade Adept',
   description: dedent /*html*/ `
-  <rt-keyword>Zeal 2</rt-keyword>: Gains +0/+1/+0.
+  <rt-keyword>Zeal 2</rt-keyword>: I have +0/+1/+0.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,

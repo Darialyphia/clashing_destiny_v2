@@ -17,7 +17,7 @@ export const syvrelTheExile: MinionBlueprint = {
   id: 'syvrel-the-exile',
   name: 'Syvrel the Exile',
   description: dedent /*html*/ `
-  <rt-trigger>On Engage</rt-trigger> You may move an enemy minion in base to this battlefield and <rt-keyword>Root</rt-keyword> it this turn.
+  <rt-trigger>On Engage</rt-trigger> You may move an enemy minion in base here and <rt-keyword>Root</rt-keyword> it this turn.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,

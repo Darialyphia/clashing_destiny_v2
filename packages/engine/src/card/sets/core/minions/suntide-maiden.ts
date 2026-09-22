@@ -15,7 +15,7 @@ export const suntideMaiden: MinionBlueprint = {
   id: 'suntide-maiden',
   name: 'Suntide Maiden',
   description: dedent /*html*/ `
-  <rt-keyword>Zeal 4</rt-keyword>: Heal all minions on this location for 3.
+  <rt-keyword>Zeal 4</rt-keyword>: Heal all minions here for 3.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,

@@ -15,7 +15,7 @@ export const primusFist: MinionBlueprint = {
   id: 'primus-fist',
   name: 'Primus Fist',
   description: dedent /*html*/ `
-  <rt-trigger>On Enter</rt-trigger> Give adjacent minions +0/+1/+0.
+  <rt-trigger>On Enter</rt-trigger> Give adjacent allies +0/+1/+0.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,

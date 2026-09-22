@@ -18,7 +18,7 @@ export const flamewreath: MinionBlueprint = {
   name: 'Flamewreath',
   description: dedent /*html*/ `
   <rt-keyword>Flanking</rt-keyword><br/>
-  <rt-trigger>On Move</rt-trigger> Inflict <rt-keyword>Burn 2</rt-keyword> to all enemies at this battlefield.
+  <rt-trigger>On Move</rt-trigger> I Inflict <rt-keyword>Burn 2</rt-keyword> to all enemies here.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,

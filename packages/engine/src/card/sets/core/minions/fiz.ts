@@ -18,9 +18,9 @@ export const fiz: MinionBlueprint = {
   id: 'fiz',
   name: 'Fiz',
   description: dedent /*html*/ `
-  <rt-trigger>On Engage</rt-trigger>: This gains "Cannot be attacked" this turn.
+  <rt-trigger>On Engage</rt-trigger>: I gain "Cannot be attacked" this turn.
   <rt-affinity affinities="Lyonar,Lyonar"></rt-affinity>
-  <rt-trigger>On Score</rt-trigger>: Move this to your base.
+  <rt-trigger>On Score</rt-trigger>: Move me to your base.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,

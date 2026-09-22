@@ -9,12 +9,13 @@ import {
   AFFINITIES
 } from '../../../card.enums';
 import { ProtectorModifier } from '../../../../modifier/modifiers/protector.modifier';
+import { VigilantModifier } from '../../../../modifier/modifiers/vigilant.modifier';
 
 export const ironcliffeGuardian: MinionBlueprint = {
   id: 'ironcliffe-guardian',
   name: 'Ironcliffe Guardian',
   description: dedent /*html*/ `
-  <rt-keyword>Protector</rt-keyword>.
+  <rt-keyword>Protector</rt-keyword>, <rt-keyword>Vigilant</rt-keyword>.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -32,6 +33,7 @@ export const ironcliffeGuardian: MinionBlueprint = {
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {
+    await card.modifiers.add(new VigilantModifier(game, card));
     await card.modifiers.add(new ProtectorModifier(game, card));
   },
   async onPlay() {},

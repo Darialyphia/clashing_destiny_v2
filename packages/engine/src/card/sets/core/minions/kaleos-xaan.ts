@@ -21,7 +21,7 @@ export const kaleosXaan: MinionBlueprint = {
   name: 'Kaleos Xaan',
   description: dedent /*html*/ `
   <rt-keyword>Stealth</rt-keyword>, <rt-keyword>Flanking</rt-keyword>.
-  <rt-timing>Once per turn</rt-timing>When you play a Spell, wake up this minion.
+  <rt-timing>Once per turn</rt-timing>When you play a Spell, ready me.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,

@@ -1,3 +1,4 @@
+import type { Battlefield } from '../../board/battlefield';
 import type { Player } from '../../player/player.entity';
 import { TypedSerializableEvent } from '../../utils/typed-emitter';
 import type { Game } from '../game';
@@ -18,6 +19,7 @@ export class EndPhase implements GamePhaseController, Serializable<EmptyObject> 
       await this.game.emit(
         END_PHASE_EVENTS.BATTLEFIELD_SCORED,
         new BattleFieldscoredEvent({
+          battledield: this.game.playerSystem.player1.boardSide.leftBattlefield,
           winner: { player: this.game.playerSystem.player1, score: p1Score },
           loser: { player: this.game.playerSystem.player2, score: p2Score }
         })
@@ -27,6 +29,7 @@ export class EndPhase implements GamePhaseController, Serializable<EmptyObject> 
       await this.game.emit(
         END_PHASE_EVENTS.BATTLEFIELD_SCORED,
         new BattleFieldscoredEvent({
+          battledield: this.game.playerSystem.player2.boardSide.leftBattlefield,
           winner: { player: this.game.playerSystem.player2, score: p2Score },
           loser: { player: this.game.playerSystem.player1, score: p1Score }
         })
@@ -44,6 +47,7 @@ export class EndPhase implements GamePhaseController, Serializable<EmptyObject> 
       await this.game.emit(
         END_PHASE_EVENTS.BATTLEFIELD_SCORED,
         new BattleFieldscoredEvent({
+          battledield: this.game.playerSystem.player1.boardSide.rightBattlefield,
           winner: { player: this.game.playerSystem.player1, score: p1Score },
           loser: { player: this.game.playerSystem.player2, score: p2Score }
         })
@@ -53,6 +57,7 @@ export class EndPhase implements GamePhaseController, Serializable<EmptyObject> 
       await this.game.emit(
         END_PHASE_EVENTS.BATTLEFIELD_SCORED,
         new BattleFieldscoredEvent({
+          battledield: this.game.playerSystem.player2.boardSide.rightBattlefield,
           winner: { player: this.game.playerSystem.player2, score: p2Score },
           loser: { player: this.game.playerSystem.player1, score: p1Score }
         })
@@ -84,16 +89,19 @@ export const END_PHASE_EVENTS = {
 
 export class BattleFieldscoredEvent extends TypedSerializableEvent<
   {
+    battledield: Battlefield;
     winner: { player: Player; score: number };
     loser: { player: Player; score: number };
   },
   {
+    battledield: string;
     winner: { player: string; score: number };
     loser: { player: string; score: number };
   }
 > {
   serialize() {
     return {
+      battledield: this.data.battledield.id,
       winner: {
         player: this.data.winner.player.id,
         score: this.data.winner.score

@@ -15,7 +15,7 @@ export const dancingBlades: MinionBlueprint = {
   id: 'dancing-blades',
   name: 'Dancing Blades',
   description: dedent /*html*/ `
-  <rt-trigger>On Engage</rt-trigger> Deal 3 damage to the minion in front of this.
+  <rt-trigger>On Engage</rt-trigger> I deal 3 damage to the minion in front of me.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
