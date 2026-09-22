@@ -14,7 +14,7 @@ export const flutterCrane: MinionBlueprint = {
   id: 'flutter-crane',
   name: 'Flutter Crane',
   description: dedent /*html*/ `
-  <rt-timing>Once per turn</rt-timing><rt-trigger>On Move</rt-trigger> Add a spell in your Supply to your hand.
+  <rt-timing>Once per turn</rt-timing><rt-trigger>On Move</rt-trigger> Put a spell from your Supply in your hand.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
