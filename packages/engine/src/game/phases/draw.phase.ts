@@ -56,14 +56,57 @@ export class DrawPhase implements GamePhaseController, Serializable<EmptyObject>
     }
   }
 
+  private async rotateDestinyCards() {
+    for (const player of this.game.playerSystem.players) {
+      const left = player.boardSide.leftBattlefield;
+      const right = player.boardSide.rightBattlefield;
+
+      const hasRight = !!right.destinyCard;
+      const hasLeft = !!left.destinyCard;
+      if (hasRight) {
+        const card = right.destinyCard!;
+        await right.destinyCard!.removeFromCurrentLocation();
+        player.cardManager.destinyDeck.addToBottom(card);
+        const newDestiny = player.cardManager.destinyDeck.peek(1)[0]!;
+        left.destinyCard = newDestiny;
+        await newDestiny.play();
+      }
+
+      if (hasLeft) {
+        const card = left.destinyCard!;
+        await card.removeFromCurrentLocation();
+        right.destinyCard = card;
+        await right.destinyCard.play();
+      }
+    }
+  }
+
+  private async setupDestinyCards() {
+    const initiativePlayer = this.game.turnSystem.initiativePlayer;
+    const opponent = initiativePlayer.opponent;
+
+    const leftDestiny = initiativePlayer.cardManager.destinyDeck.peek(1)[0];
+    const rightDestiny = opponent.cardManager.destinyDeck.peek(1)[0];
+
+    await leftDestiny.removeFromCurrentLocation();
+    initiativePlayer.boardSide.leftBattlefield.destinyCard = leftDestiny;
+    await leftDestiny.play();
+
+    await rightDestiny.removeFromCurrentLocation();
+    opponent.boardSide.rightBattlefield.destinyCard = rightDestiny;
+    await rightDestiny.play();
+  }
+
   async onEnter() {
     await this.game.turnSystem.startTurn();
 
     if (this.game.turnSystem.isFirstTurn) {
+      await this.setupDestinyCards();
       await this.drawForTurn();
+
+      // this is in a setTimeout to not let the mulligan async interaction block game.initialize()
       setTimeout(async () => {
         if (this.game.config.START_OF_GAME_MULLIGANED_CARDS > 0) {
-          // this is in a setTimeout to not block game.initialize()
           await this.mulligan(this.game.config.START_OF_GAME_MULLIGANED_CARDS, true);
           await this.game.snapshotSystem.takeSnapshot();
           await this.game.gamePhaseSystem.sendTransition(
@@ -77,6 +120,7 @@ export class DrawPhase implements GamePhaseController, Serializable<EmptyObject>
         }
       });
     } else {
+      await this.rotateDestinyCards();
       await this.recollectSupply();
       await this.mulligan(this.game.config.CARDS_MULLIGANED_PER_TURN, false);
       await this.drawForTurn();

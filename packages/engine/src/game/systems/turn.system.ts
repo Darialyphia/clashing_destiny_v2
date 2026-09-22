@@ -43,11 +43,6 @@ export class TurnSystem
     this._initiativePlayer = this.game.playerSystem.player1;
     this._nextInitiativePlayer = this.game.playerSystem.player2;
 
-    this.initiativePlayer.boardSide.leftBattlefield.destinyCard =
-      this.initiativePlayer.cardManager.destinyDeck.draw(1)[0] ?? null;
-    this.initiativePlayer.opponent.boardSide.rightBattlefield.destinyCard =
-      this.initiativePlayer.opponent.cardManager.destinyDeck.draw(1)[0] ?? null;
-
     if (!this.game.config.DEFINITIVE_PASSES) {
       // Any input that is not exempt resets the consecutive pass counter
       this.game.on(GAME_EVENTS.INPUT_START, event => {
@@ -68,31 +63,10 @@ export class TurnSystem
     return this._elapsedTurns;
   }
 
-  private async rotateDestinyCards() {
-    for (const player of this.game.playerSystem.players) {
-      const left = player.boardSide.leftBattlefield;
-      const right = player.boardSide.rightBattlefield;
-
-      const hasRight = !!right.destinyCard;
-      const hasLeft = !!left.destinyCard;
-      if (hasRight) {
-        const card = right.destinyCard!;
-        await right.destinyCard!.removeFromCurrentLocation();
-        player.cardManager.destinyDeck.addToBottom(card);
-        left.destinyCard = player.cardManager.destinyDeck.draw(1)[0] ?? null;
-      }
-
-      if (hasLeft) {
-        const card = left.destinyCard!;
-        await card!.removeFromCurrentLocation();
-        right.destinyCard = card;
-      }
-    }
-  }
-
   get isFirstTurn() {
     return this._elapsedTurns === 0;
   }
+
   async startTurn() {
     for (const player of this.game.playerSystem.players) {
       await player.startTurn();
@@ -104,7 +78,6 @@ export class TurnSystem
     );
 
     if (!this.isFirstTurn) {
-      await this.rotateDestinyCards();
       await this.resetInitiative();
     }
   }

@@ -65,7 +65,9 @@ const {
   DROP_DURATION,
   isAttacking,
   isTakingDamage,
-  isGettingHealed
+  isGettingHealed,
+  latestDamageAmount,
+  latestHealAmount
 } = useBoardCardFxEvents(card, unitEl, {
   onAttack: playAttackAnimationSequence,
   onDestroy: playDeathAnimationSequence,
@@ -82,8 +84,9 @@ const isHovered = ref(false);
 
 <template>
   <div
+    v-if="card"
     ref="unit"
-    :id="ui.DOMSelectors.cardOnBoard(card.id).id"
+    :id="ui.DOMSelectors.cardOnBoard(card.id)?.id"
     class="board-card"
     :class="[
       {
@@ -136,6 +139,14 @@ const isHovered = ref(false);
         :class="variant"
         :actions-side="variant === 'small' ? 'bottom' : 'top'"
       />
+    </Transition>
+    <Transition>
+      <div class="heal" v-if="latestHealAmount">{{ latestHealAmount }}</div>
+    </Transition>
+    <Transition>
+      <div class="damage" v-if="latestDamageAmount">
+        {{ latestDamageAmount }}
+      </div>
     </Transition>
   </div>
 </template>
@@ -245,6 +256,46 @@ const isHovered = ref(false);
     opacity: 0.5;
     transform: translateZ(2px) translateY(-5px);
   }
+}
+
+.heal,
+.damage {
+  z-index: 1;
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  display: grid;
+  place-items: center;
+  font-size: var(--font-size-7);
+  font-weight: var(--font-weight-9);
+  -webkit-text-stroke: 8px black;
+  paint-order: stroke fill;
+  transform: translateZ(3px);
+  translate: 0 -75px;
+
+  &.v-enter-active,
+  &.v-leave-active {
+    transition:
+      opacity 0.3s var(--ease-2),
+      transform 0.5s var(--ease-bounce-2);
+  }
+
+  &.v-enter-from {
+    transform: translateZ(3px) translateY(24px) scale(0.5);
+    opacity: 0;
+  }
+
+  &.v-leave-to {
+    opacity: 0;
+  }
+}
+
+.heal {
+  color: var(--green-9);
+}
+
+.damage {
+  color: var(--red-9);
 }
 
 .modifiers {

@@ -37,7 +37,7 @@ const onMouseup = (e: MouseEvent) => {
     }"
     @mouseup="onMouseup"
   >
-    <BoardCard :card="battlefield.destinyCard" />
+    <BoardCard v-if="battlefield.destinyCard" :card="battlefield.destinyCard" />
 
     <div class="my-score">
       <div
