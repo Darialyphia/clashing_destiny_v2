@@ -211,14 +211,6 @@ useDoubleTap(detailsRoot, () => {
           @click="selectPreviousCard"
         />
 
-        <UiIconButton
-          class="nav-button nav-button-next"
-          icon="material-symbols:arrow-back-2-outline"
-          aria-label="Next card"
-          :disabled="!hasNextCard"
-          @click="selectNextCard"
-        />
-
         <aside class="card-preview">
           <div ref="root">
             <BlueprintCard
@@ -278,6 +270,14 @@ useDoubleTap(detailsRoot, () => {
             </div>
           </section>
         </Transition>
+
+        <UiIconButton
+          class="nav-button nav-button-next"
+          icon="material-symbols:arrow-back-2-outline"
+          aria-label="Next card"
+          :disabled="!hasNextCard"
+          @click="selectNextCard"
+        />
       </article>
     </Transition>
   </UiModal>
@@ -300,6 +300,7 @@ useDoubleTap(detailsRoot, () => {
   @screen lt-lg {
     height: 400px;
     overflow-y: hidden;
+    gap: var(--size-2);
   }
 
   &.v-enter-active,
@@ -319,10 +320,6 @@ useDoubleTap(detailsRoot, () => {
 }
 
 .nav-button {
-  position: absolute;
-  top: 50%;
-  translate: 0 -50%;
-  z-index: 1;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -333,7 +330,7 @@ useDoubleTap(detailsRoot, () => {
   border: var(--border-size-1) solid var(--border-dimmed);
   color: var(--text-1);
   font-size: var(--font-size-6);
-  line-height: 1;
+  align-self: center;
   transition:
     background 0.15s var(--ease-3),
     opacity 0.15s var(--ease-3);
@@ -367,6 +364,7 @@ useDoubleTap(detailsRoot, () => {
   @screen lt-lg {
     --pixel-scale: 2;
     align-items: center;
+    align-self: center;
   }
 }
 
@@ -395,14 +393,12 @@ useDoubleTap(detailsRoot, () => {
   }
 }
 
-.card-info > header {
+header {
   display: flex;
   flex-direction: column;
   gap: var(--size-2);
-  padding-block-end: var(--size-3);
-  border-block-end: var(--border-size-1) solid var(--border-dimmed);
   @screen lt-lg {
-    flex-direction: row;
+    gap: 0;
   }
 }
 
@@ -451,12 +447,6 @@ useDoubleTap(detailsRoot, () => {
   font-variant-numeric: tabular-nums;
 }
 
-.card-info section {
-  display: flex;
-  flex-direction: column;
-  gap: var(--size-2);
-}
-
 .card-info h3 {
   margin: 0;
   font-size: var(--font-size-2);
@@ -471,11 +461,9 @@ useDoubleTap(detailsRoot, () => {
   /* background: var(--surface-2); */
   border-radius: var(--radius-2);
   border: var(--border-size-1) solid var(--border-subtle);
-}
 
-@media (max-width: 768px) {
-  .card-preview {
-    align-self: center;
+  @screen lt-lg {
+    display: none;
   }
 }
 </style>

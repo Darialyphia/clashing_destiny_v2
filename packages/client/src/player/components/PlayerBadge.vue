@@ -22,17 +22,13 @@ const { name } = defineProps<{
   display: inline-flex;
   align-items: center;
   gap: 12px;
-  border-top-right-radius: var(--radius-pill);
-  border-bottom-right-radius: var(--radius-pill);
   position: relative;
   overflow: hidden;
-  padding-right: var(--size-4);
-  background: linear-gradient(to right, transparent, 45px, #000000aa 45px);
 }
 
 .name {
   font-weight: 600;
-  font-size: var(--font-size-4);
+  font-size: var(--font-size-5);
   text-shadow:
     0 2px 4px rgba(0, 0, 0, 0.3),
     0 0 10px rgba(99, 102, 241, 0.3);

@@ -6,6 +6,7 @@ import FancyButton from '@/ui/components/FancyButton.vue';
 import UiSpinner from '@/ui/components/UiSpinner.vue';
 import CraftignShardIcon from '@/player/components/CraftignShardIcon.vue';
 import { useCrafting } from '@/card/composables/useCrafting';
+import { useResponsive } from '@/shared/composables/useResponsive';
 
 const { card } = defineProps<{
   card: {
@@ -30,13 +31,19 @@ const {
   isUpgrading,
   canUpgrade
 } = useCrafting(computed(() => card));
+
+const { isSmallViewport } = useResponsive();
 </script>
 
 <template>
   <footer class="card-details-modal-footer">
     <FancyButton
       v-if="canUpgrade"
-      :text="`Upgrade to Foil (${upgradeCost})`"
+      :text="
+        isSmallViewport
+          ? `Upgrade (${upgradeCost})`
+          : `Upgrade to Foil (${upgradeCost})`
+      "
       :disabled="isCrafting || isDecrafting || isUpgrading"
       size="sm"
       @click="upgrade({ cardId: card.id as CardId })"
@@ -103,8 +110,6 @@ const {
     display: flex;
     flex-direction: column;
     > button {
-      min-width: 75%;
-      width: fit-content;
       margin-inline: auto;
     }
   }

@@ -9,7 +9,7 @@ export type ButtonProps = {
   to?: RouterLinkProps['to'];
   text: string;
   variant?: 'primary' | 'error' | 'info';
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'xs' | 'sm' | 'md' | 'lg';
   as?: string;
 };
 
@@ -113,6 +113,9 @@ const tag = computed(() => {
 
     &:hover:not(:disabled) {
       filter: brightness(1.5);
+    }
+    &.xs {
+      font-size: var(--font-size-0);
     }
     &.sm {
       font-size: var(--font-size-1);

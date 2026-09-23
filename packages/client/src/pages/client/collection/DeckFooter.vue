@@ -40,51 +40,52 @@ const { isSmallViewport } = useResponsive();
   <footer>
     <div class="actions">
       <FancyButton
-        :size="isSmallViewport ? 'sm' : 'md'"
+        v-if="!isSmallViewport"
         text="Back"
         variant="error"
         @click="stopEditingDeck"
       />
+      <UiIconButton
+        v-else
+        icon="akar-icons:arrow-back-thick-fill"
+        aria-label="Back"
+        @click="stopEditingDeck"
+      />
       <FancyButton
-        :size="isSmallViewport ? 'sm' : 'md'"
+        :size="isSmallViewport ? 'xs' : 'md'"
         text="Save"
         variant="info"
         @click="saveDeck"
       />
 
-      <UiIconButton
-        v-if="!isSmallViewport"
-        class="delete-icon"
-        icon="material-symbols:delete-outline-sharp"
-        @click="isDeleteModalOpened = true"
-      />
-      <PopoverRoot v-model:open="isMenuOpened">
-        <PopoverTrigger as-child>
-          <UiIconButton class="export-icon" icon="solar:menu-dots-bold" />
-        </PopoverTrigger>
-        <PopoverPortal>
-          <PopoverContent as-child side="top" align="center" :side-offset="10">
-            <div class="options-popover surface">
-              <button
-                v-if="isSmallViewport"
-                @click="
-                  () => {
-                    isDeleteModalOpened = true;
-                    isMenuOpened = false;
-                  }
-                "
-              >
-                Delete deck
-              </button>
-              <button @click="isExportModalOpened = true">Export Deck</button>
-              <label class="block">
-                <span>Collapse foils</span>
-                <UiSwitch v-model="deckEditorOptions.collapseFoil" />
-              </label>
-            </div>
-          </PopoverContent>
-        </PopoverPortal>
-      </PopoverRoot>
+      <template v-if="!isSmallViewport">
+        <UiIconButton
+          class="delete-icon"
+          icon="material-symbols:delete-outline-sharp"
+          @click="isDeleteModalOpened = true"
+        />
+        <PopoverRoot v-model:open="isMenuOpened">
+          <PopoverTrigger as-child>
+            <UiIconButton class="export-icon" icon="solar:menu-dots-bold" />
+          </PopoverTrigger>
+          <PopoverPortal>
+            <PopoverContent
+              as-child
+              side="top"
+              align="center"
+              :side-offset="10"
+            >
+              <div class="options-popover surface">
+                <button @click="isExportModalOpened = true">Export Deck</button>
+                <label class="block">
+                  <span>Collapse foils</span>
+                  <UiSwitch v-model="deckEditorOptions.collapseFoil" />
+                </label>
+              </div>
+            </PopoverContent>
+          </PopoverPortal>
+        </PopoverRoot>
+      </template>
 
       <UiModal
         v-model:is-opened="isDeleteModalOpened"
