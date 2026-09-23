@@ -32,9 +32,9 @@ const router = useRouter();
       @click="createDeck"
     />
     <FancyButton
-      v-if="router.currentRoute.value.name !== 'ClientHome'"
+      v-if="isSmallViewport"
       text="Back"
-      :size="isSmallViewport ? 'sm' : 'md'"
+      size="md"
       class="back-button"
       @click="router.push({ name: 'ClientHome' })"
     />
