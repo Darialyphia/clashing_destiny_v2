@@ -38,7 +38,7 @@ export const scintilla: MinionBlueprint = {
       id: 'scintilla-empower',
       label: 'Empower Scintilla',
       description: 'Empower me.',
-      manaCost: 2,
+      manaCost: 3,
       canUse: (game, card) => !card.modifiers.has(EmpoweredModifier),
       getTargets: (game, card) =>
         singleMinionTargetRules.getTargets({

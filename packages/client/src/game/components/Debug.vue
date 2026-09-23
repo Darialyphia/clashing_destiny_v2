@@ -28,8 +28,8 @@ const isDev = import.meta.env.DEV;
 <style scoped lang="postcss">
 .debug {
   position: fixed;
-  top: 0;
-  left: var(--size-13);
+  top: var(--size-14);
+  right: 0;
   color: white;
   font-size: var(--font-size-0);
   z-index: 10;

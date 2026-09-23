@@ -233,47 +233,49 @@ useDoubleTap(detailsRoot, () => {
 
         <Transition appear>
           <section class="card-info surface">
-            <header>
-              <h2>{{ selectedCard.card.name }}</h2>
-              <div>
-                <span
-                  class="rarity-badge"
-                  :style="{
-                    '--rarity-color': `var(--rarity-${selectedCard.card.rarity.toLowerCase()})`
-                  }"
-                >
-                  {{ selectedCard.card.rarity }}
-                </span>
-                <p class="metadata">
-                  <span class="set-id">{{ selectedCard.card.setId }}</span>
-                  <span class="separator">•</span>
-                  <span class="copies-count">
-                    {{ selectedCard.copiesOwned }}
-                    {{ selectedCard.copiesOwned === 1 ? 'copy' : 'copies' }}
-                    owned
+            <div class="h-full">
+              <header>
+                <h2>{{ selectedCard.card.name }}</h2>
+                <div>
+                  <span
+                    class="rarity-badge"
+                    :style="{
+                      '--rarity-color': `var(--rarity-${selectedCard.card.rarity.toLowerCase()})`
+                    }"
+                  >
+                    {{ selectedCard.card.rarity }}
                   </span>
-                </p>
-              </div>
-            </header>
+                  <p class="metadata">
+                    <span class="set-id">{{ selectedCard.card.setId }}</span>
+                    <span class="separator">•</span>
+                    <span class="copies-count">
+                      {{ selectedCard.copiesOwned }}
+                      {{ selectedCard.copiesOwned === 1 ? 'copy' : 'copies' }}
+                      owned
+                    </span>
+                  </p>
+                </div>
+              </header>
 
-            <section class="description">
-              <h3>Description</h3>
-              <CardText :text="description" />
-              <template
-                v-if="
-                  'abilities' in selectedCard.card &&
-                  selectedCard.card.abilities?.length
-                "
-              >
-                <CardText
-                  v-for="(ability, index) in selectedCard.card.abilities"
-                  :key="index"
-                  :text="ability.description"
-                />
-              </template>
-            </section>
+              <section class="description">
+                <h3>Description</h3>
+                <CardText :text="description" />
+                <template
+                  v-if="
+                    'abilities' in selectedCard.card &&
+                    selectedCard.card.abilities?.length
+                  "
+                >
+                  <CardText
+                    v-for="(ability, index) in selectedCard.card.abilities"
+                    :key="index"
+                    :text="ability.description"
+                  />
+                </template>
+              </section>
 
-            <CardDetailsModalFooter :card="selectedCard" />
+              <CardDetailsModalFooter :card="selectedCard" />
+            </div>
           </section>
         </Transition>
       </article>
@@ -371,13 +373,16 @@ useDoubleTap(detailsRoot, () => {
 .card-info {
   --card-text-color: currentColor;
   flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  gap: var(--size-4);
+
   min-width: 0;
 
-  @screen lt-lg {
-    overflow-y: auto;
+  > div {
+    display: flex;
+    flex-direction: column;
+    gap: var(--size-4);
+    @screen lt-lg {
+      overflow-y: auto;
+    }
   }
   &.v-enter-active,
   &.v-leave-active {
@@ -469,11 +474,6 @@ useDoubleTap(detailsRoot, () => {
 }
 
 @media (max-width: 768px) {
-  .card-details {
-    flex-direction: column;
-    gap: var(--size-4);
-  }
-
   .card-preview {
     align-self: center;
   }
