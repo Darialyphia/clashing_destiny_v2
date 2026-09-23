@@ -103,6 +103,9 @@ export default defineConfig(({ mode }) => {
         srcDir: 'src',
         filename: 'sw.ts',
         strategies: 'injectManifest',
+        injectManifest: {
+          maximumFileSizeToCacheInBytes: 4000000
+        },
         devOptions: {
           enabled: env.VITE_DEV_PWA === 'true',
           type: 'module'
