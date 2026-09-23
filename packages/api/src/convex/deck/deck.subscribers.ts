@@ -2,10 +2,10 @@ import { AccountCreatedEvent } from '../auth/events/accountCreated.event';
 import { eventEmitter, type EventEmitter } from '../shared/eventEmitter';
 import type { Scheduler } from 'convex/server';
 import { premadeDecks } from './premadeDecks';
-import { api, internal } from '../_generated/api';
+import { internal } from '../_generated/api';
 import { GIFT_KINDS, GIFT_SOURCES } from '../gift/gift.constants';
 import { collectableCards } from '@game/engine/src/generated/cards';
-import { CardDecraftedEvent } from '../card/events/cardDecrafted.event';
+import { CardDestroyedEvent } from '../card/events/cardDestroyed.event';
 import type { DeckRepository } from './repositories/deck.repository';
 import type { CardRepository } from '../card/repositories/card.repository';
 
@@ -21,7 +21,7 @@ export class DeckSubscribers {
     }
   ) {
     eventEmitter.on(AccountCreatedEvent.EVENT_NAME, this.onAccountCreated.bind(this));
-    eventEmitter.on(CardDecraftedEvent.EVENT_NAME, this.onCardDecrafted.bind(this));
+    eventEmitter.on(CardDestroyedEvent.EVENT_NAME, this.onCardDestroyed.bind(this));
   }
 
   private async onAccountCreated(event: AccountCreatedEvent) {
@@ -58,7 +58,7 @@ export class DeckSubscribers {
     });
   }
 
-  private async onCardDecrafted(event: CardDecraftedEvent) {
+  private async onCardDestroyed(event: CardDestroyedEvent) {
     const decks = await this.ctx.deckRepo.findByOwnerId(event.data.userId);
     const card = await this.ctx.cardRepo.getById(event.data.cardId);
     if (!card) return;

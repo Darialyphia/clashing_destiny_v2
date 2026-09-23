@@ -13,6 +13,7 @@ import { DecraftCardUseCase } from './usecases/decraftCard.usecase';
 import { DecraftExtraCardsUseCase } from './usecases/decraftExtraCards.usecase';
 import type { DependenciesMap } from '../shared/container';
 import { BoosterPackMapper } from './mappers/boosterPack.mapper';
+import { UpgradeToFoilUseCase } from './usecases/upgradeToFoil.usecase';
 
 export const queryDependencies = {
   [CardReadRepository.INJECTION_KEY]: { resolver: asClass(CardReadRepository) },
@@ -43,5 +44,6 @@ export const mutationDependencies = {
   [DecraftExtraCardsUseCase.INJECTION_KEY]: {
     resolver: asClass(DecraftExtraCardsUseCase)
   },
+  [UpgradeToFoilUseCase.INJECTION_KEY]: { resolver: asClass(UpgradeToFoilUseCase) },
   [BoosterPackMapper.INJECTION_KEY]: { resolver: asClass(BoosterPackMapper) }
 } as const satisfies DependenciesMap;

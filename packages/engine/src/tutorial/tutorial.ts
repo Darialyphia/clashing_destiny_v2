@@ -18,6 +18,7 @@ export type TutorialCheckpoint = {
   id: string;
   stepId: string;
   stepIndex: number;
+  history: SerializedInput[];
   reset: (game: Game, client: GameClient) => MaybePromise<void>;
 };
 
@@ -146,6 +147,7 @@ export class Tutorial {
       id,
       stepId: this.currentStepId,
       stepIndex: this.currentStepIndex,
+      history: this.game.inputSystem.serialize(),
       reset
     };
   }

@@ -83,7 +83,6 @@ useResizeObserver(descriptionBox, resizeDescription);
   font-size: calc(1px * var(--pixel-scale) * v-bind(descriptionFontSize));
   overflow: hidden;
   line-height: 1.2;
-  text-shadow: 0 0 0.75rem black;
   -webkit-text-stroke: calc(2px * var(--pixel-scale)) black;
   paint-order: stroke fill;
   padding-inline: calc(2px * var(--pixel-scale));

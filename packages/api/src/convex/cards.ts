@@ -12,6 +12,7 @@ import { OpenBoosterPackUseCase } from './card/usecases/openBoosterPack.usecase'
 import { CraftCardUseCase } from './card/usecases/craftCard.usecase';
 import { DecraftCardUseCase } from './card/usecases/decraftCard.usecase';
 import { DecraftExtraCardsUseCase } from './card/usecases/decraftExtraCards.usecase';
+import { UpgradeToFoilUseCase } from './card/usecases/upgradeToFoil.usecase';
 
 export const myCollection = queryWithContainer({
   args: {},
@@ -118,5 +119,18 @@ export const decraftExtraCards = mutationWithContainer({
     );
 
     return usecase.execute();
+  }
+});
+
+export const upgradeCardToFoil = mutationWithContainer({
+  args: {
+    cardId: v.id('cards')
+  },
+  handler: async (ctx, args) => {
+    const usecase = ctx.resolve<UpgradeToFoilUseCase>(UpgradeToFoilUseCase.INJECTION_KEY);
+
+    return usecase.execute({
+      cardId: args.cardId
+    });
   }
 });

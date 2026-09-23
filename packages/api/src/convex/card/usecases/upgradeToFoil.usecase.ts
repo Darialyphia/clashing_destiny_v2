@@ -7,23 +7,24 @@ import type { WalletRepository } from '../../currency/repositories/wallet.reposi
 import type { EventEmitter } from '../../shared/eventEmitter';
 import type { CardId } from '../entities/card.entity';
 import { assert, isDefined } from '@game/shared';
-import { CURRENCY_SOURCES, CURRENCY_TYPES } from '../../currency/currency.constants';
-import type { AwardCurrencyUseCase } from '../../currency/usecases/awardCurrency.usecase';
+import { CURRENCY_TYPES } from '../../currency/currency.constants';
 import { CardDestroyedEvent } from '../events/cardDestroyed.event';
+import type { SpendCurrencyUseCase } from '../../currency/usecases/spendCurrency.usecase';
+import { FOIL_UPGRADE_COST_PER_RARITY } from '../card.constants';
 
-export interface DecraftCardInput {
+export interface UpgradeToFoilInput {
   cardId: CardId;
-  amount: number;
 }
 
-export interface DecraftCardOutput {
+export interface UpgradeToFoilOutput {
   cardId: CardId;
-  craftingShardsGained: number;
-  copiesDecrafted: number;
+  craftingShardsCost: number;
 }
 
-export class DecraftCardUseCase implements UseCase<DecraftCardInput, DecraftCardOutput> {
-  static INJECTION_KEY = 'decraftCardUseCase' as const;
+export class UpgradeToFoilUseCase
+  implements UseCase<UpgradeToFoilInput, UpgradeToFoilOutput>
+{
+  static INJECTION_KEY = 'upgradeToFoilUseCase' as const;
 
   constructor(
     protected ctx: {
@@ -31,11 +32,11 @@ export class DecraftCardUseCase implements UseCase<DecraftCardInput, DecraftCard
       cardRepo: CardRepository;
       walletRepo: WalletRepository;
       eventEmitter: EventEmitter;
-      awardCurrencyUseCase: AwardCurrencyUseCase;
+      spendCurrencyUseCase: SpendCurrencyUseCase;
     }
   ) {}
 
-  async execute(input: DecraftCardInput): Promise<DecraftCardOutput> {
+  async execute(input: UpgradeToFoilInput): Promise<UpgradeToFoilOutput> {
     const session = ensureAuthenticated(this.ctx.session);
 
     const card = await this.ctx.cardRepo.getById(input.cardId);
@@ -46,27 +47,23 @@ export class DecraftCardUseCase implements UseCase<DecraftCardInput, DecraftCard
       new DomainError('you are not the owner of this card')
     );
 
-    assert(input.amount > 0, new DomainError('Must decraft at least one copy'));
-    assert(
-      card.copiesOwned.value >= input.amount,
-      new DomainError(
-        `Cannot decraft ${input.amount} copies of ${card.blueprintId}. Only ${card.copiesOwned.value} available`
-      )
-    );
+    const upgradeCost = FOIL_UPGRADE_COST_PER_RARITY[card.blueprint.rarity];
 
-    const totalReward = card.decraftRewardPerCopy * input.amount;
-
-    card.removeCopies(input.amount);
+    card.removeCopies(1);
     await this.ctx.cardRepo.save(card);
 
-    if (totalReward > 0) {
-      await this.ctx.awardCurrencyUseCase.execute({
-        userId: session.userId,
-        amount: totalReward,
-        currencyType: CURRENCY_TYPES.CRAFTING_SHARDS,
-        source: CURRENCY_SOURCES.DECRAFTING
-      });
-    }
+    await this.ctx.spendCurrencyUseCase.execute({
+      purpose: `Upgrading card ${input.cardId} to foil`,
+      amount: upgradeCost,
+      currencyType: CURRENCY_TYPES.CRAFTING_SHARDS
+    });
+
+    const cardId = await this.ctx.cardRepo.create({
+      ownerId: session.userId,
+      blueprintId: card.blueprintId,
+      isFoil: true,
+      copiesOwned: 1
+    });
 
     this.ctx.eventEmitter.emit(
       CardDestroyedEvent.EVENT_NAME,
@@ -78,9 +75,8 @@ export class DecraftCardUseCase implements UseCase<DecraftCardInput, DecraftCard
     );
 
     return {
-      cardId: input.cardId,
-      craftingShardsGained: totalReward,
-      copiesDecrafted: input.amount
+      cardId,
+      craftingShardsCost: upgradeCost
     };
   }
 }

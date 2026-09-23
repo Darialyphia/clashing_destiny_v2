@@ -130,6 +130,21 @@ export const provideCollectionPage = () => {
     }>
   >(null);
 
+  watch(cards, cards => {
+    if (selectedCard.value) {
+      const updatedCard = cards.find(c => c.id === selectedCard.value!.id);
+      if (updatedCard) {
+        selectedCard.value = {
+          card: cardPool.find(bp => bp.id === updatedCard.blueprintId)!,
+          id: updatedCard.id,
+          isFoil: updatedCard.isFoil,
+          copiesOwned: updatedCard.copiesOwned
+        };
+      } else {
+        selectedCard.value = null;
+      }
+    }
+  });
   const selectCard = (id: string) => {
     const card = cards.value.find(c => c.id === id);
 

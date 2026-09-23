@@ -1,19 +1,11 @@
 <script setup lang="ts">
-import { useAuthedMutation } from '@/auth/composables/useAuth';
 import { useMe } from '@/auth/composables/useMe';
-import {
-  api,
-  CRAFTING_COST_PER_RARITY,
-  DECRAFTING_REWARD_PER_RARITY,
-  FOIL_CRAFTING_COST_MULTIPLIER,
-  FOIL_DECRAFTING_REWARD_MULTIPLIER,
-  type CardId
-} from '@game/api';
+import { type CardId } from '@game/api';
 import type { CardBlueprint } from '@game/engine/src/card/card-blueprint';
 import FancyButton from '@/ui/components/FancyButton.vue';
 import UiSpinner from '@/ui/components/UiSpinner.vue';
 import CraftignShardIcon from '@/player/components/CraftignShardIcon.vue';
-import { useToast } from '@/ui/composables/useToast';
+import { useCrafting } from '@/card/composables/useCrafting';
 
 const { card } = defineProps<{
   card: {
@@ -25,49 +17,43 @@ const { card } = defineProps<{
 }>();
 
 const { data: me } = useMe();
-const { add: addToast } = useToast();
 
-const craftingCost = computed(() => {
-  return CRAFTING_COST_PER_RARITY[card.card.rarity];
-});
-
-const decraftingReward = computed(() => {
-  const multiplier = card.isFoil ? FOIL_DECRAFTING_REWARD_MULTIPLIER : 1;
-  return DECRAFTING_REWARD_PER_RARITY[card.card.rarity] * multiplier;
-});
-
-const { mutate: craft, isLoading: isCrafting } = useAuthedMutation(
-  api.cards.craft,
-  {
-    onSuccess: () => {
-      addToast({
-        title: 'Card crafted',
-        description: `${card.card.name} was added to your collection.`,
-        variant: 'success'
-      });
-    }
-  }
-);
-
-const { mutate: decraft, isLoading: isDecrafting } = useAuthedMutation(
-  api.cards.decraft,
-  {
-    onSuccess: () => {
-      addToast({
-        title: 'Card disenchanted',
-        description: `${card.card.name} was disenchanted for ${decraftingReward.value} shards.`,
-        variant: 'success'
-      });
-    }
-  }
-);
+const {
+  craftingCost,
+  decraftingReward,
+  upgradeCost,
+  craft,
+  isCrafting,
+  decraft,
+  isDecrafting,
+  upgrade,
+  isUpgrading,
+  canUpgrade
+} = useCrafting(computed(() => card));
 </script>
 
 <template>
   <footer class="card-details-modal-footer">
     <FancyButton
-      :text="`Craft (${craftingCost * (card.isFoil ? FOIL_CRAFTING_COST_MULTIPLIER : 1)})`"
-      :disabled="isCrafting || isDecrafting"
+      v-if="canUpgrade"
+      :text="`Upgrade to Foil (${upgradeCost})`"
+      :disabled="isCrafting || isDecrafting || isUpgrading"
+      size="sm"
+      @click="upgrade({ cardId: card.id as CardId })"
+    >
+      <template #left>
+        <CraftignShardIcon />
+      </template>
+
+      <template v-if="isCrafting" #right>
+        <UiSpinner size="5" />
+      </template>
+    </FancyButton>
+
+    <FancyButton
+      v-else
+      :text="`Craft (${craftingCost})`"
+      :disabled="isCrafting || isDecrafting || isUpgrading"
       size="sm"
       @click="craft({ blueprintId: card.card.id, isFoil: card.isFoil })"
     >
@@ -106,6 +92,7 @@ const { mutate: decraft, isLoading: isDecrafting } = useAuthedMutation(
   padding-block-start: var(--size-4);
   display: grid;
   grid-template-columns: 1fr 1fr;
+  align-items: start;
   gap: var(--size-3);
   justify-content: center;
   border-block-start: var(--border-size-1) solid var(--border-dimmed);

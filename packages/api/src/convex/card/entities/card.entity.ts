@@ -28,7 +28,7 @@ export class Card extends Entity<CardId, CardData> {
 
   get blueprint() {
     const allCards = Object.values(cardsBySet).flat();
-    return allCards.find(c => c.id === this.data.blueprintId);
+    return allCards.find(c => c.id === this.data.blueprintId)!;
   }
 
   get decraftRewardPerCopy() {

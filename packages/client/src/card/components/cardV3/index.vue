@@ -144,6 +144,9 @@ const _animationSequence = computed(() => {
     @mousemove="handleMousemove"
     @mouseenter="onMouseEnter"
     @mouseleave="handleMouseleave"
+    @pointerenter="onMouseEnter"
+    @pointerleave="handleMouseleave"
+    @pointermove="handleMousemove"
   >
     <div
       ref="card"
