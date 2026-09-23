@@ -4,11 +4,12 @@ export const useResponsive = () => {
   const mobileBreakpoint = useCssVar('--size-lg');
   const tabletBreakpoint = useCssVar('--size-xl');
   return {
-    isMobile: useMediaQuery(
+    isSmallViewport: useMediaQuery(
       computed(() => `(max-width: ${mobileBreakpoint.value})`)
     ),
-    isTablet: useMediaQuery(
+    isMediumViewport: useMediaQuery(
       computed(() => `(max-width: ${tabletBreakpoint.value})`)
-    )
+    ),
+    isTouchDevice: useMediaQuery(computed(() => '(pointer: coarse)'))
   };
 };

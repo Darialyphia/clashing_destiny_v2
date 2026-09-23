@@ -10,7 +10,7 @@ import GameCard from './GameCard.vue';
 import { INTERACTION_STATES } from '@game/engine/src/game/game.enums';
 import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
 import { isDefined } from '@game/shared';
-import { useIsMobile } from '@/shared/composables/useIsMobile';
+import { useResponsive } from '@/shared/composables/useResponsive';
 
 const { client, playerId } = useGameClient();
 const state = useGameState();
@@ -107,7 +107,7 @@ const handleCardClick = (index: number, event: MouseEvent) => {
   confirm();
 };
 
-const isMobile = useIsMobile();
+const { isSmallViewport: isMobile } = useResponsive();
 </script>
 
 <template>

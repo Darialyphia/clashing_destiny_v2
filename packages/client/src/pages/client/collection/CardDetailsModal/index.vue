@@ -8,6 +8,7 @@ import { unrefElement } from '@vueuse/core';
 import CardDetailsModalFooter from './CardDetailsModalFooter.vue';
 import { useCollectionPage } from '../useCollectionPage';
 import UiIconButton from '@/ui/components/UiIconButton.vue';
+import { useDoubleTap } from '@/shared/composables/useDoubleTap';
 
 const { selectedCard, selectCard, unselectCard, cards } = useCollectionPage();
 
@@ -180,6 +181,11 @@ const animateCardOut = async () => {
     { once: true }
   );
 };
+
+const detailsRoot = useTemplateRef('detailsRoot');
+useDoubleTap(detailsRoot, () => {
+  isOpened.value = false;
+});
 </script>
 
 <template>
@@ -192,7 +198,12 @@ const animateCardOut = async () => {
     @open-animation-end="animateCardIn"
   >
     <Transition :appear="false" mode="out-in">
-      <article class="card-details" v-if="selectedCard" :key="selectedCard.id">
+      <article
+        ref="detailsRoot"
+        class="card-details"
+        v-if="selectedCard"
+        :key="selectedCard.id"
+      >
         <UiIconButton
           class="nav-button nav-button-previous"
           icon="material-symbols:arrow-back-2-outline"
@@ -224,22 +235,25 @@ const animateCardOut = async () => {
           <section class="card-info surface">
             <header>
               <h2>{{ selectedCard.card.name }}</h2>
-              <span
-                class="rarity-badge"
-                :style="{
-                  '--rarity-color': `var(--rarity-${selectedCard.card.rarity.toLowerCase()})`
-                }"
-              >
-                {{ selectedCard.card.rarity }}
-              </span>
-              <p class="metadata">
-                <span class="set-id">{{ selectedCard.card.setId }}</span>
-                <span class="separator">•</span>
-                <span class="copies-count">
-                  {{ selectedCard.copiesOwned }}
-                  {{ selectedCard.copiesOwned === 1 ? 'copy' : 'copies' }} owned
+              <div>
+                <span
+                  class="rarity-badge"
+                  :style="{
+                    '--rarity-color': `var(--rarity-${selectedCard.card.rarity.toLowerCase()})`
+                  }"
+                >
+                  {{ selectedCard.card.rarity }}
                 </span>
-              </p>
+                <p class="metadata">
+                  <span class="set-id">{{ selectedCard.card.setId }}</span>
+                  <span class="separator">•</span>
+                  <span class="copies-count">
+                    {{ selectedCard.copiesOwned }}
+                    {{ selectedCard.copiesOwned === 1 ? 'copy' : 'copies' }}
+                    owned
+                  </span>
+                </p>
+              </div>
             </header>
 
             <section class="description">
@@ -281,6 +295,10 @@ const animateCardOut = async () => {
   display: flex;
   gap: var(--size-5);
   min-height: var(--size-13);
+  @screen lt-lg {
+    height: 400px;
+    overflow-y: hidden;
+  }
 
   &.v-enter-active,
   &.v-leave-active {
@@ -344,6 +362,10 @@ const animateCardOut = async () => {
   flex-shrink: 0;
   min-height: calc(var(--card-v3-height) * var(--pixel-scale));
   aspect-ratio: var(--card-v3-ratio);
+  @screen lt-lg {
+    --pixel-scale: 2;
+    align-items: center;
+  }
 }
 
 .card-info {
@@ -354,6 +376,9 @@ const animateCardOut = async () => {
   gap: var(--size-4);
   min-width: 0;
 
+  @screen lt-lg {
+    overflow-y: auto;
+  }
   &.v-enter-active,
   &.v-leave-active {
     transition: opacity 0.3s var(--ease-3);
@@ -371,6 +396,9 @@ const animateCardOut = async () => {
   gap: var(--size-2);
   padding-block-end: var(--size-3);
   border-block-end: var(--border-size-1) solid var(--border-dimmed);
+  @screen lt-lg {
+    flex-direction: row;
+  }
 }
 
 .card-info h2 {

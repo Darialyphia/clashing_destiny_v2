@@ -99,5 +99,14 @@ const {
   > button {
     width: 100%;
   }
+  @screen lt-lg {
+    display: flex;
+    flex-direction: column;
+    > button {
+      min-width: 75%;
+      width: fit-content;
+      margin-inline: auto;
+    }
+  }
 }
 </style>

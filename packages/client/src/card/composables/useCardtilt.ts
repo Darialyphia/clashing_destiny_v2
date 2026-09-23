@@ -1,8 +1,15 @@
-import { ref, computed, onMounted, type MaybeRefOrGetter } from 'vue';
-import { unrefElement, useEventListener } from '@vueuse/core';
+import {
+  ref,
+  computed,
+  onMounted,
+  onBeforeUnmount,
+  type MaybeRefOrGetter
+} from 'vue';
+import { unrefElement, useEventListener, onLongPress } from '@vueuse/core';
 import { throttle } from 'lodash-es';
 import { clamp, mapRange } from '@game/shared';
 import gsap from 'gsap';
+import { useResponsive } from '@/shared/composables/useResponsive';
 
 export const useCardTilt = (
   target: MaybeRefOrGetter<HTMLElement | null | undefined>,
@@ -16,6 +23,80 @@ export const useCardTilt = (
   const y = ref(0);
 
   const isHovered = ref(false);
+
+  const { isTouchDevice } = useResponsive();
+
+  const isLongPressing = ref(false);
+  const longPressTarget = computed(() => unrefElement(target));
+  let lockedScrollY = 0;
+  let bodyStyles: {
+    position: string;
+    top: string;
+    width: string;
+    overflow: string;
+    overscrollBehavior: string;
+  } | null = null;
+
+  const lockPageScroll = () => {
+    if (bodyStyles) return;
+
+    lockedScrollY = window.scrollY;
+    bodyStyles = {
+      position: document.body.style.position,
+      top: document.body.style.top,
+      width: document.body.style.width,
+      overflow: document.body.style.overflow,
+      overscrollBehavior: document.body.style.overscrollBehavior
+    };
+
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${lockedScrollY}px`;
+    document.body.style.width = '100%';
+    document.body.style.overflow = 'hidden';
+    document.body.style.overscrollBehavior = 'none';
+  };
+
+  const unlockPageScroll = () => {
+    if (!bodyStyles) return;
+
+    const previousBodyStyles = bodyStyles;
+    bodyStyles = null;
+    document.body.style.position = previousBodyStyles.position;
+    document.body.style.top = previousBodyStyles.top;
+    document.body.style.width = previousBodyStyles.width;
+    document.body.style.overflow = previousBodyStyles.overflow;
+    document.body.style.overscrollBehavior =
+      previousBodyStyles.overscrollBehavior;
+    window.scrollTo(0, lockedScrollY);
+  };
+
+  const endLongPress = () => {
+    isLongPressing.value = false;
+    unlockPageScroll();
+  };
+
+  onLongPress(
+    longPressTarget,
+    () => {
+      isLongPressing.value = true;
+      lockPageScroll();
+    },
+    {
+      delay: 250,
+      distanceThreshold: false
+    }
+  );
+
+  useEventListener(['pointerup', 'pointercancel'], endLongPress);
+  useEventListener('blur', endLongPress);
+  onBeforeUnmount(endLongPress);
+
+  const isEnabled = computed(() => {
+    if (isTouchDevice.value) {
+      return isLongPressing.value && options.isEnabled.value;
+    }
+    return options.isEnabled.value;
+  });
 
   useEventListener(
     'mousemove',
@@ -96,8 +177,10 @@ export const useCardTilt = (
   });
 
   const onMousemove = (e: MouseEvent) => {
-    if (!options.isEnabled.value) return;
+    console.log('onmousemove');
+    if (!isEnabled.value) return;
     if (!isHovered.value) return;
+    e.preventDefault();
     const el = unrefElement(target);
     if (!el) return;
 

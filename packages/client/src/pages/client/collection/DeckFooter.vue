@@ -13,6 +13,7 @@ import {
 } from 'reka-ui';
 import UiIconButton from '@/ui/components/UiIconButton.vue';
 import UiSwitch from '@/ui/components/UiSwitch.vue';
+import { useResponsive } from '@/shared/composables/useResponsive';
 
 const {
   saveDeck,
@@ -31,15 +32,28 @@ const { copy, copied } = useClipboard({
 });
 
 const isMenuOpened = ref(false);
+
+const { isSmallViewport } = useResponsive();
 </script>
 
 <template>
   <footer>
     <div class="actions">
-      <FancyButton text="Back" variant="error" @click="stopEditingDeck" />
-      <FancyButton text="Save" variant="info" @click="saveDeck" />
+      <FancyButton
+        :size="isSmallViewport ? 'sm' : 'md'"
+        text="Back"
+        variant="error"
+        @click="stopEditingDeck"
+      />
+      <FancyButton
+        :size="isSmallViewport ? 'sm' : 'md'"
+        text="Save"
+        variant="info"
+        @click="saveDeck"
+      />
 
       <UiIconButton
+        v-if="!isSmallViewport"
         class="delete-icon"
         icon="material-symbols:delete-outline-sharp"
         @click="isDeleteModalOpened = true"
@@ -51,6 +65,17 @@ const isMenuOpened = ref(false);
         <PopoverPortal>
           <PopoverContent as-child side="top" align="center" :side-offset="10">
             <div class="options-popover surface">
+              <button
+                v-if="isSmallViewport"
+                @click="
+                  () => {
+                    isDeleteModalOpened = true;
+                    isMenuOpened = false;
+                  }
+                "
+              >
+                Delete deck
+              </button>
               <button @click="isExportModalOpened = true">Export Deck</button>
               <label class="block">
                 <span>Collapse foils</span>
@@ -134,15 +159,15 @@ footer {
   }
 }
 
-:has(.delete-icon, .export-icon) {
-  padding: var(--size-0);
-}
-
 .actions {
   display: flex;
   gap: var(--size-2);
   margin-top: var(--size-3);
   align-items: center;
+
+  @screen lt-lg {
+    justify-content: end;
+  }
 }
 
 pre {

@@ -141,6 +141,7 @@ const _animationSequence = computed(() => {
 <template>
   <div
     class="card-perspective-wrapper card-v3"
+    :class="{ 'is-hovered': isHovered }"
     @mousemove="handleMousemove"
     @mouseenter="onMouseEnter"
     @mouseleave="handleMouseleave"
@@ -251,6 +252,7 @@ const _animationSequence = computed(() => {
   transform-style: preserve-3d;
   align-self: start;
   transition: filter 0.3s;
+  touch-action: pan-y;
 }
 
 .card {
@@ -268,7 +270,7 @@ const _animationSequence = computed(() => {
   position: relative;
 
   --foil-animated-toggle: ;
-  .card-perspective-wrapper:hover:has(.foil) &.animated {
+  .card-perspective-wrapper.is-hovered:has(.foil) &.animated {
     --foil-x: calc(1% * v-bind('pointerStyle?.foilX'));
     --foil-y: calc(1% * v-bind('pointerStyle?.foilY'));
     --foil-animated-toggle: initial;
@@ -277,7 +279,7 @@ const _animationSequence = computed(() => {
       rotateX(calc(1deg * v-bind('angle.x')));
   }
 
-  .card-perspective-wrapper:not(:hover):has(.foil) &.animated {
+  .card-perspective-wrapper:not(.is-hovered):has(.foil) &.animated {
     transition: transform 0.5s;
   }
 

@@ -5,6 +5,7 @@ import DeckEditor from './DeckEditor.vue';
 import Collection from './Collection.vue';
 import CollectionFilters from './CollectionFilters.vue';
 import CardDetailsModal from './CardDetailsModal/index.vue';
+import { useResponsive } from '@/shared/composables/useResponsive';
 
 definePage({
   name: 'Collection',
@@ -20,13 +21,15 @@ const isSidebarContentDisplayed = ref(false);
 setTimeout(() => {
   isSidebarContentDisplayed.value = true;
 }, 1000);
+
+const { isSmallViewport } = useResponsive();
 </script>
 
 <template>
   <div class="page" :style="{ '--card-scale': cardScale[0] }">
-    <CollectionFilters class="collection-header" />
+    <CollectionFilters v-if="!isSmallViewport" class="collection-header" />
 
-    <Collection class="collection" />
+    <Collection />
 
     <CardDetailsModal />
 
@@ -49,8 +52,9 @@ setTimeout(() => {
   grid-template-rows: auto 1fr;
   transform-style: preserve-3d;
   @screen lt-lg {
-    grid-template-columns: 1fr 18rem;
+    grid-template-columns: 1fr 16rem;
     column-gap: 0;
+    grid-template-rows: 1fr;
   }
 }
 
@@ -81,6 +85,7 @@ setTimeout(() => {
   }
   @screen lt-lg {
     grid-column: 2;
+    padding-inline: var(--size-3);
   }
 }
 </style>

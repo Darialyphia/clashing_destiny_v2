@@ -114,6 +114,9 @@ const isDev = import.meta.env.DEV;
   padding-inline: var(--size-4);
   padding-bottom: var(--size-10);
   padding-top: var(--size-3);
+  @screen lt-lg {
+    padding-inline-end: 0;
+  }
   li {
     --pixel-scale: var(--card-scale);
     position: relative;

@@ -17,6 +17,7 @@ import {
 import type { Nullable } from '@game/shared';
 import type { DeckId } from '@game/api';
 import type { CardBlueprint } from '@game/engine/src/card/card-blueprint';
+import { useResponsive } from '@/shared/composables/useResponsive';
 
 export type CollectionContext = CardListContext & {
   viewMode: Ref<'expanded' | 'compact'>;
@@ -161,6 +162,8 @@ export const provideCollectionPage = () => {
     selectedCard.value = null;
   };
 
+  const { isSmallViewport } = useResponsive();
+
   const api: CollectionContext = {
     selectedCard,
     selectCard,
@@ -186,7 +189,7 @@ export const provideCollectionPage = () => {
     isDeleting: isDeletingDeck,
     deckBuilder,
     decks,
-    cardScale: ref([2]),
+    cardScale: ref([isSmallViewport.value ? 1.25 : 2]),
     createDeck: () => createDeck({}),
     editDeck: id => {
       selectedDeckId.value = id;

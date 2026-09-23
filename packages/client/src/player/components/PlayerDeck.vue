@@ -4,6 +4,7 @@ import {
   CARD_KINDS,
   type Affinity
 } from '@game/engine/src/card/card.enums';
+import { useResponsive } from '@/shared/composables/useResponsive';
 import { CARDS_DICTIONARY } from '@game/engine/src/card/sets';
 import {
   HoverCardContent,
@@ -61,6 +62,8 @@ const affinities = computed(() => {
 
   return result;
 });
+
+const { isSmallViewport } = useResponsive();
 </script>
 
 <template>
@@ -91,7 +94,7 @@ const affinities = computed(() => {
           </div>
         </div>
 
-        <HoverCardTrigger as-child>
+        <HoverCardTrigger v-if="!isSmallViewport" as-child>
           <FancyButton as="div" text="?"></FancyButton>
         </HoverCardTrigger>
       </button>
@@ -209,5 +212,8 @@ const affinities = computed(() => {
 .affinity {
   width: 26px;
   aspect-ratio: 1 / 1;
+  @screen lt-lg {
+    width: 13px;
+  }
 }
 </style>

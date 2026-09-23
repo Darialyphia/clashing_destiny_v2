@@ -4,6 +4,8 @@ import 'open-props/postcss/style';
 // @ts-ignore
 import 'open-props/colors-hsl';
 
+import '@/assets';
+
 import { createApp } from 'vue';
 import { routes, handleHotUpdate } from 'vue-router/auto-routes';
 import { createRouter, createWebHistory } from 'vue-router';
@@ -14,7 +16,9 @@ import App from './App.vue';
 import gsap from 'gsap';
 import { MotionPathPlugin, Flip } from 'gsap/all';
 import { createConvexVue } from '@convex-vue/core';
-import '@/assets';
+import Vue3TouchEvents, {
+  type Vue3TouchEventsOptions
+} from 'vue3-touch-events';
 import Trigger from './shared/components/RichText/Trigger.vue';
 import Keyword from './shared/components/RichText/Keyword.vue';
 import Mana from './shared/components/RichText/Mana.vue';
@@ -47,6 +51,7 @@ app.use(router);
 app.use(convexVue);
 app.use(pinia);
 app.use(autoAnimatePlugin);
+app.use<Vue3TouchEventsOptions>(Vue3TouchEvents, {});
 app.component('rt-trigger', Trigger);
 app.component('rt-keyword', Keyword);
 app.component('rt-mana', Mana);

@@ -1,8 +1,10 @@
 <script setup lang="ts">
+import { useResponsive } from '@/shared/composables/useResponsive';
 import { useCollectionPage } from './useCollectionPage';
 import BlueprintCard from '@/card/components/BlueprintCard.vue';
 import type { CardBlueprint } from '@game/engine/src/card/card-blueprint';
 import type { CardId } from '@game/api';
+import { useDoubleTap } from '@/shared/composables/useDoubleTap';
 
 const { card } = defineProps<{
   card: {
@@ -49,10 +51,21 @@ watch(selectedCard, () => {
     isInvisible.value = false;
   }
 });
+
+const { isTouchDevice } = useResponsive();
+const onRightClick = () => {
+  if (isTouchDevice.value) return;
+  selectCard(card.id);
+};
+
+const root = useTemplateRef('root');
+useDoubleTap(root, () => {
+  selectCard(card.id);
+});
 </script>
 
 <template>
-  <div ref="root">
+  <div ref="root" class="relative">
     <BlueprintCard
       :blueprint="card.card"
       show-stats
@@ -77,10 +90,10 @@ watch(selectedCard, () => {
           });
         }
       "
-      @contextmenu.prevent="selectCard(card.id)"
+      @contextmenu.prevent="onRightClick"
     />
 
-    <div class="copies-owned">Copies owned: {{ card.copiesOwned }}</div>
+    <div class="copies-owned">X{{ card.copiesOwned }}</div>
   </div>
 </template>
 
@@ -112,6 +125,10 @@ watch(selectedCard, () => {
   cursor: url('@/assets/ui/cursor-hover.png'), auto;
 }
 .copies-owned {
+  position: absolute;
+  bottom: calc(var(--pixel-scale) * -3px);
+  left: 50%;
+  transform: translateX(-75%);
   text-align: center;
   font-size: var(--font-size-0);
   user-select: none;
@@ -120,5 +137,7 @@ watch(selectedCard, () => {
   display: grid;
   place-items: center;
   margin-top: var(--size-1);
+  background: #222;
+  padding: 0 var(--size-1);
 }
 </style>
