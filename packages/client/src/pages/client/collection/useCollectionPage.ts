@@ -189,7 +189,7 @@ export const provideCollectionPage = () => {
     isDeleting: isDeletingDeck,
     deckBuilder,
     decks,
-    cardScale: ref([isSmallViewport.value ? 1.25 : 2]),
+    cardScale: ref([isSmallViewport.value ? 1 : 2]),
     createDeck: () => createDeck({}),
     editDeck: id => {
       selectedDeckId.value = id;
