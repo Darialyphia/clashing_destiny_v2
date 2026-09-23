@@ -149,6 +149,10 @@ const { activeFrameRect, bgPosition, imageBg } = useSprite({
     opacity: 0;
     transform: translateX(-3rem);
   }
+
+  @screen lt-lg {
+    padding-left: var(--size-1);
+  }
 }
 
 .mana-cost {

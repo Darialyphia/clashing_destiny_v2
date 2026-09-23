@@ -125,8 +125,8 @@ const isDev = import.meta.env.DEV;
     perspective: 700px;
     perspective-origin: center;
     isolation: isolate;
-    /* width: calc(var(--card-v3-width) * var(--pixel-scale));
-    aspect-ratio: var(--card-ratio); */
+    width: calc(var(--card-v3-width) * var(--pixel-scale));
+    height: calc(var(--card-v3-height) * var(--pixel-scale));
   }
 
   @screen lt-lg {
