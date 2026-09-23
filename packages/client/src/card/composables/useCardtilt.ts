@@ -177,7 +177,6 @@ export const useCardTilt = (
   });
 
   const onMousemove = (e: MouseEvent) => {
-    console.log('onmousemove');
     if (!isEnabled.value) return;
     if (!isHovered.value) return;
     e.preventDefault();

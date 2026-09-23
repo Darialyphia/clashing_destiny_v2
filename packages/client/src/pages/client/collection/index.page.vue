@@ -52,7 +52,7 @@ const { isSmallViewport } = useResponsive();
   grid-template-rows: auto 1fr;
   transform-style: preserve-3d;
   @screen lt-lg {
-    grid-template-columns: 1fr 14rem;
+    grid-template-columns: 1fr 12rem;
     column-gap: 0;
     grid-template-rows: 1fr;
   }

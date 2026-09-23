@@ -30,7 +30,8 @@ export function useSprite({
   kind,
   scale = 1,
   repeat = () => true,
-  scalePositionByPixelScale = false
+  scalePositionByPixelScale = false,
+  animated = () => true
 }: {
   sprite: MaybeRefOrGetter<SpriteData | null>;
   animationSequence: MaybeRefOrGetter<string[] | undefined>;
@@ -38,6 +39,7 @@ export function useSprite({
   scale?: number;
   repeat?: MaybeRefOrGetter<boolean>;
   scalePositionByPixelScale?: boolean;
+  animated?: MaybeRefOrGetter<boolean>;
 }) {
   const emitter = new TypedEventEmitter<{
     sequenceEnd: { animationSequence: string[] };
@@ -47,9 +49,13 @@ export function useSprite({
   const sequenceRef = computed(() => toValue(animationSequence));
   const kindRef = computed(() => toValue(kind));
   const repeatRef = computed(() => toValue(repeat));
+  const animatedRef = computed(() => toValue(animated));
 
   const shouldAnimate = computed(
-    () => isDefined(sequenceRef.value) && sequenceRef.value.length > 0
+    () =>
+      isDefined(sequenceRef.value) &&
+      sequenceRef.value.length > 0 &&
+      animatedRef.value
   );
   const isDone = ref(false);
 
