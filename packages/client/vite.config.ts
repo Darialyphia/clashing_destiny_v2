@@ -115,6 +115,8 @@ export default defineConfig(({ mode }) => {
           short_name: 'Duelyst',
           description: 'The Duelyst Dominion digital Trading Card Game',
           theme_color: '#ffffff',
+          display: 'standalone',
+          orientation: 'landscape',
           icons: [
             {
               src: '/icon/logo-192x192.png',
