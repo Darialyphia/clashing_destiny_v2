@@ -35,6 +35,18 @@ gsap.install(window);
 gsap.registerPlugin(MotionPathPlugin);
 gsap.registerPlugin(Flip);
 
+if (
+  (window.navigator as any).standalone ||
+  window.matchMedia('(display-mode: standalone)').matches
+) {
+  if (screen.orientation && screen.orientation.lock) {
+    screen.orientation
+      .lock('landscape')
+      .then(() => console.log('Orientation locked to landscape'))
+      .catch(err => console.error('Orientation lock failed: ', err));
+  }
+}
+
 const app = createApp(App);
 
 const router = createRouter({
