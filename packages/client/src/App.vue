@@ -4,6 +4,7 @@ import { provideAuth } from './auth/composables/useAuth';
 import SVGFilters from './game/components/SVGFilters.vue';
 import UiToaster from './ui/components/UiToaster.vue';
 import { provideToast } from './ui/composables/useToast';
+import ServiceWorkerPrompt from './ServiceWorkerPrompt.vue';
 
 // const { loaded } = useAssets();
 provideAuth();
@@ -23,6 +24,7 @@ provideToast();
     <div id="card-portal"></div>
     <div id="card-actions-portal"></div>
     <div id="tooltip-portal"></div>
+    <ServiceWorkerPrompt />
   </div>
 </template>
 
@@ -39,7 +41,6 @@ body:has(
   overflow-x: hidden;
 }
 </style>
-e
 
 <style scoped>
 #card-portal {

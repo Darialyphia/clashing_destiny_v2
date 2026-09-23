@@ -1,8 +1,7 @@
 import { fileURLToPath, URL } from 'node:url';
-
-import { defineConfig } from 'vite';
+import { defineConfig, loadEnv } from 'vite';
 import vue from '@vitejs/plugin-vue';
-
+import { VitePWA } from 'vite-plugin-pwa';
 import vueDevTools from 'vite-plugin-vue-devtools';
 import autoImport from 'unplugin-auto-import/vite';
 import vueRouter from 'unplugin-vue-router/vite';
@@ -11,7 +10,6 @@ import unoCSS from 'unocss/vite';
 // import icons from 'unplugin-icons/vite';
 import markdown, { Mode } from 'vite-plugin-markdown';
 import { isCustomElement, transformAssetUrls } from 'vue3-pixi/compiler';
-
 // import assetpackConfig from '@game/assetpack';
 
 const customElements = [
@@ -66,59 +64,100 @@ const prefix = 'pixi-';
 //   };
 // }
 
-export default defineConfig({
-  plugins: [
-    vueRouter({
-      extensions: ['.page.vue']
-    }),
-    vue({
-      script: {
-        defineModel: true,
-        propsDestructure: true
-      },
-      template: {
-        compilerOptions: {
-          isCustomElement(name) {
-            let normalizedName = name.replace(
-              /[A-Z]/g,
-              m => `-${m.toLowerCase()}`
-            );
-            if (normalizedName.startsWith('-'))
-              normalizedName = normalizedName.slice(1);
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd());
 
-            const isPixiElement = customElements.includes(normalizedName);
-            const isPrefixElement =
-              normalizedName.startsWith(prefix) &&
-              customElements.includes(normalizedName.slice(prefix.length));
-
-            return isCustomElement(name) || isPixiElement || isPrefixElement;
-          }
+  return {
+    plugins: [
+      vueRouter({
+        extensions: ['.page.vue']
+      }),
+      vue({
+        script: {
+          defineModel: true,
+          propsDestructure: true
         },
-        transformAssetUrls
+        template: {
+          compilerOptions: {
+            isCustomElement(name) {
+              let normalizedName = name.replace(
+                /[A-Z]/g,
+                m => `-${m.toLowerCase()}`
+              );
+              if (normalizedName.startsWith('-'))
+                normalizedName = normalizedName.slice(1);
+
+              const isPixiElement = customElements.includes(normalizedName);
+              const isPrefixElement =
+                normalizedName.startsWith(prefix) &&
+                customElements.includes(normalizedName.slice(prefix.length));
+
+              return isCustomElement(name) || isPixiElement || isPrefixElement;
+            }
+          },
+          transformAssetUrls
+        }
+      }),
+      VitePWA({
+        registerType: 'prompt',
+        srcDir: 'src',
+        filename: 'sw.ts',
+        strategies: 'injectManifest',
+        devOptions: {
+          enabled: env.VITE_DEV_PWA === 'true',
+          type: 'module'
+        },
+        manifest: {
+          name: 'Duelyst Dominion',
+          short_name: 'Duelyst',
+          description: 'The Duelyst Dominion digital Trading Card Game',
+          theme_color: '#ffffff',
+          icons: [
+            {
+              src: '/icon/logo-192x192.png',
+              sizes: '192x192',
+              type: 'image/png'
+            },
+            {
+              src: '/icon/logo-512x512.png',
+              sizes: '512x512',
+              type: 'image/png'
+            },
+            {
+              src: '/icon/logo-512x512.png',
+              sizes: '512x512',
+              type: 'image/png',
+              purpose: 'any maskable'
+            }
+          ]
+        },
+        workbox: {
+          globPatterns: ['**/*.{js,css,html,json,png}']
+        }
+      }),
+      vueDevTools(),
+      autoImport({
+        imports: ['vue', VueRouterAutoImports],
+        dts: true,
+        eslintrc: {
+          enabled: true
+        }
+      }),
+      unoCSS(),
+      // icons({}),
+      // assetpackPlugin(),
+      // @ts-expect-error
+      markdown.default({
+        mode: [Mode.VUE]
+      })
+    ],
+    resolve: {
+      alias: {
+        '@': fileURLToPath(new URL('./src', import.meta.url))
       }
-    }),
-    vueDevTools(),
-    autoImport({
-      imports: ['vue', VueRouterAutoImports],
-      dts: true,
-      eslintrc: {
-        enabled: true
-      }
-    }),
-    unoCSS(),
-    // icons({}),
-    // assetpackPlugin(),
-    // @ts-expect-error
-    markdown.default({
-      mode: [Mode.VUE]
-    })
-  ],
-  resolve: {
-    alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url))
+    },
+    server: {
+      port: 3000
     }
-  },
-  server: {
-    port: 3000
-  }
+  };
 });
