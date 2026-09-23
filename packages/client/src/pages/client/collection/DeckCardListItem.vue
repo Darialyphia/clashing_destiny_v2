@@ -134,7 +134,7 @@ const { activeFrameRect, bgPosition, imageBg } = useSprite({
   gap: var(--size-2);
   align-items: center;
   border: solid var(--border-size-1) #d7ad42;
-  padding: var(--size-2) var(--size-3);
+  padding: var(--size-3) var(--size-3);
   cursor: url('@/assets/ui/cursor-hover.png'), auto;
   background-image: linear-gradient(to right, #2b2136 25%, transparent);
   background-repeat: no-repeat;
@@ -217,7 +217,10 @@ const { activeFrameRect, bgPosition, imageBg } = useSprite({
     translate: 0 0;
   }
   .minion & {
-    translate: 45px -20px;
+    translate: 25% -20px;
+  }
+  .destiny & {
+    translate: 25px 0px;
   }
 
   @screen lt-lg {

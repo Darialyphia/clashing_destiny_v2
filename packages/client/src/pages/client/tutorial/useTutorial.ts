@@ -1,3 +1,4 @@
+import type { InjectionKey, Ref } from 'vue';
 import type {
   GameClient,
   NetworkAdapter
@@ -18,6 +19,7 @@ import type {
   Nullable,
   Override
 } from '@game/shared';
+import { useSafeInject } from '@/shared/composables/useSafeInject';
 
 type ClientTutorialTextBox = TutorialTextBox & {
   top?: string;
@@ -26,6 +28,7 @@ type ClientTutorialTextBox = TutorialTextBox & {
   bottom?: string;
   centered?: { x?: boolean; y?: boolean };
 };
+
 export type UseTutorialOptions = Pick<
   GameOptions,
   'players' | 'rngSeed' | 'history'
@@ -50,7 +53,26 @@ export type UseTutorialOptions = Pick<
   next?: string;
 };
 
-export const useTutorial = (options: UseTutorialOptions) => {
+export type TutorialContext = {
+  client: Ref<GameClient>;
+  currentStep: Ref<TutorialStep | null>;
+  currentStepTextBox: Ref<Nullable<ClientTutorialTextBox>>;
+  currentStepError: Ref<string | null>;
+  next: () => Promise<void>;
+  progress: Ref<{ current: number; total: number }>;
+  attemptCount: Ref<number>;
+  status: Ref<string | null>;
+  canRetry: Ref<boolean>;
+  retry: () => Promise<void>;
+  isFinished: Ref<boolean>;
+  nextMission: string | undefined;
+};
+
+export const TUTORIAL_INJECTION_KEY = Symbol(
+  'TutorialContext'
+) as InjectionKey<TutorialContext>;
+
+export const provideTutorial = (options: UseTutorialOptions) => {
   const game = new Game({
     id: 'sandbox',
     enableSnapshots: true,
@@ -166,7 +188,7 @@ export const useTutorial = (options: UseTutorialOptions) => {
     tutorial.value.dispose();
   });
 
-  return {
+  const ctx: TutorialContext = {
     client,
     currentStep,
     currentStepTextBox,
@@ -184,4 +206,10 @@ export const useTutorial = (options: UseTutorialOptions) => {
       return tutorial.value.isFinished;
     })
   };
+
+  provide(TUTORIAL_INJECTION_KEY, ctx);
+
+  return ctx;
 };
+
+export const useTutorial = () => useSafeInject(TUTORIAL_INJECTION_KEY);

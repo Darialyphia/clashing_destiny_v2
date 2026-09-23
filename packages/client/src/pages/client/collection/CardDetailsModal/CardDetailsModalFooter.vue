@@ -97,21 +97,14 @@ const { isSmallViewport } = useResponsive();
   --pixel-scale: 1;
   margin-block-start: auto;
   padding-block-start: var(--size-4);
-  display: grid;
-  grid-template-columns: 1fr 1fr;
   align-items: start;
   gap: var(--size-3);
   justify-content: center;
   border-block-start: var(--border-size-1) solid var(--border-dimmed);
+  display: flex;
+  flex-direction: column;
   > button {
     width: 100%;
-  }
-  @screen lt-lg {
-    display: flex;
-    flex-direction: column;
-    > button {
-      margin-inline: auto;
-    }
   }
 }
 </style>
