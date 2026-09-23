@@ -105,17 +105,18 @@ const isDev = import.meta.env.DEV;
     auto-fill,
     minmax(calc(var(--card-v3-width) * var(--card-scale)), 1fr)
   );
-  column-gap: var(--size-0);
+  column-gap: 0;
   row-gap: var(--size-2);
   justify-items: center;
   overflow-x: hidden;
   overflow-y: auto;
   align-content: start;
   padding-inline: var(--size-4);
-  padding-bottom: var(--size-10);
+  padding-bottom: var(--size-4);
   padding-top: var(--size-3);
   @screen lt-lg {
     padding-inline-end: 0;
+    padding-bottom: 0;
   }
   li {
     --pixel-scale: var(--card-scale);

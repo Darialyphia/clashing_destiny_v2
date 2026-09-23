@@ -128,7 +128,7 @@ useDoubleTap(root, () => {
   position: absolute;
   bottom: calc(var(--pixel-scale) * -3px);
   left: 50%;
-  transform: translateX(-75%);
+  transform: translateX(-50%);
   text-align: center;
   font-size: var(--font-size-0);
   user-select: none;
