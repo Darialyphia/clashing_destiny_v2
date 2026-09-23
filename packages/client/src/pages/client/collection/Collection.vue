@@ -110,6 +110,7 @@ const isDev = import.meta.env.DEV;
   justify-items: center;
   overflow-x: hidden;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch; /* Enable smooth scrolling on iOS */
   align-content: start;
   padding-inline: var(--size-4);
   padding-bottom: var(--size-4);
