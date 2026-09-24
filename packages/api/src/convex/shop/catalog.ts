@@ -63,7 +63,7 @@ export const shopCatalog: ShopCatalogEntry<string>[] = [
     ],
     quantity: {
       min: 1,
-      max: 1
+      max: 10
     },
     contents: [
       {

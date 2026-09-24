@@ -13,6 +13,9 @@ import GoldIcon from '@/player/components/GodlIcon.vue';
 import CraftignShardIcon from '@/player/components/CraftignShardIcon.vue';
 import PremiumGemIcon from '@/player/components/PremiumGemIcon.vue';
 import UiModal from '@/ui/components/UiModal.vue';
+import { useShopPurchase } from './useShop';
+import FancyButton from '@/ui/components/FancyButton.vue';
+import { useMe } from '@/auth/composables/useMe';
 
 const icon = computed(() => assets[`shop/${offer.icon}`]?.path);
 
@@ -25,6 +28,57 @@ const getCurrencyComponent = (currency: CurrencyType) => {
 };
 
 const isDetailsModalOpened = ref(false);
+
+const { mutate: purchase, isLoading: isPurchasing } = useShopPurchase();
+
+const quantity = ref(offer.quantity.min);
+const currency = ref(offer.price[0].currency);
+
+const { data: me } = useMe();
+
+const selectedPrice = computed(
+  () =>
+    offer.price.find(price => price.currency === currency.value)?.amount ?? 0
+);
+
+const currentBalance = computed(() => {
+  if (!me.value) return 0;
+
+  return match(currency.value)
+    .with(CURRENCY_TYPES.GOLD, () => me.value.wallet.gold)
+    .with(CURRENCY_TYPES.CRAFTING_SHARDS, () => me.value.wallet.craftingShards)
+    .with(CURRENCY_TYPES.PREMIUM, () => me.value.wallet.premium)
+    .exhaustive();
+});
+
+const totalPrice = computed(() => selectedPrice.value * quantity.value);
+const remainingBalance = computed(
+  () => currentBalance.value - totalPrice.value
+);
+const hasQuantitySelector = computed(
+  () => offer.quantity.max > offer.quantity.min
+);
+const canPurchase = computed(
+  () =>
+    offer.canPurchase &&
+    quantity.value >= offer.quantity.min &&
+    quantity.value <= offer.quantity.max &&
+    totalPrice.value <= currentBalance.value
+);
+
+const normalizeQuantity = () => {
+  const parsedQuantity = Number(quantity.value);
+
+  quantity.value = Math.min(
+    offer.quantity.max,
+    Math.max(
+      offer.quantity.min,
+      Number.isFinite(parsedQuantity)
+        ? Math.trunc(parsedQuantity)
+        : offer.quantity.min
+    )
+  );
+};
 </script>
 
 <template>
@@ -48,11 +102,105 @@ const isDetailsModalOpened = ref(false);
     </div>
   </button>
   <UiModal
+    v-if="me"
     v-model:is-opened="isDetailsModalOpened"
     :title="offer.name"
     description="Details about the offer"
   >
-    <div class="surface">TODO</div>
+    <div class="purchase-modal surface">
+      <div class="offer-details">
+        <img v-if="icon" :src="icon" :alt="offer.name" class="modal-icon" />
+        <div>
+          <h2>{{ offer.name }}</h2>
+          <p>{{ offer.description }}</p>
+        </div>
+      </div>
+
+      <label v-if="offer.price.length > 1" class="field">
+        <span>Pay with</span>
+        <select v-model="currency">
+          <option
+            v-for="price in offer.price"
+            :key="price.currency"
+            :value="price.currency"
+          >
+            {{ price.currency }}
+          </option>
+        </select>
+      </label>
+
+      <div class="summary">
+        <div class="summary-row">
+          <span>Price per unit</span>
+          <span class="currency-value">
+            {{ selectedPrice }}
+            <component
+              :is="getCurrencyComponent(currency)"
+              class="currency-icon"
+            />
+          </span>
+        </div>
+        <div v-if="hasQuantitySelector" class="summary-row quantity-row">
+          <label for="offer-quantity">
+            Quantity (max: {{ offer.quantity.max }})
+          </label>
+          <input
+            id="offer-quantity"
+            v-model.number="quantity"
+            type="number"
+            :min="offer.quantity.min"
+            :max="offer.quantity.max"
+            @input="normalizeQuantity"
+          />
+        </div>
+        <div class="summary-row">
+          <span>Current balance</span>
+          <span class="currency-value">
+            {{ currentBalance }}
+            <component
+              :is="getCurrencyComponent(currency)"
+              class="currency-icon"
+            />
+          </span>
+        </div>
+        <div class="summary-row total-row">
+          <span>Total deducted</span>
+          <span class="currency-value">
+            {{ totalPrice }}
+            <component
+              :is="getCurrencyComponent(currency)"
+              class="currency-icon"
+            />
+          </span>
+        </div>
+        <div class="summary-row" :class="{ negative: remainingBalance < 0 }">
+          <span>Remaining balance</span>
+          <span class="currency-value">
+            {{ remainingBalance }}
+            <component
+              :is="getCurrencyComponent(currency)"
+              class="currency-icon"
+            />
+          </span>
+        </div>
+        <p v-if="remainingBalance < 0" class="error-message">
+          You do not have enough currency for this purchase.
+        </p>
+      </div>
+
+      <FancyButton
+        :loading="isPurchasing"
+        :disabled="!canPurchase"
+        text="Purchase"
+        @click="
+          purchase({
+            sku: offer.sku,
+            quantity,
+            currencyType: currency
+          })
+        "
+      />
+    </div>
   </UiModal>
 </template>
 
@@ -109,5 +257,91 @@ const isDetailsModalOpened = ref(false);
   align-items: center;
   font-size: var(--font-size-3);
   font-weight: var(--font-weight-7);
+}
+
+.purchase-modal {
+  display: grid;
+  gap: var(--size-4);
+  min-width: min(440px, 80vw);
+}
+
+.offer-details {
+  display: flex;
+  align-items: center;
+  gap: var(--size-4);
+}
+
+.modal-icon {
+  width: 96px;
+  height: 96px;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.offer-details h2,
+.offer-details p {
+  margin: 0;
+}
+
+.offer-details p {
+  margin-block-start: var(--size-2);
+  color: var(--text-2);
+}
+
+.field,
+.quantity-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--size-3);
+}
+
+.field select,
+.quantity-row input {
+  min-width: 120px;
+  padding: var(--size-2);
+  border: 1px solid var(--surface-4);
+  background: var(--surface-1);
+  color: var(--text-1);
+}
+
+.summary {
+  display: grid;
+  gap: var(--size-2);
+  padding: var(--size-4);
+  background: var(--surface-3);
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--size-4);
+}
+
+.currency-value {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--size-1);
+  font-weight: var(--font-weight-6);
+}
+
+.currency-icon {
+  width: 1.25em;
+  height: 1.25em;
+}
+
+.total-row {
+  padding-block-start: var(--size-2);
+  border-block-start: 1px solid var(--surface-4);
+  font-weight: var(--font-weight-7);
+}
+
+.negative,
+.error-message {
+  color: var(--red-6);
+}
+
+.error-message {
+  margin: var(--size-2) 0 0;
 }
 </style>

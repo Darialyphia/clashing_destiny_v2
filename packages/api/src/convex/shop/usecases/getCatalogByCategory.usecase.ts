@@ -1,4 +1,3 @@
-import type { EmptyObject } from '@game/shared';
 import type { UseCase } from '../../usecase';
 import type { ShopOffer } from '../catalog';
 import type { ShopCategory } from '../shop.constants';
@@ -16,7 +15,15 @@ export interface GetCatalogByCategoryOutput {
   items: Array<
     Pick<
       ShopOffer,
-      'sku' | 'contents' | 'category' | 'name' | 'icon' | 'price' | 'hot'
+      | 'sku'
+      | 'contents'
+      | 'category'
+      | 'name'
+      | 'description'
+      | 'icon'
+      | 'price'
+      | 'hot'
+      | 'quantity'
     > & {
       canPurchase: boolean;
     }
@@ -30,7 +37,7 @@ export class GetCatalogByCategoryUseCase
 
   constructor(
     protected ctx: {
-      transactionRepo: TransactionReadRepository;
+      transactionReadRepo: TransactionReadRepository;
       session: AuthSession | null;
     }
   ) {}
@@ -43,7 +50,7 @@ export class GetCatalogByCategoryUseCase
       .filter(offer => offer.category === input.category)
       .filter(offer => offer.availability.every(rule => rule.isAvailable(now)));
 
-    const transactions = await this.ctx.transactionRepo.getByUserIdAndSource(
+    const transactions = await this.ctx.transactionReadRepo.getByUserIdAndSource(
       this.ctx.session!.userId,
       CURRENCY_SOURCES.SHOP_PURCHASE
     );
@@ -53,9 +60,11 @@ export class GetCatalogByCategoryUseCase
         contents: item.contents,
         category: item.category,
         name: item.name,
+        description: item.description,
         icon: item.icon,
         price: item.price,
         hot: item.hot,
+        quantity: item.quantity,
         canPurchase: item.purchaseLimits.every(rule =>
           rule.canPurchase(
             transactions.map(tx => ({

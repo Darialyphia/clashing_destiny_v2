@@ -1,4 +1,4 @@
-import { useAuthedQuery } from '@/auth/composables/useAuth';
+import { useAuthedMutation, useAuthedQuery } from '@/auth/composables/useAuth';
 import { api, type ShopCategory } from '@game/api';
 
 export const useCatalogByCategory = (
@@ -8,4 +8,8 @@ export const useCatalogByCategory = (
     api.shop.catalogByCategory,
     computed(() => ({ category: toValue(category) }))
   );
+};
+
+export const useShopPurchase = () => {
+  return useAuthedMutation(api.shop.purchaseItem);
 };
