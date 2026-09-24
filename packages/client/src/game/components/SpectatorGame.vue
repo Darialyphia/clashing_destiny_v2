@@ -61,5 +61,9 @@ socket.value.on('clockUpdate', updatedClocks => {
         @click="client.surrender()"
       />
     </template>
+
+    <template #battlefield>
+      <DoubleBattlefield :clocks="clocks" />
+    </template>
   </GameScene>
 </template>

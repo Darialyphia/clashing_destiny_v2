@@ -24,7 +24,7 @@ export const dancingBlades: MinionBlueprint = {
   rarity: RARITIES.RARE,
   affinities: [AFFINITIES.NEUTRAL, AFFINITIES.NEUTRAL, AFFINITIES.NEUTRAL],
   manaCost: 5,
-  manaSupply: 2,
+  manaSupply: 3,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 3,

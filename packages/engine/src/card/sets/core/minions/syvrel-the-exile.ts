@@ -26,7 +26,7 @@ export const syvrelTheExile: MinionBlueprint = {
   rarity: RARITIES.RARE,
   affinities: [AFFINITIES.FIRE, AFFINITIES.NEUTRAL],
   manaCost: 3,
-  manaSupply: 2,
+  manaSupply: 3,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 2,

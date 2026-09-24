@@ -56,7 +56,7 @@ export const tuskBoar: MinionBlueprint = {
   rarity: RARITIES.LEGENDARY,
   affinities: [AFFINITIES.FIRE, AFFINITIES.FIRE],
   manaCost: 3,
-  manaSupply: 1,
+  manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 3,

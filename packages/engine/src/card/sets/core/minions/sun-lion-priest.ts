@@ -27,7 +27,7 @@ export const sunlionPriest: MinionBlueprint = {
   rarity: RARITIES.EPIC,
   affinities: [AFFINITIES.LIGHT, AFFINITIES.LIGHT, AFFINITIES.NEUTRAL],
   manaCost: 5,
-  manaSupply: 2,
+  manaSupply: 3,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 3,

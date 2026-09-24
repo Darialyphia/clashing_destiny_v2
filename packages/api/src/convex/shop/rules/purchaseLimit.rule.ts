@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import { match } from 'ts-pattern';
 
 export type RawPurchaseLimit =
@@ -14,14 +15,14 @@ export type RawPurchaseLimit =
       max: number;
     };
 
-export class PurchaseLimit {
+export class PurchaseLimitRule {
   constructor(
     private limit: RawPurchaseLimit,
     private offerId: string
   ) {}
 
   canPurchase(transactions: Array<{ offerId: string; purchasedAt: Date }>): boolean {
-    const now = new Date();
+    const now = dayjs();
 
     return match(this.limit)
       .with({ type: 'lifetime' }, limit => {
@@ -31,22 +32,20 @@ export class PurchaseLimit {
         return totalPurchases < limit.max;
       })
       .with({ type: 'perDay' }, limit => {
-        const startOfDay = new Date(now);
-        startOfDay.setHours(0, 0, 0, 0);
+        const startOfDay = now.startOf('day');
 
         const purchasesToday = transactions.filter(
-          tx => tx.offerId === this.offerId && tx.purchasedAt >= startOfDay
+          tx => tx.offerId === this.offerId && !dayjs(tx.purchasedAt).isBefore(startOfDay)
         ).length;
 
         return purchasesToday < limit.max;
       })
       .with({ type: 'perWeek' }, limit => {
-        const startOfWeek = new Date(now);
-        startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
-        startOfWeek.setHours(0, 0, 0, 0);
+        const startOfWeek = now.startOf('week');
 
         const purchasesThisWeek = transactions.filter(
-          tx => tx.offerId === this.offerId && tx.purchasedAt >= startOfWeek
+          tx =>
+            tx.offerId === this.offerId && !dayjs(tx.purchasedAt).isBefore(startOfWeek)
         ).length;
 
         return purchasesThisWeek < limit.max;

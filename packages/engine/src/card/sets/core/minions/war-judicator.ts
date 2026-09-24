@@ -24,7 +24,7 @@ export const warJudicator: MinionBlueprint = {
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.RARE,
   manaCost: 5,
-  manaSupply: 2,
+  manaSupply: 3,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 2,

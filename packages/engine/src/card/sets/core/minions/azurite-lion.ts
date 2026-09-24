@@ -23,7 +23,7 @@ export const azuriteLion: MinionBlueprint = {
   rarity: RARITIES.COMMON,
   affinities: [AFFINITIES.LIGHT],
   manaCost: 3,
-  manaSupply: 2,
+  manaSupply: 3,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 2,

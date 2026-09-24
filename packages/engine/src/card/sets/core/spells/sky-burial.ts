@@ -31,7 +31,7 @@ export const skyBurial: SpellBlueprint = {
   rarity: RARITIES.RARE,
   affinities: [AFFINITIES.LIGHT, AFFINITIES.LIGHT, AFFINITIES.LIGHT],
   manaCost: 4,
-  manaSupply: 2,
+  manaSupply: 3,
   speed: CARD_SPEED.FAST,
   tags: [],
   shouldHideTargetArrows: false,

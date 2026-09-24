@@ -9,6 +9,7 @@ import { useMe } from '@/auth/composables/useMe';
 import GameScene from './GameScene.vue';
 import FancyButton from '@/ui/components/FancyButton.vue';
 import UiModal from '@/ui/components/UiModal.vue';
+import DoubleBattlefield from './MinionZone/DoubleBattlefield.vue';
 
 const { data: me } = useMe();
 const { socket, socketError } = useGameSocket();
@@ -64,6 +65,10 @@ socket.value.on('clockUpdate', updatedClocks => {
         class="w-full"
         @click="client.surrender()"
       />
+    </template>
+
+    <template #battlefield>
+      <DoubleBattlefield :clocks="clocks" />
     </template>
   </GameScene>
   <p v-else>Waiting for initial state...</p>

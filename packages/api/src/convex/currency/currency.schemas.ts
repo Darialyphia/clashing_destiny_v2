@@ -25,6 +25,7 @@ export const currencySchemas = {
   wallets: defineTable({
     userId: v.id('users'),
     gold: v.number(),
+    premiumCurrency: v.number().optional(),
     craftingShards: v.number(),
     createdAt: v.number(),
     updatedAt: v.number()

@@ -25,7 +25,7 @@ export const scintilla: MinionBlueprint = {
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.COMMON,
   manaCost: 3,
-  manaSupply: 2,
+  manaSupply: 3,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 3,

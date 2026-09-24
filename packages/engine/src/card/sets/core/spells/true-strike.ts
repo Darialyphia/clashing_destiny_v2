@@ -30,7 +30,7 @@ export const trueStrike: SpellBlueprint<MinionCard> = {
   rarity: RARITIES.COMMON,
   affinities: [AFFINITIES.LIGHT],
   manaCost: 1,
-  manaSupply: 2,
+  manaSupply: 3,
   speed: CARD_SPEED.FAST,
   tags: [],
   canPlay: (game, card) =>

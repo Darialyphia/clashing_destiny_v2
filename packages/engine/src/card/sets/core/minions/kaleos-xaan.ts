@@ -35,7 +35,7 @@ export const kaleosXaan: MinionBlueprint = {
   tags: [],
   atk: 5,
   maxHp: 5,
-  commandment: 2,
+  commandment: 3,
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {

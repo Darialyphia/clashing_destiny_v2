@@ -27,7 +27,7 @@ export const fourWindsMagi: MinionBlueprint = {
   rarity: RARITIES.RARE,
   affinities: [AFFINITIES.FIRE, AFFINITIES.FIRE],
   manaCost: 4,
-  manaSupply: 2,
+  manaSupply: 3,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 2,

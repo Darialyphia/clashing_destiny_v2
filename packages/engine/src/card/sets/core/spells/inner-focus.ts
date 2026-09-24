@@ -4,14 +4,11 @@ import { defaultCardArt, singleAllyMinionTargetRules } from '../../../card-utils
 import {
   AFFINITIES,
   CARD_KINDS,
-  CARD_LOCATIONS,
   CARD_SETS,
   CARD_SPEED,
   RARITIES
 } from '../../../card.enums';
 import type { MinionCard } from '../../../entities/minion.entity';
-import { SimpleCommandmentBuffModifier } from '../../../../modifier/modifiers/simple-commandment-modifier';
-import { UntilEndOfTurnModifierMixin } from '../../../../modifier/mixins/until-end-of-turn.mixin';
 import { AffinitiesTogglableModifierMixin } from '../../../../modifier/mixins/togglable.mixin';
 import { InstantModifier } from '../../../../modifier/modifiers/instant.modifier';
 
@@ -29,7 +26,7 @@ export const innerFocus: SpellBlueprint<MinionCard> = {
   rarity: RARITIES.COMMON,
   affinities: [AFFINITIES.FIRE, AFFINITIES.FIRE],
   manaCost: 2,
-  manaSupply: 2,
+  manaSupply: 3,
   speed: CARD_SPEED.FAST,
   tags: [],
   canPlay: (game, card) => singleAllyMinionTargetRules.canPlay(game, card),
