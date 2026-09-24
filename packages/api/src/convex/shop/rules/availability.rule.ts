@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import { match } from 'ts-pattern';
 
 export type RawAvailabilityRule =
@@ -16,12 +17,10 @@ export class AvailabilityRule {
   isAvailable(currentDate: Date): boolean {
     return match(this.rule)
       .with({ type: 'dateRange' }, rule => {
-        const startDate = new Date(rule.startDate);
-        const endDate = new Date(rule.endDate);
-        return (
-          currentDate.getTime() >= startDate.getTime() &&
-          currentDate.getTime() <= endDate.getTime()
-        );
+        const current = dayjs(currentDate);
+        const startDate = dayjs(rule.startDate);
+        const endDate = dayjs(rule.endDate);
+        return !current.isBefore(startDate) && !current.isAfter(endDate);
       })
       .with({ type: 'always' }, () => {
         return true;

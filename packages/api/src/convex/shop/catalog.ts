@@ -1,7 +1,7 @@
 import type { PackType } from '../card/card.constants';
 import type { CurrencyType } from '../currency/currency.constants';
-import type { AvailabilityRule } from './valueObjects/availabilityRule';
-import { PurchaseLimit } from './entities/purchaseLimit';
+import type { AvailabilityRule } from './rules/availability.rule';
+import { PurchaseLimitRule } from './rules/purchaseLimit.rule';
 
 export type ShopReward =
   | {
@@ -21,7 +21,6 @@ export type ShopOffer = {
 
   name: string;
   icon: string;
-  cover: string;
 
   price: {
     currency: CurrencyType;
@@ -29,7 +28,7 @@ export type ShopOffer = {
   };
 
   availability: AvailabilityRule[];
-  purchaseLimits: PurchaseLimit[];
+  purchaseLimits: PurchaseLimitRule[];
 };
 
 type ShopCatalogEntry<K extends string> = Omit<ShopOffer, 'sku'> & {
@@ -49,7 +48,6 @@ export const shopCatalog = defineShopCatalog({
     sku: 'core_booster_pack_1',
     name: 'Core Booster Pack X 1',
     icon: 'core_booster_pack_1_icon.png',
-    cover: 'core_booster_pack_1_cover.png',
     price: {
       currency: 'gold',
       amount: 100
@@ -68,7 +66,6 @@ export const shopCatalog = defineShopCatalog({
     sku: 'core_booster_pack_10',
     name: 'Core Booster Pack X 10',
     icon: 'core_booster_pack_10_icon.png',
-    cover: 'core_booster_pack_10_cover.png',
     price: {
       currency: 'gold',
       amount: 1000
@@ -85,7 +82,7 @@ export const shopCatalog = defineShopCatalog({
   },
   alpha_welcome_bundle: {
     sku: 'alpha_welcome_bundle',
-    name: 'Clash of Destiny Alpha Welcome Bundle',
+    name: 'Duelyst DominionAlpha Welcome Bundle',
     icon: 'alpha_welcome_bundle_icon.png',
     cover: 'alpha_welcome_bundle_cover.png',
     price: {
@@ -96,17 +93,12 @@ export const shopCatalog = defineShopCatalog({
       {
         type: 'boosterPack',
         packType: 'CORE_STANDARD',
-        quantity: 5
-      },
-      {
-        type: 'currency',
-        currencyType: 'gold',
-        amount: 500
+        quantity: 20
       }
     ],
     availability: [],
     purchaseLimits: [
-      new PurchaseLimit({ type: 'lifetime', max: 1 }, 'alpha_welcome_bundle')
+      new PurchaseLimitRule({ type: 'lifetime', max: 1 }, 'alpha_welcome_bundle')
     ]
   }
 });
