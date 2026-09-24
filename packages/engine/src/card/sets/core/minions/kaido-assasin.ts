@@ -23,7 +23,7 @@ export const kaidoAssassin: MinionBlueprint = {
   rarity: RARITIES.COMMON,
   affinities: [AFFINITIES.FIRE],
   manaCost: 2,
-  manaSupply: 2,
+  manaSupply: 3,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 2,

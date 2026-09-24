@@ -30,7 +30,7 @@ export const backstep: SpellBlueprint<MinionCard> = {
   rarity: RARITIES.COMMON,
   affinities: [AFFINITIES.FIRE],
   manaCost: 1,
-  manaSupply: 2,
+  manaSupply: 3,
   speed: CARD_SPEED.FAST,
   tags: [],
   shouldHideTargetArrows: true,

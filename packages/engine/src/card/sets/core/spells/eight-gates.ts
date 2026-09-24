@@ -27,7 +27,7 @@ export const eightGates: SpellBlueprint<MinionCard> = {
   rarity: RARITIES.EPIC,
   affinities: [AFFINITIES.FIRE, AFFINITIES.FIRE],
   manaCost: 4,
-  manaSupply: 2,
+  manaSupply: 3,
   speed: CARD_SPEED.FAST,
   tags: [],
   shouldHideTargetArrows: true,

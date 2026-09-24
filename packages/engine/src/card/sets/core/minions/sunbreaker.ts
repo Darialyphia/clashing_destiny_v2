@@ -26,7 +26,7 @@ export const sunbreaker: MinionBlueprint = {
   rarity: RARITIES.EPIC,
   affinities: [AFFINITIES.LIGHT, AFFINITIES.LIGHT],
   manaCost: 6,
-  manaSupply: 2,
+  manaSupply: 3,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 4,

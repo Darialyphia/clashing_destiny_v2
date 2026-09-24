@@ -23,7 +23,7 @@ export const suntideMaiden: MinionBlueprint = {
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.COMMON,
   manaCost: 4,
-  manaSupply: 1,
+  manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 2,

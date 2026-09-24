@@ -30,7 +30,7 @@ export const assassinationProtocol: SpellBlueprint<MinionCard> = {
   rarity: RARITIES.RARE,
   affinities: [AFFINITIES.FIRE],
   manaCost: 2,
-  manaSupply: 2,
+  manaSupply: 3,
   speed: CARD_SPEED.FAST,
   tags: [],
   canPlay: (game, card) =>

@@ -25,7 +25,7 @@ export const holyImmolation = defineSecretBlueprint({
   rarity: RARITIES.EPIC,
   affinities: [AFFINITIES.LIGHT, AFFINITIES.LIGHT, AFFINITIES.NEUTRAL],
   manaCost: 3,
-  manaSupply: 2,
+  manaSupply: 3,
   speed: CARD_SPEED.FAST,
   tags: [],
   shouldHideTargetArrows: true,

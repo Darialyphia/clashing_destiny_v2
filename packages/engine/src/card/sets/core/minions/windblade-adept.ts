@@ -23,7 +23,7 @@ export const windbladeAdept: MinionBlueprint = {
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.COMMON,
   manaCost: 2,
-  manaSupply: 1,
+  manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 2,

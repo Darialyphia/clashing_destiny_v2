@@ -31,7 +31,7 @@ export const bloodrageMask: ArtifactBlueprint = {
   art: defaultCardArt('artifacts/bloodrage-mask'),
   kind: CARD_KINDS.ARTIFACT,
   rarity: RARITIES.RARE,
-  affinities: [AFFINITIES.FIRE, AFFINITIES.FIRE, AFFINITIES.NEUTRAL],
+  affinities: [AFFINITIES.FIRE, AFFINITIES.NEUTRAL],
   manaCost: 2,
   manaSupply: 2,
   durability: 3,

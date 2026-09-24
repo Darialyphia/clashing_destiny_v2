@@ -27,7 +27,7 @@ export const argeonHighmane: MinionBlueprint = {
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.LEGENDARY,
   manaCost: 5,
-  manaSupply: 2,
+  manaSupply: 3,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 3,

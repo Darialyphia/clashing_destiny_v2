@@ -24,7 +24,7 @@ export const songweaver: MinionBlueprint = {
   rarity: RARITIES.COMMON,
   affinities: [AFFINITIES.NEUTRAL],
   manaCost: 3,
-  manaSupply: 2,
+  manaSupply: 3,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 2,

@@ -24,7 +24,7 @@ export const lastStand = defineSecretBlueprint({
   rarity: RARITIES.COMMON,
   affinities: [AFFINITIES.LIGHT, AFFINITIES.LIGHT],
   manaCost: 3,
-  manaSupply: 2,
+  manaSupply: 3,
   speed: CARD_SPEED.FAST,
   tags: [],
   shouldHideTargetArrows: true,

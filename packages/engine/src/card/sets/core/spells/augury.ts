@@ -23,7 +23,7 @@ export const augury: SpellBlueprint<DestinyCard> = {
   rarity: RARITIES.COMMON,
   affinities: [AFFINITIES.LIGHT, AFFINITIES.LIGHT],
   manaCost: 2,
-  manaSupply: 2,
+  manaSupply: 3,
   speed: CARD_SPEED.FAST,
   tags: [],
   canPlay: () => true,
