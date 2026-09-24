@@ -2,12 +2,6 @@
 import { useGameUi } from '../composables/useGameClient';
 import { useWindowSize } from '@vueuse/core';
 import { config } from '@/utils/config';
-import type { PlayerClockState } from '../composables/useGameSocket';
-import DoubleBattlefield from './MinionZone/DoubleBattlefield.vue';
-
-const { clocks } = defineProps<{
-  clocks?: Record<string, PlayerClockState>;
-}>();
 
 const ui = useGameUi();
 
@@ -32,7 +26,7 @@ const boardMargin = computed(() => {
 
 <template>
   <div class="board" :id="ui.DOMSelectors.board.id">
-    <DoubleBattlefield :clocks="clocks" />
+    <slot name="battlefield" />
 
     <div id="card-actions-portal" class="absolute"></div>
     <div class="arrows" id="arrows" />

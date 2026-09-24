@@ -97,7 +97,11 @@ const isScreenDimmed = computed(() => {
     <AnswerQuestionModal />
     <RearrangeCardsModal />
     <Camera>
-      <GameBoard :clocks="clocks" />
+      <GameBoard :clocks="clocks">
+        <template #battlefield>
+          <slot name="battlefield" />
+        </template>
+      </GameBoard>
     </Camera>
 
     <div class="my-deck">
