@@ -39,11 +39,11 @@ if (
   (window.navigator as any).standalone ||
   window.matchMedia('(display-mode: standalone)').matches
 ) {
-  if (screen.orientation && screen.orientation.lock) {
-    screen.orientation
+  if (screen.orientation && (screen.orientation as any).lock) {
+    (screen.orientation as any)
       .lock('landscape')
       .then(() => console.log('Orientation locked to landscape'))
-      .catch(err => console.error('Orientation lock failed: ', err));
+      .catch((err: unknown) => console.error('Orientation lock failed: ', err));
   }
 }
 
