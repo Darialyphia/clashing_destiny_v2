@@ -6,7 +6,7 @@
     "dev": "convex dev",
     "predev": "convex dev --run init --until-success",
     "codegen": "convex codegen",
-    "deploy": "convex deploy && npx convex run convex/migrations.ts:runAll --prod",
+    "deploy": "convex deploy && npx convex run migrations:runAll --prod",
     "convex": "convex",
     "migrate": "convex run migrations:runAll",
     "type-check": "tsc --noEmit"
