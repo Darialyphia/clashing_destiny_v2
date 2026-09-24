@@ -18,8 +18,8 @@ export type CurrencySource = Values<typeof CURRENCY_SOURCES>;
 
 export const CURRENCY_TYPES = {
   GOLD: 'gold',
-  CRAFTING_SHARDS: 'crafting_shards'
-  // PREMIUM: 'premium'
+  CRAFTING_SHARDS: 'crafting_shards',
+  PREMIUM: 'premium'
 } as const;
 
 export type CurrencyType = Values<typeof CURRENCY_TYPES>;

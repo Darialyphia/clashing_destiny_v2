@@ -112,11 +112,12 @@ export default defineConfig(({ mode }) => {
         },
         manifest: {
           name: 'Duelyst Dominion',
-          short_name: 'Duelyst',
+          short_name: 'Duelyst Dominion',
           description: 'The Duelyst Dominion digital Trading Card Game',
           theme_color: '#ffffff',
           display: 'standalone',
           orientation: 'landscape',
+          start_url: '/client',
           icons: [
             {
               src: '/icon/logo-192x192.png',

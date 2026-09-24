@@ -14,6 +14,7 @@ export class Wallet extends Entity<WalletId, WalletDoc> {
     return match(currency)
       .with(CURRENCY_TYPES.GOLD, () => this.data.gold >= amount)
       .with(CURRENCY_TYPES.CRAFTING_SHARDS, () => this.data.craftingShards >= amount)
+      .with(CURRENCY_TYPES.PREMIUM, () => this.data.premiumCurrency >= amount)
       .exhaustive();
   }
 
@@ -27,6 +28,18 @@ export class Wallet extends Entity<WalletId, WalletDoc> {
 
   get craftingShards() {
     return this.data.craftingShards;
+  }
+
+  get premiumCurrency() {
+    return this.data.premiumCurrency;
+  }
+
+  getCurrency(currencyType: CurrencyType): number {
+    return match(currencyType)
+      .with(CURRENCY_TYPES.GOLD, () => this.gold)
+      .with(CURRENCY_TYPES.CRAFTING_SHARDS, () => this.craftingShards)
+      .with(CURRENCY_TYPES.PREMIUM, () => this.premiumCurrency)
+      .exhaustive();
   }
 
   get createdAt() {
@@ -49,14 +62,18 @@ export class Wallet extends Entity<WalletId, WalletDoc> {
     this.data.updatedAt = Date.now();
   }
 
+  private grantPremiumCurrency(amount: number): void {
+    assert(amount > 0, new DomainError('Grant amount must be positive'));
+    this.data.premiumCurrency += amount;
+    this.data.updatedAt = Date.now();
+  }
+
   grant(amount: number, currencyType: CurrencyType): void {
-    if (currencyType === CURRENCY_TYPES.GOLD) {
-      this.grantGold(amount);
-    } else if (currencyType === CURRENCY_TYPES.CRAFTING_SHARDS) {
-      this.grantCraftingShards(amount);
-    } else {
-      throw new DomainError(`Unsupported currency type: ${currencyType}`);
-    }
+    return match(currencyType)
+      .with(CURRENCY_TYPES.GOLD, () => this.grantGold(amount))
+      .with(CURRENCY_TYPES.CRAFTING_SHARDS, () => this.grantCraftingShards(amount))
+      .with(CURRENCY_TYPES.PREMIUM, () => this.grantPremiumCurrency(amount))
+      .exhaustive();
   }
 
   private spendGold(amount: number): void {
@@ -79,13 +96,21 @@ export class Wallet extends Entity<WalletId, WalletDoc> {
     this.data.updatedAt = Date.now();
   }
 
+  private spendPremiumCurrency(amount: number): void {
+    assert(amount > 0, new DomainError('Spend amount must be positive'));
+    assert(
+      this.canAfford(amount, CURRENCY_TYPES.PREMIUM),
+      new DomainError('Insufficient premium currency')
+    );
+    this.data.premiumCurrency -= amount;
+    this.data.updatedAt = Date.now();
+  }
+
   spend(amount: number, currencyType: CurrencyType): void {
-    if (currencyType === CURRENCY_TYPES.GOLD) {
-      this.spendGold(amount);
-    } else if (currencyType === CURRENCY_TYPES.CRAFTING_SHARDS) {
-      this.spendCraftingShards(amount);
-    } else {
-      throw new DomainError(`Unsupported currency type: ${currencyType}`);
-    }
+    return match(currencyType)
+      .with(CURRENCY_TYPES.GOLD, () => this.spendGold(amount))
+      .with(CURRENCY_TYPES.CRAFTING_SHARDS, () => this.spendCraftingShards(amount))
+      .with(CURRENCY_TYPES.PREMIUM, () => this.spendPremiumCurrency(amount))
+      .exhaustive();
   }
 }

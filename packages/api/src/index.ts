@@ -45,3 +45,6 @@ export {
   type CurrencyType
 } from './convex/currency/currency.constants';
 export type { OpenBoosterPackOutput } from './convex/card/usecases/openBoosterPack.usecase';
+export { SHOP_CATEGORIES, type ShopCategory } from './convex/shop/shop.constants';
+export { type ShopOffer } from './convex/shop/catalog';
+export type { GetCatalogByCategoryOutput } from './convex/shop/usecases/getCatalogByCategory.usecase';

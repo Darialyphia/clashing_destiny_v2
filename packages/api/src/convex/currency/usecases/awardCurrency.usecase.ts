@@ -1,7 +1,6 @@
 import type { UseCase } from '../../usecase';
 import type { UserId } from '../../users/entities/user.entity';
 import type { CurrencySource, CurrencyType } from '../currency.constants';
-import { CURRENCY_TYPES } from '../currency.constants';
 import type { WalletRepository } from '../repositories/wallet.repository';
 import type { TransactionRepository } from '../repositories/transaction.repository';
 import type { EventEmitter } from '../../shared/eventEmitter';

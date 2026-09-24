@@ -25,23 +25,14 @@ export class CurrencyService {
     }
   ) {}
 
-  private spendGold(wallet: Wallet, amount: number): { before: number; after: number } {
-    const balanceBefore = wallet.gold;
-    wallet.spend(amount, CURRENCY_TYPES.GOLD);
-    this.ctx.walletRepo.save(wallet);
-    const balanceAfter = balanceBefore - amount;
-    return {
-      before: balanceBefore,
-      after: balanceAfter
-    };
-  }
-
-  private spendCraftingShards(
+  private spendCurrency(
     wallet: Wallet,
-    amount: number
+    amount: number,
+    currencyType: CurrencyType
   ): { before: number; after: number } {
-    const balanceBefore = wallet.craftingShards;
-    wallet.spend(amount, CURRENCY_TYPES.CRAFTING_SHARDS);
+    const balanceBefore = wallet.getCurrency(currencyType);
+
+    wallet.spend(amount, currencyType);
     this.ctx.walletRepo.save(wallet);
     const balanceAfter = balanceBefore - amount;
     return {
@@ -73,14 +64,11 @@ export class CurrencyService {
       new DomainError('Insufficient funds')
     );
 
-    const { before: balanceBefore, after: balanceAfter } = match(currencyType)
-      .with(CURRENCY_TYPES.GOLD, () => {
-        return this.spendGold(wallet, amount.value);
-      })
-      .with(CURRENCY_TYPES.CRAFTING_SHARDS, () => {
-        return this.spendCraftingShards(wallet, amount.value);
-      })
-      .exhaustive();
+    const { before: balanceBefore, after: balanceAfter } = this.spendCurrency(
+      wallet,
+      amount.value,
+      currencyType
+    );
 
     await this.ctx.transactionRepo.create({
       userId,

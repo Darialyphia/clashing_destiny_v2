@@ -29,6 +29,7 @@ import type * as ping from "../ping.js";
 import type * as shared_container from "../shared/container.js";
 import type * as shared_entity from "../shared/entity.js";
 import type * as shared_eventEmitter from "../shared/eventEmitter.js";
+import type * as shop from "../shop.js";
 import type * as shop_catalog from "../shop/catalog.js";
 import type * as usecase from "../usecase.js";
 import type * as users_username from "../users/username.js";
@@ -65,6 +66,7 @@ declare const fullApi: ApiFromModules<{
   "shared/container": typeof shared_container;
   "shared/entity": typeof shared_entity;
   "shared/eventEmitter": typeof shared_eventEmitter;
+  shop: typeof shop;
   "shop/catalog": typeof shop_catalog;
   usecase: typeof usecase;
   "users/username": typeof users_username;
