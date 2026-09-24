@@ -1,11 +1,16 @@
 import type { UseCase } from '../../usecase';
 import type { UserId } from '../../users/entities/user.entity';
-import type { CurrencySource, CurrencyType } from '../currency.constants';
+import {
+  CURRENCY_TYPES,
+  type CurrencySource,
+  type CurrencyType
+} from '../currency.constants';
 import type { WalletRepository } from '../repositories/wallet.repository';
 import type { TransactionRepository } from '../repositories/transaction.repository';
 import type { EventEmitter } from '../../shared/eventEmitter';
 import { CurrencyAwardedEvent } from '../events/currencyAwarded.event';
 import { AppError } from '../../utils/error';
+import { match } from 'ts-pattern';
 
 export interface AwardCurrencyInput {
   userId: UserId;
@@ -39,7 +44,12 @@ export class AwardCurrencyUseCase
     }
 
     const wallet = await this.ctx.walletRepo.getOrCreate(input.userId);
-    const balanceBefore = wallet.gold;
+    const balanceBefore = match(input.currencyType)
+      .with(CURRENCY_TYPES.GOLD, () => wallet.gold)
+      .with(CURRENCY_TYPES.CRAFTING_SHARDS, () => wallet.craftingShards)
+      .with(CURRENCY_TYPES.PREMIUM, () => wallet.premiumCurrency)
+      .exhaustive();
+
     wallet.grant(input.amount, input.currencyType);
     await this.ctx.walletRepo.save(wallet);
     const balanceAfter = balanceBefore + input.amount;

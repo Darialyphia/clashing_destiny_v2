@@ -6,6 +6,7 @@ import { shopCatalog } from '../catalog';
 import type { TransactionReadRepository } from '../../currency/repositories/transaction-read.repository';
 import type { AuthSession } from '../../auth/entities/session.entity';
 import { ensureAuthenticated } from '../../auth/auth.utils';
+import { CURRENCY_SOURCES } from '../../currency/currency.constants';
 
 export interface GetCatalogByCategoryInput {
   category: ShopCategory;
@@ -42,6 +43,10 @@ export class GetCatalogByCategoryUseCase
       .filter(offer => offer.category === input.category)
       .filter(offer => offer.availability.every(rule => rule.isAvailable(now)));
 
+    const transactions = await this.ctx.transactionRepo.getByUserIdAndSource(
+      this.ctx.session!.userId,
+      CURRENCY_SOURCES.SHOP_PURCHASE
+    );
     return {
       items: items.map(item => ({
         sku: item.sku,
@@ -51,7 +56,14 @@ export class GetCatalogByCategoryUseCase
         icon: item.icon,
         price: item.price,
         hot: item.hot,
-        canPurchase: item.purchaseLimits.every(rule => rule.canPurchase([])) //FIXME when we have ShopPurchase entity redy
+        canPurchase: item.purchaseLimits.every(rule =>
+          rule.canPurchase(
+            transactions.map(tx => ({
+              sku: tx.metadata!.sku,
+              purchasedAt: new Date(tx.createdAt)
+            }))
+          )
+        ) //FIXME when we have ShopPurchase entity ready
       }))
     };
   }

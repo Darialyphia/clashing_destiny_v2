@@ -31,6 +31,7 @@ import type * as shared_entity from "../shared/entity.js";
 import type * as shared_eventEmitter from "../shared/eventEmitter.js";
 import type * as shop from "../shop.js";
 import type * as shop_catalog from "../shop/catalog.js";
+import type * as shop_shopPurchase from "../shop/shopPurchase.js";
 import type * as usecase from "../usecase.js";
 import type * as users_username from "../users/username.js";
 import type * as utils_email from "../utils/email.js";
@@ -68,6 +69,7 @@ declare const fullApi: ApiFromModules<{
   "shared/eventEmitter": typeof shared_eventEmitter;
   shop: typeof shop;
   "shop/catalog": typeof shop_catalog;
+  "shop/shopPurchase": typeof shop_shopPurchase;
   usecase: typeof usecase;
   "users/username": typeof users_username;
   "utils/email": typeof utils_email;

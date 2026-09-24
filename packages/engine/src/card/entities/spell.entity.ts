@@ -93,6 +93,7 @@ export class SpellCard extends Card<
     if (targetsResult.cancelled) {
       return { cancelled: true };
     }
+    await this.payManaCost();
     await this.playWithTargets(targetsResult.result);
     return { cancelled: false };
   }

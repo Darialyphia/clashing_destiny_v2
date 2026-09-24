@@ -4,6 +4,7 @@ import FancyButton from '@/ui/components/FancyButton.vue';
 import { SHOP_CATEGORIES, type ShopCategory } from '@game/api';
 import ShopOffer from './ShopOffer.vue';
 import { useCatalogByCategory } from './useShop';
+import UiSpinner from '@/ui/components/UiSpinner.vue';
 
 definePage({
   name: 'Shop',
@@ -23,29 +24,33 @@ const { data: catalog, isLoading } = useCatalogByCategory(selectedCategory);
 <template>
   <div v-if="me" class="shop-page">
     <div class="shop-topbar">
-      <FancyButton text="Back" size="sm" :to="{ name: 'ClientHome' }" />
+      <FancyButton text="Back" :to="{ name: 'ClientHome' }" />
     </div>
 
-    <main class="shop-layout surface">
-      <nav class="shop-categories" aria-label="Shop categories">
-        <ul>
-          <li
-            v-for="category in Object.values(SHOP_CATEGORIES)"
-            :key="category"
-          >
-            <button
-              type="button"
-              class="category"
-              :class="{ selected: selectedCategory === category }"
-              :aria-current="selectedCategory === category ? 'page' : undefined"
-              @click="selectedCategory = category"
+    <main class="shop-layout surface-transparent">
+      <aside class="shop-sidebar">
+        <nav class="shop-categories" aria-label="Shop categories">
+          <ul>
+            <li
+              v-for="category in Object.values(SHOP_CATEGORIES)"
+              :key="category"
             >
-              <span class="category-dot" aria-hidden="true" />
-              {{ category.replace('_', ' ') }}
-            </button>
-          </li>
-        </ul>
-      </nav>
+              <button
+                type="button"
+                class="category"
+                :class="{ selected: selectedCategory === category }"
+                :aria-current="
+                  selectedCategory === category ? 'page' : undefined
+                "
+                @click="selectedCategory = category"
+              >
+                <span class="category-dot" aria-hidden="true" />
+                {{ category.replace('_', ' ') }}
+              </button>
+            </li>
+          </ul>
+        </nav>
+      </aside>
 
       <section class="category-content">
         <div v-if="isLoading" class="loading-state">
@@ -78,38 +83,76 @@ const { data: catalog, isLoading } = useCatalogByCategory(selectedCategory);
 }
 
 .shop-layout {
-  max-width: 1180px;
   margin: 0 auto;
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  align-items: start;
+  gap: var(--size-8);
+  padding: var(--size-7);
+  background: linear-gradient(to top, #000a, #0006);
+}
+
+.shop-sidebar {
+  position: sticky;
+  top: var(--size-5);
+  min-height: 360px;
+  display: flex;
+  flex-direction: column;
+  padding: var(--size-5) var(--size-2);
+  border-inline-end: 1px solid hsl(var(--color-primary-hsl) / 0.2);
+}
+
+.sidebar-heading p,
+.sidebar-heading span {
+  margin: 0;
+}
+
+.sidebar-heading p {
+  color: var(--primary);
+  font-size: var(--font-size-00);
+  font-weight: var(--font-weight-8);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.sidebar-heading div > span {
+  display: block;
+  margin-block-start: var(--size-1);
+  color: var(--text-3);
+  font-size: var(--font-size-000);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.sidebar-note p {
+  margin: 0;
 }
 
 .shop-categories {
-  display: flex;
-  align-items: center;
-  gap: var(--size-6);
-  padding-block: var(--size-5);
-  border-block-end: 1px solid hsl(var(--color-primary-hsl) / 0.16);
+  padding-block-start: var(--size-5);
 }
 
 .shop-categories ul {
-  display: flex;
+  display: grid;
   gap: var(--size-2);
-  flex-wrap: wrap;
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
 .category {
-  display: inline-flex;
+  width: 100%;
+  display: flex;
   align-items: center;
   gap: var(--size-2);
-  padding: var(--size-2) var(--size-3);
+  padding: var(--size-3);
   border: 1px solid transparent;
   background: transparent;
   color: var(--text-3);
   font-family: 'Lato', sans-serif;
   font-size: var(--font-size-1);
   font-weight: var(--font-weight-7);
+  text-align: start;
   text-transform: capitalize;
   transition:
     color 0.2s ease,
@@ -137,7 +180,7 @@ const { data: catalog, isLoading } = useCatalogByCategory(selectedCategory);
 }
 
 .category-content {
-  padding-block-start: var(--size-7);
+  min-width: 0;
 }
 
 .offer-grid {
@@ -190,10 +233,38 @@ const { data: catalog, isLoading } = useCatalogByCategory(selectedCategory);
     margin-block-end: var(--size-5);
   }
 
+  .shop-layout {
+    display: block;
+    padding: var(--size-4);
+  }
+
+  .shop-sidebar {
+    position: static;
+    min-height: 0;
+    padding: 0 0 var(--size-4);
+    border-inline-end: 0;
+    border-block-end: 1px solid hsl(var(--color-primary-hsl) / 0.2);
+  }
+
   .shop-categories {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: var(--size-3);
+    padding-block-start: 0;
+    overflow-x: auto;
+    scrollbar-width: thin;
+  }
+
+  .shop-categories ul {
+    display: flex;
+    width: max-content;
+    gap: var(--size-2);
+  }
+
+  .category {
+    width: auto;
+    white-space: nowrap;
+  }
+
+  .category-content {
+    padding-block-start: var(--size-5);
   }
 }
 </style>

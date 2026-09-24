@@ -10,6 +10,7 @@ export const CURRENCY_SOURCES = {
   ADMIN_GRANT: 'admin_grant',
   SPEND: 'spend',
   BOOSTER_PACK_PURCHASE: 'booster_pack_purchase',
+  SHOP_PURCHASE: 'shop_purchase',
   DECRAFTING: 'decrafting',
   CRAFTING: 'crafting'
 } as const;

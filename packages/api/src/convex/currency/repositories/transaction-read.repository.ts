@@ -23,13 +23,20 @@ export class TransactionReadRepository {
       .take(limit);
   }
 
-  async getBySource(
-    source: CurrencySource,
-    sourceId?: string
-  ): Promise<TransactionDoc[]> {
+  async getBySource(source: CurrencySource): Promise<TransactionDoc[]> {
     return await this.ctx.db
       .query('currencyTransactions')
-      .withIndex('by_source', q => q.eq('source', source).eq('sourceId', sourceId))
+      .withIndex('by_source', q => q.eq('source', source))
+      .collect();
+  }
+
+  getByUserIdAndSource(
+    userId: UserId,
+    source: CurrencySource
+  ): Promise<TransactionDoc[]> {
+    return this.ctx.db
+      .query('currencyTransactions')
+      .withIndex('by_user_source', q => q.eq('userId', userId).eq('source', source))
       .collect();
   }
 

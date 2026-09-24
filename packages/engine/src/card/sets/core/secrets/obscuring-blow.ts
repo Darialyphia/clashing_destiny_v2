@@ -23,7 +23,7 @@ export const obscuringBlow = defineSecretBlueprint({
   id: 'obscuring-blow',
   name: 'Obscuring Blow',
   description: dedent /*html*/ `
-  When an enemy minion scores at this battlefield, move an ally in base to this battlefield, wake it up, and give it <rt-keyword>Backstab 2</rt-keyword> this turn.
+  When an enemy minion scores at this battlefield, move an ally in base to this battlefield,  ready it, and give it <rt-keyword>Backstab 2</rt-keyword> this turn.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,

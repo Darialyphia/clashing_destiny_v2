@@ -19,7 +19,8 @@ export const CURRENCY_SOURCE_VALIDATOR = v.union(
   v.literal(CURRENCY_SOURCES.SPEND),
   v.literal(CURRENCY_SOURCES.BOOSTER_PACK_PURCHASE),
   v.literal(CURRENCY_SOURCES.CRAFTING),
-  v.literal(CURRENCY_SOURCES.DECRAFTING)
+  v.literal(CURRENCY_SOURCES.DECRAFTING),
+  v.literal(CURRENCY_SOURCES.SHOP_PURCHASE)
 );
 
 export const currencySchemas = {
@@ -39,12 +40,12 @@ export const currencySchemas = {
     balanceBefore: v.number(),
     balanceAfter: v.number(),
     source: CURRENCY_SOURCE_VALIDATOR,
-    sourceId: v.optional(v.string()),
     metadata: v.optional(v.any()),
     createdAt: v.number()
   })
     .index('by_user', ['userId'])
     .index('by_user_currency', ['userId', 'currencyType'])
+    .index('by_user_source', ['userId', 'source'])
     .index('by_user_created', ['userId', 'createdAt'])
-    .index('by_source', ['source', 'sourceId'])
+    .index('by_source', ['source'])
 };

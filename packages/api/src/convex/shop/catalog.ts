@@ -21,7 +21,13 @@ export type ShopOffer = {
   contents: ShopReward[];
   category: ShopCategory;
   name: string;
+  description: string;
   icon: string;
+
+  quantity: {
+    min: number;
+    max: number;
+  };
 
   price: Array<{
     currency: CurrencyType;
@@ -42,6 +48,7 @@ export const shopCatalog: ShopCatalogEntry<string>[] = [
     sku: 'core_booster_pack_1',
     category: SHOP_CATEGORIES.BOOSTER_PACKS,
     name: 'Core Booster Pack X 1',
+    description: 'Contains 1 Core Standard Booster Pack.',
     icon: 'core_booster_pack_1_icon',
     hot: false,
     price: [
@@ -51,9 +58,13 @@ export const shopCatalog: ShopCatalogEntry<string>[] = [
       },
       {
         currency: CURRENCY_TYPES.PREMIUM,
-        amount: 10
+        amount: 100
       }
     ],
+    quantity: {
+      min: 1,
+      max: 1
+    },
     contents: [
       {
         type: 'boosterPack',
@@ -68,18 +79,19 @@ export const shopCatalog: ShopCatalogEntry<string>[] = [
     sku: 'core_booster_pack_10',
     category: SHOP_CATEGORIES.BOOSTER_PACKS,
     name: 'Core Booster Pack X 10',
+    description: 'Contains 10 Core Standard Booster Packs.',
     icon: 'core_booster_pack_10_icon',
     hot: false,
     price: [
       {
-        currency: CURRENCY_TYPES.GOLD,
-        amount: 1000
-      },
-      {
         currency: CURRENCY_TYPES.PREMIUM,
-        amount: 100
+        amount: 950
       }
     ],
+    quantity: {
+      min: 1,
+      max: 1
+    },
     contents: [
       {
         type: 'boosterPack',
@@ -93,7 +105,8 @@ export const shopCatalog: ShopCatalogEntry<string>[] = [
   {
     sku: 'alpha_welcome_bundle',
     category: SHOP_CATEGORIES.BUNDLES,
-    name: 'Duelyst DominionAlpha Welcome Bundle',
+    name: 'Welcome Bundle',
+    description: 'Contains 20 Core Standard Booster Packs and 3000 Crafting Shards.',
     icon: 'alpha_welcome_bundle_icon',
     hot: true,
     price: [
@@ -102,11 +115,20 @@ export const shopCatalog: ShopCatalogEntry<string>[] = [
         amount: 0
       }
     ],
+    quantity: {
+      min: 1,
+      max: 1
+    },
     contents: [
       {
         type: 'boosterPack',
         packType: 'CORE_STANDARD',
         quantity: 20
+      },
+      {
+        type: 'currency',
+        currencyType: CURRENCY_TYPES.CRAFTING_SHARDS,
+        amount: 3000
       }
     ],
     availability: [],

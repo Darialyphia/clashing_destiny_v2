@@ -12,6 +12,7 @@ const { offer } = defineProps<{
 import GoldIcon from '@/player/components/GodlIcon.vue';
 import CraftignShardIcon from '@/player/components/CraftignShardIcon.vue';
 import PremiumGemIcon from '@/player/components/PremiumGemIcon.vue';
+import UiModal from '@/ui/components/UiModal.vue';
 
 const icon = computed(() => assets[`shop/${offer.icon}`]?.path);
 
@@ -22,10 +23,16 @@ const getCurrencyComponent = (currency: CurrencyType) => {
     .with(CURRENCY_TYPES.PREMIUM, () => PremiumGemIcon)
     .exhaustive();
 };
+
+const isDetailsModalOpened = ref(false);
 </script>
 
 <template>
-  <button class="offer-card" :class="{ unavailable: !offer.canPurchase }">
+  <button
+    class="offer-card"
+    :class="{ unavailable: !offer.canPurchase }"
+    @click="isDetailsModalOpened = true"
+  >
     <img v-if="icon" :src="icon" :alt="offer.name" class="icon" />
 
     <div class="name">{{ offer.name }}</div>
@@ -40,11 +47,19 @@ const getCurrencyComponent = (currency: CurrencyType) => {
       </div>
     </div>
   </button>
+  <UiModal
+    v-model:is-opened="isDetailsModalOpened"
+    :title="offer.name"
+    description="Details about the offer"
+  >
+    <div class="surface">TODO</div>
+  </UiModal>
 </template>
 
 <style scoped lang="postcss">
 .offer-card {
-  min-height: 100%;
+  width: 200px;
+  aspect-ratio: 1;
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -53,6 +68,8 @@ const getCurrencyComponent = (currency: CurrencyType) => {
   border: solid 1px hsl(var(--color-primary-hsl) / 0.18);
   -webkit-text-stroke: 3px black;
   paint-order: stroke fill;
+  background: linear-gradient(to top, #0004, transparent);
+  border-radius: var(--size-2);
   &:hover {
     box-shadow: 0 0 10px #fff8;
   }
@@ -79,7 +96,12 @@ const getCurrencyComponent = (currency: CurrencyType) => {
 
 .prices {
   display: flex;
+  justify-content: center;
   gap: var(--size-2);
+
+  &:has(> div:nth-of-type(2)) {
+    justify-content: space-between;
+  }
 }
 
 .price {

@@ -77,7 +77,7 @@ export class Wallet extends Entity<WalletId, WalletDoc> {
   }
 
   private spendGold(amount: number): void {
-    assert(amount > 0, new DomainError('Spend amount must be positive'));
+    assert(amount >= 0, new DomainError('Spend amount must be positive'));
     assert(
       this.canAfford(amount, CURRENCY_TYPES.GOLD),
       new DomainError('Insufficient gold')
@@ -87,7 +87,7 @@ export class Wallet extends Entity<WalletId, WalletDoc> {
   }
 
   private spendCraftingShards(amount: number): void {
-    assert(amount > 0, new DomainError('Spend amount must be positive'));
+    assert(amount >= 0, new DomainError('Spend amount must be positive'));
     assert(
       this.canAfford(amount, CURRENCY_TYPES.CRAFTING_SHARDS),
       new DomainError('Insufficient crafting shards')
@@ -97,7 +97,7 @@ export class Wallet extends Entity<WalletId, WalletDoc> {
   }
 
   private spendPremiumCurrency(amount: number): void {
-    assert(amount > 0, new DomainError('Spend amount must be positive'));
+    assert(amount >= 0, new DomainError('Spend amount must be positive'));
     assert(
       this.canAfford(amount, CURRENCY_TYPES.PREMIUM),
       new DomainError('Insufficient premium currency')

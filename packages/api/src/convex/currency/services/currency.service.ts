@@ -9,10 +9,10 @@ import { CurrencySpentEvent } from '../events/currencySpent.event';
 import { SpendingAmount } from '../spendingAmount';
 import type { EventEmitter } from '../../shared/eventEmitter';
 import type { TransactionRepository } from '../repositories/transaction.repository';
+import type { TransactionId } from '../entities/transaction.entity';
 import type { WalletRepository } from '../repositories/wallet.repository';
 import type { UserId } from '../../users/entities/user.entity';
 import type { Wallet } from '../entities/wallet.entity';
-import { match } from 'ts-pattern';
 
 export class CurrencyService {
   static INJECTION_KEY = 'currencyService' as const;
@@ -53,7 +53,7 @@ export class CurrencyService {
     currencyType: CurrencyType;
     purpose: string;
     metadata?: any;
-  }): Promise<{ newBalance: number }> {
+  }): Promise<{ newBalance: number; transactionId: TransactionId }> {
     const wallet = await this.ctx.walletRepo.getByUserId(userId);
     if (!wallet) {
       throw new AppError('Wallet not found');
@@ -70,7 +70,7 @@ export class CurrencyService {
       currencyType
     );
 
-    await this.ctx.transactionRepo.create({
+    const transactionId = await this.ctx.transactionRepo.create({
       userId,
       currencyType: currencyType,
       amount: -amount.value,
@@ -87,6 +87,7 @@ export class CurrencyService {
       CurrencySpentEvent.EVENT_NAME,
       new CurrencySpentEvent({
         userId,
+        transactionId,
         amount: amount.value,
         currencyType: currencyType,
         purpose: purpose,
@@ -94,6 +95,6 @@ export class CurrencyService {
       })
     );
 
-    return { newBalance: balanceAfter };
+    return { newBalance: balanceAfter, transactionId };
   }
 }
