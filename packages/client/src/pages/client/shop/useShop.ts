@@ -10,6 +10,8 @@ export const useCatalogByCategory = (
   );
 };
 
-export const useShopPurchase = () => {
-  return useAuthedMutation(api.shop.purchaseItem);
+export const useShopPurchase = (onSuccess?: () => void) => {
+  return useAuthedMutation(api.shop.purchaseItem, {
+    onSuccess
+  });
 };

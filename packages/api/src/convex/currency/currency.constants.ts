@@ -1,18 +1,18 @@
 import type { Values } from '@game/shared';
 
 export const CURRENCY_SOURCES = {
-  GAME_VICTORY: 'game_victory',
-  GAME_PARTICIPATION: 'game_participation',
-  QUEST_COMPLETION: 'quest_completion',
-  DAILY_LOGIN: 'daily_login',
-  ACHIEVEMENT: 'achievement',
-  SEASON_REWARD: 'season_reward',
-  ADMIN_GRANT: 'admin_grant',
-  SPEND: 'spend',
-  BOOSTER_PACK_PURCHASE: 'booster_pack_purchase',
-  SHOP_PURCHASE: 'shop_purchase',
-  DECRAFTING: 'decrafting',
-  CRAFTING: 'crafting'
+  GAME_VICTORY: 'game_victory', // gold reward when winning a game
+  GAME_PARTICIPATION: 'game_participation', // gold reward for playing a ranked game
+  QUEST_COMPLETION: 'quest_completion', // gold reward for completing a quest
+  DAILY_LOGIN: 'daily_login', // gold reward for daily login
+  ACHIEVEMENT: 'achievement', // gold reward for achieving milestones
+  SEASON_REWARD: 'season_reward', // end of season rewards
+  ADMIN_GRANT: 'admin_grant', // (disputes, manual adjustments, support tickets...)
+  BOOSTER_PACK_PURCHASE: 'booster_pack_purchase', // deprecated
+  SHOP_PURCHASE: 'shop_purchase', // purchase made in the shop
+  SHOP_OFFER_CONTENT: 'shop_offer_content', // content of a shop offer
+  DECRAFTING: 'decrafting', // decrafting items into crafting shards
+  CRAFTING: 'crafting' // crafting items using crafting shards
 } as const;
 
 export type CurrencySource = Values<typeof CURRENCY_SOURCES>;

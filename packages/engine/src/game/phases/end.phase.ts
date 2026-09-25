@@ -10,12 +10,29 @@ export class EndPhase implements GamePhaseController, Serializable<EmptyObject> 
 
   async onEnter() {}
 
+  private canGainVictoryPoints(player: Player): boolean {
+    const isOnePointFromVictory =
+      player.victoryPoints === this.game.config.VICTORY_POINTS_TO_WIN - 1;
+
+    if (isOnePointFromVictory) {
+      const totalScore =
+        player.boardSide.leftBattlefield.commandmentScore +
+        player.boardSide.rightBattlefield.commandmentScore;
+      const opponentTotalScore =
+        player.opponent.boardSide.leftBattlefield.commandmentScore +
+        player.opponent.boardSide.rightBattlefield.commandmentScore;
+
+      return totalScore > opponentTotalScore;
+    }
+
+    return true;
+  }
   async scoreLeftBattlefield() {
     const p1Score =
       this.game.playerSystem.player1.boardSide.leftBattlefield.commandmentScore;
     const p2Score =
       this.game.playerSystem.player2.boardSide.leftBattlefield.commandmentScore;
-    if (p1Score > p2Score) {
+    if (p1Score > p2Score && this.canGainVictoryPoints(this.game.playerSystem.player1)) {
       await this.game.emit(
         END_PHASE_EVENTS.BATTLEFIELD_SCORED,
         new BattleFieldscoredEvent({
@@ -25,7 +42,10 @@ export class EndPhase implements GamePhaseController, Serializable<EmptyObject> 
         })
       );
       await this.game.playerSystem.player1.gainVictoryPoints(1);
-    } else if (p2Score > p1Score) {
+    } else if (
+      p2Score > p1Score &&
+      this.canGainVictoryPoints(this.game.playerSystem.player2)
+    ) {
       await this.game.emit(
         END_PHASE_EVENTS.BATTLEFIELD_SCORED,
         new BattleFieldscoredEvent({
@@ -43,7 +63,7 @@ export class EndPhase implements GamePhaseController, Serializable<EmptyObject> 
       this.game.playerSystem.player1.boardSide.rightBattlefield.commandmentScore;
     const p2Score =
       this.game.playerSystem.player2.boardSide.rightBattlefield.commandmentScore;
-    if (p1Score > p2Score) {
+    if (p1Score > p2Score && this.canGainVictoryPoints(this.game.playerSystem.player1)) {
       await this.game.emit(
         END_PHASE_EVENTS.BATTLEFIELD_SCORED,
         new BattleFieldscoredEvent({
@@ -53,7 +73,10 @@ export class EndPhase implements GamePhaseController, Serializable<EmptyObject> 
         })
       );
       await this.game.playerSystem.player1.gainVictoryPoints(1);
-    } else if (p2Score > p1Score) {
+    } else if (
+      p2Score > p1Score &&
+      this.canGainVictoryPoints(this.game.playerSystem.player2)
+    ) {
       await this.game.emit(
         END_PHASE_EVENTS.BATTLEFIELD_SCORED,
         new BattleFieldscoredEvent({

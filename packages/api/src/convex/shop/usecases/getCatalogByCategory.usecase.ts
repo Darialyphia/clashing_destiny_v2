@@ -49,7 +49,6 @@ export class GetCatalogByCategoryUseCase
     const items = shopCatalog
       .filter(offer => offer.category === input.category)
       .filter(offer => offer.availability.every(rule => rule.isAvailable(now)));
-
     const transactions = await this.ctx.transactionReadRepo.getByUserIdAndSource(
       this.ctx.session!.userId,
       CURRENCY_SOURCES.SHOP_PURCHASE
@@ -67,12 +66,14 @@ export class GetCatalogByCategoryUseCase
         quantity: item.quantity,
         canPurchase: item.purchaseLimits.every(rule =>
           rule.canPurchase(
-            transactions.map(tx => ({
-              sku: tx.metadata!.sku,
-              purchasedAt: new Date(tx.createdAt)
-            }))
+            transactions.map(tx => {
+              return {
+                sku: tx.metadata!.sku,
+                purchasedAt: new Date(tx.createdAt)
+              };
+            })
           )
-        ) //FIXME when we have ShopPurchase entity ready
+        )
       }))
     };
   }

@@ -2,8 +2,8 @@ import { assert } from '@game/shared';
 import { AppError, DomainError } from '../../utils/error';
 import {
   type CurrencyType,
-  CURRENCY_SOURCES,
-  CURRENCY_TYPES
+  type CurrencySource,
+  CURRENCY_SOURCES
 } from '../currency.constants';
 import { CurrencySpentEvent } from '../events/currencySpent.event';
 import { SpendingAmount } from '../spendingAmount';
@@ -46,11 +46,13 @@ export class CurrencyService {
     amount,
     currencyType,
     purpose,
-    metadata
+    metadata,
+    source
   }: {
     userId: UserId;
     amount: SpendingAmount;
     currencyType: CurrencyType;
+    source: CurrencySource;
     purpose: string;
     metadata?: any;
   }): Promise<{ newBalance: number; transactionId: TransactionId }> {
@@ -76,7 +78,7 @@ export class CurrencyService {
       amount: -amount.value,
       balanceBefore,
       balanceAfter,
-      source: CURRENCY_SOURCES.SPEND,
+      source,
       metadata: {
         purpose: purpose,
         ...metadata

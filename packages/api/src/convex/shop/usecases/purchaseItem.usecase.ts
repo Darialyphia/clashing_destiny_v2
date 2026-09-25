@@ -16,6 +16,7 @@ import type { BoosterPackRepository } from '../../card/repositories/booster-pack
 import { assert } from '@game/shared';
 import { DomainError } from '../../utils/error';
 import type { TransactionId } from '../../currency/entities/transaction.entity';
+import type { ShopReward } from '../catalog';
 
 export interface PurchaseItemInput {
   sku: string;
@@ -50,7 +51,30 @@ export class PurchaseItemUseCase
       amount: new SpendingAmount(purchase.totalPrice!),
       currencyType: purchase.currencyType,
       purpose: 'Shop purchase',
-      metadata: purchase.metadata
+      metadata: purchase.metadata,
+      source: CURRENCY_SOURCES.SHOP_PURCHASE
+    });
+  }
+
+  async provideBoosterPacks(userId: UserId, item: ShopReward & { type: 'boosterPack' }) {
+    for (let i = 0; i < item.quantity; i++) {
+      const boosterPackPurchase = new BoosterPackPurchase(item.quantity, item.packType);
+      boosterPackPurchase.generateContent();
+
+      await this.ctx.boosterPackRepo.create({
+        ownerId: userId,
+        packType: boosterPackPurchase.metadata.packType,
+        content: boosterPackPurchase.content
+      });
+    }
+  }
+
+  async provideCurrency(userId: UserId, item: ShopReward & { type: 'currency' }) {
+    await this.ctx.awardCurrencyUseCase.execute({
+      userId: userId,
+      amount: item.amount,
+      currencyType: item.currencyType,
+      source: CURRENCY_SOURCES.SHOP_OFFER_CONTENT
     });
   }
 
@@ -59,25 +83,10 @@ export class PurchaseItemUseCase
       for (const item of purchase.product!.contents) {
         await match(item)
           .with({ type: 'boosterPack' }, async item => {
-            const boosterPackPurchase = new BoosterPackPurchase(
-              item.quantity,
-              item.packType
-            );
-            boosterPackPurchase.generateContent();
-
-            await this.ctx.boosterPackRepo.create({
-              ownerId: userId,
-              packType: boosterPackPurchase.metadata.packType,
-              content: boosterPackPurchase.content
-            });
+            await this.provideBoosterPacks(userId, item);
           })
           .with({ type: 'currency' }, async item => {
-            await this.ctx.awardCurrencyUseCase.execute({
-              userId: userId,
-              amount: item.amount,
-              currencyType: item.currencyType,
-              source: CURRENCY_SOURCES.SHOP_PURCHASE
-            });
+            await this.provideCurrency(userId, item);
           })
           .exhaustive();
       }

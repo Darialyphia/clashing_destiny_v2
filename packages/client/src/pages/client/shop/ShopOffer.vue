@@ -16,6 +16,7 @@ import UiModal from '@/ui/components/UiModal.vue';
 import { useShopPurchase } from './useShop';
 import FancyButton from '@/ui/components/FancyButton.vue';
 import { useMe } from '@/auth/composables/useMe';
+import { useToast } from '@/ui/composables/useToast';
 
 const icon = computed(() => assets[`shop/${offer.icon}`]?.path);
 
@@ -28,8 +29,14 @@ const getCurrencyComponent = (currency: CurrencyType) => {
 };
 
 const isDetailsModalOpened = ref(false);
-
-const { mutate: purchase, isLoading: isPurchasing } = useShopPurchase();
+const { add: addToast } = useToast();
+const { mutate: purchase, isLoading: isPurchasing } = useShopPurchase(() => {
+  isDetailsModalOpened.value = false;
+  addToast({
+    title: 'Purchase Successful',
+    variant: 'success'
+  });
+});
 
 const quantity = ref(offer.quantity.min);
 const currency = ref(offer.price[0].currency);
@@ -79,6 +86,8 @@ const normalizeQuantity = () => {
     )
   );
 };
+
+const isFree = computed(() => offer.price.every(price => price.amount === 0));
 </script>
 
 <template>
@@ -87,18 +96,23 @@ const normalizeQuantity = () => {
     :class="{ unavailable: !offer.canPurchase }"
     @click="isDetailsModalOpened = true"
   >
+    <div class="hot" v-if="offer.hot">Hot!</div>
     <img v-if="icon" :src="icon" :alt="offer.name" class="icon" />
 
     <div class="name">{{ offer.name }}</div>
 
     <div class="prices">
-      <div v-for="price in offer.price" :key="price.currency" class="price">
-        <component
-          :is="getCurrencyComponent(price.currency)"
-          class="currency-icon"
-        />
-        {{ price.amount }}
-      </div>
+      <div v-if="isFree" class="free">Free</div>
+
+      <template v-else>
+        <div v-for="price in offer.price" :key="price.currency" class="price">
+          <component
+            :is="getCurrencyComponent(price.currency)"
+            class="currency-icon"
+          />
+          {{ price.amount }}
+        </div>
+      </template>
     </div>
   </button>
   <UiModal
@@ -208,7 +222,6 @@ const normalizeQuantity = () => {
 .offer-card {
   width: 200px;
   aspect-ratio: 1;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
   --pixel-scale: 1;
@@ -218,14 +231,36 @@ const normalizeQuantity = () => {
   paint-order: stroke fill;
   background: linear-gradient(to top, #0004, transparent);
   border-radius: var(--size-2);
+  position: relative;
   &:hover {
     box-shadow: 0 0 10px #fff8;
+  }
+  .hot {
+    position: absolute;
+    top: calc(-1 * var(--size-2));
+    right: var(--size-2);
+    background: var(--red-8);
+    color: var(--text-1);
+    padding: 0 var(--size-2);
+    border-radius: var(--size-1);
+    font-weight: var(--font-weight-7);
+    font-size: var(--font-size-3);
+    z-index: 1;
   }
 }
 
 .unavailable {
-  filter: saturate(0.45);
-  opacity: 0.72;
+  &::after {
+    content: 'You have already purchased this item.';
+    position: absolute;
+    inset: 0;
+    backdrop-filter: grayscale(1);
+    display: grid;
+    place-items: center;
+    padding: var(--size-2);
+    font-size: var(--font-size-2);
+    background: #0008;
+  }
 }
 
 .icon {
@@ -343,5 +378,10 @@ const normalizeQuantity = () => {
 
 .error-message {
   margin: var(--size-2) 0 0;
+}
+
+.free {
+  font-size: var(--font-size-4);
+  font-weight: var(--font-weight-7);
 }
 </style>

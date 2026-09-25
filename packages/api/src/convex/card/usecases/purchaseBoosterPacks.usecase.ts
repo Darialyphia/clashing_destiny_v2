@@ -5,7 +5,7 @@ import type { WalletRepository } from '../../currency/repositories/wallet.reposi
 import type { TransactionRepository } from '../../currency/repositories/transaction.repository';
 import type { BoosterPackRepository } from '../repositories/booster-pack.repository';
 import type { EventEmitter } from '../../shared/eventEmitter';
-import { CURRENCY_TYPES } from '../../currency/currency.constants';
+import { CURRENCY_SOURCES, CURRENCY_TYPES } from '../../currency/currency.constants';
 import { BoosterPacksPurchasedEvent } from '../events/boosterPacksPurchased.event';
 import type { BoosterPackId } from '../entities/booster-pack.entity';
 import { BoosterPackPurchase } from '../boosterPackPurchase';
@@ -45,7 +45,8 @@ export class PurchaseBoosterPacksUseCase
       amount: new SpendingAmount(purchase.totalCost),
       currencyType: CURRENCY_TYPES.GOLD,
       purpose: 'Booster pack purchase',
-      metadata: purchase.metadata
+      metadata: purchase.metadata,
+      source: CURRENCY_SOURCES.BOOSTER_PACK_PURCHASE
     });
   }
 

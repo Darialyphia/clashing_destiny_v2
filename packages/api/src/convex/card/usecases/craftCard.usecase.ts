@@ -11,7 +11,7 @@ import {
   CRAFTING_COST_PER_RARITY,
   FOIL_CRAFTING_COST_MULTIPLIER
 } from '../card.constants';
-import { CURRENCY_TYPES } from '../../currency/currency.constants';
+import { CURRENCY_TYPES, CURRENCY_SOURCES } from '../../currency/currency.constants';
 import type { SpendCurrencyUseCase } from '../../currency/usecases/spendCurrency.usecase';
 
 export interface CraftCardInput {
@@ -58,7 +58,8 @@ export class CraftCardUseCase implements UseCase<CraftCardInput, CraftCardOutput
     await this.ctx.spendCurrencyUseCase.execute({
       purpose: `Crafting card ${input.blueprintId}`,
       amount: craftingCost,
-      currencyType: CURRENCY_TYPES.CRAFTING_SHARDS
+      currencyType: CURRENCY_TYPES.CRAFTING_SHARDS,
+      source: CURRENCY_SOURCES.CRAFTING
     });
 
     const cardId = await this.ctx.cardRepo.create({

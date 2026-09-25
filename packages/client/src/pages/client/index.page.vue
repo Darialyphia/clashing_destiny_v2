@@ -45,7 +45,7 @@ const { data: me } = useMe();
       class="flex gap-3 absolute top-4 left-8"
     />
 
-    <div class="currencies absolute top-4 right-8">
+    <div v-if="me" class="currencies absolute top-4 right-8">
       <GodlIcon />
       <span class="dual-text" :data-text="me.wallet.gold">
         {{ me.wallet.gold }}
