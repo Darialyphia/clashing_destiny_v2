@@ -4,6 +4,7 @@ import { ensureAuthenticated } from '../../auth/auth.utils';
 import type { BoosterPackReadRepository } from '../repositories/booster-pack-read.repository';
 import type { BoosterPackId } from '../entities/booster-pack.entity';
 import { BOOSTER_PACKS_CATALOG } from '../card.constants';
+import type { CardSetId } from '@game/engine/src/card/card.enums';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface GetUnopenedPacksInput {}
@@ -13,6 +14,8 @@ export interface GetUnopenedPacksOutput {
     id: BoosterPackId;
     type: string;
     packName: string;
+    set: CardSetId;
+    icon: string;
     acquiredAt: number;
   }>;
 }
@@ -38,12 +41,14 @@ export class GetUnopenedPacksUseCase
 
     const packs = pendingPacks.map(pack => {
       const packConfig =
-        BOOSTER_PACKS_CATALOG[pack.packType as keyof typeof BOOSTER_PACKS_CATALOG];
+        BOOSTER_PACKS_CATALOG[pack.packType as keyof typeof BOOSTER_PACKS_CATALOG]!;
 
       return {
         id: pack._id,
         type: pack.packType,
-        packName: packConfig?.name ?? 'Unknown Pack',
+        packName: packConfig.name,
+        set: packConfig.set,
+        icon: packConfig.icon,
         acquiredAt: pack.acquiredAt
       };
     });

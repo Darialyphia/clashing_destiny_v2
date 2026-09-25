@@ -19,6 +19,7 @@ export type BoosterPackContents = ReturnType<BoosterPack['getContents']>;
 export type BoosterPackCatalogEntry = {
   id: string;
   set: CardSetId;
+  icon: string;
   name: string;
   packSize: number;
   packGoldCost: number;
@@ -31,6 +32,7 @@ export const BOOSTER_PACKS_CATALOG = {
   CORE_STANDARD: {
     id: 'CORE_STANDARD',
     set: CARD_SETS.CORE,
+    icon: 'core',
     name: 'Core Set Standard Booster',
     packSize: 8,
     packGoldCost: 100,

@@ -108,6 +108,9 @@ const cardsWithParticles = computed(() => {
             />
           </div>
         </div>
+        <div v-if="!cardsWithParticles.length" class="instructions">
+          Click on a pack below to open it !
+        </div>
         <Transition name="fade">
           <div v-if="dealingStatus === 'waiting'" class="stack-glow"></div>
         </Transition>
@@ -468,5 +471,15 @@ const cardsWithParticles = computed(() => {
 .done-leave-to {
   opacity: 0;
   transform: translateY(20px);
+}
+
+.instructions {
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: var(--font-size-6);
+  z-index: 100;
+  -webkit-text-stroke: 4px black;
+  paint-order: stroke fill;
 }
 </style>
