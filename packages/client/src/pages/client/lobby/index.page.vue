@@ -1,14 +1,17 @@
 <script setup lang="ts">
 import { useAuthedQuery } from '@/auth/composables/useAuth';
-import AuthenticatedHeader from '@/AuthenticatedHeader.vue';
 import LobbyForm from './LobbyForm.vue';
 import { useMe } from '@/auth/composables/useMe';
 import { api } from '@game/api';
 import { Icon } from '@iconify/vue';
 import UiButton from '@/ui/components/UiButton.vue';
+import FancyButton from '@/ui/components/FancyButton.vue';
 
 definePage({
-  name: 'Lobbies'
+  name: 'Lobbies',
+  meta: {
+    wrapperClass: 'page-blur'
+  }
 });
 
 const { data: lobbies, isLoading } = useAuthedQuery(api.lobbies.list, {});
@@ -17,7 +20,13 @@ const { data: me } = useMe();
 
 <template>
   <div class="page" v-if="me">
-    <AuthenticatedHeader />
+    <FancyButton
+      class="absolute top-10 left-8"
+      text="Back"
+      size="md"
+      :to="{ name: 'SelectMode' }"
+    />
+
     <div class="grid container">
       <section class="surface">
         <h2>Lobbies</h2>
@@ -66,8 +75,7 @@ const { data: me } = useMe();
 <style scoped lang="postcss">
 .page {
   display: grid;
-  grid-template-rows: auto 1fr;
-
+  align-items: center;
   height: 100dvh;
   padding-top: var(--size-2);
   padding-inline: var(--size-5);

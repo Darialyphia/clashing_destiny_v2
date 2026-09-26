@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useAuthedQuery } from '@/auth/composables/useAuth';
 import { useMe } from '@/auth/composables/useMe';
-import AuthenticatedHeader from '@/AuthenticatedHeader.vue';
+import FancyButton from '@/ui/components/FancyButton.vue';
 import {
   api,
   LOBBY_STATUS,
@@ -24,7 +24,10 @@ import {
 } from '@/lobby/composables/useLobby';
 
 definePage({
-  name: 'Lobby'
+  name: 'Lobby',
+  meta: {
+    wrapperClass: 'page-blur'
+  }
 });
 
 const route = useRoute<'Lobby'>();
@@ -115,6 +118,13 @@ watchEffect(() => {
 
 <template>
   <div class="page" style="--container-size: var(--size-xl)">
+    <FancyButton
+      class="absolute top-10 left-8"
+      text="Back"
+      size="md"
+      :to="{ name: 'SelectMode' }"
+    />
+
     <div v-if="isLoading" class="loader">Loading lobby...</div>
 
     <div
@@ -145,9 +155,7 @@ watchEffect(() => {
     </UiModal>
 
     <template v-else-if="lobby">
-      <AuthenticatedHeader />
-
-      <aside class="surface container">
+      <aside class="surface container mt-8">
         <div>
           <h2>Chat</h2>
           <LobbyChat :lobby="lobby" />
@@ -227,11 +235,11 @@ watchEffect(() => {
                 <div class="option-item">
                   <label class="option-label">
                     <UiSwitch v-model="teachingMode" />
-                    <span class="option-title">Teaching mode</span>
+                    <span class="option-title">Sandbox mode</span>
                   </label>
                   <p class="option-description">
-                    Both players can see each other's hand, destiny zone and
-                    destiny deck
+                    Both players can see each other's hand and has access to
+                    sandbox tools
                   </p>
                 </div>
               </div>
@@ -288,6 +296,8 @@ watchEffect(() => {
 
   height: 100dvh;
   padding-inline: var(--size-5);
+
+  background: url('@/assets/backgrounds/main-menu-overlay.png');
 }
 
 .loader {

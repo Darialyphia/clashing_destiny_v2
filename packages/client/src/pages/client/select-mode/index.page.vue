@@ -66,7 +66,7 @@ definePage({
 .page {
   min-height: 100vh;
   padding-top: var(--size-12);
-  background-image: url('@/assets/backgrounds/main-menu-overlay.png');
+  background: url('@/assets/backgrounds/main-menu-overlay.png');
 }
 
 .page-container {

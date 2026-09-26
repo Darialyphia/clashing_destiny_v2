@@ -119,7 +119,7 @@ const cardsWithParticles = computed(() => {
             v-if="
               !cardStyles.length || (dealingStatus === 'done' && allRevealed)
             "
-            class="absolute bottom-7"
+            class="absolute top-8 left-8"
           >
             <slot name="done" :dealing-status="dealingStatus"></slot>
           </div>
@@ -241,6 +241,7 @@ const cardsWithParticles = computed(() => {
       1.007 84.7%,
       1
     );
+  transition-duration: var(--card-layout-transition-duration, 0.4s);
   transition-delay: calc(var(--child-index) * 0.05s);
 
   &:not(:has(.revealed)) {

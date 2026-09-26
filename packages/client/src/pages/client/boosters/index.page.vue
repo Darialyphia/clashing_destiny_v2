@@ -42,10 +42,9 @@ const latestPackOpened = ref<
       class="h-screen"
     >
       <template #done>
-        <div class="flex gap-2">
+        <div class="flex flex-col gap-8">
           <FancyButton
             class="primary-button"
-            size="lg"
             text="Back"
             :to="{ name: 'ClientHome' }"
           />
@@ -67,13 +66,16 @@ const latestPackOpened = ref<
             />
           </div>
 
-          <FancyButton
-            v-else
-            class="secondary-button"
-            size="lg"
-            text="Buy more packs"
-            :to="{ name: 'Shop' }"
-          />
+          <div v-else class="flex flex-col gap-3">
+            <p>You have no pack to open right now.</p>
+            <FancyButton
+              class="secondary-button"
+              size="md"
+              variant="info"
+              text="Buy more packs"
+              :to="{ name: 'Shop' }"
+            />
+          </div>
         </div>
       </template>
     </BoosterPackContent>
@@ -92,7 +94,7 @@ const latestPackOpened = ref<
   height: calc(98px * 2);
   background: var(--bg);
   background-size: cover;
-  left: calc(6px * var(--child-index));
+  left: calc(6px * (var(--child-index) - 1) - 30px);
   bottom: 0;
   transition: transform 0.3s var(--ease-bounce-2);
   &:disabled {
@@ -101,17 +103,18 @@ const latestPackOpened = ref<
 
   &:hover {
     filter: drop-shadow(0 0 10px yellow);
-    transform: translateY(-30px);
+    transform: translateY(30px);
   }
 }
 
 .unopened-packs {
   position: relative;
+  height: calc(98px * 2);
   &::after {
     content: attr(data-count);
     position: absolute;
-    top: 40px;
-    left: 85px;
+    bottom: -15px;
+    left: 50%;
     z-index: 100;
     background: var(--red-10);
     color: white;
@@ -122,6 +125,7 @@ const latestPackOpened = ref<
     align-items: center;
     justify-content: center;
     font-size: var(--font-size-3);
+    border: solid 3px black;
   }
 }
 </style>
