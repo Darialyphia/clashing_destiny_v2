@@ -16,7 +16,6 @@ import { BoardSide, type SerializedBoardSide } from '../board/board-side.entity'
 import { GAME_EVENTS } from '../game/game.events';
 import { PlayerAddSupplyEvent, PlayerGainVictoryPointEvent } from './player.events';
 import type { Affinity } from '../card/card.enums';
-import { PLAYER_EVENTS } from './player.enums';
 
 export type PlayerOptions = {
   id: string;

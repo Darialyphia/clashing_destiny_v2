@@ -1,5 +1,4 @@
 import type { SerializedAbility } from '../../card/card-blueprint';
-import type { SerializedModifier } from '../../modifier/modifier.entity';
 import type { GameClient, GameStateEntities } from '../client';
 import { PatchApplier } from '../patch-applier';
 import type { PatchOperation } from '../../game/systems/patch-types';
@@ -62,6 +61,10 @@ export class AbilityViewModel {
 
   get canUse() {
     return this.data.canUse;
+  }
+
+  get unusableReason() {
+    return this.data.unusableReason;
   }
 
   get manaCost() {

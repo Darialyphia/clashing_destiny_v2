@@ -54,6 +54,10 @@ export class Ability<T extends AbilityOwner>
     return this.interceptors.manaCost.getValue(this.blueprint.manaCost, this);
   }
 
+  get canPayManaCost() {
+    return this.card.player.mana >= this.manaCost;
+  }
+
   get shouldCreateChain(): boolean {
     return this.interceptors.shouldCreateChain.getValue(
       this.game.config.EFFECT_CHAIN,
@@ -74,12 +78,29 @@ export class Ability<T extends AbilityOwner>
     const timingCondition = this.game.interaction.isInteractive(this.card.player);
 
     return (
-      this.card.player.cardManager.hand.length >= this.manaCost &&
+      this.canPayManaCost &&
       authorizedPhases.includes(this.game.gamePhaseSystem.getContext().state) &&
       timingCondition &&
       exhaustCondition &&
       this.blueprint.canUse(this.game, this.card)
     );
+  }
+
+  get unusableReason() {
+    if (this._isSealed) return 'Ability is sealed';
+
+    if (!this.canPayManaCost) return 'Not enough mana';
+
+    const authorizedPhases: GamePhase[] = [GAME_PHASES.MAIN];
+    if (!authorizedPhases.includes(this.game.gamePhaseSystem.getContext().state))
+      return 'Cannot use ability in this phase';
+
+    if (!this.game.interaction.isInteractive(this.card.player))
+      return 'Cannot use ability at this time';
+
+    if (this.card.isExhausted) return 'Card is exhausted';
+
+    return this.blueprint.canUse(this.game, this.card) ? null : 'Ability cannot be used';
   }
 
   private async resolveEffect(onResolved?: () => MaybePromise<void>) {
@@ -163,7 +184,8 @@ export class Ability<T extends AbilityOwner>
       manaCost: this.manaCost,
       isHiddenOnCard: !!this.blueprint.isHiddenOnCard,
       targets: this.targets ? serializeTargets(this.targets) : null,
-      shouldExhaust: !!this.blueprint.shouldExhaust
+      shouldExhaust: !!this.blueprint.shouldExhaust,
+      unusableReason: this.unusableReason ?? null
     };
   }
 }

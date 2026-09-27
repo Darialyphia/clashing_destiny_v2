@@ -57,7 +57,8 @@ export const mistDragonSeal: SpellBlueprint<MinionCard> = {
       predicate: space =>
         space.player.equals(card.player) &&
         (space.position.zone === CARD_LOCATIONS.LEFT_BATTLEFIELD ||
-          space.position.zone === CARD_LOCATIONS.RIGHT_BATTLEFIELD),
+          space.position.zone === CARD_LOCATIONS.RIGHT_BATTLEFIELD) &&
+        minionToMove.result.cards[0].canMoveTo(space),
       label: 'Select a space to move the minion to.'
     });
 

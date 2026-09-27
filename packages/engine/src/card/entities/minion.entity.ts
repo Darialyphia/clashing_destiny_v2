@@ -411,7 +411,17 @@ export class MinionCard extends Card<
   }
 
   get canMove(): boolean {
-    return this.interceptors.canMove.getValue(this.isOnBoard, this);
+    const hasEmptySpaceInOtherLocation = this.player.boardSide.allSpaces.some(space =>
+      this.canMoveTo(space)
+    );
+    return this.interceptors.canMove.getValue(
+      this.isOnBoard && hasEmptySpaceInOtherLocation,
+      this
+    );
+  }
+
+  canMoveTo(space: BoardSpace): boolean {
+    return space.isEmpty && space.position.zone !== this.location;
   }
 
   get canMoveManually(): boolean {

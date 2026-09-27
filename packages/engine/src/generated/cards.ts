@@ -69,7 +69,24 @@ export const cards = {
 "last-stand": "last-stand",
 "holy-immolation": "holy-immolation",
 "arclyte-regalia": "arclyte-regalia",
-"mistWalking": "mistWalking"
+"mistWalking": "mistWalking",
+"dynasty-standard": "dynasty-standard",
+"decimate": "decimate",
+"steadfastVigil": "steadfastVigil",
+"circleOfLife": "circleOfLife",
+"lionheartBlessing": "lionheartBlessing",
+"crimson-stalker": "crimson-stalker",
+"unseven": "unseven",
+"wind-dervish": "wind-dervish",
+"ethereal-obelysk": "ethereal-obelysk",
+"air-affinity": "air-affinity",
+"dune-caster": "dune-caster",
+"aymara-healer": "aymara-healer",
+"fireblaze-obelysk": "fireblaze-obelysk",
+"pyromancer": "pyromancer",
+"zirix-starstrider": "zirix-starstrider",
+"incinera": "incinera",
+"soul-arbiter": "soul-arbiter"
 } as const;
 
 export const collectableCards = {
@@ -136,7 +153,23 @@ export const collectableCards = {
 "last-stand": "last-stand",
 "holy-immolation": "holy-immolation",
 "arclyte-regalia": "arclyte-regalia",
-"mistWalking": "mistWalking"
+"mistWalking": "mistWalking",
+"dynasty-standard": "dynasty-standard",
+"decimate": "decimate",
+"steadfastVigil": "steadfastVigil",
+"circleOfLife": "circleOfLife",
+"lionheartBlessing": "lionheartBlessing",
+"crimson-stalker": "crimson-stalker",
+"unseven": "unseven",
+"ethereal-obelysk": "ethereal-obelysk",
+"air-affinity": "air-affinity",
+"dune-caster": "dune-caster",
+"aymara-healer": "aymara-healer",
+"fireblaze-obelysk": "fireblaze-obelysk",
+"pyromancer": "pyromancer",
+"zirix-starstrider": "zirix-starstrider",
+"incinera": "incinera",
+"soul-arbiter": "soul-arbiter"
 } as const;
 
 type CardSet = Array<{id: string; collectable: boolean; rarity: Rarity, kind: CardKind}>;
@@ -525,6 +558,108 @@ export const cardsBySet: Record<string, CardSet> = {
     "collectable": true,
     "rarity": "common",
     "kind": "SPELL"
+  },
+  {
+    "id": "dynasty-standard",
+    "collectable": true,
+    "rarity": "rare",
+    "kind": "ARTIFACT"
+  },
+  {
+    "id": "decimate",
+    "collectable": true,
+    "rarity": "legendary",
+    "kind": "SPELL"
+  },
+  {
+    "id": "steadfastVigil",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "SPELL"
+  },
+  {
+    "id": "circleOfLife",
+    "collectable": true,
+    "rarity": "epic",
+    "kind": "SPELL"
+  },
+  {
+    "id": "lionheartBlessing",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "SPELL"
+  },
+  {
+    "id": "crimson-stalker",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "MINION"
+  },
+  {
+    "id": "unseven",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "MINION"
+  },
+  {
+    "id": "wind-dervish",
+    "collectable": false,
+    "rarity": "token",
+    "kind": "MINION"
+  },
+  {
+    "id": "ethereal-obelysk",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "MINION"
+  },
+  {
+    "id": "air-affinity",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "RUNE"
+  },
+  {
+    "id": "dune-caster",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "MINION"
+  },
+  {
+    "id": "aymara-healer",
+    "collectable": true,
+    "rarity": "epic",
+    "kind": "MINION"
+  },
+  {
+    "id": "fireblaze-obelysk",
+    "collectable": true,
+    "rarity": "rare",
+    "kind": "MINION"
+  },
+  {
+    "id": "pyromancer",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "MINION"
+  },
+  {
+    "id": "zirix-starstrider",
+    "collectable": true,
+    "rarity": "legendary",
+    "kind": "MINION"
+  },
+  {
+    "id": "incinera",
+    "collectable": true,
+    "rarity": "rare",
+    "kind": "MINION"
+  },
+  {
+    "id": "soul-arbiter",
+    "collectable": true,
+    "rarity": "rare",
+    "kind": "MINION"
   }
 ]
 };
@@ -593,7 +728,24 @@ export const cardShortIds: Record<string, number> = {
 "last-stand": 63,
 "holy-immolation": 64,
 "arclyte-regalia": 65,
-"mistWalking": 66
+"mistWalking": 66,
+"dynasty-standard": 67,
+"decimate": 68,
+"steadfastVigil": 69,
+"circleOfLife": 70,
+"lionheartBlessing": 71,
+"crimson-stalker": 72,
+"unseven": 73,
+"wind-dervish": 74,
+"ethereal-obelysk": 75,
+"air-affinity": 76,
+"dune-caster": 77,
+"aymara-healer": 78,
+"fireblaze-obelysk": 79,
+"pyromancer": 80,
+"zirix-starstrider": 81,
+"incinera": 82,
+"soul-arbiter": 83
 } as const;
 
 export const cardIdByShortId: Record<number, string> = {
@@ -660,5 +812,22 @@ export const cardIdByShortId: Record<number, string> = {
 "63": "last-stand",
 "64": "holy-immolation",
 "65": "arclyte-regalia",
-"66": "mistWalking"
+"66": "mistWalking",
+"67": "dynasty-standard",
+"68": "decimate",
+"69": "steadfastVigil",
+"70": "circleOfLife",
+"71": "lionheartBlessing",
+"72": "crimson-stalker",
+"73": "unseven",
+"74": "wind-dervish",
+"75": "ethereal-obelysk",
+"76": "air-affinity",
+"77": "dune-caster",
+"78": "aymara-healer",
+"79": "fireblaze-obelysk",
+"80": "pyromancer",
+"81": "zirix-starstrider",
+"82": "incinera",
+"83": "soul-arbiter"
 } as const;

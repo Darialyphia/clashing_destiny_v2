@@ -178,7 +178,6 @@ const sprite = computed(() => {
         :repeat-animation="repeatAnimation"
         @art-sequence-end="emit('artSequenceEnd', $event)"
       />
-
       <!-- <div class="damage" v-if="damageTaken > 0">
         {{ damageTaken }}
       </div> -->

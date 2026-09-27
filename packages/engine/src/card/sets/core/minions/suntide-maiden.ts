@@ -34,7 +34,7 @@ export const suntideMaiden: MinionBlueprint = {
   abilities: [],
   async onInit(game, card) {
     await card.modifiers.add(
-      new ZealModifier(game, card, {
+      new ZealModifier('suntide-maiden-zeal', game, card, {
         amount: 4,
         zealedModifiers: [],
         onGainZeal: async () => {

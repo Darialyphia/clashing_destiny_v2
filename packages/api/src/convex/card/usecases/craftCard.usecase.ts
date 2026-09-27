@@ -13,6 +13,7 @@ import {
 } from '../card.constants';
 import { CURRENCY_TYPES, CURRENCY_SOURCES } from '../../currency/currency.constants';
 import type { SpendCurrencyUseCase } from '../../currency/usecases/spendCurrency.usecase';
+import type { CardId } from '../entities/card.entity';
 
 export interface CraftCardInput {
   blueprintId: string;
@@ -20,7 +21,7 @@ export interface CraftCardInput {
 }
 
 export interface CraftCardOutput {
-  cardId: string;
+  cardId: CardId;
   craftingShardsCost: number;
 }
 

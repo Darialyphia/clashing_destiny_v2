@@ -53,7 +53,8 @@ export const mistWalking: SpellBlueprint<MinionCard> = {
     const destination = await emptyBoardSpaceTargetRules.getTargets({
       game,
       card,
-      predicate: space => space.player.equals(card.player),
+      predicate: space =>
+        space.player.equals(card.player) && minionToMove.result.cards[0].canMoveTo(space),
       label: 'Select a space to move the minion to.'
     });
 

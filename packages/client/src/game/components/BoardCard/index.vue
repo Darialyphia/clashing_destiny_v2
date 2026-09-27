@@ -45,7 +45,7 @@ const {
   isTargetable,
   canAttack,
   onMouseup
-} = useBoardCardInteraction(card);
+} = useBoardCardInteraction(computed(() => card));
 
 watch(isSelected, selected => {
   if (!selected) {

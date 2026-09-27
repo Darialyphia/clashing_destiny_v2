@@ -11,13 +11,13 @@ export const KEYWORDS = {
   ATTACKER: {
     id: 'attacker',
     name: 'Attacker X',
-    description: 'This unit has +X Attack while you have the initiative.',
+    description: 'This minion has +X Attack while you have the initiative.',
     aliases: [/attacker [0-9]+/]
   },
   BACKSTAB: {
     id: 'backstab',
     name: 'Backstab X',
-    description: 'This unit deals X extra damage when attacking an exhausted minion.',
+    description: 'This minion deals X extra damage when attacking an exhausted minion.',
     aliases: [/backstab [0-9]+/]
   },
   BLAST: {
@@ -50,7 +50,7 @@ export const KEYWORDS = {
   DEFENDER: {
     id: 'defender',
     name: 'Defender X',
-    description: 'This unit has +X attack while your opponent has the initiative.',
+    description: 'This minion has +X attack while your opponent has the initiative.',
     aliases: [/defender [0-9]+/]
   },
   DISCOVER: {
@@ -76,7 +76,7 @@ export const KEYWORDS = {
   EMPOWERED: {
     id: 'empowered',
     name: 'Empowered',
-    description: 'This unit has an additional effect.',
+    description: 'This minion has an additional effect.',
     aliases: [/empower/, /disempower/, /disempowered/]
   },
   ENHANCE: {
@@ -132,7 +132,7 @@ export const KEYWORDS = {
   INTIMIDATE: {
     id: 'intimidate',
     name: 'Intimidate X',
-    description: 'This unit cannot be attacked by minions with X or less attack.',
+    description: 'This minion cannot be attacked by minions with X or less attack.',
     aliases: [/intimidate [0-9]+/]
   },
   MILL: {
@@ -170,7 +170,7 @@ export const KEYWORDS = {
     id: 'on-kill',
     name: 'On Kill',
     description:
-      'Does something when this card kills another unit by combat while being the attacker.',
+      'Does something when this card kills another minion by combat while being the attacker.',
     aliases: []
   },
   ON_MOVE: {
@@ -210,7 +210,7 @@ export const KEYWORDS = {
     id: 'protector',
     name: 'Protector',
     description:
-      'Enemies on the same battlefield as this can only attack this unit if able.',
+      'Enemies on the same battlefield as this can only attack this minion if able.',
     aliases: []
   },
   RESERVE: {
@@ -222,13 +222,13 @@ export const KEYWORDS = {
   REGENERATION: {
     id: 'regeneration',
     name: 'Regeneration X',
-    description: 'At the start of the turn, heal this unit for X.',
+    description: 'At the start of the turn, heal this minion for X.',
     aliases: [/regeneration [0-9]+/]
   },
   ROOTED: {
     id: 'rooted',
     name: 'Rooted',
-    description: 'This unit cannot move or be moved by any effect.',
+    description: 'This minion cannot move or be moved by any effect.',
     aliases: []
   },
   RUSH: {
@@ -254,6 +254,12 @@ export const KEYWORDS = {
     id: 'shield',
     name: 'Shield',
     description: 'Prevents the next time this would be damaged.',
+    aliases: []
+  },
+  SPAWN: {
+    id: 'spawn',
+    name: 'Spawn',
+    description: 'Summon a minion in your base at the start of the main phase.',
     aliases: []
   },
   SILENCED: {
@@ -284,13 +290,19 @@ export const KEYWORDS = {
   STEALTH: {
     id: 'stealth',
     name: 'Stealth',
-    description: 'This unit cannot be attacked or targeted  as long as it is awake.',
+    description: 'This minion cannot be attacked or targeted  as long as it is awake.',
+    aliases: []
+  },
+  STRUCTURE: {
+    id: 'structure',
+    name: 'Structure',
+    description: 'This minion cannot move, attack, or retaliate.',
     aliases: []
   },
   STUNNED: {
     id: 'stunned',
     name: 'Stunned',
-    description: 'This unit is exhausted and has 0 attack until the end of the turn.',
+    description: 'This minion is exhausted and has 0 attack until the end of the turn.',
     aliases: ['Stun']
   },
   TACTIC: {
@@ -326,20 +338,20 @@ export const KEYWORDS = {
   VULNERABLE: {
     id: 'vulnerable',
     name: 'Vulnerable X',
-    description: 'This unit takes X more damage from all sources.',
+    description: 'This minion takes X more damage from all sources.',
     aliases: [/vulnerable [0-9]+/]
   },
   WITHER: {
     id: 'wither',
     name: 'Wither X',
-    description: 'At the start of the turn, this unit loses X Attack and X Health.',
+    description: 'At the start of the turn, this minion loses X Attack and X Health.',
     aliases: [/wither [0-9]+/]
   },
   ZEAL: {
     id: 'zeal',
     name: 'Zeal X',
     description:
-      'This unit gains an effect while on a battlefield that has at least X influence.',
+      'This minion gains an effect while on a battlefield that has at least X influence.',
     aliases: [/zeal [0-9]+/]
   }
 };

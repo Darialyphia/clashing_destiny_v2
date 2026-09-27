@@ -36,7 +36,7 @@ export const sunbreaker: MinionBlueprint = {
   abilities: [],
   async onInit(game, card) {
     await card.modifiers.add(
-      new ZealModifier(game, card, {
+      new ZealModifier('sunbreaker-zeal', game, card, {
         amount: 3,
         zealedModifiers: [new CleaveModifier(game, card, { amount: 3 })]
       })

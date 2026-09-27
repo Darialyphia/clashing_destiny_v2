@@ -60,6 +60,7 @@ export const CRAFTING_COST_PER_RARITY: Record<Rarity, number> = {
 };
 
 export const MIN_COPIES_OWNED_TO_ALLOW_FOIL_UPGRADE = 3;
+export const MIN_COPIES_OWNED_TO_ALLOW_AFFINITY_FOIL_UPGRADE = 10;
 export const FOIL_CRAFTING_COST_MULTIPLIER = 3;
 
 export const FOIL_UPGRADE_COST_PER_RARITY: Record<Rarity, number> = {
