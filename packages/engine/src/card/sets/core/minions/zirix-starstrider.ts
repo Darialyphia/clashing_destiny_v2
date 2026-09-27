@@ -87,6 +87,7 @@ export const zirixStarstrider: MinionBlueprint = {
             );
 
             await targetDervish.moveToSpace(destination[0]);
+            await targetDervish.wakeUp();
 
             return false;
           };
