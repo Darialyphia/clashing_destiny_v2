@@ -90,7 +90,7 @@
     "duration": 64
    },
    {
-    "filename": "breathing-0",
+    "filename": "attack-10",
     "frame": { "x": 800, "y": 0, "w": 80, "h": 80 },
     "rotated": false,
     "trimmed": false,
@@ -99,7 +99,7 @@
     "duration": 64
    },
    {
-    "filename": "breathing-1",
+    "filename": "attack-11",
     "frame": { "x": 880, "y": 0, "w": 80, "h": 80 },
     "rotated": false,
     "trimmed": false,
@@ -108,7 +108,7 @@
     "duration": 64
    },
    {
-    "filename": "breathing-2",
+    "filename": "attack-12",
     "frame": { "x": 960, "y": 0, "w": 80, "h": 80 },
     "rotated": false,
     "trimmed": false,
@@ -117,7 +117,7 @@
     "duration": 64
    },
    {
-    "filename": "breathing-3",
+    "filename": "attack-13",
     "frame": { "x": 1040, "y": 0, "w": 80, "h": 80 },
     "rotated": false,
     "trimmed": false,
@@ -126,7 +126,7 @@
     "duration": 64
    },
    {
-    "filename": "breathing-4",
+    "filename": "breathing-0",
     "frame": { "x": 1120, "y": 0, "w": 80, "h": 80 },
     "rotated": false,
     "trimmed": false,
@@ -135,7 +135,7 @@
     "duration": 64
    },
    {
-    "filename": "breathing-5",
+    "filename": "breathing-1",
     "frame": { "x": 1200, "y": 0, "w": 80, "h": 80 },
     "rotated": false,
     "trimmed": false,
@@ -144,7 +144,7 @@
     "duration": 64
    },
    {
-    "filename": "breathing-6",
+    "filename": "breathing-2",
     "frame": { "x": 1280, "y": 0, "w": 80, "h": 80 },
     "rotated": false,
     "trimmed": false,
@@ -153,7 +153,7 @@
     "duration": 64
    },
    {
-    "filename": "breathing-7",
+    "filename": "breathing-3",
     "frame": { "x": 1360, "y": 0, "w": 80, "h": 80 },
     "rotated": false,
     "trimmed": false,
@@ -162,7 +162,7 @@
     "duration": 64
    },
    {
-    "filename": "breathing-8",
+    "filename": "breathing-4",
     "frame": { "x": 1440, "y": 0, "w": 80, "h": 80 },
     "rotated": false,
     "trimmed": false,
@@ -171,7 +171,7 @@
     "duration": 64
    },
    {
-    "filename": "breathing-9",
+    "filename": "breathing-5",
     "frame": { "x": 1520, "y": 0, "w": 80, "h": 80 },
     "rotated": false,
     "trimmed": false,
@@ -180,7 +180,7 @@
     "duration": 64
    },
    {
-    "filename": "breathing-10",
+    "filename": "breathing-6",
     "frame": { "x": 1600, "y": 0, "w": 80, "h": 80 },
     "rotated": false,
     "trimmed": false,
@@ -189,7 +189,7 @@
     "duration": 64
    },
    {
-    "filename": "breathing-11",
+    "filename": "breathing-7",
     "frame": { "x": 1680, "y": 0, "w": 80, "h": 80 },
     "rotated": false,
     "trimmed": false,
@@ -198,7 +198,7 @@
     "duration": 64
    },
    {
-    "filename": "breathing-12",
+    "filename": "breathing-8",
     "frame": { "x": 1760, "y": 0, "w": 80, "h": 80 },
     "rotated": false,
     "trimmed": false,
@@ -207,7 +207,7 @@
     "duration": 64
    },
    {
-    "filename": "breathing-13",
+    "filename": "breathing-9",
     "frame": { "x": 1840, "y": 0, "w": 80, "h": 80 },
     "rotated": false,
     "trimmed": false,
@@ -216,7 +216,7 @@
     "duration": 64
    },
    {
-    "filename": "death-0",
+    "filename": "breathing-10",
     "frame": { "x": 1920, "y": 0, "w": 80, "h": 80 },
     "rotated": false,
     "trimmed": false,
@@ -225,7 +225,7 @@
     "duration": 64
    },
    {
-    "filename": "death-1",
+    "filename": "breathing-11",
     "frame": { "x": 2000, "y": 0, "w": 80, "h": 80 },
     "rotated": false,
     "trimmed": false,
@@ -234,7 +234,7 @@
     "duration": 64
    },
    {
-    "filename": "death-2",
+    "filename": "breathing-12",
     "frame": { "x": 2080, "y": 0, "w": 80, "h": 80 },
     "rotated": false,
     "trimmed": false,
@@ -243,7 +243,7 @@
     "duration": 64
    },
    {
-    "filename": "death-3",
+    "filename": "breathing-13",
     "frame": { "x": 2160, "y": 0, "w": 80, "h": 80 },
     "rotated": false,
     "trimmed": false,
@@ -252,7 +252,7 @@
     "duration": 64
    },
    {
-    "filename": "death-4",
+    "filename": "death-0",
     "frame": { "x": 2240, "y": 0, "w": 80, "h": 80 },
     "rotated": false,
     "trimmed": false,
@@ -261,7 +261,7 @@
     "duration": 64
    },
    {
-    "filename": "death-5",
+    "filename": "death-1",
     "frame": { "x": 2320, "y": 0, "w": 80, "h": 80 },
     "rotated": false,
     "trimmed": false,
@@ -270,7 +270,7 @@
     "duration": 64
    },
    {
-    "filename": "death-6",
+    "filename": "death-2",
     "frame": { "x": 2400, "y": 0, "w": 80, "h": 80 },
     "rotated": false,
     "trimmed": false,
@@ -279,7 +279,7 @@
     "duration": 64
    },
    {
-    "filename": "death-7",
+    "filename": "death-3",
     "frame": { "x": 2480, "y": 0, "w": 80, "h": 80 },
     "rotated": false,
     "trimmed": false,
@@ -288,7 +288,7 @@
     "duration": 64
    },
    {
-    "filename": "death-8",
+    "filename": "death-4",
     "frame": { "x": 2560, "y": 0, "w": 80, "h": 80 },
     "rotated": false,
     "trimmed": false,
@@ -297,7 +297,7 @@
     "duration": 64
    },
    {
-    "filename": "death-9",
+    "filename": "death-5",
     "frame": { "x": 2640, "y": 0, "w": 80, "h": 80 },
     "rotated": false,
     "trimmed": false,
@@ -306,7 +306,7 @@
     "duration": 64
    },
    {
-    "filename": "death-10",
+    "filename": "death-6",
     "frame": { "x": 2720, "y": 0, "w": 80, "h": 80 },
     "rotated": false,
     "trimmed": false,
@@ -315,7 +315,7 @@
     "duration": 64
    },
    {
-    "filename": "death-11",
+    "filename": "death-7",
     "frame": { "x": 2800, "y": 0, "w": 80, "h": 80 },
     "rotated": false,
     "trimmed": false,
@@ -324,7 +324,7 @@
     "duration": 64
    },
    {
-    "filename": "death-12",
+    "filename": "death-8",
     "frame": { "x": 2880, "y": 0, "w": 80, "h": 80 },
     "rotated": false,
     "trimmed": false,
@@ -333,7 +333,7 @@
     "duration": 64
    },
    {
-    "filename": "death-13",
+    "filename": "death-9",
     "frame": { "x": 2960, "y": 0, "w": 80, "h": 80 },
     "rotated": false,
     "trimmed": false,
@@ -342,7 +342,7 @@
     "duration": 64
    },
    {
-    "filename": "death-14",
+    "filename": "death-10",
     "frame": { "x": 3040, "y": 0, "w": 80, "h": 80 },
     "rotated": false,
     "trimmed": false,
@@ -351,7 +351,7 @@
     "duration": 64
    },
    {
-    "filename": "death-15",
+    "filename": "hit-0",
     "frame": { "x": 3120, "y": 0, "w": 80, "h": 80 },
     "rotated": false,
     "trimmed": false,
@@ -360,7 +360,7 @@
     "duration": 64
    },
    {
-    "filename": "hit-0",
+    "filename": "hit-1",
     "frame": { "x": 3200, "y": 0, "w": 80, "h": 80 },
     "rotated": false,
     "trimmed": false,
@@ -369,7 +369,7 @@
     "duration": 64
    },
    {
-    "filename": "hit-1",
+    "filename": "hit-2",
     "frame": { "x": 3280, "y": 0, "w": 80, "h": 80 },
     "rotated": false,
     "trimmed": false,
@@ -378,7 +378,7 @@
     "duration": 64
    },
    {
-    "filename": "hit-2",
+    "filename": "idle-0",
     "frame": { "x": 3360, "y": 0, "w": 80, "h": 80 },
     "rotated": false,
     "trimmed": false,
@@ -387,7 +387,7 @@
     "duration": 64
    },
    {
-    "filename": "idle-0",
+    "filename": "idle-1",
     "frame": { "x": 3440, "y": 0, "w": 80, "h": 80 },
     "rotated": false,
     "trimmed": false,
@@ -396,7 +396,7 @@
     "duration": 64
    },
    {
-    "filename": "idle-1",
+    "filename": "idle-2",
     "frame": { "x": 3520, "y": 0, "w": 80, "h": 80 },
     "rotated": false,
     "trimmed": false,
@@ -405,7 +405,7 @@
     "duration": 64
    },
    {
-    "filename": "idle-2",
+    "filename": "idle-3",
     "frame": { "x": 3600, "y": 0, "w": 80, "h": 80 },
     "rotated": false,
     "trimmed": false,
@@ -414,7 +414,7 @@
     "duration": 64
    },
    {
-    "filename": "idle-3",
+    "filename": "idle-4",
     "frame": { "x": 3680, "y": 0, "w": 80, "h": 80 },
     "rotated": false,
     "trimmed": false,
@@ -423,7 +423,7 @@
     "duration": 64
    },
    {
-    "filename": "idle-4",
+    "filename": "idle-5",
     "frame": { "x": 3760, "y": 0, "w": 80, "h": 80 },
     "rotated": false,
     "trimmed": false,
@@ -432,7 +432,7 @@
     "duration": 64
    },
    {
-    "filename": "idle-5",
+    "filename": "idle-6",
     "frame": { "x": 3840, "y": 0, "w": 80, "h": 80 },
     "rotated": false,
     "trimmed": false,
@@ -441,7 +441,7 @@
     "duration": 64
    },
    {
-    "filename": "idle-6",
+    "filename": "idle-7",
     "frame": { "x": 3920, "y": 0, "w": 80, "h": 80 },
     "rotated": false,
     "trimmed": false,
@@ -450,7 +450,7 @@
     "duration": 64
    },
    {
-    "filename": "idle-7",
+    "filename": "idle-8",
     "frame": { "x": 4000, "y": 0, "w": 80, "h": 80 },
     "rotated": false,
     "trimmed": false,
@@ -459,7 +459,7 @@
     "duration": 64
    },
    {
-    "filename": "idle-8",
+    "filename": "idle-9",
     "frame": { "x": 4080, "y": 0, "w": 80, "h": 80 },
     "rotated": false,
     "trimmed": false,
@@ -468,7 +468,7 @@
     "duration": 64
    },
    {
-    "filename": "idle-9",
+    "filename": "idle-10",
     "frame": { "x": 4160, "y": 0, "w": 80, "h": 80 },
     "rotated": false,
     "trimmed": false,
@@ -477,7 +477,7 @@
     "duration": 64
    },
    {
-    "filename": "idle-10",
+    "filename": "idle-11",
     "frame": { "x": 4240, "y": 0, "w": 80, "h": 80 },
     "rotated": false,
     "trimmed": false,
@@ -486,7 +486,7 @@
     "duration": 64
    },
    {
-    "filename": "idle-11",
+    "filename": "idle-12",
     "frame": { "x": 4320, "y": 0, "w": 80, "h": 80 },
     "rotated": false,
     "trimmed": false,
@@ -495,7 +495,7 @@
     "duration": 64
    },
    {
-    "filename": "idle-12",
+    "filename": "idle-13",
     "frame": { "x": 4400, "y": 0, "w": 80, "h": 80 },
     "rotated": false,
     "trimmed": false,
@@ -504,7 +504,7 @@
     "duration": 64
    },
    {
-    "filename": "idle-13",
+    "filename": "run-0",
     "frame": { "x": 4480, "y": 0, "w": 80, "h": 80 },
     "rotated": false,
     "trimmed": false,
@@ -513,7 +513,7 @@
     "duration": 64
    },
    {
-    "filename": "run-0",
+    "filename": "run-1",
     "frame": { "x": 4560, "y": 0, "w": 80, "h": 80 },
     "rotated": false,
     "trimmed": false,
@@ -522,7 +522,7 @@
     "duration": 64
    },
    {
-    "filename": "run-1",
+    "filename": "run-2",
     "frame": { "x": 4640, "y": 0, "w": 80, "h": 80 },
     "rotated": false,
     "trimmed": false,
@@ -531,7 +531,7 @@
     "duration": 64
    },
    {
-    "filename": "run-2",
+    "filename": "run-3",
     "frame": { "x": 4720, "y": 0, "w": 80, "h": 80 },
     "rotated": false,
     "trimmed": false,
@@ -540,7 +540,7 @@
     "duration": 64
    },
    {
-    "filename": "run-3",
+    "filename": "run-4",
     "frame": { "x": 4800, "y": 0, "w": 80, "h": 80 },
     "rotated": false,
     "trimmed": false,
@@ -549,7 +549,7 @@
     "duration": 64
    },
    {
-    "filename": "run-4",
+    "filename": "run-5",
     "frame": { "x": 4880, "y": 0, "w": 80, "h": 80 },
     "rotated": false,
     "trimmed": false,
@@ -558,7 +558,7 @@
     "duration": 64
    },
    {
-    "filename": "run-5",
+    "filename": "run-6",
     "frame": { "x": 4960, "y": 0, "w": 80, "h": 80 },
     "rotated": false,
     "trimmed": false,
@@ -567,7 +567,7 @@
     "duration": 64
    },
    {
-    "filename": "run-6",
+    "filename": "run-7",
     "frame": { "x": 5040, "y": 0, "w": 80, "h": 80 },
     "rotated": false,
     "trimmed": false,
@@ -576,8 +576,35 @@
     "duration": 64
    },
    {
-    "filename": "run-7",
+    "filename": "run-8",
     "frame": { "x": 5120, "y": 0, "w": 80, "h": 80 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 80 },
+    "sourceSize": { "w": 80, "h": 80 },
+    "duration": 64
+   },
+   {
+    "filename": "run-9",
+    "frame": { "x": 5200, "y": 0, "w": 80, "h": 80 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 80 },
+    "sourceSize": { "w": 80, "h": 80 },
+    "duration": 64
+   },
+   {
+    "filename": "run-10",
+    "frame": { "x": 5280, "y": 0, "w": 80, "h": 80 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 80 },
+    "sourceSize": { "w": 80, "h": 80 },
+    "duration": 64
+   },
+   {
+    "filename": "run-11",
+    "frame": { "x": 5360, "y": 0, "w": 80, "h": 80 },
     "rotated": false,
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 80, "h": 80 },
@@ -588,17 +615,17 @@
  "meta": {
   "app": "https://www.aseprite.org/",
   "version": "1.3.18.6-x64",
-  "image": "azurite-lion.png",
+  "image": "orb-weaver.png",
   "format": "RGBA8888",
-  "size": { "w": 5200, "h": 80 },
+  "size": { "w": 5440, "h": 80 },
   "scale": "1",
   "frameTags": [
-   { "name": "attack", "from": 0, "to": 9, "direction": "forward", "color": "#000000ff" },
-   { "name": "breathing", "from": 10, "to": 23, "direction": "forward", "color": "#000000ff" },
-   { "name": "death", "from": 24, "to": 39, "direction": "forward", "color": "#000000ff" },
-   { "name": "hit", "from": 40, "to": 42, "direction": "forward", "color": "#000000ff" },
-   { "name": "idle", "from": 43, "to": 56, "direction": "forward", "color": "#000000ff" },
-   { "name": "run", "from": 57, "to": 64, "direction": "forward", "color": "#000000ff" }
+   { "name": "attack", "from": 0, "to": 13, "direction": "forward", "color": "#000000ff" },
+   { "name": "breathing", "from": 14, "to": 27, "direction": "forward", "color": "#000000ff" },
+   { "name": "death", "from": 28, "to": 38, "direction": "forward", "color": "#000000ff" },
+   { "name": "hit", "from": 39, "to": 41, "direction": "forward", "color": "#000000ff" },
+   { "name": "idle", "from": 42, "to": 55, "direction": "forward", "color": "#000000ff" },
+   { "name": "run", "from": 56, "to": 67, "direction": "forward", "color": "#000000ff" }
   ],
   "layers": [
    { "name": "Layer 1", "opacity": 255, "blendMode": "normal" }

@@ -13,21 +13,20 @@ import { windDervish } from './wind-dervish';
 import { WhileOnBoardModifier } from '../../../../modifier/modifiers/while-on-board.modifier';
 import { CardAuraModifierMixin } from '../../../../modifier/mixins/aura.mixin';
 import type { MinionCard } from '../../../entities/minion.entity';
-import { OnAttackModifier } from '../../../../modifier/modifiers/on-attack.modifier';
-import { BurnModifier } from '../../../../modifier/modifiers/burn.modifier';
+import { InstantMoveModifier } from '../../../../modifier/modifiers/instant-move.modifier';
 import { StructureModifier } from '../../../../modifier/modifiers/structure.modifier';
 
-export const fireblazeObelysk: MinionBlueprint = {
-  id: 'fireblaze-obelysk',
-  name: 'Fireblaze Obelysk',
+export const windstormObelysk: MinionBlueprint = {
+  id: 'windstorm-obelysk',
+  name: 'Windstorm Obelysk',
   description: dedent /*html*/ `
   <rt-keyword>Structure</rt-keyword>.
   <rt-keyword>Spawn</rt-keyword>: <rt-card>Wind Dervish</rt-card>.
-  Your <rt-card>Wind Dervish</rt-card> have <rt-trigger>On Attack</rt-trigger>: Infict <rt-keyword>Burn 1</rt-keyword>.
+  Your <rt-card>Wind Dervish</rt-card> have <rt-keyword>Instant Move</rt-keyword>.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
-  art: defaultCardArt('minions/fireblaze-obelysk'),
+  art: defaultCardArt('minions/windstorm-obelysk'),
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.RARE,
   manaCost: 3,
@@ -60,15 +59,7 @@ export const fireblazeObelysk: MinionBlueprint = {
               );
             },
             getModifiers() {
-              return [
-                new OnAttackModifier(game, card, {
-                  async handler(event) {
-                    await event.data.target.modifiers.add(
-                      new BurnModifier(game, card, { stacks: 1 })
-                    );
-                  }
-                })
-              ];
+              return [new InstantMoveModifier(game, card)];
             }
           })
         ]

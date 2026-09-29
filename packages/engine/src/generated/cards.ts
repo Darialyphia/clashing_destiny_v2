@@ -86,7 +86,14 @@ export const cards = {
 "pyromancer": "pyromancer",
 "zirix-starstrider": "zirix-starstrider",
 "incinera": "incinera",
-"soul-arbiter": "soul-arbiter"
+"soul-arbiter": "soul-arbiter",
+"time-maelstrom": "time-maelstrom",
+"blindscorch": "blindscorch",
+"corpseCombustion": "corpseCombustion",
+"stars-fury": "stars-fury",
+"windstorm-obelysk": "windstorm-obelysk",
+"zephyr": "zephyr",
+"chronomancer": "chronomancer"
 } as const;
 
 export const collectableCards = {
@@ -169,7 +176,14 @@ export const collectableCards = {
 "pyromancer": "pyromancer",
 "zirix-starstrider": "zirix-starstrider",
 "incinera": "incinera",
-"soul-arbiter": "soul-arbiter"
+"soul-arbiter": "soul-arbiter",
+"time-maelstrom": "time-maelstrom",
+"blindscorch": "blindscorch",
+"corpseCombustion": "corpseCombustion",
+"stars-fury": "stars-fury",
+"windstorm-obelysk": "windstorm-obelysk",
+"zephyr": "zephyr",
+"chronomancer": "chronomancer"
 } as const;
 
 type CardSet = Array<{id: string; collectable: boolean; rarity: Rarity, kind: CardKind}>;
@@ -660,6 +674,48 @@ export const cardsBySet: Record<string, CardSet> = {
     "collectable": true,
     "rarity": "rare",
     "kind": "MINION"
+  },
+  {
+    "id": "time-maelstrom",
+    "collectable": true,
+    "rarity": "legendary",
+    "kind": "SPELL"
+  },
+  {
+    "id": "blindscorch",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "SPELL"
+  },
+  {
+    "id": "corpseCombustion",
+    "collectable": true,
+    "rarity": "rare",
+    "kind": "SPELL"
+  },
+  {
+    "id": "stars-fury",
+    "collectable": true,
+    "rarity": "legendary",
+    "kind": "SPELL"
+  },
+  {
+    "id": "windstorm-obelysk",
+    "collectable": true,
+    "rarity": "rare",
+    "kind": "MINION"
+  },
+  {
+    "id": "zephyr",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "MINION"
+  },
+  {
+    "id": "chronomancer",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "MINION"
   }
 ]
 };
@@ -745,7 +801,14 @@ export const cardShortIds: Record<string, number> = {
 "pyromancer": 80,
 "zirix-starstrider": 81,
 "incinera": 82,
-"soul-arbiter": 83
+"soul-arbiter": 83,
+"time-maelstrom": 84,
+"blindscorch": 85,
+"corpseCombustion": 86,
+"stars-fury": 87,
+"windstorm-obelysk": 88,
+"zephyr": 89,
+"chronomancer": 90
 } as const;
 
 export const cardIdByShortId: Record<number, string> = {
@@ -829,5 +892,12 @@ export const cardIdByShortId: Record<number, string> = {
 "80": "pyromancer",
 "81": "zirix-starstrider",
 "82": "incinera",
-"83": "soul-arbiter"
+"83": "soul-arbiter",
+"84": "time-maelstrom",
+"85": "blindscorch",
+"86": "corpseCombustion",
+"87": "stars-fury",
+"88": "windstorm-obelysk",
+"89": "zephyr",
+"90": "chronomancer"
 } as const;

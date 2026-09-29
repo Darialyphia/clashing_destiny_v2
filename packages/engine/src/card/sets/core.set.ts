@@ -81,6 +81,13 @@ import { pyromancer } from './core/minions/pyromancer';
 import { zirixStarstrider } from './core/minions/zirix-starstrider';
 import { incinera } from './core/minions/incinera';
 import { soulArbiter } from './core/minions/soul-arbiter';
+import { timeMaelstrom } from './core/spells/time-maelstrom';
+import { blindscorch } from './core/spells/blindscorch';
+import { corpseCombustion } from './core/spells/corpse-combustion';
+import { starsFury } from './core/spells/stars-fury';
+import { windstormObelysk } from './core/minions/windstorm-obelysk';
+import { zephyr } from './core/minions/zephyr';
+import { chronomancer } from './core/minions/chronomancer';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -166,6 +173,13 @@ export const coreSet: CardSet = {
     pyromancer,
     zirixStarstrider,
     incinera,
-    soulArbiter
+    soulArbiter,
+    timeMaelstrom,
+    blindscorch,
+    corpseCombustion,
+    starsFury,
+    windstormObelysk,
+    zephyr,
+    chronomancer
   ]
 };

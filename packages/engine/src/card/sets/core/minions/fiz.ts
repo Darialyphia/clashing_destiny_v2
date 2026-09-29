@@ -13,6 +13,7 @@ import { WhileOnBoardModifier } from '../../../../modifier/modifiers/while-on-bo
 import { MinionInterceptorModifierMixin } from '../../../../modifier/mixins/interceptor.mixin';
 import { UntilEndOfTurnModifierMixin } from '../../../../modifier/mixins/until-end-of-turn.mixin';
 import { OnScoreModifier } from '../../../../modifier/modifiers/on-score.modifier';
+import { AffinitiesTogglableModifierMixin } from '../../../../modifier/mixins/togglable.mixin';
 
 export const fiz: MinionBlueprint = {
   id: 'fiz',
@@ -66,7 +67,10 @@ export const fiz: MinionBlueprint = {
           );
           if (!emptySpaceInBase) return;
           await card.moveToSpace(emptySpaceInBase);
-        }
+        },
+        mixins: [
+          new AffinitiesTogglableModifierMixin(game, [AFFINITIES.LIGHT, AFFINITIES.LIGHT])
+        ]
       })
     );
   },

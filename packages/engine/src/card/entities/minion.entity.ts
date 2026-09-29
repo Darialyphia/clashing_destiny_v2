@@ -518,6 +518,7 @@ export class MinionCard extends Card<
   // doesnt trigger BEFORE_PLAY or AFTER_PLAY events
   // this is useful when summoning minions as part of another card effect
   async playImmediatelyAt(position: BoardSpace, { shouldExhaust = true }) {
+    await this.reveal();
     await this.summon(position, shouldExhaust);
     this.updatePlayedAt();
   }

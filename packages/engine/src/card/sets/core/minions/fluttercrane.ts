@@ -14,7 +14,7 @@ export const flutterCrane: MinionBlueprint = {
   id: 'flutter-crane',
   name: 'Flutter Crane',
   description: dedent /*html*/ `
-  <rt-timing>Once per turn</rt-timing><rt-trigger>On Move</rt-trigger> Put a spell from your Supply in your hand.
+  <rt-trigger>On Move</rt-trigger> Put a spell from your Supply in your hand.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -26,15 +26,14 @@ export const flutterCrane: MinionBlueprint = {
   manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
-  atk: 0,
-  maxHp: 2,
+  atk: 1,
+  maxHp: 3,
   commandment: 1,
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {
     await card.modifiers.add(
       new OnMoveModifier(game, card, {
-        frequencyPerGameTurn: 1,
         async handler() {
           const spellsInSupply = [...card.player.cardManager.supply].filter(isSpell);
           if (!spellsInSupply.length) return;

@@ -21,7 +21,7 @@ export const backstep: SpellBlueprint<MinionCard> = {
   id: 'backstep',
   name: 'Backstep',
   description: dedent /*html*/ `
-  Choose an ally minion at a battlefield. It deals 1 damage to the minion in front of it then moves to your base.
+  Choose an ally minion at a battlefield. It deals 2 damage to the minion in front of it then moves to your base.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -84,7 +84,7 @@ export const backstep: SpellBlueprint<MinionCard> = {
     const inFront = card.position?.inFront?.card;
     if (!inFront) return;
     if (!isMinion(inFront)) return;
-    await inFront.takeDamage(card, new SpellDamage(1, card));
+    await inFront.takeDamage(card, new SpellDamage(2, card));
 
     await target.move(destination.position.zone, destination.position.index);
   },

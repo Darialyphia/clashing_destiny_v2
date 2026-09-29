@@ -17,7 +17,7 @@ export const duneCaster: MinionBlueprint = {
   id: 'dune-caster',
   name: 'Dune Caster',
   description: dedent /*html*/ `
-  <rt-trigger>On Enter</rt-trigger>: Give an ally <rt-card>Wind Dervish</rt-card> +1/+1/+1 and remove <rt-keyword>Ephemeral</rt-keyword> from it.
+  <rt-trigger>On Enter</rt-trigger>: Give an ally <rt-card>Wind Dervish</rt-card> +0/+1/+1 and remove <rt-keyword>Ephemeral</rt-keyword> from it.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -28,7 +28,7 @@ export const duneCaster: MinionBlueprint = {
   manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
-  atk: 0,
+  atk: 1,
   maxHp: 2,
   affinities: [AFFINITIES.AIR],
   commandment: 1,
@@ -65,7 +65,7 @@ export const duneCaster: MinionBlueprint = {
           await target.modifiers.add(
             new SimpleStatsBuffModifier('dune-caster-buff', game, card, {
               atk: 1,
-              cmd: 1,
+              cmd: 0,
               hp: 1
             })
           );

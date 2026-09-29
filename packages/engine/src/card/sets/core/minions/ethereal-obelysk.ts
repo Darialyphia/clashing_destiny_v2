@@ -8,9 +8,9 @@ import {
   CARD_SPEED,
   AFFINITIES
 } from '../../../card.enums';
-import { EphemeralModifier } from '../../../../modifier/modifiers/ephemeral.modifier';
 import { SpawnModifier } from '../../../../modifier/modifiers/spawn.modifier';
 import { windDervish } from './wind-dervish';
+import { StructureModifier } from '../../../../modifier/modifiers/structure.modifier';
 
 export const etherealObelysk: MinionBlueprint = {
   id: 'ethereal-obelysk',
@@ -35,7 +35,7 @@ export const etherealObelysk: MinionBlueprint = {
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {
-    await card.modifiers.add(new EphemeralModifier(game, card));
+    await card.modifiers.add(new StructureModifier(game, card));
     await card.modifiers.add(
       new SpawnModifier(game, card, {
         blueprint: () => windDervish

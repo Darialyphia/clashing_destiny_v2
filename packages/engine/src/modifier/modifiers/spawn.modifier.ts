@@ -8,6 +8,8 @@ import { KeywordModifierMixin } from '../mixins/keyword.mixin';
 import { WhileOnBoardModifier } from './while-on-board.modifier';
 import type { ModifierMixin } from '../modifier-mixin';
 import type { MinionBlueprint } from '../../card/card-blueprint';
+import { GAME_PHASES } from '../../game/game.enums';
+import { CardEffectTriggeredEvent } from '../../card/card.events';
 
 export class SpawnModifier<T extends MinionCard> extends WhileOnBoardModifier<T> {
   constructor(
@@ -21,15 +23,25 @@ export class SpawnModifier<T extends MinionCard> extends WhileOnBoardModifier<T>
     super(KEYWORDS.SPAWN.id, game, source, {
       name: KEYWORDS.SPAWN.name,
       description: KEYWORDS.SPAWN.description,
-      icon: 'icons/keyword-spawn',
       mixins: [
         new KeywordModifierMixin(game, KEYWORDS.SPAWN),
         new GameEventModifierMixin(game, {
           eventName: GAME_EVENTS.AFTER_CHANGE_PHASE,
-          filter: () => {
-            return !this.target.player.boardSide.base.some(space => space.isEmpty);
+          filter: event => {
+            return (
+              event.data.from === GAME_PHASES.SUPPLY &&
+              event.data.to.state === GAME_PHASES.MAIN &&
+              this.target.player.boardSide.base.some(space => space.isEmpty)
+            );
           },
           handler: async () => {
+            await this.game.emit(
+              GAME_EVENTS.CARD_EFFECT_TRIGGERED,
+              new CardEffectTriggeredEvent({
+                card: this.target,
+                message: `${this.target.blueprint.name} spawns a ${options.blueprint().name}.`
+              })
+            );
             const blueprint = options.blueprint();
             const card = await this.target.player.generateCard<MinionCard>(
               blueprint.id,
