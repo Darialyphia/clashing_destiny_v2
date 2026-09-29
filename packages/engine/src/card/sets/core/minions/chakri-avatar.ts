@@ -23,7 +23,7 @@ export const chakriAvatar: MinionBlueprint = {
   name: 'Chakri Avatar',
   description: dedent /*html*/ `
   When I see you play 2 spells in a turn, <rt-keyword>Empower</rt-keyword> me.
-  While <rt-keyword>Empowered</rt-keyword>, I have +2/+2/+1 and <rt-keyword>Intimidate 2</rt-keyword>.
+  While <rt-keyword>Empowered</rt-keyword>, I have +2/+2/+1, and <rt-keyword>Intimidate 1</rt-keyword>.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -84,7 +84,7 @@ export const chakriAvatar: MinionBlueprint = {
 
     await card.modifiers.add(
       new IntimidateModifier(game, card, {
-        level: 2,
+        level: 1,
         mixins: [
           new TogglableModifierMixin(game, () => card.modifiers.has(EmpoweredModifier))
         ]

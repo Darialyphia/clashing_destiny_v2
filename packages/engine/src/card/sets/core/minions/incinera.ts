@@ -18,7 +18,7 @@ export const incinera: MinionBlueprint = {
   name: 'Incinera',
   description: dedent /*html*/ `
     <rt-keyword>Flanking</rt-keyword><br/>
-    <rt-trigger>On Move</rt-trigger>: if I am at a battlefield, gain influence here equal to the amount of enemy minions with <rt-keyword>Burn</rt-keyword>.
+    <rt-trigger>On Move</rt-trigger>: Inflict <rt-keyword>Burn 1</rt-keyword> to all enemies here.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -41,13 +41,18 @@ export const incinera: MinionBlueprint = {
       new OnMoveModifier(game, card, {
         location: 'battlefield',
         async handler() {
-          const burningEnemies = card
+          const enemies = card
             .battlefield!.opponentSpaces.map(space => space.card)
             .filter(isDefined)
-            .filter(isMinion)
-            .filter(minion => minion.modifiers.has(BurnModifier));
+            .filter(isMinion);
 
-          await card.battlefield?.gainScore(burningEnemies.length);
+          for (const enemy of enemies) {
+            await enemy.modifiers.add(
+              new BurnModifier(game, card, {
+                stacks: 1
+              })
+            );
+          }
         }
       })
     );

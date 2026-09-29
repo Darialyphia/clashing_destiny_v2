@@ -111,6 +111,7 @@ const onMouseleave = () => {
 }
 
 .player-mana {
+  font-size: 10px;
   scale: 3;
   translate: -15px 0;
 }

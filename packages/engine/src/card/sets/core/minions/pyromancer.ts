@@ -58,7 +58,7 @@ export const pyromancer: MinionBlueprint = {
           if (targetResult.cancelled) return;
           const target = targetResult.result.cards[0];
           if (!target) return;
-          await target.modifiers.add(new BurnModifier(game, card, { stacks: 2 }));
+          await target.modifiers.add(new BurnModifier(game, card, { stacks: 1 }));
         },
         mixins: [
           new TogglableModifierMixin(game, () => card.location === CARD_LOCATIONS.BASE)

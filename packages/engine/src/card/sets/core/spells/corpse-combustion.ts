@@ -14,7 +14,6 @@ import {
   RARITIES
 } from '../../../card.enums';
 import type { MinionCard } from '../../../entities/minion.entity';
-import { SpellDamage } from '../../../../utils/damage';
 import { BurnModifier } from '../../../../modifier/modifiers/burn.modifier';
 
 export const corpseCombustion: SpellBlueprint<MinionCard> = {
@@ -30,7 +29,7 @@ export const corpseCombustion: SpellBlueprint<MinionCard> = {
   rarity: RARITIES.RARE,
   affinities: [AFFINITIES.AIR, AFFINITIES.AIR],
   manaCost: 5,
-  manaSupply: 2,
+  manaSupply: 3,
   speed: CARD_SPEED.FAST,
   tags: [],
   canPlay: (game, card) =>
