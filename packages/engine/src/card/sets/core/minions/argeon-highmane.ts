@@ -19,7 +19,7 @@ export const argeonHighmane: MinionBlueprint = {
   name: 'Argeon Highmane',
   description: dedent /*html*/ `
   <rt-keyword>Shield</rt-keyword>.
-  <rt-location locations="battlefield"></rt-location> My allies here have <rt-keyword>Intimidate 2</rt-keyword>.
+  <rt-location locations="battlefield"></rt-location> My allies here have <rt-keyword>Intimidate 1</rt-keyword>.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -46,7 +46,7 @@ export const argeonHighmane: MinionBlueprint = {
               return candidate.isAlly(card) && candidate.location === card.location;
             },
             getModifiers() {
-              return [new IntimidateModifier(game, card, { level: 2 })];
+              return [new IntimidateModifier(game, card, { level: 1 })];
             }
           })
         ]

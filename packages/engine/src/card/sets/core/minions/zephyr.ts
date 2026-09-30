@@ -1,10 +1,6 @@
 import dedent from 'dedent';
 import type { MinionBlueprint } from '../../../card-blueprint';
-import {
-  defaultCardArt,
-  singleAllyMinionTargetRules,
-  singleMinionTargetRules
-} from '../../../card-utils';
+import { defaultCardArt, singleAllyMinionTargetRules } from '../../../card-utils';
 import {
   CARD_SETS,
   CARD_KINDS,
@@ -40,7 +36,7 @@ export const zephyr: MinionBlueprint = {
   abilities: [
     {
       id: 'zephyr-ability',
-      label: 'Move me a,d debuff enemies',
+      label: 'Move me and debuff enemies',
       description:
         '<rt-keyword>Disempower</rt-keyword> me. Swap my position with an ally minion at a battlefield, then give enemies at this battlefield -1/-1/-1.',
       manaCost: 1,

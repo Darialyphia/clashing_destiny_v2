@@ -114,6 +114,9 @@ const onMouseleave = () => {
   font-size: 10px;
   scale: 3;
   translate: -15px 0;
+  & * {
+    -webkit-text-stroke: 2px black !important;
+  }
 }
 
 .supply-indicator {
