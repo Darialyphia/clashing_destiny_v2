@@ -5,6 +5,7 @@ import { SpendCurrencyUseCase } from './currency/usecases/spendCurrency.usecase'
 import { GetTransactionHistoryUseCase } from './currency/usecases/getTransactionHistory.usecase';
 import { AwardCurrencyUseCase } from './currency/usecases/awardCurrency.usecase';
 import { CreateMissingWalletsUseCase } from './currency/usecases/createMissingWallets.usecase';
+import { CURRENCY_SOURCE_VALIDATOR } from './currency/currency.schemas';
 // import { CreateMissingWalletsUseCase } from './currency/usecases/createMissingWallets.usecase';
 
 export const balance = queryWithContainer({
@@ -33,6 +34,7 @@ export const spendInternal = internalMutationWithContainer({
   args: {
     amount: v.number(),
     currencyType: v.string(),
+    source: CURRENCY_SOURCE_VALIDATOR,
     purpose: v.string(),
     metadata: v.optional(v.any())
   },
@@ -43,6 +45,7 @@ export const spendInternal = internalMutationWithContainer({
     return useCase.execute({
       amount: args.amount,
       currencyType: args.currencyType as any,
+      source: args.source,
       purpose: args.purpose,
       metadata: args.metadata
     });

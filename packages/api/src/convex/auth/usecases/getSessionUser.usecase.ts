@@ -40,6 +40,7 @@ export interface GetSessionUserput {
   wallet: {
     gold: number;
     craftingShards: number;
+    premium: number;
   };
 }
 

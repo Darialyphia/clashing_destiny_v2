@@ -35,7 +35,7 @@ export const warJudicator: MinionBlueprint = {
   abilities: [],
   async onInit(game, card) {
     await card.modifiers.add(
-      new ZealModifier(game, card, {
+      new ZealModifier('war-judicator-zeal', game, card, {
         amount: 5,
         zealedModifiers: [],
         onGainZeal: async () => {

@@ -64,6 +64,30 @@ import { lastStand } from './core/secrets/last-stand';
 import { holyImmolation } from './core/secrets/holy-immolation';
 import { arclyteRegalia } from './core/artifacts/arclyte-regalia';
 import { mistWalking } from './core/spells/mist-walking';
+import { dynastyStandard } from './core/artifacts/dynasty-standard';
+import { decimate } from './core/spells/decimate';
+import { steadfastVigil } from './core/spells/steadfast-vigil';
+import { circleOfLife } from './core/spells/circle-of-life';
+import { lionheartBlessing } from './core/spells/lionheart-blessing';
+import { crimsonStalker } from './core/minions/crimson-stalker';
+import { unseven } from './core/minions/unseven';
+import { windDervish } from './core/minions/wind-dervish';
+import { etherealObelysk } from './core/minions/ethereal-obelysk';
+import { airAffinity } from './core/runes/air-affinity';
+import { duneCaster } from './core/minions/dune-caster';
+import { aymaraHealer } from './core/minions/aymara-healer';
+import { fireblazeObelysk } from './core/minions/fireblaze-obelysk';
+import { pyromancer } from './core/minions/pyromancer';
+import { zirixStarstrider } from './core/minions/zirix-starstrider';
+import { incinera } from './core/minions/incinera';
+import { soulArbiter } from './core/minions/soul-arbiter';
+import { timeMaelstrom } from './core/spells/time-maelstrom';
+import { blindscorch } from './core/spells/blindscorch';
+import { corpseCombustion } from './core/spells/corpse-combustion';
+import { starsFury } from './core/spells/stars-fury';
+import { windstormObelysk } from './core/minions/windstorm-obelysk';
+import { zephyr } from './core/minions/zephyr';
+import { chronomancer } from './core/minions/chronomancer';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -132,6 +156,30 @@ export const coreSet: CardSet = {
     lastStand,
     holyImmolation,
     arclyteRegalia,
-    mistWalking
+    mistWalking,
+    dynastyStandard,
+    decimate,
+    steadfastVigil,
+    circleOfLife,
+    lionheartBlessing,
+    crimsonStalker,
+    unseven,
+    windDervish,
+    etherealObelysk,
+    airAffinity,
+    duneCaster,
+    aymaraHealer,
+    fireblazeObelysk,
+    pyromancer,
+    zirixStarstrider,
+    incinera,
+    soulArbiter,
+    timeMaelstrom,
+    blindscorch,
+    corpseCombustion,
+    starsFury,
+    windstormObelysk,
+    zephyr,
+    chronomancer
   ]
 };

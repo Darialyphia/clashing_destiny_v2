@@ -5,15 +5,14 @@ import type { MinionCard } from '../../card/entities/minion.entity';
 import type { Game } from '../../game/game';
 import { GAME_EVENTS } from '../../game/game.events';
 import { CardAuraModifierMixin } from '../mixins/aura.mixin';
-import { GameEventModifierMixin } from '../mixins/game-event.mixin';
 import { TogglableModifierMixin } from '../mixins/togglable.mixin';
-import { UntilEndOfTurnModifierMixin } from '../mixins/until-end-of-turn.mixin';
 import type { ModifierMixin } from '../modifier-mixin';
 import type { Modifier } from '../modifier.entity';
 import { WhileOnBoardModifier } from './while-on-board.modifier';
 
 export class ZealModifier extends WhileOnBoardModifier<MinionCard> {
   constructor(
+    modifierType: string,
     game: Game,
     source: AnyCard,
     options: {
@@ -24,9 +23,9 @@ export class ZealModifier extends WhileOnBoardModifier<MinionCard> {
       onLoseZeal?: (candidate: MinionCard) => void;
     }
   ) {
-    super(KEYWORDS.ZEAL.id, game, source, {
+    super(modifierType, game, source, {
       name: KEYWORDS.ZEAL.name,
-      description: KEYWORDS.ZEAL.description,
+      description: KEYWORDS.ZEAL.description.replace(' X', ` ${options.amount}`),
       icon: 'icons/keyword-zeal',
       mixins: [
         new CardAuraModifierMixin<MinionCard>(game, source, {

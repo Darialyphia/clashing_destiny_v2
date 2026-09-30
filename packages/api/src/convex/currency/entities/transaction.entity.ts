@@ -24,9 +24,6 @@ export class CurrencyTransaction extends Entity<TransactionId, TransactionDoc> {
   get source() {
     return this.data.source;
   }
-  get sourceId() {
-    return this.data.sourceId;
-  }
   get metadata() {
     return this.data.metadata;
   }

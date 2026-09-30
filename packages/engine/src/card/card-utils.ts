@@ -328,6 +328,7 @@ export const battlefieldTargetingRules = {
       canCancel,
       aiHints,
       isElligible(candidate) {
+        console.log(candidate.blueprintId);
         if (!isDestiny(candidate)) {
           return false;
         }
@@ -702,6 +703,14 @@ export const emptyBoardSpaceTargetRules = {
       cancelled: false as const,
       result: { spaces: result.result, cards: [], effect: null }
     };
+  },
+
+  defaultTimeoutFallback: (game: Game, predicate?: (space: BoardSpace) => boolean) => {
+    return [
+      game.boardSystem.boardSpaces.find(
+        space => space.isEmpty && (predicate ? predicate(space) : true)
+      )!
+    ];
   }
 };
 

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import AuthenticatedHeader from '@/AuthenticatedHeader.vue';
 import {
   useJoinMatchmaking,
   useLeaveMatchmaking
@@ -13,18 +12,39 @@ import type { DeckId } from '@game/api';
 import MatchmakingTimer from '@/matchmaking/components/MatchmakingTimer.vue';
 
 definePage({
-  name: 'Matchmaking'
+  name: 'Matchmaking',
+  meta: {
+    wrapperClass: 'page-blur'
+  }
 });
 
 const { data: me } = useMe();
 const { data: decks, isLoading: isLoadingDecks } = useDecks();
 
-const { data: matchmakings, isLoading } = useMatchmakingList();
+const { data: matchmakings } = useMatchmakingList();
 const { mutate: join, isLoading: isJoining } = useJoinMatchmaking();
 const { mutate: leave, isLoading: isLeaving } = useLeaveMatchmaking();
 
 const selectedDeckId = ref<string | null>(null);
 const selectedQueueName = ref<string | null>(null);
+watch(
+  matchmakings,
+  newMatchmakings => {
+    if (newMatchmakings?.length) {
+      selectedQueueName.value = newMatchmakings[0]?.name;
+    }
+  },
+  { immediate: true }
+);
+watch(
+  decks,
+  newDecks => {
+    if (newDecks?.length) {
+      selectedDeckId.value = newDecks[0]?.id;
+    }
+  },
+  { immediate: true }
+);
 
 const isInMatchmaking = computed(() => {
   return !!me.value?.currentJoinedMatchmaking;
@@ -47,24 +67,28 @@ const getDisplayedDeck = (deck: UserDeck) => ({
 </script>
 
 <template>
-  <div class="matchmaking-page">
-    <AuthenticatedHeader />
+  <div class="page">
+    <FancyButton
+      class="absolute top-10 left-8"
+      text="Back"
+      size="md"
+      :to="{ name: 'SelectMode' }"
+    />
+
     <main class="container">
-      <h1 class="page-title">Matchmaking</h1>
+      <h1 class="page-title dual-text" data-text="Matchmaking">Matchmaking</h1>
 
       <div class="matchmaking-content">
-        <section class="surface">
-          <h2>1. Select Your Deck</h2>
-
+        <section>
           <div v-if="isLoadingDecks" class="loading-state">
             Loading decks...
           </div>
 
-          <div v-else-if="!decks?.length" class="empty-state">
+          <div v-else-if="!decks?.length" class="surface empty-state">
             No decks available. Create a deck first!
           </div>
 
-          <ul v-else class="grid gap-3 mb-4">
+          <ul v-else class="grid grid-cols-3 gap-3 mb-4">
             <li
               v-for="deck in decks"
               :key="deck.id"
@@ -85,7 +109,7 @@ const getDisplayedDeck = (deck: UserDeck) => ({
           </ul>
         </section>
 
-        <section class="surface">
+        <!-- <section class="surface" v-if="matchmakings?.length > 1">
           <h2>2. Select Queue</h2>
 
           <div v-if="isLoading" class="loading-state">
@@ -129,7 +153,7 @@ const getDisplayedDeck = (deck: UserDeck) => ({
               </div>
             </li>
           </ul>
-        </section>
+        </section> -->
 
         <footer>
           <FancyButton
@@ -163,26 +187,34 @@ const getDisplayedDeck = (deck: UserDeck) => ({
 </template>
 
 <style scoped lang="postcss">
+.page {
+  min-height: 100vh;
+  background: url('@/assets/backgrounds/main-menu-overlay.png');
+}
+
 .container {
   max-width: var(--size-lg);
   margin: 0 auto;
   padding: var(--size-6);
+  container-type: inline-size;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100dvh;
 }
 
 .page-title {
-  font-family: 'Cinzel Decorative', serif;
-  font-size: var(--font-size-6);
+  font-size: var(--font-size-7);
   font-weight: var(--font-weight-7);
-  color: transparent;
-  background-image: linear-gradient(45deg, #efef9f, #d7ad42);
-  background-clip: text;
-  text-align: center;
-  margin-bottom: var(--size-8);
+  color: var(--text-1);
+  margin-bottom: var(--size-3);
+  font-family: 'Cinzel Decorative', serif;
 }
 
 .matchmaking-content {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   grid-template-rows: auto auto;
   gap: var(--size-6);
   align-items: start;
@@ -194,7 +226,6 @@ footer {
   flex-direction: column;
   align-items: center;
   gap: var(--size-4);
-  background: var(--surface-1);
 }
 
 h2 {
@@ -242,9 +273,9 @@ h2 {
   text-align: center;
   padding: var(--size-8);
   color: #a8a8a8;
-  font-size: 1.1rem;
+  font-size: var(--font-size-2);
 }
-
+/*
 .matchmaking-card {
   position: relative;
   cursor: pointer;
@@ -307,5 +338,5 @@ h2 {
     gap: var(--size-4);
     text-align: center;
   }
-}
+} */
 </style>

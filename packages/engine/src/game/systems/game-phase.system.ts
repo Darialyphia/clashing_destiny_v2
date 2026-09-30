@@ -106,6 +106,11 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
       ),
       stateTransition(GAME_PHASES.MAIN, GAME_PHASE_TRANSITIONS.END_TURN, GAME_PHASES.END),
       stateTransition(
+        GAME_PHASES.PLAY_CARD,
+        GAME_PHASE_TRANSITIONS.END_TURN,
+        GAME_PHASES.END
+      ),
+      stateTransition(
         GAME_PHASES.MAIN,
         GAME_PHASE_TRANSITIONS.START_PLAYING_CARD,
         GAME_PHASES.PLAY_CARD

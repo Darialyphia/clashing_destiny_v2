@@ -16,7 +16,7 @@ export const counterstrike = defineSecretBlueprint({
   id: 'counterstrike',
   name: 'Counterstrike',
   description: dedent /*html*/ `
-  When an enemy minion declares an attack at this battlefield, wake up the target and give it +0/+2/+0 this turn.
+  When an enemy minion declares an attack at this battlefield, ready the defender and give it +0/+2/+0 this turn.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,

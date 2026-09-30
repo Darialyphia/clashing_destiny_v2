@@ -65,7 +65,9 @@ export const provideCollectionPage = () => {
     toggleAffinityFilter,
     clearAffinityFilter,
     manaCostFilter,
-    includeUnowned
+    includeUnowned,
+    foilFilter,
+    getUnownedId
   } = provideCardList();
 
   const { data: decks, isLoading: isLoadingDecks } = useDecks();
@@ -171,6 +173,8 @@ export const provideCollectionPage = () => {
     isLoading: computed(() => isLoading.value || isLoadingDecks.value),
     cards,
     includeUnowned,
+    getUnownedId,
+    foilFilter,
     cardPool,
     hasKindFilter,
     toggleKindFilter,

@@ -5,7 +5,7 @@ import {
   type BoosterPackContents
 } from './card.constants';
 
-const MAX_PACKS_PER_PURCHASE = 10;
+const MAX_PACKS_PER_PURCHASE = 99;
 const MIN_PACKS_PER_PURCHASE = 1;
 
 export class BoosterPackPurchase {

@@ -1,15 +1,13 @@
 import type { UseCase } from '../../usecase';
 import type { AuthSession } from '../../auth/entities/session.entity';
 import { ensureAuthenticated } from '../../auth/auth.utils';
-import { AppError } from '../../utils/error';
 import type { WalletRepository } from '../../currency/repositories/wallet.repository';
 import type { TransactionRepository } from '../../currency/repositories/transaction.repository';
 import type { BoosterPackRepository } from '../repositories/booster-pack.repository';
 import type { EventEmitter } from '../../shared/eventEmitter';
-import { CURRENCY_TYPES } from '../../currency/currency.constants';
+import { CURRENCY_SOURCES, CURRENCY_TYPES } from '../../currency/currency.constants';
 import { BoosterPacksPurchasedEvent } from '../events/boosterPacksPurchased.event';
 import type { BoosterPackId } from '../entities/booster-pack.entity';
-import type { SpendCurrencyUseCase } from '../../currency/usecases/spendCurrency.usecase';
 import { BoosterPackPurchase } from '../boosterPackPurchase';
 import type { UserId } from '../../users/entities/user.entity';
 import type { CurrencyService } from '../../currency/services/currency.service';
@@ -47,7 +45,8 @@ export class PurchaseBoosterPacksUseCase
       amount: new SpendingAmount(purchase.totalCost),
       currencyType: CURRENCY_TYPES.GOLD,
       purpose: 'Booster pack purchase',
-      metadata: purchase.metadata
+      metadata: purchase.metadata,
+      source: CURRENCY_SOURCES.BOOSTER_PACK_PURCHASE
     });
   }
 

@@ -101,9 +101,6 @@ export class PlayCardPhase
 
   private async onCancelDuringPlay() {
     this._isPlayingCard = false;
-    if (!this.hasBeenSupplied) {
-      await this._player.manaManager.gain(this.manaCost);
-    }
     this.card.isPlayedFromHand = false;
     return this.cancel(this._player);
   }

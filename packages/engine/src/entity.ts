@@ -38,7 +38,7 @@ export abstract class Entity<TI extends Record<string, Interceptable<any, any>>>
     key: T,
     interceptor: inferInterceptor<TI[T]>
   ) {
-    this.interceptors[key].remove(interceptor);
+    this.interceptors[key]?.remove(interceptor);
     await this.onInterceptorRemoved(key);
   }
 }

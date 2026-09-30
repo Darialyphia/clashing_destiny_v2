@@ -34,7 +34,7 @@ import { EntityWithModifiers } from '../../modifier/entity-with-modifiers';
 import { COMBAT_STEPS, EFFECT_TYPE, INTERACTION_STATES } from '../../game/game.enums';
 import { nanoid } from 'nanoid';
 import type { BoardSpace } from '../../board/board-space.entity';
-import type { RuneCard } from './rune.entity';
+import { GAME_EVENTS } from '../../game/game.events';
 
 export type CardOptions<T extends CardBlueprint = CardBlueprint> = {
   id: string;
@@ -55,6 +55,7 @@ export type CardInterceptors = {
   offFactionManaCostIncrease: Interceptable<number>;
   speed: Interceptable<CardSpeed>;
   shouldCreateChainWhenPlayed: Interceptable<boolean, AnyCard>;
+  canBeSupplied: Interceptable<boolean>;
 };
 
 export const makeCardInterceptors = (): CardInterceptors => ({
@@ -68,7 +69,8 @@ export const makeCardInterceptors = (): CardInterceptors => ({
   playerLevel: new Interceptable(),
   offFactionManaCostIncrease: new Interceptable(),
   speed: new Interceptable(),
-  shouldCreateChainWhenPlayed: new Interceptable()
+  shouldCreateChainWhenPlayed: new Interceptable(),
+  canBeSupplied: new Interceptable()
 });
 
 export type SerializedCard = {
@@ -93,6 +95,7 @@ export type SerializedCard = {
   position: string | null;
   speed: CardSpeed;
   isFoil: boolean;
+  canBeSupplied: boolean;
 };
 
 export abstract class Card<
@@ -126,6 +129,10 @@ export abstract class Card<
     this.originalPlayer = player;
     this._baseblueprintId = options.blueprint.id;
     this.isFoil = options.isFoil;
+    this.game.on(
+      GAME_EVENTS.CARD_AFTER_CHANGE_LOCATION,
+      this.onLocationChange.bind(this)
+    );
   }
 
   get blueprintId() {
@@ -138,6 +145,15 @@ export abstract class Card<
 
   async init() {
     await this.blueprint.onInit(this.game, this as any);
+  }
+
+  protected async onLocationChange(event: CardChangeLocationEvent) {
+    if (!event.data.card.equals(this)) return;
+    if (event.data.to === CARD_LOCATIONS.BASE) return;
+    if (event.data.to === CARD_LOCATIONS.LEFT_BATTLEFIELD) return;
+    if (event.data.to === CARD_LOCATIONS.RIGHT_BATTLEFIELD) return;
+
+    this._isExhausted = false;
   }
 
   async copy() {
@@ -163,6 +179,10 @@ export abstract class Card<
 
   get affinities() {
     return this.blueprint.affinities;
+  }
+
+  get canBeSupplied() {
+    return this.interceptors.canBeSupplied.getValue(true, {});
   }
 
   async reveal() {
@@ -577,7 +597,8 @@ export abstract class Card<
       isRevealed: this.isRevealed,
       affinities: this.affinities,
       position: this.position?.id ?? null,
-      speed: this.speed
+      speed: this.speed,
+      canBeSupplied: this.canBeSupplied
     };
   }
 

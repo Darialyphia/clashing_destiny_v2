@@ -7,6 +7,7 @@ import {
   useOpenBoosterPack,
   useUnopenedBoosterPacks
 } from './composables/useBoosterPack';
+import { assets } from '@/assets';
 
 definePage({
   name: 'Boosters',
@@ -35,30 +36,46 @@ const latestPackOpened = ref<
 
 <template>
   <div class="page">
-    <BoosterPackContent :cards="latestPackOpened" class="h-screen">
+    <BoosterPackContent
+      v-if="unopenedPacks"
+      :cards="latestPackOpened"
+      class="h-screen"
+    >
       <template #done>
-        <div class="flex gap-2">
+        <div class="flex flex-col gap-8">
           <FancyButton
             class="primary-button"
-            size="lg"
             text="Back"
             :to="{ name: 'ClientHome' }"
           />
-          <FancyButton
+          <div
             v-if="unopenedPacks.packs.length"
-            class="secondary-button"
-            size="lg"
-            text="Next pack"
-            :isLoading="isOpeningPack"
-            @click="openPack({ packId: unopenedPacks.packs[0].id })"
-          />
-          <FancyButton
-            v-else
-            class="secondary-button"
-            size="lg"
-            text="Buy more packs"
-            :to="{ name: 'Shop' }"
-          />
+            class="unopened-packs"
+            :data-count="unopenedPacks.packs.length"
+          >
+            <button
+              v-for="(pack, index) of unopenedPacks.packs"
+              class="unopened-pack"
+              :style="{
+                '--bg': assets[`ui/packs/${pack.icon}`].css,
+                zIndex: unopenedPacks.packs.length - index
+              }"
+              :key="pack.id"
+              :disabled="isOpeningPack"
+              @click="openPack({ packId: pack.id })"
+            />
+          </div>
+
+          <div v-else class="flex flex-col gap-3">
+            <p>You have no pack to open right now.</p>
+            <FancyButton
+              class="secondary-button"
+              size="md"
+              variant="info"
+              text="Buy more packs"
+              :to="{ name: 'Shop' }"
+            />
+          </div>
         </div>
       </template>
     </BoosterPackContent>
@@ -69,5 +86,46 @@ const latestPackOpened = ref<
 .page {
   min-height: 100vh;
   background-image: url('@/assets/backgrounds/main-menu-overlay.png');
+}
+
+.unopened-pack {
+  position: absolute;
+  width: calc(95px * 2);
+  height: calc(98px * 2);
+  background: var(--bg);
+  background-size: cover;
+  left: calc(6px * (var(--child-index) - 1) - 30px);
+  bottom: 0;
+  transition: transform 0.3s var(--ease-bounce-2);
+  &:disabled {
+    filter: grayscale(100%);
+  }
+
+  &:hover {
+    filter: drop-shadow(0 0 10px yellow);
+    transform: translateY(30px);
+  }
+}
+
+.unopened-packs {
+  position: relative;
+  height: calc(98px * 2);
+  &::after {
+    content: attr(data-count);
+    position: absolute;
+    bottom: -15px;
+    left: 50%;
+    z-index: 100;
+    background: var(--red-10);
+    color: white;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--font-size-3);
+    border: solid 3px black;
+  }
 }
 </style>

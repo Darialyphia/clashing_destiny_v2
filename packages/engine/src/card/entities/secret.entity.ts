@@ -191,11 +191,11 @@ export class SecretCard extends Card<
     if (positionResult.cancelled) {
       return { cancelled: true };
     }
-    await this.payManaCost();
     const targetsResult = await this.blueprint.getTargets(this.game, this);
     if (targetsResult.cancelled) {
       return { cancelled: true };
     }
+    await this.payManaCost();
     await this.playWithTargets(positionResult.result[0], targetsResult.result);
 
     return { cancelled: false };

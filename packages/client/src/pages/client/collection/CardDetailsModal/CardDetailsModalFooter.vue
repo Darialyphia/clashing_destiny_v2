@@ -7,6 +7,7 @@ import UiSpinner from '@/ui/components/UiSpinner.vue';
 import CraftignShardIcon from '@/player/components/CraftignShardIcon.vue';
 import { useCrafting } from '@/card/composables/useCrafting';
 import { useResponsive } from '@/shared/composables/useResponsive';
+import { useCollectionPage } from '../useCollectionPage';
 
 const { card } = defineProps<{
   card: {
@@ -19,6 +20,7 @@ const { card } = defineProps<{
 
 const { data: me } = useMe();
 
+const { selectCard } = useCollectionPage();
 const {
   craftingCost,
   decraftingReward,
@@ -30,7 +32,14 @@ const {
   upgrade,
   isUpgrading,
   canUpgrade
-} = useCrafting(computed(() => card));
+} = useCrafting(
+  computed(() => card),
+  {
+    onCraftSuccess(data) {
+      selectCard(data.cardId);
+    }
+  }
+);
 
 const { isSmallViewport } = useResponsive();
 </script>

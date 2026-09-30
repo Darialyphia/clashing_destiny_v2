@@ -23,7 +23,7 @@ const canInteract = computed(() => {
 const onMouseup = (e: MouseEvent) => {
   if (e.button !== 0) return;
   if (!canInteract.value) return;
-
+  if (!ui.value.selectedCard) return;
   client.value.score(ui.value.selectedCard!.id);
 };
 </script>

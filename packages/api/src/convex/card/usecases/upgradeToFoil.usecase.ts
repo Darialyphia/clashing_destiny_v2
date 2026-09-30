@@ -7,7 +7,7 @@ import type { WalletRepository } from '../../currency/repositories/wallet.reposi
 import type { EventEmitter } from '../../shared/eventEmitter';
 import type { CardId } from '../entities/card.entity';
 import { assert, isDefined } from '@game/shared';
-import { CURRENCY_TYPES } from '../../currency/currency.constants';
+import { CURRENCY_TYPES, CURRENCY_SOURCES } from '../../currency/currency.constants';
 import { CardDestroyedEvent } from '../events/cardDestroyed.event';
 import type { SpendCurrencyUseCase } from '../../currency/usecases/spendCurrency.usecase';
 import { FOIL_UPGRADE_COST_PER_RARITY } from '../card.constants';
@@ -55,7 +55,8 @@ export class UpgradeToFoilUseCase
     await this.ctx.spendCurrencyUseCase.execute({
       purpose: `Upgrading card ${input.cardId} to foil`,
       amount: upgradeCost,
-      currencyType: CURRENCY_TYPES.CRAFTING_SHARDS
+      currencyType: CURRENCY_TYPES.CRAFTING_SHARDS,
+      source: CURRENCY_SOURCES.CRAFTING
     });
 
     const cardId = await this.ctx.cardRepo.create({

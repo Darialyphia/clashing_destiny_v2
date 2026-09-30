@@ -34,6 +34,15 @@ export class TransactionRepository {
     return this.buildEntity(doc);
   }
 
+  async getByUserIdAndSource(userId: UserId, source: CurrencySource) {
+    const docs = await this.ctx.db
+      .query('currencyTransactions')
+      .withIndex('by_user_source', q => q.eq('userId', userId).eq('source', source))
+      .collect();
+
+    return docs.map(doc => this.buildEntity(doc));
+  }
+
   async create(data: CreateTransactionData): Promise<TransactionId> {
     const transactionId = await this.ctx.db.insert('currencyTransactions', {
       userId: data.userId,
@@ -42,7 +51,6 @@ export class TransactionRepository {
       balanceBefore: data.balanceBefore,
       balanceAfter: data.balanceAfter,
       source: data.source,
-      sourceId: data.sourceId,
       metadata: data.metadata,
       createdAt: Date.now()
     });
