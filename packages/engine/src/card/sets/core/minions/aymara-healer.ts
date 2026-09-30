@@ -11,11 +11,13 @@ import {
 import { ChannelModifier } from '../../../../modifier/modifiers/channel.modifier';
 import { TogglableModifierMixin } from '../../../../modifier/mixins/togglable.mixin';
 import { SimpleStatsBuffModifier } from '../../../../modifier/modifiers/simple-stats-modifier';
+import { ProtectorModifier } from '../../../../modifier/modifiers/protector.modifier';
 
 export const aymaraHealer: MinionBlueprint = {
   id: 'aymara-healer',
   name: 'Aymara Healer',
   description: dedent /*html*/ `
+  <rt-keyword>Protector</rt-keyword>
  <rt-location locations="battlefield"></rt-location> <rt-keyword>Channel</rt-keyword>: Every enemy minion here gets -1/-1/-1. Heal allies here for 1 for each affected enemy minion.    
   `,
   collectable: true,
@@ -34,6 +36,7 @@ export const aymaraHealer: MinionBlueprint = {
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {
+    await card.modifiers.add(new ProtectorModifier(game, card));
     await card.modifiers.add(
       new ChannelModifier('aymara-healer-channel', game, card, {
         async handler() {
