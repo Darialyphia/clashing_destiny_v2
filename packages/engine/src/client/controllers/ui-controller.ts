@@ -77,13 +77,6 @@ export class UiController {
       new DOMSelector(`hero-health-indicator-${playerId}`),
     hand: (playerId: string) => new DOMSelector(`hand-${playerId}`),
     draggedCard: (id: string) => new DOMSelector(id, '#dragged-card'),
-    minionPosition: (playerId: string, minionId: string) =>
-      new DOMSelector(`${playerId}-minion-position-${minionId}`),
-    minionOnBoard: (playerId: string, minionId: string) =>
-      new DOMSelector(
-        minionId,
-        this.DOMSelectors.minionPosition(playerId, minionId).selector
-      ),
     discardPile: (playerId: string) => new DOMSelector(`discard-pile-${playerId}`),
     banishPile: (playerId: string) => new DOMSelector(`banish-pile-${playerId}`),
     destinyDeck: (playerId: string) => new DOMSelector(`destiny-deck-${playerId}`),

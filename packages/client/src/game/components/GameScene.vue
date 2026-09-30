@@ -17,7 +17,6 @@ import Hand from './Hand.vue';
 import DraggedCard from './DraggedCard.vue';
 import { useEventListener, usePageLeave } from '@vueuse/core';
 import { INTERACTION_STATES } from '@game/engine/src/game/game.enums';
-import HoveredCardInfos from './HoveredCardnfos.vue';
 import PlayerInfos from './PlayerInfos.vue';
 import CombatArrows from './CombatArrows.vue';
 import TurnIndicator from './TurnIndicator.vue';
@@ -118,7 +117,6 @@ const isScreenDimmed = computed(() => {
     </div>
   </div>
 
-  <HoveredCardInfos class="hovered-cell-infos" />
   <InteractionCard />
 
   <Transition>

@@ -93,7 +93,8 @@ export const cards = {
 "stars-fury": "stars-fury",
 "windstorm-obelysk": "windstorm-obelysk",
 "zephyr": "zephyr",
-"chronomancer": "chronomancer"
+"chronomancer": "chronomancer",
+"red-synja": "red-synja"
 } as const;
 
 export const collectableCards = {
@@ -183,7 +184,8 @@ export const collectableCards = {
 "stars-fury": "stars-fury",
 "windstorm-obelysk": "windstorm-obelysk",
 "zephyr": "zephyr",
-"chronomancer": "chronomancer"
+"chronomancer": "chronomancer",
+"red-synja": "red-synja"
 } as const;
 
 type CardSet = Array<{id: string; collectable: boolean; rarity: Rarity, kind: CardKind}>;
@@ -716,6 +718,12 @@ export const cardsBySet: Record<string, CardSet> = {
     "collectable": true,
     "rarity": "common",
     "kind": "MINION"
+  },
+  {
+    "id": "red-synja",
+    "collectable": true,
+    "rarity": "legendary",
+    "kind": "MINION"
   }
 ]
 };
@@ -808,7 +816,8 @@ export const cardShortIds: Record<string, number> = {
 "stars-fury": 87,
 "windstorm-obelysk": 88,
 "zephyr": 89,
-"chronomancer": 90
+"chronomancer": 90,
+"red-synja": 91
 } as const;
 
 export const cardIdByShortId: Record<number, string> = {
@@ -899,5 +908,6 @@ export const cardIdByShortId: Record<number, string> = {
 "87": "stars-fury",
 "88": "windstorm-obelysk",
 "89": "zephyr",
-"90": "chronomancer"
+"90": "chronomancer",
+"91": "red-synja"
 } as const;

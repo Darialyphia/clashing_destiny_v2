@@ -81,12 +81,12 @@ export const backstep: SpellBlueprint<MinionCard> = {
     const destination = targets.spaces[0];
     if (!destination) return;
 
-    const inFront = card.position?.inFront?.card;
-    if (!inFront) return;
-    if (!isMinion(inFront)) return;
-    await inFront.takeDamage(card, new SpellDamage(2, card));
+    const inFront = target.position?.inFront?.card;
+    if (inFront && isMinion(inFront)) {
+      await inFront.takeDamage(card, new SpellDamage(2, card));
+    }
 
-    await target.move(destination.position.zone, destination.position.index);
+    await target.moveToSpace(destination);
   },
   aiHints: {
     shouldPlay: () => 1

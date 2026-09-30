@@ -88,6 +88,7 @@ import { starsFury } from './core/spells/stars-fury';
 import { windstormObelysk } from './core/minions/windstorm-obelysk';
 import { zephyr } from './core/minions/zephyr';
 import { chronomancer } from './core/minions/chronomancer';
+import { redSynja } from './core/minions/red-synja';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -180,6 +181,7 @@ export const coreSet: CardSet = {
     starsFury,
     windstormObelysk,
     zephyr,
-    chronomancer
+    chronomancer,
+    redSynja
   ]
 };

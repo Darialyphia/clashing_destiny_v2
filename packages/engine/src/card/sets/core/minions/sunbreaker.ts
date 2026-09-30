@@ -24,7 +24,7 @@ export const sunbreaker: MinionBlueprint = {
   art: defaultCardArt('minions/sunbreaker'),
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.EPIC,
-  affinities: [AFFINITIES.LIGHT, AFFINITIES.LIGHT],
+  affinities: [AFFINITIES.LIGHT, AFFINITIES.LIGHT, AFFINITIES.NEUTRAL],
   manaCost: 6,
   manaSupply: 3,
   speed: CARD_SPEED.SLOW,

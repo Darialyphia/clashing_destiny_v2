@@ -1,5 +1,9 @@
 <script setup lang="ts">
-import { useGameClient, useGameUi } from '../../composables/useGameClient';
+import {
+  useGameClient,
+  useGameUi,
+  useMyPlayer
+} from '../../composables/useGameClient';
 import GameCard from '../GameCard.vue';
 import ModifiersList from '../ModifiersList.vue';
 import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
@@ -9,7 +13,7 @@ import InspectableCard from '@/card/components/InspectableCard.vue';
 import { useBoardCardAnimationSequence } from './useBoardCardAnimationSequence';
 import { useBoardCardFxEvents } from './useBoardCardFx';
 import { useBoardCardInteraction } from './useBoardCardInteraction';
-import SpriteFX from '../SpriteFX.vue';
+import BoardCardSpriteFX from './BoardCardSpriteFX.vue';
 
 const {
   card,
@@ -80,7 +84,12 @@ const shouldScaleSprite = computed(() => {
   return card.kind !== CARD_KINDS.DESTINY;
 });
 
-const isHovered = ref(false);
+const isHovered = computed(() => ui.value.hoveredCard?.equals(card));
+
+const myPlayer = useMyPlayer();
+const isFaceDown = computed(
+  () => !card.isRevealed && !card.player.equals(myPlayer.value)
+);
 </script>
 
 <template>
@@ -109,8 +118,14 @@ const isHovered = ref(false);
       '--drop-duration': `${DROP_DURATION}ms`
     }"
     @mouseup="onMouseup"
-    @mouseenter="isHovered = true"
-    @mouseleave="isHovered = false"
+    @mouseenter="
+      () => {
+        if (!isFaceDown) {
+          ui.hover(card);
+        }
+      }
+    "
+    @mouseleave="ui.unhover()"
   >
     <ModifiersList :card="card" class="modifiers" />
 
@@ -142,45 +157,9 @@ const isHovered = ref(false);
       />
     </Transition>
 
-    <SpriteFX
-      v-if="latestDamageAmount"
-      class="fx-container"
-      :sprites="[
-        {
-          spriteId: 'fx/impact',
-          animationSequence: ['impactorangebig'],
-          scale: 1.5,
-          offset: {
-            x: 0,
-            y: 0
-          }
-        },
-        {
-          spriteId: 'fx/collision',
-          animationSequence: ['collisionsparksblue'],
-          scale: 1.5,
-          offset: {
-            x: -10,
-            y: 10
-          }
-        }
-      ]"
-    />
-
-    <SpriteFX
-      v-if="latestHealAmount"
-      class="fx-container"
-      :sprites="[
-        {
-          spriteId: 'fx/fx_heal',
-          animationSequence: ['default'],
-          scale: 1.5,
-          offset: {
-            x: 0,
-            y: -20
-          }
-        }
-      ]"
+    <BoardCardSpriteFX
+      :latest-damage-amount="latestDamageAmount"
+      :latest-heal-amount="latestHealAmount"
     />
 
     <Transition>
@@ -360,12 +339,6 @@ const isHovered = ref(false);
     opacity: 1;
     translate: 0 0;
   }
-}
-
-.fx-container {
-  position: absolute;
-  inset: 0;
-  transform: translateZ(10px);
 }
 
 @keyframes drop {

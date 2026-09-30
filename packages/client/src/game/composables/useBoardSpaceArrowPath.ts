@@ -1,10 +1,8 @@
 import { useGameClient, useGameState, useGameUi } from './useGameClient';
 import { isDefined, useMouse } from '@vueuse/core';
-import {
-  GAME_PHASES,
-  INTERACTION_STATES
-} from '@game/engine/src/game/game.enums';
+import { INTERACTION_STATES } from '@game/engine/src/game/game.enums';
 import type { BoardSpaceViewModel } from '@game/engine/src/client/view-models/board-space.model';
+import { CARD_KINDS } from '@game/engine/src/card/card.enums';
 
 export const useBoardSpaceArrowPath = (cell: Ref<BoardSpaceViewModel>) => {
   const { client } = useGameClient();
@@ -32,17 +30,16 @@ export const useBoardSpaceArrowPath = (cell: Ref<BoardSpaceViewModel>) => {
   });
 
   const pathColor = computed(() => {
-    if (
-      state.value.interaction.state ===
-      INTERACTION_STATES.SELECTING_SPACE_ON_BOARD
-    ) {
-      return 'lime';
-    }
-    if (state.value.phase.state === GAME_PHASES.MAIN) {
-      return 'cyan';
-    }
+    if (ui.value.hoveredCard) {
+      if (ui.value.hoveredCard.kind === CARD_KINDS.DESTINY) {
+        return 'lime';
+      }
 
-    return 'red';
+      if (ui.value.selectedCard?.canAttackAt(ui.value.hoveredCard)) {
+        return 'red';
+      }
+    }
+    return ' #306EFF';
   });
 
   const shouldBeDisplayed = computed(() => isDefined(card.value));
