@@ -64,6 +64,8 @@ const { data: me } = useMe();
   perspective: 1300px;
   height: 100dvh;
   z-index: 0;
+  background: url('@/assets/backgrounds/main-menu-overlay.png');
+  background-size: 100% 100%;
 }
 
 .boosters {

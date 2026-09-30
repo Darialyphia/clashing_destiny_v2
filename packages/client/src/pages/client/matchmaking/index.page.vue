@@ -190,6 +190,7 @@ const getDisplayedDeck = (deck: UserDeck) => ({
 .page {
   min-height: 100vh;
   background: url('@/assets/backgrounds/main-menu-overlay.png');
+  background-size: 100% 100%;
 }
 
 .container {

@@ -8,8 +8,6 @@ import {
   CARD_SPEED,
   AFFINITIES
 } from '../../../card.enums';
-import { SimpleAttackBuffModifier } from '../../../../modifier/modifiers/simple-attack-buff.modifier';
-import { ZealModifier } from '../../../../modifier/modifiers/zeal.modifier';
 import { OnEnterModifier } from '../../../../modifier/modifiers/on-enter.modifier';
 import { FleetingModifier } from '../../../../modifier/modifiers/fleeting.modifier';
 
@@ -17,7 +15,7 @@ export const chronomancer: MinionBlueprint = {
   id: 'chronomancer',
   name: 'Chronomancer',
   description: dedent /*html*/ `
-  <rt-trigger>On Enter</rt-trigger>: Add a copy of the last card you played to your hand and give it <rt-keyword>Fleeting</rt-keyword>.
+  <rt-trigger>On Enter</rt-trigger>: Add a copy of the last card you played to your hand this turn and give it <rt-keyword>Fleeting</rt-keyword>.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -30,7 +28,7 @@ export const chronomancer: MinionBlueprint = {
   tags: [],
   atk: 2,
   maxHp: 3,
-  affinities: [AFFINITIES.AIR],
+  affinities: [AFFINITIES.AIR, AFFINITIES.AIR],
   commandment: 2,
   canPlay: () => true,
   abilities: [],
@@ -38,7 +36,7 @@ export const chronomancer: MinionBlueprint = {
     await card.modifiers.add(
       new OnEnterModifier(game, card, {
         async handler() {
-          const lastPlayedCard = card.player.cardTracker.lastPlayedCard;
+          const lastPlayedCard = card.player.cardTracker.lastPlayedCardThisTurn;
           if (!lastPlayedCard) return;
           const copy = await card.player.generateCard(
             lastPlayedCard.card.blueprintId,

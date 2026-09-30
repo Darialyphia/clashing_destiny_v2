@@ -47,7 +47,7 @@ const playersConfig = computed(() => {
 <template>
   <div v-if="!isStarted" class="page">
     <FancyButton
-      class="absolute top-10 left-8"
+      class="absolute top-10 left-8 lt-lg:top-3 lt-lg:left-0"
       text="Back"
       size="md"
       :to="{ name: 'SelectMode' }"
@@ -71,6 +71,12 @@ const playersConfig = computed(() => {
   flex-direction: column;
   padding-top: var(--size-12);
   background-image: url('@/assets/backgrounds/main-menu-overlay.png');
+  background-size: 100% 100%;
+  @screen lt-lg {
+    padding-top: var(--size-3);
+    padding-inline: var(--size-9);
+    overflow-y: auto;
+  }
 }
 
 h1 {

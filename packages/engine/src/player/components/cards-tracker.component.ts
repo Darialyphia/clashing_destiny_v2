@@ -63,6 +63,12 @@ export class CardTrackerComponent {
     return null;
   }
 
+  get lastPlayedCardThisTurn() {
+    const turn = this.game.turnSystem.elapsedTurns;
+    const turnCards = this.cardsPlayedByGameTurn.get(turn);
+    return turnCards?.at(-1) ?? null;
+  }
+
   get cardsDestroyedThisGameTurn() {
     return this.cardsDestroyedByGameTurn.get(this.game.turnSystem.elapsedTurns) ?? [];
   }

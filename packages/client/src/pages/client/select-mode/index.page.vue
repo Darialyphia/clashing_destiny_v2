@@ -13,7 +13,7 @@ definePage({
 <template>
   <div class="page">
     <FancyButton
-      class="absolute top-10 left-8"
+      class="absolute top-10 left-8 lt-lg:top-3 lt-lg:left-0"
       text="Back"
       size="md"
       :to="{ name: 'ClientHome' }"
@@ -41,7 +41,7 @@ definePage({
           class="mode-card surface-transparent"
           :style="{ '--bg': assets['backgrounds/lobbies'].css }"
         >
-          <h2 class="mode-title">Lobby Games</h2>
+          <h2 class="mode-title">Lobbies</h2>
           <p class="mode-description">
             Create or join custom lobbies to practice and spectate with friends.
           </p>
@@ -67,6 +67,10 @@ definePage({
   min-height: 100vh;
   padding-top: var(--size-12);
   background: url('@/assets/backgrounds/main-menu-overlay.png');
+  background-size: 100% 100%;
+  @screen lt-lg {
+    padding-top: var(--size-3);
+  }
 }
 
 .page-container {
@@ -83,6 +87,9 @@ h1 {
   color: var(--text-1);
   margin-bottom: var(--size-3);
   font-family: 'Cinzel Decorative', serif;
+  @screen lt-lg {
+    font-size: var(--font-size-6);
+  }
 }
 
 .mode-options {
@@ -91,6 +98,10 @@ h1 {
   gap: var(--size-6);
   margin: 0 auto;
   transition: all 0.25s var(--ease-3);
+  @screen lt-lg {
+    overflow-x: auto;
+    padding-inline: var(--size-6);
+  }
   @starting-style {
     opacity: 0;
     scale: 1.5;
@@ -104,12 +115,19 @@ h1 {
     box-shadow 0.2s ease;
   padding: var(--size-7);
   display: flex;
+  @screen lg {
+    justify-content: flex-end;
+  }
   flex-direction: column;
-  justify-content: flex-end;
   width: var(--size-xs);
+  @screen lt-lg {
+    width: var(--size-13);
+    aspect-ratio: 1;
+  }
   aspect-ratio: 9 / 12;
   position: relative;
   background: linear-gradient(to bottom, black, transparent, black), var(--bg);
+
   background-size: cover;
   &:hover {
     box-shadow: 0 0 20px #efef9f;
@@ -131,8 +149,16 @@ h1 {
   font-size: var(--font-size-3);
   color: var(--text-2);
   line-height: var(--line-height-3);
-  margin-bottom: var(--size-5);
   text-wrap: balance;
+  @screen lt-lg {
+    font-size: var(--font-size-2);
+    -webkit-text-stroke: 2px black;
+    paint-order: stroke fill;
+    font-weight: var(--font-weight-5);
+  }
+  @screen lg {
+    margin-bottom: var(--size-5);
+  }
 }
 
 @container (max-width: 500px) {

@@ -157,10 +157,6 @@ const parallaxStyle = computed(() => ({
   inset: 0;
 }
 
-.background-overlay {
-  background-image: url('@/assets/backgrounds/main-menu-overlay.png');
-  inset: 0;
-}
 .page-wrapper {
   position: absolute;
   height: 100dvh;

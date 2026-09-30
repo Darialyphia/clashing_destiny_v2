@@ -1,6 +1,10 @@
 import dedent from 'dedent';
 import type { MinionBlueprint } from '../../../card-blueprint';
-import { defaultCardArt, isMinion } from '../../../card-utils';
+import {
+  defaultCardArt,
+  emptyBoardSpaceTargetRules,
+  isMinion
+} from '../../../card-utils';
 import {
   CARD_SETS,
   CARD_KINDS,
@@ -8,7 +12,6 @@ import {
   CARD_SPEED,
   AFFINITIES
 } from '../../../card.enums';
-import { SpawnModifier } from '../../../../modifier/modifiers/spawn.modifier';
 import { windDervish } from './wind-dervish';
 import { WhileOnBoardModifier } from '../../../../modifier/modifiers/while-on-board.modifier';
 import { CardAuraModifierMixin } from '../../../../modifier/mixins/aura.mixin';
@@ -39,14 +42,43 @@ export const fireblazeObelysk: MinionBlueprint = {
   affinities: [AFFINITIES.AIR, AFFINITIES.AIR],
   commandment: 1,
   canPlay: () => true,
-  abilities: [],
+  abilities: [
+    {
+      id: 'fireblaze-obelysk-ability',
+      label: 'Summon Wind Dervish',
+      description: 'Summon a Wind Dervish in your base.',
+      shouldExhaust: true,
+      canUse: game => emptyBoardSpaceTargetRules.canPlay(game, space => space.isInBase),
+      getTargets: (game, card) =>
+        emptyBoardSpaceTargetRules.getTargets({
+          game,
+          card,
+          label: 'Select an empty space in your base',
+          canCancel: true,
+          predicate: space => space.isInBase,
+          timeoutFallback: emptyBoardSpaceTargetRules.defaultTimeoutFallback(
+            game,
+            space => space.isInBase
+          )
+        }),
+      manaCost: 1,
+      aiHints: {
+        shouldUse: () => 1
+      },
+      async onResolve(game, card, targets) {
+        const space = targets.spaces[0];
+        if (!space) return;
+        const dervish = await card.player.generateCard<MinionCard>(
+          windDervish.id,
+          card.isFoil
+        );
+        await dervish.playImmediatelyAt(space, { shouldExhaust: false });
+      }
+    }
+  ],
   async onInit(game, card) {
     await card.modifiers.add(new StructureModifier(game, card));
-    await card.modifiers.add(
-      new SpawnModifier(game, card, {
-        blueprint: () => windDervish
-      })
-    );
+
     await card.modifiers.add(
       new WhileOnBoardModifier<MinionCard>('fireblaze-obelysk-aura', game, card, {
         mixins: [

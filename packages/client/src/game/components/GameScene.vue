@@ -192,6 +192,9 @@ const isScreenDimmed = computed(() => {
   @media (max-height: 920px) {
     top: -5%;
   }
+  @screen lt-lg {
+    top: -35%;
+  }
 }
 
 .vignette {
