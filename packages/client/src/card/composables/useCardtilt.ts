@@ -92,7 +92,7 @@ export const useCardTilt = (
   onBeforeUnmount(endLongPress);
 
   const isEnabled = computed(() => {
-    if (isTouchDevice.value) {
+    if (isTouchDevice) {
       return isLongPressing.value && options.isEnabled.value;
     }
     return options.isEnabled.value;

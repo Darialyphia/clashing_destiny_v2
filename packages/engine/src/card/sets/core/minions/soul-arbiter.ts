@@ -23,7 +23,7 @@ export const soulArbiter: MinionBlueprint = {
   art: defaultCardArt('minions/soul-arbiter'),
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.RARE,
-  manaCost: 4,
+  manaCost: 3,
   manaSupply: 3,
   speed: CARD_SPEED.SLOW,
   tags: [],

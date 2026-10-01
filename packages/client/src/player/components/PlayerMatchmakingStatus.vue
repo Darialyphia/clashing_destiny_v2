@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useMe } from '@/auth/composables/useMe';
 import { useLeaveMatchmaking } from '@/matchmaking/composables';
-import FancyButton from '@/ui/components/FancyButton.vue';
 import MatchmakingTimer from '@/matchmaking/components/MatchmakingTimer.vue';
 import { useLeaveLobby } from '@/lobby/composables/useLobby';
 
@@ -20,16 +19,16 @@ const route = useRoute();
     v-if="me?.currentJoinedMatchmaking && route.name !== 'Matchmaking'"
     class="matchmaking-status surface"
   >
-    <span class="status-label">In matchmaking:</span>
-    <span class="matchmaking-name">
-      {{ me.currentJoinedMatchmaking.name }}
-    </span>
-    <MatchmakingTimer
-      v-if="me.currentJoinedMatchmaking.joinedAt"
-      :joinedAt="me.currentJoinedMatchmaking.joinedAt"
-    />
-    <FancyButton
-      text="Leave"
+    <div class="matchmaking-icon" />
+    <div class="matchmaking-name">
+      <span>In Queue</span>
+      <MatchmakingTimer
+        v-if="me.currentJoinedMatchmaking.joinedAt"
+        :joinedAt="me.currentJoinedMatchmaking.joinedAt"
+      />
+    </div>
+    <button
+      aria-label="Leave"
       variant="error"
       class="leave-button"
       size="sm"
@@ -41,21 +40,30 @@ const route = useRoute();
     v-if="me?.currentLobby && route.name !== 'Lobby'"
     class="lobby-status surface"
   >
-    <span class="status-label">In lobby:</span>
-    <RouterLink
-      :to="{ name: 'Lobby', params: { id: me.currentLobby.id } }"
-      class="lobby-name"
-    >
-      {{ me.currentLobby.name }}
-    </RouterLink>
-    <FancyButton
-      text="Leave"
-      variant="error"
-      class="leave-button"
-      size="sm"
-      :isLoading="isLeavingLobby"
-      @click="leaveLobby({ lobbyId: me.currentLobby.id })"
-    />
+    <div class="lobby-icon" />
+
+    <div class="lobby-infos">
+      <span>In Queue</span>
+      <div class="lobby-name">
+        {{ me.currentLobby.name }}
+      </div>
+    </div>
+    <div class="flex gap-2">
+      <RouterLink
+        aria-label="Go to Lobby"
+        :to="{ name: 'Lobby', params: { id: me.currentLobby.id } }"
+        class="lobby-back-button"
+      />
+
+      <button
+        aria-label="Leave"
+        variant="error"
+        class="leave-button"
+        size="sm"
+        :isLoading="isLeavingLobby"
+        @click="leaveLobby({ lobbyId: me.currentLobby.id })"
+      />
+    </div>
   </div>
 </template>
 
@@ -63,36 +71,67 @@ const route = useRoute();
 .matchmaking-status {
   display: flex;
   align-items: center;
-  gap: var(--size-2);
-  font-size: 0.85rem;
+  gap: var(--size-5);
   flex-wrap: wrap;
+  padding: var(--size-4);
 }
 
-.status-label {
-  color: #a8a8a8;
+.matchmaking-icon {
+  width: 48px;
+  aspect-ratio: 1;
+  background: url('@/assets/ui/matchmaking-status.png') no-repeat center center;
+}
+
+.matchmaking-name {
+  color: var(--blue-3);
+  font-size: var(--font-size-3);
+  font-weight: var(--font-weight-7);
+  line-height: 1.2;
 }
 
 .lobby-status {
   display: flex;
   align-items: center;
-  gap: var(--size-2);
-  font-size: 0.85rem;
-  flex-wrap: wrap;
+  gap: var(--size-5);
+  padding: var(--size-4);
+}
+
+.lobby-icon {
+  width: 48px;
+  aspect-ratio: 1;
+  background: url('@/assets/ui/lobby-status.png') no-repeat center center;
+}
+
+.lobby-infos {
+  color: var(--yellow-3);
+  font-size: var(--font-size-3);
+  font-weight: var(--font-weight-7);
+  line-height: 1.2;
+  display: flex;
+  flex-direction: column;
 }
 
 .lobby-name {
-  color: #42d7a8;
-  font-weight: var(--font-weight-6);
-  padding: var(--size-1) var(--size-2);
-  background: hsl(160 100% 50% / 0.1);
-  border-radius: var(--radius-1);
-  border: 1px solid hsl(160 100% 50% / 0.2);
-  text-decoration: none;
-  transition: all 0.2s ease;
+  color: var(--gray-1);
+  font-size: var(--font-size-2);
+  font-weight: var(--font-weight-4);
 }
 
-.lobby-name:hover {
-  background: hsl(160 100% 50% / 0.15);
-  border-color: hsl(160 100% 50% / 0.3);
+.leave-button {
+  width: 39px;
+  aspect-ratio: 1;
+  background: url('@/assets/ui/button-close.png') no-repeat center center;
+  &:hover:not(:disabled) {
+    filter: brightness(1.5);
+  }
+}
+
+.lobby-back-button {
+  width: 39px;
+  aspect-ratio: 1;
+  background: url('@/assets/ui/button-back.png') no-repeat center center;
+  &:hover:not(:disabled) {
+    filter: brightness(1.5);
+  }
 }
 </style>

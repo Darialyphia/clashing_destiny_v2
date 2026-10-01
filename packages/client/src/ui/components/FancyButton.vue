@@ -49,11 +49,12 @@ const tag = computed(() => {
     :disabled="attrs.disabled || isLoading"
     v-bind="attrs"
   >
-    <!-- <UiSpinner v-if="isLoading" /> -->
     <slot name="left" />
-    <span class="content" :data-text="text">
-      {{ text }}
-    </span>
+    <slot>
+      <span class="content" :data-text="text">
+        {{ text }}
+      </span>
+    </slot>
     <slot name="right" />
   </component>
 </template>

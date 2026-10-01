@@ -15,7 +15,7 @@ export const useDoubleTap = <T extends HTMLElement>(
   let lastTapAt = 0;
 
   return useEventListener(target, 'touchend', event => {
-    if (!isTouchDevice.value) return;
+    if (!isTouchDevice) return;
 
     const now = Date.now();
 

@@ -220,7 +220,7 @@ const isFree = computed(() => offer.price.every(price => price.amount === 0));
 
 <style scoped lang="postcss">
 .offer-card {
-  width: 200px;
+  width: 220px;
   aspect-ratio: 1;
   display: flex;
   flex-direction: column;

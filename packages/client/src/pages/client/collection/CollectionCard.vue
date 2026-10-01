@@ -54,7 +54,7 @@ watch(selectedCard, () => {
 
 const { isTouchDevice } = useResponsive();
 const onRightClick = () => {
-  if (isTouchDevice.value) return;
+  if (isTouchDevice) return;
   selectCard(card.id);
 };
 

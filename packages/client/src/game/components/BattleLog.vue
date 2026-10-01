@@ -20,6 +20,16 @@ watch(
 );
 
 const isOpened = ref(false);
+watch(isOpened, opened => {
+  if (opened) {
+    nextTick(() => {
+      listEl.value?.scrollTo({
+        top: listEl.value.scrollHeight,
+        behavior: 'instant'
+      });
+    });
+  }
+});
 </script>
 
 <template>

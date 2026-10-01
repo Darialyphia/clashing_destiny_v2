@@ -17,8 +17,8 @@ export const aymaraHealer: MinionBlueprint = {
   id: 'aymara-healer',
   name: 'Aymara Healer',
   description: dedent /*html*/ `
-  <rt-keyword>Protector</rt-keyword>
- <rt-location locations="battlefield"></rt-location> <rt-keyword>Channel</rt-keyword>: Every enemy minion here gets -1/-1/-1. Heal allies here for 1 for each affected enemy minion.    
+  <rt-keyword>Protector</rt-keyword><br/>
+  <rt-location locations="battlefield"></rt-location> <rt-keyword>Channel</rt-keyword>: Every enemy minion here gets -1/-1/-1. Heal allies here for 1 for each affected enemy minion.    
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -29,9 +29,9 @@ export const aymaraHealer: MinionBlueprint = {
   manaSupply: 3,
   speed: CARD_SPEED.SLOW,
   tags: [],
-  atk: 2,
+  atk: 1,
   maxHp: 6,
-  affinities: [AFFINITIES.AIR, AFFINITIES.AIR, AFFINITIES.NEUTRAL],
+  affinities: [AFFINITIES.AIR, AFFINITIES.NEUTRAL],
   commandment: 2,
   canPlay: () => true,
   abilities: [],
