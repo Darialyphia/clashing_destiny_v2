@@ -1,4 +1,8 @@
-import { useGameClient, useGameState, useGameUi } from './useGameClient';
+import {
+  useGameClient,
+  useGameState,
+  useGameUi
+} from '../../composables/useGameClient';
 import { isDefined, useMouse } from '@vueuse/core';
 import { INTERACTION_STATES } from '@game/engine/src/game/game.enums';
 import type { BoardSpaceViewModel } from '@game/engine/src/client/view-models/board-space.model';

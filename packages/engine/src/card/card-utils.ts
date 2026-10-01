@@ -66,7 +66,7 @@ export const minionTargetRules = {
     game: Game;
     card: AnyCard;
     timeoutFallback: AnyCard[];
-    predicate: (c: MinionCard) => boolean;
+    predicate: (c: MinionCard, selected: MinionCard[]) => boolean;
     min: number;
     max: number;
     allowRepeat: boolean;
@@ -91,7 +91,7 @@ export const minionTargetRules = {
         return (
           candidate.canBeTargeted(card) &&
           (allowRepeat || !selectedCards.some(selected => selected.equals(candidate))) &&
-          predicate(candidate)
+          predicate(candidate, selectedCards as MinionCard[])
         );
       },
       canCommit(selectedCards) {
@@ -492,7 +492,7 @@ export const multipleEnemyTargetRules = {
       max: number;
       allowRepeat?: boolean;
       label: string;
-      predicate?: (c: MinionCard) => boolean;
+      predicate?: (c: MinionCard, selectedCards: MinionCard[]) => boolean;
       timeoutFallback: AnyCard[];
       aiHints: {
         shouldPick: (game: Game, player: Player, selectedCards: AnyCard[]) => number;
@@ -506,7 +506,9 @@ export const multipleEnemyTargetRules = {
       allowRepeat: options.allowRepeat ?? false,
       game,
       card,
-      predicate: c => !c.player.equals(card.player) && (options.predicate?.(c) ?? true),
+      predicate: (c, selected) =>
+        !c.player.equals(card.player) &&
+        (options.predicate?.(c, selected as MinionCard[]) ?? true),
       timeoutFallback: options.timeoutFallback,
       aiHints: options.aiHints
     });

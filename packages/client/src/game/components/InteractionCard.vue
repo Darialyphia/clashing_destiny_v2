@@ -34,6 +34,13 @@ const source = computed(() => {
   }
   return null;
 });
+
+const label = computed(() => {
+  if ('label' in interactionState.value.ctx) {
+    return interactionState.value.ctx.label;
+  }
+  return '';
+});
 const offset = ref({
   x: 0,
   y: 0
@@ -63,9 +70,10 @@ watch([source, isDisplayed], async ([newSource, newIsDisplayed]) => {
 
 <template>
   <div
-    v-if="'source' in interactionState.ctx && isDisplayed"
+    v-if="source && isDisplayed"
     ref="root"
     class="interaction-card"
+    :id="ui.DOMSelectors.interactionZone.id"
   >
     <div
       class="inner"
@@ -73,18 +81,15 @@ watch([source, isDisplayed], async ([newSource, newIsDisplayed]) => {
         transform: `translate(${offset.x}px, ${offset.y}px)`
       }"
     >
-      <InspectableCard
-        :card-id="interactionState.ctx.source"
-        :is-interactive="false"
-      >
+      <InspectableCard :card-id="source" :is-interactive="false">
         <GameCard
-          :card-id="interactionState.ctx.source"
+          :card-id="source"
           :is-interactive="false"
           :pixel-scale="1.5"
         />
       </InspectableCard>
     </div>
-    <p v-if="interactionState.ctx.label">{{ interactionState.ctx.label }}</p>
+    <p v-if="label">{{ label }}</p>
     <FancyButton
       v-if="interactionState.ctx.canCancel"
       class="mt-4"

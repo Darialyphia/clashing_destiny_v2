@@ -101,12 +101,20 @@ export class Player
   async gainVictoryPoints(amount: number) {
     await this.game.emit(
       GAME_EVENTS.PLAYER_BEFORE_GAIN_VICTORY_POINT,
-      new PlayerGainVictoryPointEvent({ player: this, amount })
+      new PlayerGainVictoryPointEvent({
+        player: this,
+        amount,
+        total: this._victoryPoints
+      })
     );
     this._victoryPoints += amount;
     await this.game.emit(
       GAME_EVENTS.PLAYER_AFTER_GAIN_VICTORY_POINT,
-      new PlayerGainVictoryPointEvent({ player: this, amount })
+      new PlayerGainVictoryPointEvent({
+        player: this,
+        amount,
+        total: this._victoryPoints
+      })
     );
   }
 

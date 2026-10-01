@@ -41,41 +41,24 @@ export const juxtaposition: SpellBlueprint<MinionCard> = {
           minion => minion.canBeTargeted(card) && minion.canMove
         ).length >= 2
     }),
-  getTargets: async (game, card) => {
-    const minion1 = await singleMinionTargetRules.getTargets({
+  getTargets: (game, card) => {
+    return minionTargetRules.getTargets({
       game,
       card,
+      min: 2,
+      max: 2,
+      label: 'Select two minions to swap',
+      allowRepeat: false,
       timeoutFallback: singleAllyMinionTargetRules.defaultTimeoutFallback(game, card),
       canCancel: true,
-      predicate: minion => minion.canMove,
+      predicate: (minion, selected) => {
+        if (selected.length === 0) return minion.canMove;
+        return minion.canMove && minion.isAlly(selected[0]);
+      },
       aiHints: {
         shouldPick: () => 1
       }
     });
-
-    if (minion1.cancelled) return { cancelled: true, result: null };
-
-    const minion2 = await singleMinionTargetRules.getTargets({
-      game,
-      card,
-      predicate: minion => minion.isAlly(minion1.result.cards[0]) && minion.canMove,
-      timeoutFallback: singleAllyMinionTargetRules.defaultTimeoutFallback(game, card),
-      canCancel: true,
-      aiHints: {
-        shouldPick: () => 1
-      }
-    });
-
-    if (minion2.cancelled) return { cancelled: true, result: null };
-
-    return {
-      cancelled: false,
-      result: {
-        cards: [...minion1.result.cards, ...minion2.result.cards],
-        spaces: [],
-        effect: null
-      }
-    };
   },
   async onInit(game, card) {
     await card.modifiers.add(new InstantModifier(game, card));

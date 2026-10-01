@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import UiSimpleTooltip from '@/ui/components/UiSimpleTooltip.vue';
 import { assets } from '@/assets';
-import { useModifierGroups } from '../composables/useModifierGroup';
+import { useModifierGroups } from '@/game/composables/useModifierGroup';
 import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
 import { isDefined } from '@game/shared';
 

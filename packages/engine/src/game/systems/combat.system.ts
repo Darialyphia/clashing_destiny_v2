@@ -279,14 +279,42 @@ export class CombatSystem
 
       const performAtttackerStrike = async () => {
         if (defender.isAlive) {
+          await this.game.emit(
+            COMBAT_EVENTS.BEFORE_ATTACKER_STRIKES,
+            new StrikeEvent({
+              attacker,
+              defender
+            })
+          );
           await attacker.dealDamage(defender, new CombatDamage(attacker, defender));
+          await this.game.emit(
+            COMBAT_EVENTS.AFTER_ATTACKER_STRIKES,
+            new StrikeEvent({
+              attacker,
+              defender
+            })
+          );
         }
       };
 
       const performDefenderStrike = async () => {
         if (!this.isDefenderRetaliating) return;
         if (attacker.isAlive) {
+          await this.game.emit(
+            COMBAT_EVENTS.BEFORE_DEFENDER_STRIKES,
+            new StrikeEvent({
+              attacker,
+              defender
+            })
+          );
           await defender.dealDamage(attacker, new CombatDamage(defender, attacker));
+          await this.game.emit(
+            COMBAT_EVENTS.AFTER_DEFENDER_STRIKES,
+            new StrikeEvent({
+              attacker,
+              defender
+            })
+          );
         }
       };
 
@@ -422,6 +450,18 @@ export class AttackFizzledResolveCombatEvent extends TypedSerializableEvent<
   }
 }
 
+export class StrikeEvent extends TypedSerializableEvent<
+  { defender: AttackTarget; attacker: Attacker },
+  { defender: string; attacker: string }
+> {
+  serialize() {
+    return {
+      attacker: this.data.attacker.id,
+      defender: this.data.defender.id
+    };
+  }
+}
+
 export const COMBAT_EVENTS = {
   BEFORE_DECLARE_ATTACK: 'combat.before-declare-attack',
   AFTER_DECLARE_ATTACK: 'combat.after-declare-attack',
@@ -429,7 +469,11 @@ export const COMBAT_EVENTS = {
   AFTER_DECLARE_ATTACK_TARGET: 'combat.after-declare-attack-target',
   BEFORE_RESOLVE_COMBAT: 'combat.before-resolve-combat',
   AFTER_RESOLVE_COMBAT: 'combat.after-resolve-combat',
-  ATTACK_FIZZLED: 'combat.attack-fizzled'
+  ATTACK_FIZZLED: 'combat.attack-fizzled',
+  BEFORE_ATTACKER_STRIKES: 'combat.before-attacker-strikes',
+  AFTER_ATTACKER_STRIKES: 'combat.after-attacker-strikes',
+  BEFORE_DEFENDER_STRIKES: 'combat.before-defender-strikes',
+  AFTER_DEFENDER_STRIKES: 'combat.after-defender-strikes'
 } as const;
 export type CombatEventName = Values<typeof COMBAT_EVENTS>;
 
@@ -441,4 +485,8 @@ export type CombatEventMap = {
   [COMBAT_EVENTS.BEFORE_RESOLVE_COMBAT]: BeforeResolveCombatEvent;
   [COMBAT_EVENTS.AFTER_RESOLVE_COMBAT]: AfterResolveCombatEvent;
   [COMBAT_EVENTS.ATTACK_FIZZLED]: AttackFizzledResolveCombatEvent;
+  [COMBAT_EVENTS.BEFORE_ATTACKER_STRIKES]: StrikeEvent;
+  [COMBAT_EVENTS.AFTER_ATTACKER_STRIKES]: StrikeEvent;
+  [COMBAT_EVENTS.BEFORE_DEFENDER_STRIKES]: StrikeEvent;
+  [COMBAT_EVENTS.AFTER_DEFENDER_STRIKES]: StrikeEvent;
 };

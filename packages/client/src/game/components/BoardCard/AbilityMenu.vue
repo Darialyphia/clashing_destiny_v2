@@ -4,7 +4,7 @@ import type { CardViewModel } from '@game/engine/src/client/view-models/card.mod
 import CardText from '@/card/components/CardText.vue';
 import { isDefined } from '@game/shared';
 import { type PopoverContentProps } from 'reka-ui';
-import { useGameUi, useMyPlayer } from '../composables/useGameClient';
+import { useGameUi, useMyPlayer } from '@/game/composables/useGameClient';
 
 const { card, actionsSide = 'bottom' } = defineProps<{
   card: CardViewModel;

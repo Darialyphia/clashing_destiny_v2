@@ -4,11 +4,11 @@ import {
   useGameUi,
   useMyPlayer
 } from '../../composables/useGameClient';
-import GameCard from '../GameCard.vue';
-import ModifiersList from '../ModifiersList.vue';
 import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
-import AbilityMenu from '../AbilityMenu.vue';
 import { CARD_KINDS } from '@game/engine/src/card/card.enums';
+import GameCard from '../GameCard.vue';
+import ModifiersList from './ModifiersList.vue';
+import AbilityMenu from './AbilityMenu.vue';
 import InspectableCard from '@/card/components/InspectableCard.vue';
 import { useBoardCardAnimationSequence } from './useBoardCardAnimationSequence';
 import { useBoardCardFxEvents } from './useBoardCardFx';
@@ -205,7 +205,7 @@ const isFaceDown = computed(
     box-shadow: 0 0px 20px 0 var(--shadow-color);
 
     &:hover {
-      --shadow-color: var(--yellow-2);
+      --shadow-color: var(--green-3);
     }
   }
 
