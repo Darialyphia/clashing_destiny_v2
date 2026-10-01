@@ -43,7 +43,7 @@ const route = useRoute();
     <div class="lobby-icon" />
 
     <div class="lobby-infos">
-      <span>In Queue</span>
+      <span>In Lobby</span>
       <div class="lobby-name">
         {{ me.currentLobby.name }}
       </div>

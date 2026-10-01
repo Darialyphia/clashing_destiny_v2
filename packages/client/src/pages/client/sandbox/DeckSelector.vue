@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import FancyButton from '@/ui/components/FancyButton.vue';
-import PlayerDeck from '@/player/components/PlayerDeck.vue';
+import PlayerDeckCard from '@/player/components/PlayerDeckCard.vue';
 import { useDecks, type UserDeck } from '@/card/composables/useDecks';
 
 const emit = defineEmits<{
@@ -32,7 +32,7 @@ const validDecks = computed(() => {
           class="w-15"
           :class="{ selected: p1Deck?.id === deck.id }"
         >
-          <PlayerDeck :deck="deck" @click="p1Deck = deck" />
+          <PlayerDeckCard :deck="deck" @click="p1Deck = deck" />
         </li>
       </ul>
       <ul class="flex flex-col gap-3">
@@ -42,7 +42,7 @@ const validDecks = computed(() => {
           class="w-15"
           :class="{ selected: p2Deck?.id === deck.id }"
         >
-          <PlayerDeck :deck="deck" @click="p2Deck = deck" />
+          <PlayerDeckCard :deck="deck" @click="p2Deck = deck" />
         </li>
       </ul>
     </div>
