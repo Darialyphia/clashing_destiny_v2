@@ -20,7 +20,11 @@ definePage({
     />
 
     <div class="page-container">
-      <h1 class="dual-text" data-text="Choose Your Game Mode">
+      <h1
+        class="dual-text"
+        data-text="Choose Your Game Mode"
+        style="--dual-text-stroke: 4px"
+      >
         Choose Your Game Mode
       </h1>
 

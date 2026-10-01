@@ -10,6 +10,7 @@ import PlayerDeck from '@/player/components/PlayerDeck.vue';
 import FancyButton from '@/ui/components/FancyButton.vue';
 import type { DeckId } from '@game/api';
 import MatchmakingTimer from '@/matchmaking/components/MatchmakingTimer.vue';
+import PlayerDeckCard from '@/player/components/PlayerDeckCard.vue';
 
 definePage({
   name: 'Matchmaking',
@@ -76,7 +77,13 @@ const getDisplayedDeck = (deck: UserDeck) => ({
     />
 
     <main class="container">
-      <h1 class="page-title dual-text" data-text="Matchmaking">Matchmaking</h1>
+      <h1
+        class="page-title dual-text"
+        data-text="Matchmaking"
+        style="--dual-text-stroke: 4px"
+      >
+        Matchmaking
+      </h1>
 
       <div class="matchmaking-content">
         <section>
@@ -101,59 +108,10 @@ const getDisplayedDeck = (deck: UserDeck) => ({
                 }
               "
             >
-              <PlayerDeck :deck="getDisplayedDeck(deck)" />
-              <div v-if="selectedDeckId === deck.id" class="selected-indicator">
-                ✓
-              </div>
+              <PlayerDeckCard :deck="getDisplayedDeck(deck)" />
             </li>
           </ul>
         </section>
-
-        <!-- <section class="surface" v-if="matchmakings?.length > 1">
-          <h2>2. Select Queue</h2>
-
-          <div v-if="isLoading" class="loading-state">
-            Loading matchmakings...
-          </div>
-
-          <div v-else-if="!matchmakings?.length" class="empty-state">
-            No matchmakings available.
-          </div>
-
-          <ul v-else class="matchmaking-list">
-            <li
-              v-for="matchmaking in matchmakings"
-              :key="matchmaking.id"
-              class="matchmaking-card"
-              :class="{
-                selected: selectedQueueName === matchmaking.name,
-                disabled: !matchmaking.enabled
-              }"
-              @click="
-                () => {
-                  if (!matchmaking.enabled) return;
-                  selectedQueueName = matchmaking.name;
-                }
-              "
-            >
-              <header>
-                <h3>{{ matchmaking.name }}</h3>
-                <span v-if="!matchmaking.enabled" class="disabled-badge">
-                  Disabled
-                </span>
-              </header>
-              <p class="matchmaking-description">
-                {{ matchmaking.description }}
-              </p>
-              <div
-                v-if="selectedQueueName === matchmaking.name"
-                class="selected-indicator"
-              >
-                ✓
-              </div>
-            </li>
-          </ul>
-        </section> -->
 
         <footer>
           <FancyButton
@@ -229,15 +187,20 @@ footer {
   gap: var(--size-4);
 }
 
-h2 {
-  font-family: 'Cinzel Decorative', serif;
-  font-size: var(--font-size-4);
-  font-weight: var(--font-weight-6);
-  color: #efef9f;
-  margin-bottom: var(--size-4);
-  text-align: center;
+@property --selected-deck-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
 }
 
+@keyframes selected-deck-rotate {
+  from {
+    --selected-deck-angle: 0deg;
+  }
+  to {
+    --selected-deck-angle: 360deg;
+  }
+}
 .deck-option {
   position: relative;
   cursor: pointer;
@@ -248,25 +211,29 @@ h2 {
     transform: translateY(-2px);
   }
   &.selected {
-    background: rgba(239, 239, 159, 0.1);
+    filter: brightness(1.5);
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: conic-gradient(
+        from var(--selected-deck-angle) at center,
+        var(--yellow-2),
+        transparent,
+        var(--orange-7),
+        transparent,
+        var(--yellow-10),
+        transparent,
+        cyan
+      );
+      animation: selected-deck-rotate 3.5s linear infinite;
+      mask-image: url(@/assets/ui/card/v3/deck.png);
+      mask-size: cover;
+      transform-origin: center;
+      scale: 1.05;
+      z-index: -1;
+    }
   }
-}
-
-.selected-indicator {
-  position: absolute;
-  top: var(--size-2);
-  right: var(--size-2);
-  background: linear-gradient(45deg, #d7ad42, #efef9f);
-  color: hsl(240 100% 5%);
-  border-radius: 50%;
-  width: var(--size-6);
-  aspect-ratio: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: var(--font-weight-7);
-  font-size: var(--font-size-2);
-  box-shadow: 0 2px 8px rgba(215, 173, 66, 0.5);
 }
 
 .matchmaking-card .loading-state,

@@ -4,23 +4,14 @@ import {
   CARD_KINDS,
   type Affinity
 } from '@game/engine/src/card/card.enums';
-import { useResponsive } from '@/shared/composables/useResponsive';
 import { CARDS_DICTIONARY } from '@game/engine/src/card/sets';
-import {
-  HoverCardContent,
-  HoverCardPortal,
-  HoverCardRoot,
-  HoverCardTrigger
-} from 'reka-ui';
-import FancyButton from '@/ui/components/FancyButton.vue';
+import { HoverCardContent, HoverCardPortal, HoverCardRoot } from 'reka-ui';
 import type { DeckValidationResult } from '@game/engine/src/card/validators/deck.validator';
-import { assets, sprites } from '@/assets';
+import { sprites } from '@/assets';
 import { useSprite } from '@/shared/composables/useSprite';
 import { match } from 'ts-pattern';
-import {
-  ANIMATIONS_NAMES,
-  type AnimationName
-} from '@game/engine/src/game/game.enums';
+import { ANIMATIONS_NAMES } from '@game/engine/src/game/game.enums';
+import { assets } from '@/assets';
 
 export type DisplayedDeck = {
   name: string;
@@ -69,8 +60,6 @@ const affinities = computed(() => {
   return result;
 });
 
-const { isSmallViewport } = useResponsive();
-
 const mostExpensiveCard = computed(() =>
   mainDeck.value.reduce((acc, current) => {
     if (current.blueprint.kind === CARD_KINDS.DESTINY) return acc;
@@ -82,18 +71,20 @@ const mostExpensiveCard = computed(() =>
   }, mainDeck.value[0])
 );
 
-const sprite = computed(() => sprites[mostExpensiveCard.value.blueprint.id]);
+const sprite = computed(
+  () => sprites[`cards/${mostExpensiveCard.value.blueprint.art.default.sprite}`]
+);
 
 const animationSequence = computed(() =>
   match(mostExpensiveCard.value.blueprint.kind)
-    .with(CARD_KINDS.MINION, () => [ANIMATIONS_NAMES.IDLE])
+    .with(CARD_KINDS.MINION, () => [ANIMATIONS_NAMES.BREATHING])
     .otherwise(() => [ANIMATIONS_NAMES.DEFAULT])
 );
-const { activeFrameRect, bgPosition, imageBg, on } = useSprite({
+const { activeFrameRect, bgPosition, imageBg } = useSprite({
   animationSequence,
   sprite,
   kind: computed(() => mostExpensiveCard.value.blueprint.kind),
-  scale: 2,
+  scale: 1,
   repeat: true,
   scalePositionByPixelScale: true
 });
@@ -103,7 +94,7 @@ const { activeFrameRect, bgPosition, imageBg, on } = useSprite({
   <div>
     <HoverCardRoot :open-delay="200" :close-delay="0">
       <button
-        class="player-deck surface"
+        class="player-deck-card"
         :class="{
           invalid: deck.isValid.result === 'failure'
         }"
@@ -119,22 +110,23 @@ const { activeFrameRect, bgPosition, imageBg, on } = useSprite({
             '--background-height': `calc(${sprite.sheetSize.h}px * var(--pixel-scale))`
           }"
         >
-          <!-- <div
-      v-if="artBgImage"
-      class="art-bg parallax"
-      style="--parallax-strength: -1"
-    /> -->
-          <div
-            class="sprite-shadow parallax"
-            style="--parallax-strength-x: -3; --parallax-strength-y: -1"
-          />
-          <div
-            class="sprite parallax"
-            style="--parallax-strength-x: 1.5; --parallax-strength-y: 1"
-          />
+          <div class="sprite" />
         </div>
-        <div class="deck-name">
+        <div
+          class="deck-name dual-text"
+          :data-text="deck.name"
+          style="--dual-text-stroke-offset-y: -2px"
+        >
           {{ deck.name }}
+        </div>
+        <div class="affinities">
+          <img
+            v-for="aff in affinities"
+            :key="aff"
+            :src="assets[`ui/card/v3/affinity-${aff.toLocaleLowerCase()}`].path"
+            :alt="aff"
+            class="affinity"
+          />
         </div>
       </button>
 
@@ -174,21 +166,14 @@ const { activeFrameRect, bgPosition, imageBg, on } = useSprite({
 </template>
 
 <style scoped lang="postcss">
-.player-deck {
+.player-deck-card {
   position: relative;
-  display: flex;
-  width: 100%;
-  gap: var(--size-2);
-  align-items: center;
-  background-image:
-    linear-gradient(to right, hsl(0deg 0% 20% / 0.5), hsl(0deg 0% 0% / 0.5)),
-    var(--bg);
-  background-repeat: no-repeat;
-  background-position:
-    center center,
-    right calc(100% + 70px);
-  background-size: 200%, calc(2px * 96);
   padding: var(--size-2) var(--size-4);
+  width: calc(113px * 2);
+  height: calc(141px * 2);
+  background: url(@/assets/ui/card/v3/deck.png);
+  background-size: cover;
+
   /* border: solid 1px hsl(var(--color-primary-hsl) / 0.5); */
   &.invalid {
     border-color: var(--red-8);
@@ -206,17 +191,15 @@ const { activeFrameRect, bgPosition, imageBg, on } = useSprite({
 }
 
 .deck-name {
+  position: absolute;
+  bottom: 62px;
+  left: 50%;
+  transform: translateX(-50%);
   flex: 1 1 0%;
   text-align: left;
   align-self: stretch;
   font-size: var(--font-size-3);
   font-weight: var(--font-weight-7);
-  text-shadow: 0 0 1rem 1rem black;
-  -webkit-text-stroke: 3px black;
-  paint-order: stroke fill;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
   @screen lt-lg {
     font-size: var(--font-size-1);
   }
@@ -256,13 +239,13 @@ const { activeFrameRect, bgPosition, imageBg, on } = useSprite({
   }
 }
 
-.card-art {
+.art {
   position: absolute;
-  width: calc(var(--pixel-scale) * var(--width));
-  height: calc(var(--pixel-scale) * var(--height));
   left: 50%;
   transform: translateX(-50%);
-  bottom: calc(100px * var(--pixel-scale));
+  bottom: 105px;
+  width: calc(var(--pixel-scale) * var(--width));
+  height: calc(var(--pixel-scale) * var(--height));
   overflow: hidden;
   pointer-events: none;
 
@@ -276,22 +259,6 @@ const { activeFrameRect, bgPosition, imageBg, on } = useSprite({
   &.destiny {
     translate: 0 calc(var(--pixel-scale) * 3px);
   }
-
-  &.full-art {
-    width: calc(var(--card-v2-width) * var(--pixel-scale));
-    height: calc(var(--card-v2-height) * var(--pixel-scale));
-    left: 0;
-    top: 0;
-
-    &::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background-image: url('@/assets/ui/card/v2/full-art-overlay.png');
-      background-size: cover;
-      pointer-events: none;
-    }
-  }
 }
 
 .sprite {
@@ -301,7 +268,15 @@ const { activeFrameRect, bgPosition, imageBg, on } = useSprite({
   background-position: var(--bg-position);
   background-repeat: no-repeat;
   background-size: var(--background-width) var(--background-height);
-  translate: calc(var(--parallax-x, 0)) var(--parallax-y, 0) !important;
   pointer-events: none;
+}
+
+.affinities {
+  display: flex;
+  gap: var(--size-2);
+  position: absolute;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
 }
 </style>

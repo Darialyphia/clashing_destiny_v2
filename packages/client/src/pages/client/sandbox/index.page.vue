@@ -53,7 +53,13 @@ const playersConfig = computed(() => {
       :to="{ name: 'SelectMode' }"
     />
 
-    <h1 class="dual-text" data-text="Select your Decks">Select your Decks</h1>
+    <h1
+      class="dual-text"
+      data-text="Select your Decks"
+      style="--dual-text-stroke: 4px"
+    >
+      Select your Decks
+    </h1>
 
     <DeckSelector
       v-model:p1Deck="p1Deck"
