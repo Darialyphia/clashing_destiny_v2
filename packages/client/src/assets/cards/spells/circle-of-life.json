@@ -191,7 +191,7 @@
  ],
  "meta": {
   "app": "https://www.aseprite.org/",
-  "version": "1.3.18.5-x64",
+  "version": "1.3.18.6-x64",
   "image": "circle-of-life.png",
   "format": "RGBA8888",
   "size": { "w": 1008, "h": 48 },

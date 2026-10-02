@@ -19,7 +19,8 @@ export class ChooseCardsInput extends Input<typeof schema> {
     GAME_PHASES.DRAW,
     GAME_PHASES.SUPPLY,
     GAME_PHASES.MAIN,
-    GAME_PHASES.PLAY_CARD
+    GAME_PHASES.PLAY_CARD,
+    GAME_PHASES.END
   ];
 
   protected payloadSchema = schema;

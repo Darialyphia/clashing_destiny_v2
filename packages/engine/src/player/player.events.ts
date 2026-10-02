@@ -43,13 +43,14 @@ export class PlayerRuneChangeEvent extends TypedSerializableEvent<
 }
 
 export class PlayerGainVictoryPointEvent extends TypedSerializableEvent<
-  { player: Player; amount: number },
-  { player: string; amount: number }
+  { player: Player; amount: number; total: number },
+  { player: string; amount: number; total: number }
 > {
   serialize() {
     return {
       player: this.data.player.id,
-      amount: this.data.amount
+      amount: this.data.amount,
+      total: this.data.total
     };
   }
 }

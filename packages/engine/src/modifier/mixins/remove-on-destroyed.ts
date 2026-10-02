@@ -1,3 +1,4 @@
+import { CARD_LOCATIONS, type CardLocation } from '../../card/card.enums';
 import type {
   CardAfterDestroyEvent,
   CardAfterPlayEvent,
@@ -59,8 +60,18 @@ export class RemoveOnLeaveBoardModifierMixin extends ModifierMixin<
   async onLocationChange(event: CardChangeLocationEvent) {
     const target = this.target ?? this.modifier.target;
     if (!event.data.card.equals(target)) return;
-    if (!target.isOnBoard) return;
-    await target.modifiers.remove(this.modifier as any);
+    const { to } = event.data;
+    const locations: CardLocation[] = [
+      CARD_LOCATIONS.BANISH_PILE,
+      CARD_LOCATIONS.DISCARD_PILE,
+      CARD_LOCATIONS.HAND,
+      CARD_LOCATIONS.RESERVE,
+      CARD_LOCATIONS.MAIN_DECK,
+      CARD_LOCATIONS.SUPPLY
+    ];
+    if (locations.includes(to)) {
+      await target.modifiers.remove(this.modifier as any);
+    }
 
     this.game.off(GAME_EVENTS.CARD_AFTER_CHANGE_LOCATION, this.onLocationChange);
   }

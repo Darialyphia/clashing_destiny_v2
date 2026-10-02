@@ -8,7 +8,6 @@ import {
   CARD_SPEED,
   AFFINITIES
 } from '../../../card.enums';
-import { OverwhelmModifier } from '../../../../modifier/modifiers/overwhelm.modifier';
 import { DoubleAttackModifier } from '../../../../modifier/modifiers/double-attack.modifier';
 
 export const daggerKiri: MinionBlueprint = {
@@ -27,7 +26,7 @@ export const daggerKiri: MinionBlueprint = {
   manaSupply: 3,
   speed: CARD_SPEED.SLOW,
   tags: [],
-  atk: 2,
+  atk: 3,
   maxHp: 6,
   commandment: 2,
   canPlay: () => true,

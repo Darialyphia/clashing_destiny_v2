@@ -25,7 +25,7 @@ const card = computed(() => {
     </HoverCardTrigger>
     <HoverCardPortal>
       <HoverCardContent class="z-10" side="top">
-        <div style="--pixel-scale: 1">
+        <div>
           <BlueprintCard v-if="card" :blueprint="card" />
         </div>
       </HoverCardContent>
@@ -35,7 +35,6 @@ const card = computed(() => {
 
 <style scoped lang="postcss">
 .card {
-  text-decoration: underline;
-  text-decoration-color: var(--card-text-color);
+  color: var(--green-4);
 }
 </style>

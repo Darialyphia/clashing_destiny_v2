@@ -20,6 +20,7 @@ import * as friendProviders from '../friend/friend.providers';
 import * as lobbyProviders from '../lobby/lobby.providers';
 import * as giftProviders from '../gift/gift.providers';
 import * as currencyProviders from '../currency/currency.providers';
+import * as shopProviders from '../shop/shop.providers';
 
 export type Dependency<T> = { resolver: Resolver<T>; eager?: boolean };
 export type DependenciesMap = Record<string, Dependency<any>>;
@@ -56,7 +57,8 @@ const makeQueryDependencies = (ctx: QueryCtxWithSession) => {
     ...friendProviders.queryDependencies,
     ...lobbyProviders.queryDependencies,
     ...giftProviders.queryDependencies,
-    ...currencyProviders.queryDependencies
+    ...currencyProviders.queryDependencies,
+    ...shopProviders.queryDependencies
   } as const satisfies DependenciesMap;
 
   return deps;
@@ -82,7 +84,8 @@ const makeMutationDependencies = (ctx: MutationCtxWithSession) => {
     ...friendProviders.mutationDependencies,
     ...lobbyProviders.mutationDependencies,
     ...giftProviders.mutationDependencies,
-    ...currencyProviders.mutationDependencies
+    ...currencyProviders.mutationDependencies,
+    ...shopProviders.mutationDependencies
   } as const satisfies DependenciesMap;
 
   return deps;

@@ -17,8 +17,6 @@ import Hand from './Hand.vue';
 import DraggedCard from './DraggedCard.vue';
 import { useEventListener, usePageLeave } from '@vueuse/core';
 import { INTERACTION_STATES } from '@game/engine/src/game/game.enums';
-import HoveredCardInfos from './HoveredCardnfos.vue';
-import PlayerInfos from './PlayerInfos.vue';
 import CombatArrows from './CombatArrows.vue';
 import TurnIndicator from './TurnIndicator.vue';
 import RearrangeCardsModal from './RearrangeCardsModal.vue';
@@ -31,6 +29,7 @@ import type { PlayerClockState } from '../composables/useGameSocket';
 import Deck from './Deck.vue';
 import GamePhaseIndicator from './GamePhaseIndicator.vue';
 import Debug from './Debug.vue';
+import BattleLog from './BattleLog.vue';
 
 const { clocks } = defineProps<{
   clocks?: Record<string, PlayerClockState>;
@@ -118,7 +117,6 @@ const isScreenDimmed = computed(() => {
     </div>
   </div>
 
-  <HoveredCardInfos class="hovered-cell-infos" />
   <InteractionCard />
 
   <Transition>
@@ -136,11 +134,11 @@ const isScreenDimmed = computed(() => {
     />
   </div>
 
-  <!-- <PlayerResources class="my-resources" :player="myPlayer" />
-  <PlayerResources class="opponent-resources" :player="opponent" /> -->
-
-  <PlayerInfos class="opponent-player" :player="opponent" inverted />
-  <PlayerInfos class="my-player" :player="myPlayer" />
+  <div class="battle-log-container">
+    <BattleLog />
+  </div>
+  <!-- <PlayerInfos class="opponent-player" :player="opponent" inverted />
+  <PlayerInfos class="my-player" :player="myPlayer" /> -->
 
   <DraggedCard />
 
@@ -192,6 +190,9 @@ const isScreenDimmed = computed(() => {
   @media (max-height: 920px) {
     top: -5%;
   }
+  @screen lt-lg {
+    top: -35%;
+  }
 }
 
 .vignette {
@@ -214,39 +215,6 @@ const isScreenDimmed = computed(() => {
   &.v-leave-to {
     opacity: 0;
   }
-}
-
-.my-player {
-  position: absolute;
-  left: var(--size-6);
-  bottom: var(--size-3);
-}
-/* .my-resources {
-  position: absolute;
-  right: 140px;
-  top: 50.5%;
-  width: 200px;
-} */
-
-.opponent-player {
-  position: absolute;
-  right: var(--size-6);
-  top: var(--size-3);
-}
-
-/* .opponent-resources {
-  position: absolute;
-  right: 140px;
-  top: 43%;
-  width: 200px;
-} */
-
-.hovered-cell-infos {
-  position: absolute;
-  right: var(--size-1);
-  top: 45%;
-  translate: 0 -50%;
-  z-index: 2;
 }
 
 .my-deck {
@@ -290,5 +258,11 @@ const isScreenDimmed = computed(() => {
     border-right: #73473a 1px solid;
     border-bottom: #af7d48 1px solid;
   }
+}
+
+.battle-log-container {
+  position: absolute;
+  left: var(--size-2);
+  bottom: var(--size-5);
 }
 </style>

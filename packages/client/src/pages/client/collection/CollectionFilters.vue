@@ -30,6 +30,7 @@ const {
   clearKindFilter,
   manaCostFilter,
   includeUnowned,
+  foilFilter,
   cardScale,
   hasRarityFilter,
   toggleRarityFilter,
@@ -118,6 +119,8 @@ const toggleMinManaCostFilter = (cost: number) => {
     manaCostFilter.value = { min: cost, max: Infinity };
   }
 };
+
+const route = useRoute();
 </script>
 
 <template>
@@ -126,7 +129,7 @@ const toggleMinManaCostFilter = (cost: number) => {
       v-if="router.currentRoute.value.name !== 'ClientHome'"
       text="Back"
       size="md"
-      @click="router.push({ name: 'ClientHome' })"
+      @click="router.push({ name: (route.query.from as any) ?? 'ClientHome' })"
     />
 
     <Icon icon="material-symbols:zoom-in" width="2rem" />
@@ -166,20 +169,21 @@ const toggleMinManaCostFilter = (cost: number) => {
           align="center"
           :side-offset="8"
         >
+          <button
+            class="clear-all-btn"
+            :class="{ 'is-hidden': activeFilterCount === 0 }"
+            @click="clearAllFilters"
+          >
+            <Icon icon="material-symbols:close" width="0.85rem" />
+            Clear all filters
+          </button>
           <section class="filter-section">
-            <h4 class="filter-title flex gap-3 items-center">
-              Include Unowned
+            <div class="filter-title flex gap-3 items-center">
               <UiSwitch v-model="includeUnowned" />
-
-              <button
-                v-if="activeFilterCount > 0"
-                class="clear-all-btn"
-                @click="clearAllFilters"
-              >
-                <Icon icon="material-symbols:close" width="0.85rem" />
-                Clear all filters
-              </button>
-            </h4>
+              Include Unowned
+              <UiSwitch v-model="foilFilter" />
+              Include Foils
+            </div>
           </section>
 
           <section class="filter-section">
@@ -326,6 +330,9 @@ const toggleMinManaCostFilter = (cost: number) => {
   &:hover {
     background-color: hsl(from var(--color-red-6) h s l / 0.1);
   }
+  &.is-hidden {
+    visibility: hidden;
+  }
 }
 
 .search-input {
@@ -367,6 +374,7 @@ const toggleMinManaCostFilter = (cost: number) => {
   display: flex;
   flex-direction: column;
   gap: var(--size-2);
+  margin-bottom: var(--size-3);
 
   & + & {
     border-top: solid var(--border-size-1) hsl(var(--color-primary-hsl) / 0.15);

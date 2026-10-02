@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import AuthenticatedHeader from '@/AuthenticatedHeader.vue';
 import {
   useJoinMatchmaking,
   useLeaveMatchmaking
@@ -7,24 +6,46 @@ import {
 import { useMatchmakingList } from './useMatchmakingList';
 import { useMe } from '@/auth/composables/useMe';
 import { useDecks, type UserDeck } from '@/card/composables/useDecks';
-import PlayerDeck from '@/player/components/PlayerDeck.vue';
 import FancyButton from '@/ui/components/FancyButton.vue';
 import type { DeckId } from '@game/api';
 import MatchmakingTimer from '@/matchmaking/components/MatchmakingTimer.vue';
+import PlayerDeckCard from '@/player/components/PlayerDeckCard.vue';
+import PageTitle from '@/shared/components/PageTitle.vue';
 
 definePage({
-  name: 'Matchmaking'
+  name: 'Matchmaking',
+  meta: {
+    wrapperClass: 'page-blur'
+  }
 });
 
 const { data: me } = useMe();
 const { data: decks, isLoading: isLoadingDecks } = useDecks();
 
-const { data: matchmakings, isLoading } = useMatchmakingList();
+const { data: matchmakings } = useMatchmakingList();
 const { mutate: join, isLoading: isJoining } = useJoinMatchmaking();
 const { mutate: leave, isLoading: isLeaving } = useLeaveMatchmaking();
 
 const selectedDeckId = ref<string | null>(null);
 const selectedQueueName = ref<string | null>(null);
+watch(
+  matchmakings,
+  newMatchmakings => {
+    if (newMatchmakings?.length) {
+      selectedQueueName.value = newMatchmakings[0]?.name;
+    }
+  },
+  { immediate: true }
+);
+watch(
+  decks,
+  newDecks => {
+    if (newDecks?.length) {
+      selectedDeckId.value = newDecks[0]?.id;
+    }
+  },
+  { immediate: true }
+);
 
 const isInMatchmaking = computed(() => {
   return !!me.value?.currentJoinedMatchmaking;
@@ -37,34 +58,36 @@ const canJoin = computed(() => {
 });
 
 const getDisplayedDeck = (deck: UserDeck) => ({
+  id: deck.id,
   name: deck.name,
-  cards: deck.cards.map(card => ({
-    blueprintId: card.blueprintId,
-    copies: card.copies
-  })),
+  cards: deck.cards,
   isValid: deck.isValid
 });
 </script>
 
 <template>
-  <div class="matchmaking-page">
-    <AuthenticatedHeader />
+  <div class="page">
+    <FancyButton
+      class="absolute top-10 left-8"
+      text="Back"
+      size="md"
+      :to="{ name: 'SelectMode' }"
+    />
+
     <main class="container">
-      <h1 class="page-title">Matchmaking</h1>
+      <PageTitle title="Matchmaking" />
 
       <div class="matchmaking-content">
-        <section class="surface">
-          <h2>1. Select Your Deck</h2>
-
+        <section>
           <div v-if="isLoadingDecks" class="loading-state">
             Loading decks...
           </div>
 
-          <div v-else-if="!decks?.length" class="empty-state">
+          <div v-else-if="!decks?.length" class="surface empty-state">
             No decks available. Create a deck first!
           </div>
 
-          <ul v-else class="grid gap-3 mb-4">
+          <ul v-else class="grid grid-cols-3 gap-3 mb-4">
             <li
               v-for="deck in decks"
               :key="deck.id"
@@ -77,56 +100,7 @@ const getDisplayedDeck = (deck: UserDeck) => ({
                 }
               "
             >
-              <PlayerDeck :deck="getDisplayedDeck(deck)" />
-              <div v-if="selectedDeckId === deck.id" class="selected-indicator">
-                ✓
-              </div>
-            </li>
-          </ul>
-        </section>
-
-        <section class="surface">
-          <h2>2. Select Queue</h2>
-
-          <div v-if="isLoading" class="loading-state">
-            Loading matchmakings...
-          </div>
-
-          <div v-else-if="!matchmakings?.length" class="empty-state">
-            No matchmakings available.
-          </div>
-
-          <ul v-else class="matchmaking-list">
-            <li
-              v-for="matchmaking in matchmakings"
-              :key="matchmaking.id"
-              class="matchmaking-card"
-              :class="{
-                selected: selectedQueueName === matchmaking.name,
-                disabled: !matchmaking.enabled
-              }"
-              @click="
-                () => {
-                  if (!matchmaking.enabled) return;
-                  selectedQueueName = matchmaking.name;
-                }
-              "
-            >
-              <header>
-                <h3>{{ matchmaking.name }}</h3>
-                <span v-if="!matchmaking.enabled" class="disabled-badge">
-                  Disabled
-                </span>
-              </header>
-              <p class="matchmaking-description">
-                {{ matchmaking.description }}
-              </p>
-              <div
-                v-if="selectedQueueName === matchmaking.name"
-                class="selected-indicator"
-              >
-                ✓
-              </div>
+              <PlayerDeckCard :deck="getDisplayedDeck(deck)" />
             </li>
           </ul>
         </section>
@@ -163,26 +137,27 @@ const getDisplayedDeck = (deck: UserDeck) => ({
 </template>
 
 <style scoped lang="postcss">
+.page {
+  min-height: 100vh;
+  background: url('@/assets/backgrounds/main-menu-overlay.png');
+  background-size: 100% 100%;
+}
+
 .container {
   max-width: var(--size-lg);
   margin: 0 auto;
   padding: var(--size-6);
-}
-
-.page-title {
-  font-family: 'Cinzel Decorative', serif;
-  font-size: var(--font-size-6);
-  font-weight: var(--font-weight-7);
-  color: transparent;
-  background-image: linear-gradient(45deg, #efef9f, #d7ad42);
-  background-clip: text;
-  text-align: center;
-  margin-bottom: var(--size-8);
+  container-type: inline-size;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100dvh;
 }
 
 .matchmaking-content {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   grid-template-rows: auto auto;
   gap: var(--size-6);
   align-items: start;
@@ -194,18 +169,22 @@ footer {
   flex-direction: column;
   align-items: center;
   gap: var(--size-4);
-  background: var(--surface-1);
 }
 
-h2 {
-  font-family: 'Cinzel Decorative', serif;
-  font-size: var(--font-size-4);
-  font-weight: var(--font-weight-6);
-  color: #efef9f;
-  margin-bottom: var(--size-4);
-  text-align: center;
+@property --selected-deck-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
 }
 
+@keyframes selected-deck-rotate {
+  from {
+    --selected-deck-angle: 0deg;
+  }
+  to {
+    --selected-deck-angle: 360deg;
+  }
+}
 .deck-option {
   position: relative;
   cursor: pointer;
@@ -216,25 +195,29 @@ h2 {
     transform: translateY(-2px);
   }
   &.selected {
-    background: rgba(239, 239, 159, 0.1);
+    filter: brightness(1.5);
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: conic-gradient(
+        from var(--selected-deck-angle) at center,
+        var(--yellow-2),
+        transparent,
+        var(--orange-7),
+        transparent,
+        var(--yellow-10),
+        transparent,
+        cyan
+      );
+      animation: selected-deck-rotate 3.5s linear infinite;
+      mask-image: url(@/assets/ui/card/v3/deck.png);
+      mask-size: cover;
+      transform-origin: center;
+      scale: 1.05;
+      z-index: -1;
+    }
   }
-}
-
-.selected-indicator {
-  position: absolute;
-  top: var(--size-2);
-  right: var(--size-2);
-  background: linear-gradient(45deg, #d7ad42, #efef9f);
-  color: hsl(240 100% 5%);
-  border-radius: 50%;
-  width: var(--size-6);
-  aspect-ratio: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: var(--font-weight-7);
-  font-size: var(--font-size-2);
-  box-shadow: 0 2px 8px rgba(215, 173, 66, 0.5);
 }
 
 .matchmaking-card .loading-state,
@@ -242,9 +225,9 @@ h2 {
   text-align: center;
   padding: var(--size-8);
   color: #a8a8a8;
-  font-size: 1.1rem;
+  font-size: var(--font-size-2);
 }
-
+/*
 .matchmaking-card {
   position: relative;
   cursor: pointer;
@@ -307,5 +290,5 @@ h2 {
     gap: var(--size-4);
     text-align: center;
   }
-}
+} */
 </style>

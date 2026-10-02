@@ -108,6 +108,9 @@ const cardsWithParticles = computed(() => {
             />
           </div>
         </div>
+        <div v-if="!cardsWithParticles.length" class="instructions">
+          Click on a pack below to open it !
+        </div>
         <Transition name="fade">
           <div v-if="dealingStatus === 'waiting'" class="stack-glow"></div>
         </Transition>
@@ -116,7 +119,7 @@ const cardsWithParticles = computed(() => {
             v-if="
               !cardStyles.length || (dealingStatus === 'done' && allRevealed)
             "
-            class="absolute bottom-7"
+            class="absolute top-8 left-8"
           >
             <slot name="done" :dealing-status="dealingStatus"></slot>
           </div>
@@ -238,6 +241,7 @@ const cardsWithParticles = computed(() => {
       1.007 84.7%,
       1
     );
+  transition-duration: var(--card-layout-transition-duration, 0.4s);
   transition-delay: calc(var(--child-index) * 0.05s);
 
   &:not(:has(.revealed)) {
@@ -468,5 +472,15 @@ const cardsWithParticles = computed(() => {
 .done-leave-to {
   opacity: 0;
   transform: translateY(20px);
+}
+
+.instructions {
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: var(--font-size-6);
+  z-index: 100;
+  -webkit-text-stroke: 4px black;
+  paint-order: stroke fill;
 }
 </style>

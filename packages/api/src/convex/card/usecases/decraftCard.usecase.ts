@@ -20,6 +20,7 @@ export interface DecraftCardOutput {
   cardId: CardId;
   craftingShardsGained: number;
   copiesDecrafted: number;
+  remainingCopies: number;
 }
 
 export class DecraftCardUseCase implements UseCase<DecraftCardInput, DecraftCardOutput> {
@@ -80,7 +81,8 @@ export class DecraftCardUseCase implements UseCase<DecraftCardInput, DecraftCard
     return {
       cardId: input.cardId,
       craftingShardsGained: totalReward,
-      copiesDecrafted: input.amount
+      copiesDecrafted: input.amount,
+      remainingCopies: card.copiesOwned.value
     };
   }
 }

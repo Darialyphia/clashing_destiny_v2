@@ -1,6 +1,6 @@
 import type { UseCase } from '../../usecase';
 import type { AuthSession } from '../../auth/entities/session.entity';
-import type { CurrencyType } from '../currency.constants';
+import type { CurrencyType, CurrencySource } from '../currency.constants';
 import { ensureAuthenticated } from '../../auth/auth.utils';
 import { SpendingAmount } from '../spendingAmount';
 import type { CurrencyService } from '../services/currency.service';
@@ -8,6 +8,7 @@ import type { CurrencyService } from '../services/currency.service';
 export interface SpendCurrencyInput {
   amount: number;
   currencyType: CurrencyType;
+  source: CurrencySource;
   purpose: string;
   metadata?: any;
 }
@@ -39,7 +40,8 @@ export class SpendCurrencyUseCase
       amount,
       currencyType: input.currencyType,
       purpose: input.purpose,
-      metadata: input.metadata
+      metadata: input.metadata,
+      source: input.source
     });
 
     return { newBalance };

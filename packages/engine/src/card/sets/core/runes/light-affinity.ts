@@ -14,7 +14,7 @@ export const lightAffinity: RuneBlueprint = {
   kind: CARD_KINDS.RUNE,
   collectable: true,
   name: 'Lyonar Affinity',
-  description: dedent /*html*/ `Provides one lyonar Affinity.`,
+  description: dedent /*html*/ `Provides one Lyonar Affinity.`,
   setId: CARD_SETS.CORE,
   rarity: RARITIES.COMMON,
   art: defaultCardArt('affinities/light-affinity'),

@@ -1,4 +1,4 @@
-import { INTERACTION_STATES } from '../../game/game.enums';
+import { GAME_PHASES, INTERACTION_STATES } from '../../game/game.enums';
 import { GAME_EVENTS, type SerializedStarEvent } from '../../game/game.events';
 import type { GameClient } from '../client';
 import { FX_EVENTS } from './fx-controller';
@@ -32,6 +32,12 @@ export class OptimisticStateManager {
     if (event.eventName === GAME_EVENTS.CARD_BEFORE_PLAY) {
       this.finishPlayingCard();
     }
+    if (
+      event.eventName === GAME_EVENTS.AFTER_CHANGE_PHASE &&
+      event.event.to.state === GAME_PHASES.PLAY_CARD
+    ) {
+      this.finishPlayingCard();
+    }
   }
 
   onUpdate() {
@@ -45,12 +51,14 @@ export class OptimisticStateManager {
   }
 
   cancelPlayingCard() {
+    console.log('cancel playing card');
     this._state.playedCardId = null;
     this._state.isCancellingPlayCard = true;
     this.client.triggerStateUpdate();
   }
 
   resetCancellingPlayCard() {
+    console.log('reset cancelling play card');
     this._state.isCancellingPlayCard = false;
     this.client.triggerStateUpdate();
   }

@@ -1,5 +1,5 @@
 import { isMinion } from '../../card/card-utils';
-import type { CardKind } from '../../card/card.enums';
+import { CARD_KINDS, type CardKind } from '../../card/card.enums';
 import type { AnyCard } from '../../card/entities/card.entity';
 import type { Game } from '../../game/game';
 import { GAME_EVENTS } from '../../game/game.events';
@@ -46,6 +46,27 @@ export class CardTrackerComponent {
 
   get cardsPlayedThisGameTurn() {
     return this.cardsPlayedByGameTurn.get(this.game.turnSystem.elapsedTurns) ?? [];
+  }
+
+  get lastPlayedCard() {
+    for (let turn = this.game.turnSystem.elapsedTurns; turn >= 0; turn--) {
+      const turnCards = this.cardsPlayedByGameTurn.get(turn);
+      const lastCard = turnCards?.at(-1);
+      if (
+        lastCard?.card.kind !== CARD_KINDS.DESTINY &&
+        lastCard?.card.kind !== CARD_KINDS.RUNE
+      ) {
+        if (lastCard) return lastCard;
+      }
+    }
+
+    return null;
+  }
+
+  get lastPlayedCardThisTurn() {
+    const turn = this.game.turnSystem.elapsedTurns;
+    const turnCards = this.cardsPlayedByGameTurn.get(turn);
+    return turnCards?.at(-1) ?? null;
   }
 
   get cardsDestroyedThisGameTurn() {

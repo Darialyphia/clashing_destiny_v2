@@ -22,6 +22,7 @@ const isDev = import.meta.env.DEV;
       Optimistic played card id:
       {{ client.optimisticStateManager.state.playedCardId }}
     </div>
+    <div>dragged card id: {{ ui.draggedCard?.id }}</div>
   </div>
 </template>
 

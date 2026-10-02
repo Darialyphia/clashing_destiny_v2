@@ -99,15 +99,19 @@ const confirm = () => {
     _isOpened.value = false;
   }
 };
+
+const { isSmallViewport: isMobile } = useResponsive();
+
+const needsManualConfirmation = computed(
+  () => maxChoices.value > 1 || minChoices.value < maxChoices.value
+);
 const handleCardClick = (index: number, event: MouseEvent) => {
-  if (maxChoices.value > 1 || isWaiting.value) return;
+  if (isWaiting.value || needsManualConfirmation.value) return;
 
   event.preventDefault();
   selectedIndices.value = [index];
   confirm();
 };
-
-const { isSmallViewport: isMobile } = useResponsive();
 </script>
 
 <template>
@@ -158,7 +162,7 @@ const { isSmallViewport: isMobile } = useResponsive();
       </div>
       <footer class="flex mt-7 gap-10 justify-center">
         <FancyButton
-          v-if="!isShowingBoard && !isWaiting && maxChoices > 1"
+          v-if="!isShowingBoard && !isWaiting && needsManualConfirmation"
           variant="info"
           text="Confirm"
           :disabled="selectedIndices.length < minChoices || isWaiting"
@@ -241,6 +245,11 @@ const { isSmallViewport: isMobile } = useResponsive();
   font-size: var(--font-size-5);
   font-weight: var(--font-weight-7);
   color: transparent;
+  /* avoids flickering */
+  transition: display 0.5s;
+  @starting-style {
+    display: none;
+  }
 }
 
 @keyframes choose-card-reveal {

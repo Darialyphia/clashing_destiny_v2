@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useAuth } from '@/auth/composables/useAuth';
 import { useMe } from '@/auth/composables/useMe';
+import PlayerMatchmakingStatus from '@/player/components/PlayerMatchmakingStatus.vue';
 import { GAME_STATUS } from '@game/api';
 import { useMouse, useRafFn, useWindowSize } from '@vueuse/core';
 
@@ -85,6 +86,10 @@ const parallaxStyle = computed(() => ({
         <component :is="Component" />
       </div>
     </router-view>
+
+    <div class="absolute bottom-4 left-4">
+      <PlayerMatchmakingStatus />
+    </div>
   </div>
 </template>
 
@@ -152,10 +157,6 @@ const parallaxStyle = computed(() => ({
   inset: 0;
 }
 
-.background-overlay {
-  background-image: url('@/assets/backgrounds/main-menu-overlay.png');
-  inset: 0;
-}
 .page-wrapper {
   position: absolute;
   height: 100dvh;

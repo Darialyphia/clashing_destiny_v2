@@ -34,7 +34,7 @@ export const windbladeAdept: MinionBlueprint = {
   abilities: [],
   async onInit(game, card) {
     await card.modifiers.add(
-      new ZealModifier(game, card, {
+      new ZealModifier('windblade-adept-zeal', game, card, {
         amount: 2,
         zealedModifiers: [
           new SimpleAttackBuffModifier('windblade-adept-atk', game, card, {

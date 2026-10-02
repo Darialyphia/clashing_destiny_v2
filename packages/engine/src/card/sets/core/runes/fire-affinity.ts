@@ -14,7 +14,7 @@ export const fireAffinity: RuneBlueprint = {
   kind: CARD_KINDS.RUNE,
   collectable: true,
   name: 'Songhai Affinity',
-  description: dedent /*html*/ `Provides one songhai Affinity.`,
+  description: dedent /*html*/ `Provides one Songhai Affinity.`,
   setId: CARD_SETS.CORE,
   rarity: RARITIES.COMMON,
   art: defaultCardArt('affinities/fire-affinity'),

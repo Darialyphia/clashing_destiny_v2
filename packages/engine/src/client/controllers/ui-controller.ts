@@ -77,13 +77,9 @@ export class UiController {
       new DOMSelector(`hero-health-indicator-${playerId}`),
     hand: (playerId: string) => new DOMSelector(`hand-${playerId}`),
     draggedCard: (id: string) => new DOMSelector(id, '#dragged-card'),
-    minionPosition: (playerId: string, minionId: string) =>
-      new DOMSelector(`${playerId}-minion-position-${minionId}`),
-    minionOnBoard: (playerId: string, minionId: string) =>
-      new DOMSelector(
-        minionId,
-        this.DOMSelectors.minionPosition(playerId, minionId).selector
-      ),
+    interactionZone: new DOMSelector('interaction-zone'),
+    interactionCard: (cardId: string) =>
+      new DOMSelector(cardId, this.DOMSelectors.interactionZone.selector),
     discardPile: (playerId: string) => new DOMSelector(`discard-pile-${playerId}`),
     banishPile: (playerId: string) => new DOMSelector(`banish-pile-${playerId}`),
     destinyDeck: (playerId: string) => new DOMSelector(`destiny-deck-${playerId}`),
@@ -158,7 +154,7 @@ export class UiController {
     const canCancelPlaying =
       this.client.state.phase.state === GAME_PHASES.PLAY_CARD &&
       !this.client.state.phase.ctx.isPlayingCard;
-    if (canCancelPlaying) {
+    if (cancelPlay && canCancelPlaying) {
       this.client.cancelPlayingCard();
       actionTaken = true;
     }
@@ -252,6 +248,24 @@ export class UiController {
   update() {
     if (this.selectedCard?.isExhausted) {
       this.unselect();
+    }
+
+    if (
+      this.client.state.interaction.state === INTERACTION_STATES.SELECTING_CARDS_ON_BOARD
+    ) {
+      if (this.client.state.interaction.ctx.selectedCards.length) {
+        this.unselect();
+        this._draggedCard = null;
+      }
+    }
+
+    if (
+      this.client.state.interaction.state === INTERACTION_STATES.SELECTING_SPACE_ON_BOARD
+    ) {
+      if (this.client.state.interaction.ctx.selectedSpaces.length) {
+        this.unselect();
+        this._draggedCard = null;
+      }
     }
   }
 

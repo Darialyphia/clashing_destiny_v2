@@ -26,7 +26,7 @@ export class IntimidateModifier<T extends MinionCard> extends Modifier<T> {
           interceptor: (value, { attacker }) => {
             if (!value) return value;
 
-            return attacker.manaCost > options.level;
+            return attacker.affinities.length > options.level;
           }
         }),
         ...(options.mixins ?? [])

@@ -4,7 +4,7 @@ import type { CardViewModel } from '@game/engine/src/client/view-models/card.mod
 import CardText from '@/card/components/CardText.vue';
 import { isDefined } from '@game/shared';
 import { type PopoverContentProps } from 'reka-ui';
-import { useGameUi, useMyPlayer } from '../composables/useGameClient';
+import { useGameUi, useMyPlayer } from '@/game/composables/useGameClient';
 
 const { card, actionsSide = 'bottom' } = defineProps<{
   card: CardViewModel;
@@ -49,6 +49,9 @@ const myPlayer = useMyPlayer();
       </template>
       <div class="ability-tooltip">
         <CardText :text="ability.getLabel()" />
+        <p v-if="ability.unusableReason" class="unusable-reason">
+          {{ ability.unusableReason }}
+        </p>
       </div>
     </UiSimpleTooltip>
   </div>
@@ -83,5 +86,13 @@ p {
   text-shadow:
     0 0 2px black,
     0 0 1px black;
+}
+
+.unusable-reason {
+  font-size: var(--size-2);
+  font-weight: var(--font-weight-5);
+  -webkit-text-stroke: 3px black;
+  paint-order: stroke fill;
+  color: var(--red-5);
 }
 </style>

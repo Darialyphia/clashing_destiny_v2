@@ -82,11 +82,9 @@ onBeforeUnmount(() => {
 
 const draggedCard = computed(() => {
   let card: CardViewModel | null = null;
-
-  if (client.value.optimisticStateManager.state.playedCardId) {
-    card = state.value.entities[
-      client.value.optimisticStateManager.state.playedCardId
-    ] as CardViewModel;
+  const optimisticId = client.value.optimisticStateManager.state.playedCardId;
+  if (optimisticId) {
+    card = state.value.entities[optimisticId] as CardViewModel;
   } else {
     card = ui.value.draggedCard;
   }

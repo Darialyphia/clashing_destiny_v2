@@ -16,7 +16,6 @@ import { BoardSide, type SerializedBoardSide } from '../board/board-side.entity'
 import { GAME_EVENTS } from '../game/game.events';
 import { PlayerAddSupplyEvent, PlayerGainVictoryPointEvent } from './player.events';
 import type { Affinity } from '../card/card.enums';
-import { PLAYER_EVENTS } from './player.enums';
 
 export type PlayerOptions = {
   id: string;
@@ -102,12 +101,20 @@ export class Player
   async gainVictoryPoints(amount: number) {
     await this.game.emit(
       GAME_EVENTS.PLAYER_BEFORE_GAIN_VICTORY_POINT,
-      new PlayerGainVictoryPointEvent({ player: this, amount })
+      new PlayerGainVictoryPointEvent({
+        player: this,
+        amount,
+        total: this._victoryPoints
+      })
     );
     this._victoryPoints += amount;
     await this.game.emit(
       GAME_EVENTS.PLAYER_AFTER_GAIN_VICTORY_POINT,
-      new PlayerGainVictoryPointEvent({ player: this, amount })
+      new PlayerGainVictoryPointEvent({
+        player: this,
+        amount,
+        total: this._victoryPoints
+      })
     );
   }
 

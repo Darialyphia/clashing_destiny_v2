@@ -10,8 +10,8 @@
   background-size: cover;
   font-weight: var(--font-weight-5);
   border-radius: var(--radius-round);
-  width: calc(14.5px * var(--pixel-scale));
-  height: calc(14.5px * var(--pixel-scale));
+  width: calc(14.5px * var(--pixel-scale) * (2 / 3));
+  height: calc(14.5px * var(--pixel-scale) * (2 / 3));
   display: inline-flex;
   justify-content: center;
   align-items: center;

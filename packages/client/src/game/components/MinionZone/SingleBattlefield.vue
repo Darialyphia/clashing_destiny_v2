@@ -6,7 +6,7 @@ import {
   useMyPlayer,
   useOpponentPlayer
 } from '@/game/composables/useGameClient';
-import BoardSpace from '../BoardSpace.vue';
+import BoardSpace from '../BoardSpace/index.vue';
 import BoardCard from '../BoardCard/index.vue';
 import PassButton from '../PassButton.vue';
 import Battlefield from '../Battlefield.vue';

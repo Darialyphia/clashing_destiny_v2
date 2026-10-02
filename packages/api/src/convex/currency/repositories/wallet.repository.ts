@@ -34,6 +34,7 @@ export class WalletRepository {
       userId,
       gold: 0,
       craftingShards: 0,
+      premiumCurrency: 0,
       createdAt: Date.now(),
       updatedAt: Date.now()
     });

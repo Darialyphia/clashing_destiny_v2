@@ -587,7 +587,7 @@
  ],
  "meta": {
   "app": "https://www.aseprite.org/",
-  "version": "1.3.18.5-x64",
+  "version": "1.3.18.6-x64",
   "image": "azurite-lion.png",
   "format": "RGBA8888",
   "size": { "w": 5200, "h": 80 },

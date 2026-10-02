@@ -1,7 +1,8 @@
 import type { PackType } from '../card/card.constants';
-import type { CurrencyType } from '../currency/currency.constants';
+import { CURRENCY_TYPES, type CurrencyType } from '../currency/currency.constants';
 import type { AvailabilityRule } from './rules/availability.rule';
 import { PurchaseLimitRule } from './rules/purchaseLimit.rule';
+import { SHOP_CATEGORIES, type ShopCategory } from './shop.constants';
 
 export type ShopReward =
   | {
@@ -18,15 +19,22 @@ export type ShopReward =
 export type ShopOffer = {
   sku: string;
   contents: ShopReward[];
-
+  category: ShopCategory;
   name: string;
+  description: string;
   icon: string;
 
-  price: {
-    currency: CurrencyType;
-    amount: number;
+  quantity: {
+    min: number;
+    max: number;
   };
 
+  price: Array<{
+    currency: CurrencyType;
+    amount: number;
+  }>;
+
+  hot: boolean;
   availability: AvailabilityRule[];
   purchaseLimits: PurchaseLimitRule[];
 };
@@ -35,22 +43,27 @@ type ShopCatalogEntry<K extends string> = Omit<ShopOffer, 'sku'> & {
   sku: K;
 };
 
-function defineShopCatalog<const T extends Record<string, ShopOffer>>(
-  catalog: T & {
-    [K in keyof T]: ShopCatalogEntry<K & string>;
-  }
-): T {
-  return catalog;
-}
-
-export const shopCatalog = defineShopCatalog({
-  core_booster_pack_1: {
+export const shopCatalog: ShopCatalogEntry<string>[] = [
+  {
     sku: 'core_booster_pack_1',
+    category: SHOP_CATEGORIES.BOOSTER_PACKS,
     name: 'Core Booster Pack X 1',
-    icon: 'core_booster_pack_1_icon.png',
-    price: {
-      currency: 'gold',
-      amount: 100
+    description: 'Contains 1 Core Standard Booster Pack.',
+    icon: 'core_booster_pack_1_icon',
+    hot: false,
+    price: [
+      {
+        currency: CURRENCY_TYPES.GOLD,
+        amount: 100
+      },
+      {
+        currency: CURRENCY_TYPES.PREMIUM,
+        amount: 100
+      }
+    ],
+    quantity: {
+      min: 1,
+      max: 10
     },
     contents: [
       {
@@ -62,13 +75,22 @@ export const shopCatalog = defineShopCatalog({
     availability: [],
     purchaseLimits: []
   },
-  core_booster_pack_10: {
+  {
     sku: 'core_booster_pack_10',
+    category: SHOP_CATEGORIES.BOOSTER_PACKS,
     name: 'Core Booster Pack X 10',
-    icon: 'core_booster_pack_10_icon.png',
-    price: {
-      currency: 'gold',
-      amount: 1000
+    description: 'Contains 10 Core Standard Booster Packs.',
+    icon: 'core_booster_pack_10_icon',
+    hot: false,
+    price: [
+      {
+        currency: CURRENCY_TYPES.PREMIUM,
+        amount: 950
+      }
+    ],
+    quantity: {
+      min: 1,
+      max: 1
     },
     contents: [
       {
@@ -80,20 +102,33 @@ export const shopCatalog = defineShopCatalog({
     availability: [],
     purchaseLimits: []
   },
-  alpha_welcome_bundle: {
+  {
     sku: 'alpha_welcome_bundle',
-    name: 'Duelyst DominionAlpha Welcome Bundle',
-    icon: 'alpha_welcome_bundle_icon.png',
-    cover: 'alpha_welcome_bundle_cover.png',
-    price: {
-      currency: 'gold',
-      amount: 0
+    category: SHOP_CATEGORIES.BUNDLES,
+    name: 'Welcome Bundle',
+    description: 'Contains 20 Core Standard Booster Packs and 3000 Crafting Shards.',
+    icon: 'alpha_welcome_bundle_icon',
+    hot: true,
+    price: [
+      {
+        currency: CURRENCY_TYPES.GOLD,
+        amount: 0
+      }
+    ],
+    quantity: {
+      min: 1,
+      max: 1
     },
     contents: [
       {
         type: 'boosterPack',
         packType: 'CORE_STANDARD',
         quantity: 20
+      },
+      {
+        type: 'currency',
+        currencyType: CURRENCY_TYPES.CRAFTING_SHARDS,
+        amount: 3000
       }
     ],
     availability: [],
@@ -101,4 +136,4 @@ export const shopCatalog = defineShopCatalog({
       new PurchaseLimitRule({ type: 'lifetime', max: 1 }, 'alpha_welcome_bundle')
     ]
   }
-});
+];

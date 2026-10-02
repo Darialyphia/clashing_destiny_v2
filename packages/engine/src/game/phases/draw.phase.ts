@@ -57,28 +57,23 @@ export class DrawPhase implements GamePhaseController, Serializable<EmptyObject>
   }
 
   private async rotateDestinyCards() {
-    for (const player of this.game.playerSystem.players) {
-      const left = player.boardSide.leftBattlefield;
-      const right = player.boardSide.rightBattlefield;
+    // 1- remove card on right battlefield
+    const rightCard =
+      this.game.playerSystem.player1.boardSide.rightBattlefield.destinyCard ??
+      this.game.playerSystem.player2.boardSide.rightBattlefield.destinyCard!;
+    await rightCard!.removeFromCurrentLocation();
+    await rightCard.player.cardManager.destinyDeck.addToBottom(rightCard);
 
-      const hasRight = !!right.destinyCard;
-      const hasLeft = !!left.destinyCard;
-      if (hasRight) {
-        const card = right.destinyCard!;
-        await right.destinyCard!.removeFromCurrentLocation();
-        player.cardManager.destinyDeck.addToBottom(card);
-        const newDestiny = player.cardManager.destinyDeck.peek(1)[0]!;
-        left.destinyCard = newDestiny;
-        await newDestiny.play();
-      }
+    // 2- move card on the left battlefield ro the right
+    const leftCard = rightCard.player.opponent.boardSide.leftBattlefield.destinyCard!;
+    await leftCard.removeFromCurrentLocation();
+    leftCard.player.boardSide.rightBattlefield.destinyCard = leftCard;
+    await leftCard.play();
 
-      if (hasLeft) {
-        const card = left.destinyCard!;
-        await card.removeFromCurrentLocation();
-        right.destinyCard = card;
-        await right.destinyCard.play();
-      }
-    }
+    // 3- add a card to the left battlefield for the player who removed the right
+    const newLeftCard = rightCard.player.cardManager.destinyDeck.draw(1)[0];
+    newLeftCard.player.boardSide.leftBattlefield.destinyCard = newLeftCard;
+    await newLeftCard.play();
   }
 
   private async setupDestinyCards() {

@@ -16,7 +16,7 @@ export const innerFocus: SpellBlueprint<MinionCard> = {
   id: 'innerFocus',
   name: 'Inner Focus',
   description: dedent /*html*/ `
-  Wake up an ally minion.
+  Ready an ally minion.
   <rt-affinity affinities="${AFFINITIES.FIRE},${AFFINITIES.FIRE},${AFFINITIES.FIRE},${AFFINITIES.NEUTRAL}"></rt-affinity> <rt-keyword>Instant</rt-keyword>.
   `,
   collectable: true,

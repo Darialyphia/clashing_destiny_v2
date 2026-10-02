@@ -19,6 +19,10 @@ export class UseAbilityAction implements CardActionRule {
     return `<rt-mana>${a.manaCost ?? 0}</rt-mana> ${a.label}`;
   }
 
+  get unusableReason() {
+    return this.ability.unusableReason;
+  }
+
   handler(card: CardViewModel) {
     this.client.dispatch({
       type: 'declareUseCardAbility',

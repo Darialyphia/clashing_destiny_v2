@@ -1,14 +1,5 @@
 <script setup lang="ts">
-import { GIFT_STATES } from '@game/api';
 import { useLogout } from '@/auth/composables/useLogout';
-import { useGifts } from '@/player/composables/useGifts';
-
-const { data: gifts } = useGifts();
-const unclaimedGiftsCount = computed(() => {
-  return (
-    gifts.value?.filter(gift => gift.state === GIFT_STATES.ISSUED).length ?? 0
-  );
-});
 
 const { mutate: logout } = useLogout();
 </script>
@@ -36,18 +27,6 @@ const { mutate: logout } = useLogout();
     <li class="hot">
       <RouterLink :to="{ name: 'Shop' }" class="dual-text" data-text="Shop">
         Shop
-      </RouterLink>
-    </li>
-    <li>
-      <RouterLink
-        :to="{ name: 'Gifts' }"
-        class="dual-text relative"
-        data-text="Gifts"
-      >
-        Gifts
-        <span class="gift-chip" v-if="unclaimedGiftsCount > 0">
-          {{ unclaimedGiftsCount }}
-        </span>
       </RouterLink>
     </li>
     <li>
@@ -105,25 +84,6 @@ const { mutate: logout } = useLogout();
         font-size: var(--font-size-00);
       }
     }
-  }
-}
-
-.gift-chip {
-  margin-left: var(--size-1);
-  padding-left: var(--size-2);
-  padding-right: var(--size-2);
-  padding-top: var(--size-05);
-  padding-bottom: var(--size-05);
-  font-size: var(--font-size-0);
-  font-weight: 500;
-  background-color: var(--red-8);
-  color: white;
-  border-radius: var(--radius-round);
-  position: absolute;
-  top: 0;
-  left: 100%;
-  @screen lt-lg {
-    font-size: var(--font-size-00);
   }
 }
 </style>

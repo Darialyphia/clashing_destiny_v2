@@ -42,8 +42,13 @@ export const firestormMantra: SpellBlueprint<DestinyCard> = {
     const amountToSteal = card.player.cardTracker.getCardsPlayedThisTurnOfKind(
       CARD_KINDS.SPELL
     ).length;
-    await target.battlefield?.gainScore(amountToSteal);
-    await target.battlefield?.opponentBattlefield.loseScore(amountToSteal);
+    if (target.isAlly(card)) {
+      await target.battlefield?.gainScore(amountToSteal);
+      await target.battlefield?.opponentBattlefield.loseScore(amountToSteal);
+    } else {
+      await target.battlefield?.opponentBattlefield.gainScore(amountToSteal);
+      await target.battlefield?.loseScore(amountToSteal);
+    }
   },
   aiHints: {
     shouldPlay: () => 1

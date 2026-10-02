@@ -30,6 +30,7 @@ export type CardListContext = {
   includeUnowned: Ref<boolean>;
   cardPool: CardBlueprint[];
   textFilter: Ref<string, string>;
+  getUnownedId(blueprintId: string): CardId;
 
   hasKindFilter(kind: CardKind): boolean;
   toggleKindFilter(kind: CardKind): void;
@@ -44,6 +45,8 @@ export type CardListContext = {
   clearAffinityFilter(): void;
 
   manaCostFilter: Ref<{ min: number; max: number } | null>;
+
+  foilFilter: Ref<boolean>;
 };
 
 const CardListInjectionKey = Symbol(
@@ -80,6 +83,7 @@ export const provideCardList = () => {
   const affinityFilter = ref(new Set<Affinity>());
   const manaCostFilter = ref<{ min: number; max: number } | null>(null);
   const includeUnowned = ref(false);
+  const foilFilter = ref(true);
 
   const urlParams = useUrlSearchParams<{
     kinds?: string;
@@ -88,6 +92,7 @@ export const provideCardList = () => {
     manaMin?: string;
     manaMax?: string;
     includeUnowned?: string;
+    foil?: string;
   }>('history', { removeNullishValues: true });
 
   const parseFilterSet = <T extends string>(
@@ -134,11 +139,19 @@ export const provideCardList = () => {
         ? undefined
         : manaCostFilter.value?.max.toString();
     urlParams.includeUnowned = includeUnowned.value ? 'true' : undefined;
+    urlParams.foil = foilFilter.value ? 'true' : undefined;
   };
 
   restoreFiltersFromUrl();
   watch(
-    [kindFilter, rarityFilter, affinityFilter, manaCostFilter, includeUnowned],
+    [
+      kindFilter,
+      rarityFilter,
+      affinityFilter,
+      manaCostFilter,
+      includeUnowned,
+      foilFilter
+    ],
     syncFiltersToUrl,
     { deep: true }
   );
@@ -149,6 +162,9 @@ export const provideCardList = () => {
   const allBlueprints = Object.values(CARD_SET_DICTIONARY).flatMap(
     set => set.cards
   );
+
+  const getUnownedId = (blueprintId: string) =>
+    `unowned-${blueprintId}` as CardId;
   const cards = computed(() => {
     if (!myCollection.value) return [];
     const base = [...myCollection.value];
@@ -161,7 +177,7 @@ export const provideCardList = () => {
       });
       base.push(
         ...missing.map(bp => ({
-          id: `unowned-${bp.id}` as CardId,
+          id: getUnownedId(bp.id),
           blueprintId: bp.id,
           isFoil: false,
           copiesOwned: 0
@@ -176,7 +192,7 @@ export const provideCardList = () => {
           card: allBlueprints.find(b => b.id === c.blueprintId)!
         };
       })
-      .filter(({ card }) => {
+      .filter(({ card, isFoil }) => {
         if (kindFilter.value.size > 0 && !kindFilter.value.has(card.kind)) {
           return false;
         }
@@ -189,9 +205,18 @@ export const provideCardList = () => {
         }
 
         if (affinityFilter.value.size > 0) {
-          const isMatch = card.affinities.some(affinity =>
-            affinityFilter.value.has(affinity)
-          );
+          if (
+            affinityFilter.value.size === 1 &&
+            affinityFilter.value.has(AFFINITIES.NEUTRAL)
+          ) {
+            const isMatch = card.affinities.every(
+              affinity => affinity === AFFINITIES.NEUTRAL
+            );
+            if (!isMatch) return false;
+          }
+          const isMatch = card.affinities.some(affinity => {
+            return affinityFilter.value.has(affinity);
+          });
           if (!isMatch) return false;
         }
 
@@ -206,6 +231,10 @@ export const provideCardList = () => {
           ) {
             return false;
           }
+        }
+
+        if (!foilFilter.value && isFoil) {
+          return false;
         }
 
         if (textFilter.value) {
@@ -275,6 +304,8 @@ export const provideCardList = () => {
     cardPool: allBlueprints,
     includeUnowned,
     textFilter,
+    foilFilter,
+    getUnownedId,
 
     hasKindFilter(kind: CardKind) {
       return kindFilter.value.has(kind);

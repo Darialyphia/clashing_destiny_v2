@@ -5,13 +5,16 @@ import {
   CRAFTING_COST_PER_RARITY,
   DECRAFTING_REWARD_PER_RARITY,
   FOIL_CRAFTING_COST_MULTIPLIER,
-  FOIL_DECRAFTING_REWARD_MULTIPLIER
+  FOIL_DECRAFTING_REWARD_MULTIPLIER,
+  type CardId
 } from '@game/api';
 import {
   FOIL_UPGRADE_COST_PER_RARITY,
+  MIN_COPIES_OWNED_TO_ALLOW_AFFINITY_FOIL_UPGRADE,
   MIN_COPIES_OWNED_TO_ALLOW_FOIL_UPGRADE
 } from '@game/api/src/convex/card/card.constants';
 import type { CardBlueprint } from '@game/engine/src/card/card-blueprint';
+import { CARD_KINDS } from '@game/engine/src/card/card.enums';
 
 export const useCrafting = (
   card: Ref<{
@@ -19,7 +22,17 @@ export const useCrafting = (
     id: string;
     isFoil: boolean;
     copiesOwned: number;
-  }>
+  }>,
+  {
+    onCraftSuccess,
+    onDecraftSuccess
+  }: {
+    onCraftSuccess?: (data: { cardId: CardId }) => void;
+    onDecraftSuccess?: (data: {
+      cardId: CardId;
+      remainingCopies: number;
+    }) => void;
+  } = {}
 ) => {
   const { add: addToast } = useToast();
 
@@ -43,7 +56,8 @@ export const useCrafting = (
   const { mutate: craft, isLoading: isCrafting } = useAuthedMutation(
     api.cards.craft,
     {
-      onSuccess: () => {
+      onSuccess: data => {
+        onCraftSuccess?.({ cardId: data.cardId });
         addToast({
           title: 'Card crafted',
           description: `${card.value.card.name} was added to your collection.`,
@@ -63,7 +77,11 @@ export const useCrafting = (
   const { mutate: decraft, isLoading: isDecrafting } = useAuthedMutation(
     api.cards.decraft,
     {
-      onSuccess: () => {
+      onSuccess: data => {
+        onDecraftSuccess?.({
+          cardId: data.cardId,
+          remainingCopies: data.remainingCopies
+        });
         addToast({
           title: 'Card disenchanted',
           description: `${card.value.card.name} was disenchanted for ${decraftingReward.value} shards.`,
@@ -83,7 +101,10 @@ export const useCrafting = (
   const canUpgrade = computed(
     () =>
       !card.value.isFoil &&
-      card.value.copiesOwned >= MIN_COPIES_OWNED_TO_ALLOW_FOIL_UPGRADE
+      card.value.copiesOwned >=
+        (card.value.card.kind === CARD_KINDS.RUNE
+          ? MIN_COPIES_OWNED_TO_ALLOW_AFFINITY_FOIL_UPGRADE
+          : MIN_COPIES_OWNED_TO_ALLOW_FOIL_UPGRADE)
   );
   const { mutate: upgrade, isLoading: isUpgrading } = useAuthedMutation(
     api.cards.upgradeCardToFoil,

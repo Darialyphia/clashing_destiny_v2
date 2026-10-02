@@ -44,23 +44,13 @@ function formatDuration(milliseconds: number): string {
 
 <template>
   <div class="matchmaking-timer">
-    <span class="timer-value">{{ matchmakingElapsed }}</span>
+    {{ matchmakingElapsed }}
   </div>
 </template>
 
 <style scoped lang="postcss">
 .matchmaking-timer {
-  display: flex;
-  align-items: center;
-  gap: var(--size-1);
-  margin-left: var(--size-1);
-}
-
-.timer-value {
-  color: #efef9f;
   font-weight: var(--font-weight-6);
   font-family: 'Courier New', monospace;
-  padding: var(--size-1) var(--size-2);
-  text-align: center;
 }
 </style>
