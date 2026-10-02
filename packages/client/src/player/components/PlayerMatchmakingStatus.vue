@@ -15,56 +15,60 @@ const route = useRoute();
 </script>
 
 <template>
-  <div
-    v-if="me?.currentJoinedMatchmaking && route.name !== 'Matchmaking'"
-    class="matchmaking-status surface"
-  >
-    <div class="matchmaking-icon" />
-    <div class="matchmaking-name">
-      <span>In Queue</span>
-      <MatchmakingTimer
-        v-if="me.currentJoinedMatchmaking.joinedAt"
-        :joinedAt="me.currentJoinedMatchmaking.joinedAt"
-      />
-    </div>
-    <button
-      aria-label="Leave"
-      variant="error"
-      class="leave-button"
-      size="sm"
-      :isLoading="isLeavingMatchmaking"
-      @click="leaveMatchmaking({})"
-    />
-  </div>
-  <div
-    v-if="me?.currentLobby && route.name !== 'Lobby'"
-    class="lobby-status surface"
-  >
-    <div class="lobby-icon" />
-
-    <div class="lobby-infos">
-      <span>In Lobby</span>
-      <div class="lobby-name">
-        {{ me.currentLobby.name }}
+  <Transition>
+    <div
+      v-if="me?.currentJoinedMatchmaking && route.name !== 'Matchmaking'"
+      class="matchmaking-status surface"
+    >
+      <div class="matchmaking-icon" />
+      <div class="matchmaking-name">
+        <span>In Queue</span>
+        <MatchmakingTimer
+          v-if="me.currentJoinedMatchmaking.joinedAt"
+          :joinedAt="me.currentJoinedMatchmaking.joinedAt"
+        />
       </div>
-    </div>
-    <div class="flex gap-2">
-      <RouterLink
-        aria-label="Go to Lobby"
-        :to="{ name: 'Lobby', params: { id: me.currentLobby.id } }"
-        class="lobby-back-button"
-      />
-
       <button
         aria-label="Leave"
         variant="error"
         class="leave-button"
         size="sm"
-        :isLoading="isLeavingLobby"
-        @click="leaveLobby({ lobbyId: me.currentLobby.id })"
+        :isLoading="isLeavingMatchmaking"
+        @click="leaveMatchmaking({})"
       />
     </div>
-  </div>
+  </Transition>
+  <Transition>
+    <div
+      v-if="me?.currentLobby && route.name !== 'Lobby'"
+      class="lobby-status surface"
+    >
+      <div class="lobby-icon" />
+
+      <div class="lobby-infos">
+        <span>In Lobby</span>
+        <div class="lobby-name">
+          {{ me.currentLobby.name }}
+        </div>
+      </div>
+      <div class="flex gap-2">
+        <RouterLink
+          aria-label="Go to Lobby"
+          :to="{ name: 'Lobby', params: { id: me.currentLobby.id } }"
+          class="lobby-back-button"
+        />
+
+        <button
+          aria-label="Leave"
+          variant="error"
+          class="leave-button"
+          size="sm"
+          :isLoading="isLeavingLobby"
+          @click="leaveLobby({ lobbyId: me.currentLobby.id })"
+        />
+      </div>
+    </div>
+  </Transition>
 </template>
 
 <style scoped lang="postcss">
@@ -133,5 +137,15 @@ const route = useRoute();
   &:hover:not(:disabled) {
     filter: brightness(1.5);
   }
+}
+
+.v-enter-active,
+.v-leave-active {
+  transition: all 0.3s var(--ease-2);
+}
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
+  translate: -100% 0;
 }
 </style>

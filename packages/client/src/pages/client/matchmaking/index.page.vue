@@ -6,11 +6,11 @@ import {
 import { useMatchmakingList } from './useMatchmakingList';
 import { useMe } from '@/auth/composables/useMe';
 import { useDecks, type UserDeck } from '@/card/composables/useDecks';
-import PlayerDeck from '@/player/components/PlayerDeck.vue';
 import FancyButton from '@/ui/components/FancyButton.vue';
 import type { DeckId } from '@game/api';
 import MatchmakingTimer from '@/matchmaking/components/MatchmakingTimer.vue';
 import PlayerDeckCard from '@/player/components/PlayerDeckCard.vue';
+import PageTitle from '@/shared/components/PageTitle.vue';
 
 definePage({
   name: 'Matchmaking',
@@ -77,13 +77,7 @@ const getDisplayedDeck = (deck: UserDeck) => ({
     />
 
     <main class="container">
-      <h1
-        class="page-title dual-text"
-        data-text="Matchmaking"
-        style="--dual-text-stroke: 4px"
-      >
-        Matchmaking
-      </h1>
+      <PageTitle title="Matchmaking" />
 
       <div class="matchmaking-content">
         <section>
@@ -161,14 +155,6 @@ const getDisplayedDeck = (deck: UserDeck) => ({
   justify-content: center;
   align-items: center;
   height: 100dvh;
-}
-
-.page-title {
-  font-size: var(--font-size-7);
-  font-weight: var(--font-weight-7);
-  color: var(--text-1);
-  margin-bottom: var(--size-3);
-  font-family: 'Cinzel Decorative', serif;
 }
 
 .matchmaking-content {

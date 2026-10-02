@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import Sandbox from '@/game/components/Sandbox.vue';
 import FancyButton from '@/ui/components/FancyButton.vue';
+import PageTitle from '@/shared/components/PageTitle.vue';
 import { type UserDeck } from '@/card/composables/useDecks';
 import DeckSelector from './DeckSelector.vue';
 import type { PlayerOptions } from '@game/engine/src/player/player.entity';
@@ -53,13 +54,7 @@ const playersConfig = computed(() => {
       :to="{ name: 'SelectMode' }"
     />
 
-    <h1
-      class="dual-text"
-      data-text="Select your Decks"
-      style="--dual-text-stroke: 4px"
-    >
-      Select your Decks
-    </h1>
+    <PageTitle title="Select your Decks" />
 
     <DeckSelector
       v-model:p1Deck="p1Deck"
@@ -83,14 +78,5 @@ const playersConfig = computed(() => {
     padding-inline: var(--size-9);
     overflow-y: auto;
   }
-}
-
-h1 {
-  font-size: var(--font-size-7);
-  font-weight: var(--font-weight-7);
-  color: var(--text-1);
-  margin-bottom: var(--size-3);
-  font-family: 'Cinzel Decorative', serif;
-  text-align: center;
 }
 </style>

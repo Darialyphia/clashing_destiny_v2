@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import FancyButton from '@/ui/components/FancyButton.vue';
 import { assets } from '@/assets';
+import PageTitle from '@/shared/components/PageTitle.vue';
 
 definePage({
   name: 'SelectMode',
@@ -20,13 +21,7 @@ definePage({
     />
 
     <div class="page-container">
-      <h1
-        class="dual-text"
-        data-text="Choose Your Game Mode"
-        style="--dual-text-stroke: 4px"
-      >
-        Choose Your Game Mode
-      </h1>
+      <PageTitle title="Choose Your Game Mode" />
 
       <div class="mode-options">
         <RouterLink
@@ -83,17 +78,6 @@ definePage({
   display: grid;
   place-items: center;
   width: 100vw;
-}
-
-h1 {
-  font-size: var(--font-size-7);
-  font-weight: var(--font-weight-7);
-  color: var(--text-1);
-  margin-bottom: var(--size-3);
-  font-family: 'Cinzel Decorative', serif;
-  @screen lt-lg {
-    font-size: var(--font-size-6);
-  }
 }
 
 .mode-options {
@@ -168,10 +152,6 @@ h1 {
 @container (max-width: 500px) {
   .mode-options {
     grid-template-columns: 1fr;
-  }
-
-  h1 {
-    font-size: var(--font-size-6);
   }
 }
 </style>

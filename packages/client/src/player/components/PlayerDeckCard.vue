@@ -1,21 +1,35 @@
 <script setup lang="ts">
+import { keyBy } from 'lodash-es';
 import {
   AFFINITIES,
   CARD_KINDS,
-  type Affinity
+  type Affinity,
+  type Rarity
 } from '@game/engine/src/card/card.enums';
-import { CARDS_DICTIONARY } from '@game/engine/src/card/sets';
-import { HoverCardContent, HoverCardPortal, HoverCardRoot } from 'reka-ui';
+import {
+  CARD_SET_DICTIONARY,
+  CARDS_DICTIONARY
+} from '@game/engine/src/card/sets';
 import type { DeckValidationResult } from '@game/engine/src/card/validators/deck.validator';
 import { sprites } from '@/assets';
 import { useSprite } from '@/shared/composables/useSprite';
 import { match } from 'ts-pattern';
 import { ANIMATIONS_NAMES } from '@game/engine/src/game/game.enums';
 import { assets } from '@/assets';
+import UiDrawer from '@/ui/components/UiDrawer.vue';
+import { StandardDeckValidator } from '@game/engine/src/card/validators/standard.validator';
+import { DeckBuilderViewModel } from '@/card/deck-builder.model';
+import type { CardId } from '@game/api';
 
 export type DisplayedDeck = {
+  id: string;
   name: string;
-  cards: { blueprintId: string; copies: number }[];
+  cards: {
+    blueprintId: string;
+    copies: number;
+    cardId: CardId;
+    isFoil: boolean;
+  }[];
   isValid: DeckValidationResult;
 };
 const { deck } = defineProps<{
@@ -27,17 +41,6 @@ const mainDeck = computed(() =>
     ...card,
     blueprint: CARDS_DICTIONARY[card.blueprintId]
   }))
-);
-const minions = computed(() =>
-  mainDeck.value.filter(item => item.blueprint.kind === CARD_KINDS.MINION)
-);
-
-const spells = computed(() =>
-  mainDeck.value.filter(item => item.blueprint.kind === CARD_KINDS.SPELL)
-);
-
-const artifacts = computed(() =>
-  mainDeck.value.filter(item => item.blueprint.kind === CARD_KINDS.ARTIFACT)
 );
 
 const violations = computed(() =>
@@ -88,80 +91,141 @@ const { activeFrameRect, bgPosition, imageBg } = useSprite({
   repeat: true,
   scalePositionByPixelScale: true
 });
+
+const isDetailsOpened = ref(false);
+
+const allBlueprints = Object.values(CARD_SET_DICTIONARY).flatMap(
+  set => set.cards
+);
+
+const deckBuilder = new DeckBuilderViewModel(
+  allBlueprints,
+  new StandardDeckValidator({ cardPool: keyBy(allBlueprints, 'id') })
+);
+watch(
+  () => deck,
+  newDeck => {
+    deckBuilder.loadDeck({
+      name: newDeck.name,
+      id: newDeck.id,
+      isEqual(first, second) {
+        return first.meta.cardId === second.meta.cardId;
+      },
+      cards: newDeck.cards.map(card => ({
+        blueprintId: card.blueprintId,
+        copies: card.copies,
+        meta: {
+          isFoil: card.isFoil,
+          cardId: card.cardId
+        }
+      }))
+    });
+  },
+  { immediate: true }
+);
+
+const cards = computed(() => {
+  // group foil ans non foil cards who share the same blueprint id
+  // if a card only has a foil version, change isFoil to false
+  const groupedCards: Record<
+    string,
+    Array<{ blueprintId: string; copies: number; name: string; rarity: Rarity }>
+  > = {};
+  for (const card of deckBuilder.mainDeckCards) {
+    const id = card.blueprintId;
+    if (!groupedCards[id]) groupedCards[id] = [];
+    groupedCards[id].push({
+      blueprintId: card.blueprintId,
+      rarity: card.blueprint.rarity,
+      copies: card.copies,
+      name: card.blueprint.name
+    });
+  }
+
+  const result: Array<{
+    blueprintId: string;
+    copies: number;
+    name: string;
+    rarity: Rarity;
+  }> = [];
+  for (const group of Object.values(groupedCards)) {
+    result.push({
+      blueprintId: group[0].blueprintId,
+      copies: group.reduce((sum, card) => sum + card.copies, 0),
+      name: group[0].name,
+      rarity: group[0].rarity
+    });
+  }
+
+  return result;
+});
 </script>
 
 <template>
-  <div>
-    <HoverCardRoot :open-delay="200" :close-delay="0">
-      <button
-        class="player-deck-card"
-        :class="{
-          invalid: deck.isValid.result === 'failure'
+  <div class="relative">
+    <button
+      class="player-deck-card"
+      :class="{
+        invalid: deck.isValid.result === 'failure'
+      }"
+    >
+      <div
+        class="art"
+        :class="[mostExpensiveCard.blueprint.kind.toLocaleLowerCase()]"
+        :style="{
+          '--bg-position': bgPosition,
+          '--width': `${activeFrameRect.width}px`,
+          '--height': `${activeFrameRect.height}px`,
+          '--background-width': `calc(${sprite.sheetSize.w}px * var(--pixel-scale))`,
+          '--background-height': `calc(${sprite.sheetSize.h}px * var(--pixel-scale))`
         }"
       >
-        <div
-          class="art"
-          :class="[mostExpensiveCard.blueprint.kind.toLocaleLowerCase()]"
-          :style="{
-            '--bg-position': bgPosition,
-            '--width': `${activeFrameRect.width}px`,
-            '--height': `${activeFrameRect.height}px`,
-            '--background-width': `calc(${sprite.sheetSize.w}px * var(--pixel-scale))`,
-            '--background-height': `calc(${sprite.sheetSize.h}px * var(--pixel-scale))`
-          }"
-        >
-          <div class="sprite" />
-        </div>
-        <div
-          class="deck-name dual-text"
-          :data-text="deck.name"
-          style="--dual-text-stroke-offset-y: -2px"
-        >
-          {{ deck.name }}
-        </div>
-        <div class="affinities">
-          <img
-            v-for="aff in affinities"
-            :key="aff"
-            :src="assets[`ui/card/v3/affinity-${aff.toLocaleLowerCase()}`].path"
-            :alt="aff"
-            class="affinity"
-          />
-        </div>
-      </button>
+        <div class="sprite" />
+      </div>
+      <div
+        class="deck-name dual-text"
+        :data-text="deck.name"
+        style="--dual-text-stroke-offset-y: -2px"
+      >
+        {{ deck.name }}
+      </div>
+      <div class="affinities">
+        <img
+          v-for="aff in affinities"
+          :key="aff"
+          :src="assets[`ui/card/v3/affinity-${aff.toLocaleLowerCase()}`].path"
+          :alt="aff"
+          class="affinity"
+        />
+      </div>
+    </button>
 
-      <HoverCardPortal>
-        <HoverCardContent side="right" align="center" :side-offset="8">
-          <div class="deck-details">
-            <ul>
-              <li v-for="(violation, index) in violations" :key="index">
-                <span class="invalid-label">{{ violation.reason }}</span>
-              </li>
-            </ul>
-            <ul>
-              <li v-for="item in minions" :key="item.blueprint.id">
-                {{ item.copies }}x
-                <span :class="item.blueprint.rarity.toLocaleLowerCase()">
-                  {{ item.blueprint.name }}
-                </span>
-              </li>
-              <li v-for="item in spells" :key="item.blueprint.id">
-                {{ item.copies }}x
-                <span :class="item.blueprint.rarity.toLocaleLowerCase()">
-                  {{ item.blueprint.name }}
-                </span>
-              </li>
-              <li v-for="item in artifacts" :key="item.blueprint.id">
-                {{ item.copies }}x
-                <span :class="item.blueprint.rarity.toLocaleLowerCase()">
-                  {{ item.blueprint.name }}
-                </span>
-              </li>
-            </ul>
-          </div>
-        </HoverCardContent>
-      </HoverCardPortal>
-    </HoverCardRoot>
+    <button
+      class="details-toggle"
+      aria-label="Toggle details"
+      @click="isDetailsOpened = !isDetailsOpened"
+    />
+    <UiDrawer
+      v-model:is-opened="isDetailsOpened"
+      title="Deck details"
+      :style="{ '--ui-drawer-size': 'var(--size-xs)' }"
+    >
+      <div class="deck-details surface">
+        <ul>
+          <li v-for="(violation, index) in violations" :key="index">
+            <span class="invalid-label">{{ violation.reason }}</span>
+          </li>
+        </ul>
+        <ul>
+          <li v-for="card in cards" :key="card.blueprintId">
+            {{ card.copies }}x
+            <span :class="card.rarity.toLocaleLowerCase()">
+              {{ card.name }}
+            </span>
+          </li>
+        </ul>
+      </div>
+    </UiDrawer>
   </div>
 </template>
 
@@ -206,12 +270,7 @@ const { activeFrameRect, bgPosition, imageBg } = useSprite({
 }
 
 .deck-details {
-  padding: var(--size-4);
-  --un-bg-opacity: 1;
-  background-color: hsl(var(--gray-10-hsl) / var(--un-bg-opacity));
-  border-radius: var(--radius-2);
-  box-shadow: var(--shadow-3);
-  color: white;
+  height: 100%;
 }
 
 .rare {
@@ -278,5 +337,18 @@ const { activeFrameRect, bgPosition, imageBg } = useSprite({
   bottom: 28px;
   left: 50%;
   transform: translateX(-50%);
+}
+
+.details-toggle {
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+  width: 48px;
+  aspect-ratio: 1;
+  background: url('@/assets/ui/question-mark.png') no-repeat center center;
+  background-size: cover;
+  &:hover:not(:disabled) {
+    filter: brightness(1.5);
+  }
 }
 </style>
