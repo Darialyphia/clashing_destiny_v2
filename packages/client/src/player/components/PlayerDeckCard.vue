@@ -3,8 +3,7 @@ import { keyBy } from 'lodash-es';
 import {
   AFFINITIES,
   CARD_KINDS,
-  type Affinity,
-  type Rarity
+  type Affinity
 } from '@game/engine/src/card/card.enums';
 import {
   CARD_SET_DICTIONARY,
@@ -20,6 +19,10 @@ import UiDrawer from '@/ui/components/UiDrawer.vue';
 import { StandardDeckValidator } from '@game/engine/src/card/validators/standard.validator';
 import { DeckBuilderViewModel } from '@/card/deck-builder.model';
 import type { CardId } from '@game/api';
+import FancyButton from '@/ui/components/FancyButton.vue';
+import BlueprintSmallCard from '@/card/components/BlueprintSmallCard.vue';
+import type { CardBlueprint } from '@game/engine/src/card/card-blueprint';
+import ManaCurveChart from './ManaCurveChart.vue';
 
 export type DisplayedDeck = {
   id: string;
@@ -89,7 +92,8 @@ const { activeFrameRect, bgPosition, imageBg } = useSprite({
   kind: computed(() => mostExpensiveCard.value.blueprint.kind),
   scale: 1,
   repeat: true,
-  scalePositionByPixelScale: true
+  scalePositionByPixelScale: true,
+  animated: false
 });
 
 const isDetailsOpened = ref(false);
@@ -129,36 +133,32 @@ const cards = computed(() => {
   // if a card only has a foil version, change isFoil to false
   const groupedCards: Record<
     string,
-    Array<{ blueprintId: string; copies: number; name: string; rarity: Rarity }>
+    Array<{ blueprint: CardBlueprint; copies: number }>
   > = {};
   for (const card of deckBuilder.mainDeckCards) {
     const id = card.blueprintId;
     if (!groupedCards[id]) groupedCards[id] = [];
     groupedCards[id].push({
-      blueprintId: card.blueprintId,
-      rarity: card.blueprint.rarity,
-      copies: card.copies,
-      name: card.blueprint.name
+      blueprint: card.blueprint,
+      copies: card.copies
     });
   }
 
   const result: Array<{
-    blueprintId: string;
+    blueprint: CardBlueprint;
     copies: number;
-    name: string;
-    rarity: Rarity;
   }> = [];
   for (const group of Object.values(groupedCards)) {
     result.push({
-      blueprintId: group[0].blueprintId,
-      copies: group.reduce((sum, card) => sum + card.copies, 0),
-      name: group[0].name,
-      rarity: group[0].rarity
+      blueprint: group[0].blueprint,
+      copies: group.reduce((sum, card) => sum + card.copies, 0)
     });
   }
 
   return result;
 });
+
+const route = useRoute();
 </script>
 
 <template>
@@ -205,25 +205,75 @@ const cards = computed(() => {
       aria-label="Toggle details"
       @click="isDetailsOpened = !isDetailsOpened"
     />
-    <UiDrawer
-      v-model:is-opened="isDetailsOpened"
-      title="Deck details"
-      :style="{ '--ui-drawer-size': 'var(--size-xs)' }"
-    >
+    <UiDrawer v-model:is-opened="isDetailsOpened" title="Deck details">
       <div class="deck-details surface">
-        <ul>
-          <li v-for="(violation, index) in violations" :key="index">
-            <span class="invalid-label">{{ violation.reason }}</span>
-          </li>
-        </ul>
-        <ul>
-          <li v-for="card in cards" :key="card.blueprintId">
-            {{ card.copies }}x
-            <span :class="card.rarity.toLocaleLowerCase()">
-              {{ card.name }}
-            </span>
-          </li>
-        </ul>
+        <div class="details-scroller fancy-scrollbar">
+          <header class="relative">
+            <div
+              v-if="sprite"
+              class="details-art"
+              :class="[mostExpensiveCard.blueprint.kind.toLocaleLowerCase()]"
+              :style="{
+                '--bg-position': bgPosition,
+                '--width': `${activeFrameRect.width}px`,
+                '--height': `${activeFrameRect.height}px`,
+                '--background-width': `calc(${sprite.sheetSize.w}px * var(--pixel-scale))`,
+                '--background-height': `calc(${sprite.sheetSize.h}px * var(--pixel-scale))`
+              }"
+            >
+              <div class="details-sprite" :style="{ '--bg': imageBg }" />
+            </div>
+            <div
+              class="details-name dual-text"
+              :data-text="deck.name"
+              style="--dual-text-stroke-offset-y: 2px"
+            >
+              {{ deck.name }}
+            </div>
+            <div class="affinities">
+              <img
+                v-for="aff in affinities"
+                :key="aff"
+                :src="
+                  assets[`ui/card/v3/affinity-${aff.toLocaleLowerCase()}`].path
+                "
+                :alt="aff"
+                class="affinity"
+              />
+            </div>
+          </header>
+
+          <ManaCurveChart :deck-builder="deckBuilder" class="mana-curve" />
+
+          <ul class="mb-3" v-if="violations.length > 0">
+            <li v-for="(violation, index) in violations" :key="index">
+              <span class="invalid-label">{{ violation.reason }}</span>
+            </li>
+          </ul>
+
+          <div class="details-cards">
+            <div
+              v-for="card in cards"
+              :key="card.blueprint.id"
+              class="relative"
+            >
+              <BlueprintSmallCard :blueprint="card.blueprint" />
+              <div class="copies">
+                {{ card.copies }}
+              </div>
+            </div>
+          </div>
+          <footer>
+            <FancyButton
+              class="mt-4"
+              text="Edit Deck"
+              :to="{
+                name: 'Collection',
+                query: { from: route.name, deck: deck.id }
+              }"
+            />
+          </footer>
+        </div>
       </div>
     </UiDrawer>
   </div>
@@ -240,17 +290,8 @@ const cards = computed(() => {
 
   /* border: solid 1px hsl(var(--color-primary-hsl) / 0.5); */
   &.invalid {
-    border-color: var(--red-8);
-    background-image:
-      linear-gradient(to right, hsl(0deg 0% 20% / 0.5), hsl(0deg 0% 0% / 0.5)),
-      var(--bg),
-      repeating-linear-gradient(
-        45deg,
-        hsl(var(--red-8-hsl) / 0.35) 0px,
-        hsl(var(--red-8-hsl) / 0.35) 10px,
-        hsl(var(--red-9-hsl) / 0.35) 10px,
-        hsl(var(--red-9-hsl) / 0.35) 20px
-      );
+    background: url(@/assets/ui/card/v3/deck-invalid.png);
+    background-size: cover;
   }
 }
 
@@ -271,6 +312,13 @@ const cards = computed(() => {
 
 .deck-details {
   height: 100%;
+  padding-right: 0;
+}
+
+.details-scroller {
+  height: 100%;
+  overflow: auto;
+  padding-right: var(--size-4);
 }
 
 .rare {
@@ -286,8 +334,7 @@ const cards = computed(() => {
 }
 
 .invalid-label {
-  color: var(--red-6);
-  font-weight: var(--font-weight-7);
+  color: var(--red-5);
 }
 
 .affinity {
@@ -350,5 +397,105 @@ const cards = computed(() => {
   &:hover:not(:disabled) {
     filter: brightness(1.5);
   }
+}
+
+.deck-details {
+  --pixel-scale: 3;
+  header {
+    padding-block: var(--size-5);
+    border: solid 1px #73473a;
+    z-index: 0;
+    margin-bottom: var(--size-5);
+    overflow-x: clip;
+    background: linear-gradient(
+      to right,
+      transparent,
+      #111 30%,
+      #111 70%,
+      transparent
+    );
+
+    .affinities {
+      position: absolute;
+      left: 50%;
+      bottom: 0;
+      translate: 0 50%;
+    }
+  }
+
+  footer {
+    position: sticky;
+    bottom: 0;
+    display: flex;
+    justify-content: flex-end;
+  }
+}
+
+.details-name {
+  font-family: 'Cinzel Decorative', 'Cinzel', serif;
+  font-size: var(--font-size-4);
+  text-align: center;
+  font-weight: var(--font-weight-7);
+  line-height: 1;
+}
+.details-art {
+  position: absolute;
+  width: calc(var(--pixel-scale) * var(--width));
+  height: calc(var(--pixel-scale) * var(--height));
+  right: 0;
+  pointer-events: none;
+  scale: -1 1;
+  bottom: -120px;
+
+  &.spell &,
+  &.rune &,
+  &.artifact & {
+    translate: 0 0;
+  }
+  &.minion {
+    translate: 25% -20px;
+  }
+  &.destiny {
+    translate: 25px 0px;
+  }
+}
+
+.details-sprite {
+  position: absolute;
+  inset: 0;
+  background: var(--bg);
+  background-position: var(--bg-position);
+  background-repeat: no-repeat;
+  background-size: var(--background-width) var(--background-height);
+  pointer-events: none;
+}
+
+.details-cards {
+  --pixel-scale: 1;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  column-gap: var(--size-1);
+  row-gap: var(--size-2);
+}
+
+.copies {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.7);
+  width: 24px;
+  aspect-ratio: 1;
+  border-radius: var(--radius-round);
+  display: grid;
+  place-items: center;
+  border: solid 1px #af7d48;
+  color: #af7d48;
+  font-weight: var(--font-weight-7);
+}
+
+.mana-curve {
+  height: var(--size-11);
+  margin-bottom: var(--size-3);
 }
 </style>

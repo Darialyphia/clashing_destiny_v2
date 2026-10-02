@@ -1,7 +1,15 @@
 <script setup lang="ts">
-import { useCollectionPage } from './useCollectionPage';
+import type { DeckBuilderViewModel } from '@/card/deck-builder.model';
 
-const { deckBuilder } = useCollectionPage();
+const { deckBuilder } = defineProps<{ deckBuilder: DeckBuilderViewModel }>();
+
+const highestCount = computed(() =>
+  Math.max(
+    ...Array.from({ length: 7 }, (_, i) =>
+      i === 6 ? getCountForCostAndUp(i) : getCountForCost(i)
+    )
+  )
+);
 
 const getCount = (cards: Array<{ copies: number }>) => {
   return cards.reduce((acc, card) => {
@@ -14,7 +22,7 @@ const getCount = (cards: Array<{ copies: number }>) => {
 
 const getCountForCost = (cost: number) =>
   getCount(
-    deckBuilder.value.mainDeckCards.filter(c => {
+    deckBuilder.mainDeckCards.filter(c => {
       if ('manaCost' in c.blueprint) {
         return c.blueprint.manaCost === cost;
       }
@@ -24,7 +32,7 @@ const getCountForCost = (cost: number) =>
 
 const getCountForCostAndUp = (minCost: number) =>
   getCount(
-    deckBuilder.value.mainDeckCards.filter(c => {
+    deckBuilder.mainDeckCards.filter(c => {
       if ('manaCost' in c.blueprint) {
         return (c.blueprint.manaCost ?? 0) >= minCost;
       }
@@ -34,10 +42,7 @@ const getCountForCostAndUp = (minCost: number) =>
 </script>
 
 <template>
-  <div
-    class="bars lt-lg:hidden"
-    :style="{ '--total': deckBuilder.mainDeckSize }"
-  >
+  <div class="bars lt-lg:hidden" :style="{ '--highest': highestCount }">
     <div
       v-for="i in 7"
       :key="i"
@@ -58,9 +63,13 @@ const getCountForCostAndUp = (minCost: number) =>
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     gap: var(--size-1);
-    height: var(--size-10);
     margin-top: var(--size-2);
-
+    border: solid 2px #73473a;
+    border-top-color: #af7d48;
+    border-radius: var(--radius-3);
+    border-bottom-left-radius: var(--radius-2);
+    border-bottom-right-radius: var(--radius-2);
+    overflow: hidden;
     > div {
       display: grid;
       grid-template-rows: 1fr auto;
@@ -72,17 +81,18 @@ const getCountForCostAndUp = (minCost: number) =>
     display: grid;
     place-content: center;
     color: var(--primary);
+    background: #73473a;
   }
 
   .bar {
-    --percent: calc(1% * (var(--count) * 100 / var(--total)));
+    --percent: calc(1% * (var(--count) * 100 / var(--highest)) - 20px);
 
     position: relative;
     background: linear-gradient(
       to top,
       var(--primary) 0%,
       var(--primary) var(--percent),
-      hsl(var(--gray-12-hsl) / 0.5) var(--percent)
+      hsl(var(--gray-12-hsl) / 0.65) var(--percent)
     );
 
     &:not([data-count='0'])::after {
@@ -92,8 +102,9 @@ const getCountForCostAndUp = (minCost: number) =>
       bottom: var(--percent);
       left: 50%;
       transform: translateX(-50%);
-
+      color: var(--primary);
       font-size: var(--font-size-0);
+      font-weight: var(--font-weight-5);
     }
   }
 }

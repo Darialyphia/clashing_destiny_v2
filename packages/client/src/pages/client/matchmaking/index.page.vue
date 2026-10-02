@@ -58,11 +58,9 @@ const canJoin = computed(() => {
 });
 
 const getDisplayedDeck = (deck: UserDeck) => ({
+  id: deck.id,
   name: deck.name,
-  cards: deck.cards.map(card => ({
-    blueprintId: card.blueprintId,
-    copies: card.copies
-  })),
+  cards: deck.cards,
   isValid: deck.isValid
 });
 </script>

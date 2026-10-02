@@ -21,23 +21,18 @@ const selectDeck = (deck: UserDeck) => {
     player = 1;
   }
 };
-
-const validDecks = computed(() => {
-  if (!decks.value) return [];
-  return decks.value.filter(deck => deck.isValid.result === 'success');
-});
 </script>
 
 <template>
   <div class="deck-selector">
     <p v-if="isLoading">Loading decks...</p>
-    <p v-if="!validDecks.length">
-      You don't have any valid decks yet. Create some decks in the Deck Builder
-      to get started!
+    <p v-else-if="!decks.length">
+      You don't have any deck ready. Create some decks in the Deck Builder to
+      get started!
     </p>
     <ul class="flex gap-3 flex-wrap justify-center">
       <li
-        v-for="deck in validDecks"
+        v-for="deck in decks"
         :key="deck.name"
         class="relative"
         :class="{
@@ -45,7 +40,16 @@ const validDecks = computed(() => {
           'selected-p2': p2Deck?.id === deck.id
         }"
       >
-        <PlayerDeckCard :deck="deck" @click="selectDeck(deck)" />
+        <PlayerDeckCard
+          :deck="deck"
+          @click="
+            () => {
+              if (deck.isValid.result === 'success') {
+                selectDeck(deck);
+              }
+            }
+          "
+        />
         <div class="p1-indicator">P1</div>
         <div class="p2-indicator">P2</div>
       </li>

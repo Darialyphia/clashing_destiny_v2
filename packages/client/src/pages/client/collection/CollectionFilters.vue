@@ -119,6 +119,8 @@ const toggleMinManaCostFilter = (cost: number) => {
     manaCostFilter.value = { min: cost, max: Infinity };
   }
 };
+
+const route = useRoute();
 </script>
 
 <template>
@@ -127,7 +129,7 @@ const toggleMinManaCostFilter = (cost: number) => {
       v-if="router.currentRoute.value.name !== 'ClientHome'"
       text="Back"
       size="md"
-      @click="router.push({ name: 'ClientHome' })"
+      @click="router.push({ name: (route.query.from as any) ?? 'ClientHome' })"
     />
 
     <Icon icon="material-symbols:zoom-in" width="2rem" />

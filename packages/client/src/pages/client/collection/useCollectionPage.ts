@@ -14,10 +14,11 @@ import {
   useUpdateDeck,
   type UserDeck
 } from '@/card/composables/useDecks';
-import type { Nullable } from '@game/shared';
+import { isDefined, type Nullable } from '@game/shared';
 import type { DeckId } from '@game/api';
 import type { CardBlueprint } from '@game/engine/src/card/card-blueprint';
 import { useResponsive } from '@/shared/composables/useResponsive';
+import { useRouteQuery } from '@vueuse/router';
 
 export type CollectionContext = CardListContext & {
   viewMode: Ref<'expanded' | 'compact'>;
@@ -79,33 +80,38 @@ export const provideCollectionPage = () => {
     )
   ) as Ref<DeckBuilderViewModel>;
 
-  const selectedDeckId = ref<Nullable<DeckId>>(null);
+  const selectedDeckId = useRouteQuery('deck') as Ref<Nullable<DeckId>>;
+
   const selectedDeck = computed(
     () => decks.value?.find(deck => deck.id === selectedDeckId.value) || null
   );
-  watch(selectedDeck, newDeck => {
-    if (!newDeck) {
-      deckBuilder.value.reset();
-      return;
-    }
-    deckBuilder.value.loadDeck({
-      name: newDeck.name,
-      id: newDeck.id,
-      isEqual(first, second) {
-        return first.meta.cardId === second.meta.cardId;
-      },
-      cards: newDeck.cards.map(card => ({
-        blueprintId: card.blueprintId,
-        copies: card.copies,
-        meta: {
-          isFoil: card.isFoil,
-          cardId: card.cardId
-        }
-      }))
-    });
-  });
+  watch(
+    selectedDeck,
+    newDeck => {
+      if (!newDeck) {
+        deckBuilder.value.reset();
+        return;
+      }
+      deckBuilder.value.loadDeck({
+        name: newDeck.name,
+        id: newDeck.id,
+        isEqual(first, second) {
+          return first.meta.cardId === second.meta.cardId;
+        },
+        cards: newDeck.cards.map(card => ({
+          blueprintId: card.blueprintId,
+          copies: card.copies,
+          meta: {
+            isFoil: card.isFoil,
+            cardId: card.cardId
+          }
+        }))
+      });
+    },
+    { immediate: true }
+  );
 
-  const isEditingDeck = computed(() => selectedDeckId.value !== null);
+  const isEditingDeck = computed(() => isDefined(selectedDeckId.value));
   const { mutate: createDeck } = useCreateDeck(({ deckId }) => {
     selectedDeckId.value = deckId as DeckId;
     deckBuilder.value.reset();
