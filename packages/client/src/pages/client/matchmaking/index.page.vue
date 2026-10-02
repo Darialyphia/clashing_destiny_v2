@@ -104,6 +104,7 @@ const getDisplayedDeck = (deck: UserDeck) => ({
             </li>
           </ul>
         </section>
+        -->
 
         <footer>
           <FancyButton
