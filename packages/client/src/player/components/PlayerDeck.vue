@@ -1,18 +1,6 @@
 <script setup lang="ts">
-import {
-  AFFINITIES,
-  CARD_KINDS,
-  type Affinity
-} from '@game/engine/src/card/card.enums';
-import { useResponsive } from '@/shared/composables/useResponsive';
+import { AFFINITIES, type Affinity } from '@game/engine/src/card/card.enums';
 import { CARDS_DICTIONARY } from '@game/engine/src/card/sets';
-import {
-  HoverCardContent,
-  HoverCardPortal,
-  HoverCardRoot,
-  HoverCardTrigger
-} from 'reka-ui';
-import FancyButton from '@/ui/components/FancyButton.vue';
 import type { DeckValidationResult } from '@game/engine/src/card/validators/deck.validator';
 import { assets } from '@/assets';
 
@@ -31,21 +19,6 @@ const mainDeck = computed(() =>
     blueprint: CARDS_DICTIONARY[card.blueprintId]
   }))
 );
-const minions = computed(() =>
-  mainDeck.value.filter(item => item.blueprint.kind === CARD_KINDS.MINION)
-);
-
-const spells = computed(() =>
-  mainDeck.value.filter(item => item.blueprint.kind === CARD_KINDS.SPELL)
-);
-
-const artifacts = computed(() =>
-  mainDeck.value.filter(item => item.blueprint.kind === CARD_KINDS.ARTIFACT)
-);
-
-const violations = computed(() =>
-  deck.isValid.result === 'failure' ? deck.isValid.violations : []
-);
 
 const affinities = computed(() => {
   const result: Affinity[] = [];
@@ -62,75 +35,33 @@ const affinities = computed(() => {
 
   return result;
 });
-
-const { isSmallViewport } = useResponsive();
 </script>
 
 <template>
   <div>
-    <HoverCardRoot :open-delay="200" :close-delay="0">
-      <button
-        class="player-deck surface"
-        :class="{
-          invalid: deck.isValid.result === 'failure'
-        }"
-        :style="{}"
-      >
-        <div class="deck-name">
-          {{ deck.name }}
-          <div v-if="deck.isValid.result === 'failure'" class="invalid-label">
-            Invalid Deck
-          </div>
-          <div v-else class="flex gap-2">
-            <img
-              v-for="aff in affinities"
-              :key="aff"
-              :src="
-                assets[`ui/card/v3/affinity-${aff.toLocaleLowerCase()}`].path
-              "
-              :alt="aff"
-              class="affinity"
-            />
-          </div>
+    <button
+      class="player-deck surface"
+      :class="{
+        invalid: deck.isValid.result === 'failure'
+      }"
+      :style="{}"
+    >
+      <div class="deck-name">
+        {{ deck.name }}
+        <div v-if="deck.isValid.result === 'failure'" class="invalid-label">
+          Invalid Deck
         </div>
-
-        <HoverCardTrigger v-if="!isSmallViewport" as-child>
-          <FancyButton as="div" text="?"></FancyButton>
-        </HoverCardTrigger>
-      </button>
-
-      <HoverCardPortal>
-        <HoverCardContent side="right" align="center" :side-offset="8">
-          <div class="deck-details">
-            <ul>
-              <li v-for="(violation, index) in violations" :key="index">
-                <span class="invalid-label">{{ violation.reason }}</span>
-              </li>
-            </ul>
-            <ul>
-              <li v-for="item in minions" :key="item.blueprint.id">
-                {{ item.copies }}x
-                <span :class="item.blueprint.rarity.toLocaleLowerCase()">
-                  {{ item.blueprint.name }}
-                </span>
-              </li>
-              <li v-for="item in spells" :key="item.blueprint.id">
-                {{ item.copies }}x
-                <span :class="item.blueprint.rarity.toLocaleLowerCase()">
-                  {{ item.blueprint.name }}
-                </span>
-              </li>
-              <li v-for="item in artifacts" :key="item.blueprint.id">
-                {{ item.copies }}x
-                <span :class="item.blueprint.rarity.toLocaleLowerCase()">
-                  {{ item.blueprint.name }}
-                </span>
-              </li>
-            </ul>
-          </div>
-        </HoverCardContent>
-      </HoverCardPortal>
-    </HoverCardRoot>
+      </div>
+      <div class="flex gap-2">
+        <img
+          v-for="aff in affinities"
+          :key="aff"
+          :src="assets[`ui/card/v3/affinity-${aff.toLocaleLowerCase()}`].path"
+          :alt="aff"
+          class="affinity"
+        />
+      </div>
+    </button>
   </div>
 </template>
 

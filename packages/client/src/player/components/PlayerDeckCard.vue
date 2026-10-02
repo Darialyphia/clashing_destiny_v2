@@ -162,7 +162,7 @@ const route = useRoute();
 </script>
 
 <template>
-  <div class="relative">
+  <div class="player-deck-card-wrapper">
     <button
       class="player-deck-card"
       :class="{
@@ -255,7 +255,7 @@ const route = useRoute();
             <div
               v-for="card in cards"
               :key="card.blueprint.id"
-              class="relative"
+              class="detail-card"
             >
               <BlueprintSmallCard :blueprint="card.blueprint" />
               <div class="copies">
@@ -280,6 +280,11 @@ const route = useRoute();
 </template>
 
 <style scoped lang="postcss">
+.player-deck-card-wrapper {
+  position: relative;
+  width: fit-content;
+}
+
 .player-deck-card {
   position: relative;
   padding: var(--size-2) var(--size-4);
@@ -476,6 +481,16 @@ const route = useRoute();
   grid-template-columns: repeat(4, 1fr);
   column-gap: var(--size-1);
   row-gap: var(--size-2);
+}
+
+.detail-card {
+  position: relative;
+  transition: all 0.2s var(--ease-2);
+  transition-delay: calc(0.025s * sibling-index());
+  @starting-style {
+    opacity: 0;
+    translate: 0 -6px;
+  }
 }
 
 .copies {

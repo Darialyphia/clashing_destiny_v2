@@ -205,9 +205,18 @@ export const provideCardList = () => {
         }
 
         if (affinityFilter.value.size > 0) {
-          const isMatch = card.affinities.some(affinity =>
-            affinityFilter.value.has(affinity)
-          );
+          if (
+            affinityFilter.value.size === 1 &&
+            affinityFilter.value.has(AFFINITIES.NEUTRAL)
+          ) {
+            const isMatch = card.affinities.every(
+              affinity => affinity === AFFINITIES.NEUTRAL
+            );
+            if (!isMatch) return false;
+          }
+          const isMatch = card.affinities.some(affinity => {
+            return affinityFilter.value.has(affinity);
+          });
           if (!isMatch) return false;
         }
 
