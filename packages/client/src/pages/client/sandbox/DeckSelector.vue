@@ -34,7 +34,6 @@ const selectDeck = (deck: UserDeck) => {
       <li
         v-for="deck in decks"
         :key="deck.name"
-        class="relative"
         :class="{
           'selected-p1': p1Deck?.id === deck.id,
           'selected-p2': p2Deck?.id === deck.id
@@ -68,13 +67,17 @@ const selectDeck = (deck: UserDeck) => {
 .deck-selector {
   width: var(--size-lg);
   margin-inline: auto;
+}
+
+li {
+  position: relative;
   transition: all 0.25s var(--ease-3);
+  transition-delay: calc(0.05s * sibling-index());
   @starting-style {
     opacity: 0;
     scale: 1.5;
   }
 }
-
 .p1-indicator,
 .p2-indicator {
   display: none;

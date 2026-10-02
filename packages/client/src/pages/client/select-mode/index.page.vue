@@ -85,22 +85,15 @@ definePage({
   justify-content: center;
   gap: var(--size-6);
   margin: 0 auto;
-  transition: all 0.25s var(--ease-3);
   @screen lt-lg {
     overflow-x: auto;
     padding-inline: var(--size-6);
-  }
-  @starting-style {
-    opacity: 0;
-    scale: 1.5;
   }
 }
 
 .mode-card {
   text-align: center;
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
+  transition: all 0.2s ease;
   padding: var(--size-7);
   display: flex;
   @screen lg {
@@ -115,6 +108,12 @@ definePage({
   aspect-ratio: 9 / 12;
   position: relative;
   background: linear-gradient(to bottom, black, transparent, black), var(--bg);
+
+  transition-delay: calc(0.05s * sibling-index());
+  @starting-style {
+    scale: 1.5;
+    opacity: 0;
+  }
 
   background-size: cover;
   &:hover {
