@@ -133,7 +133,9 @@ const { activeFrameRect, bgPosition, imageBg } = useSprite({
   display: flex;
   gap: var(--size-2);
   align-items: center;
-  border: solid var(--border-size-1) #d7ad42;
+  border: solid var(--border-size-1) #73473a;
+  border-top-color: #af7d48;
+  border-left-color: #af7d48;
   padding: var(--size-3) var(--size-3);
   cursor: url('@/assets/ui/cursor-hover.png'), auto;
   background-image: linear-gradient(to right, #2b2136 25%, transparent);
@@ -144,6 +146,7 @@ const { activeFrameRect, bgPosition, imageBg } = useSprite({
   background-size: cover, calc(2px * 96);
   transition: transform 0.3s var(--ease-2);
   overflow: hidden;
+  margin-block: var(--size-1);
 
   @starting-style {
     opacity: 0;

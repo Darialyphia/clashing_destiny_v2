@@ -10,7 +10,7 @@ import PlayerBadge from './player/components/PlayerBadge.vue';
 import GodlIcon from './player/components/GodlIcon.vue';
 import { type RouterLinkProps } from 'vue-router';
 import { useLeaveLobby } from './lobby/composables/useLobby';
-import CraftignShardIcon from './player/components/CraftignShardIcon.vue';
+import CraftignShardIcon from './player/components/CraftingShardIcon.vue';
 
 const { backTo = { name: 'ClientHome' } } = defineProps<{
   backTo?: RouterLinkProps['to'];

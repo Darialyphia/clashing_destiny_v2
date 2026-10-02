@@ -29,6 +29,6 @@ const { deckBuilder } = useCollectionPage();
 }
 
 .mana-curve {
-  height: var(--size-10);
+  height: var(--size-11);
 }
 </style>

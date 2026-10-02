@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { useAuthedQuery } from '@/auth/composables/useAuth';
-import { api } from '@game/api';
+import { api, GIFT_STATES } from '@game/api';
 import { useMe } from '@/auth/composables/useMe';
-import CraftignShardIcon from '@/player/components/CraftignShardIcon.vue';
 import GodlIcon from '@/player/components/GodlIcon.vue';
 import PlayerBadge from '@/player/components/PlayerBadge.vue';
 import MainMenu from './MainMenu.vue';
+import PremiumGemIcon from '@/player/components/PremiumGemIcon.vue';
+import { useGifts } from '@/player/composables/useGifts.js';
 definePage({
   name: 'ClientHome',
   meta: {
@@ -22,6 +23,13 @@ const boosterPackButtonLabel = computed(() => {
 });
 
 const { data: me } = useMe();
+
+const { data: gifts } = useGifts();
+const unclaimedGiftsCount = computed(() => {
+  return (
+    gifts.value?.filter(gift => gift.state === GIFT_STATES.ISSUED).length ?? 0
+  );
+});
 </script>
 
 <template>
@@ -50,10 +58,21 @@ const { data: me } = useMe();
       <span class="dual-text" :data-text="me.wallet.gold">
         {{ me.wallet.gold }}
       </span>
-      <CraftignShardIcon />
-      <span class="dual-text" :data-text="me.wallet.craftingShards">
-        {{ me.wallet.craftingShards }}
+      <PremiumGemIcon />
+      <span class="dual-text" :data-text="me.wallet.premium">
+        {{ me.wallet.premium }}
       </span>
+    </div>
+
+    <div class="bottom-menu">
+      <!-- <button class="menu" /> -->
+      <RouterLink :to="{ name: 'Gifts' }" class="gifts">
+        <span class="gift-chip" v-if="unclaimedGiftsCount > 0">
+          {{ unclaimedGiftsCount }}
+        </span>
+      </RouterLink>
+      <button class="friends" />
+      <button class="settings" />
     </div>
   </div>
 </template>
@@ -98,5 +117,55 @@ const { data: me } = useMe();
   background: #000000aa;
   padding: var(--size-2) var(--size-3);
   border-radius: var(--radius-pill);
+}
+
+.bottom-menu {
+  position: absolute;
+  bottom: var(--size-9);
+  right: var(--size-9);
+  display: flex;
+  gap: var(--size-6);
+  > *:hover {
+    filter: brightness(1.3);
+  }
+}
+.gifts {
+  width: 64px;
+  height: 64px;
+  background-image: url('@/assets/icons/gift.png');
+  background-size: cover;
+  position: relative;
+}
+
+.gift-chip {
+  margin-left: var(--size-1);
+  padding-left: var(--size-2);
+  padding-right: var(--size-2);
+  padding-top: var(--size-05);
+  padding-bottom: var(--size-05);
+  font-size: var(--font-size-0);
+  font-weight: 500;
+  background-color: var(--red-8);
+  color: white;
+  border-radius: var(--radius-round);
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  @screen lt-lg {
+    font-size: var(--font-size-00);
+  }
+}
+
+.settings {
+  width: 64px;
+  height: 64px;
+  background-image: url('@/assets/icons/settings.png');
+  background-size: cover;
+}
+.friends {
+  width: 64px;
+  height: 64px;
+  background-image: url('@/assets/icons/friends.png');
+  background-size: cover;
 }
 </style>

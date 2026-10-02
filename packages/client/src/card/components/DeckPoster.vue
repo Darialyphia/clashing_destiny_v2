@@ -5,7 +5,7 @@ import BlueprintSmallCard from './BlueprintSmallCard.vue';
 import { domToPng } from 'modern-screenshot';
 import BlueprintCard from './BlueprintCard.vue';
 import UiButton from '@/ui/components/UiButton.vue';
-import CraftignShardIcon from '@/player/components/CraftignShardIcon.vue';
+import CraftignShardIcon from '@/player/components/CraftingShardIcon.vue';
 import {
   CRAFTING_COST_PER_RARITY,
   FOIL_CRAFTING_COST_MULTIPLIER

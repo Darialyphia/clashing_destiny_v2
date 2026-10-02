@@ -356,9 +356,13 @@ on('sequenceEnd', onSequenceEnd);
   pointer-events: none;
   transform-style: preserve-3d;
 
+  .artifact & {
+    transform: translateX(-50%) translateY(calc(-16px * var(--pixel-scale)));
+  }
+
   .spell &,
   .rune &,
-  .artifact & {
+  .secret & {
     transform: translateX(-50%) translateY(calc(-12px * var(--pixel-scale)));
   }
 }

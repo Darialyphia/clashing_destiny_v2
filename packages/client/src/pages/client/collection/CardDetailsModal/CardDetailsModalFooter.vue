@@ -4,7 +4,7 @@ import { type CardId } from '@game/api';
 import type { CardBlueprint } from '@game/engine/src/card/card-blueprint';
 import FancyButton from '@/ui/components/FancyButton.vue';
 import UiSpinner from '@/ui/components/UiSpinner.vue';
-import CraftignShardIcon from '@/player/components/CraftignShardIcon.vue';
+import CraftignShardIcon from '@/player/components/CraftingShardIcon.vue';
 import { useCrafting } from '@/card/composables/useCrafting';
 import { useResponsive } from '@/shared/composables/useResponsive';
 import { useCollectionPage } from '../useCollectionPage';

@@ -10,7 +10,7 @@ const { offer } = defineProps<{
   offer: GetCatalogByCategoryOutput['items'][number];
 }>();
 import GoldIcon from '@/player/components/GodlIcon.vue';
-import CraftignShardIcon from '@/player/components/CraftignShardIcon.vue';
+import CraftignShardIcon from '@/player/components/CraftingShardIcon.vue';
 import PremiumGemIcon from '@/player/components/PremiumGemIcon.vue';
 import UiModal from '@/ui/components/UiModal.vue';
 import { useShopPurchase } from './useShop';
