@@ -54,7 +54,7 @@ const playersConfig = computed(() => {
       :to="{ name: 'SelectMode' }"
     />
 
-    <PageTitle title="Select your Decks" />
+    <PageTitle title="Select Decks" />
 
     <DeckSelector
       v-model:p1Deck="p1Deck"

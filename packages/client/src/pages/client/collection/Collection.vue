@@ -3,7 +3,6 @@
 import { useCollectionPage } from './useCollectionPage';
 import CollectionCard from './CollectionCard.vue';
 import { useIntersectionObserver } from '@vueuse/core';
-import UiSpinner from '@/ui/components/UiSpinner.vue';
 import { domToPng } from 'modern-screenshot';
 
 const { cards, viewMode, isLoading } = useCollectionPage();
@@ -62,9 +61,7 @@ const isDev = import.meta.env.DEV;
     :appear="false"
     class="h-full overflow-hidden fancy-scrollbar"
   >
-    <div v-if="isLoading" class="h-full flex items-center justify-center">
-      <UiSpinner size="11" />
-    </div>
+    <div v-if="isLoading" class="h-full flex items-center justify-center"></div>
     <div v-else-if="cards.length" class="h-full relative">
       <ul
         ref="card-list"
@@ -106,7 +103,7 @@ const isDev = import.meta.env.DEV;
     minmax(calc(var(--card-v3-width) * var(--card-scale)), 1fr)
   );
   column-gap: 0;
-  row-gap: var(--size-2);
+  row-gap: var(--size-8);
   justify-items: center;
   overflow-x: hidden;
   overflow-y: auto;
@@ -114,7 +111,7 @@ const isDev = import.meta.env.DEV;
   align-content: start;
   padding-inline: var(--size-4);
   padding-bottom: var(--size-4);
-  padding-top: var(--size-3);
+  padding-top: var(--size-6);
   @screen lt-lg {
     padding-inline-end: 0;
     padding-bottom: 0;

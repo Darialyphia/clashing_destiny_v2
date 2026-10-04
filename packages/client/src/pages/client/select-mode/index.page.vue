@@ -93,7 +93,6 @@ definePage({
 
 .mode-card {
   text-align: center;
-  transition: all 0.2s ease;
   padding: var(--size-7);
   display: flex;
   @screen lg {
@@ -107,9 +106,12 @@ definePage({
   }
   aspect-ratio: 9 / 12;
   position: relative;
+  transition:
+    scale 0.2s ease,
+    opacity 0.2s ease;
   background: linear-gradient(to bottom, black, transparent, black), var(--bg);
-
   transition-delay: calc(0.05s * sibling-index());
+
   @starting-style {
     scale: 1.5;
     opacity: 0;
@@ -117,7 +119,7 @@ definePage({
 
   background-size: cover;
   &:hover {
-    box-shadow: 0 0 20px #efef9f;
+    filter: brightness(1.3);
   }
 }
 
