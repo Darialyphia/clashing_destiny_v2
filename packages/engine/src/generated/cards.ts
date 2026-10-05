@@ -94,7 +94,10 @@ export const cards = {
 "windstorm-obelysk": "windstorm-obelysk",
 "zephyr": "zephyr",
 "chronomancer": "chronomancer",
-"red-synja": "red-synja"
+"red-synja": "red-synja",
+"bloodbound-invader": "bloodbound-invader",
+"tutorial-windblade-adept": "tutorial-windblade-adept",
+"tutorial-silverguard-outpost": "tutorial-silverguard-outpost"
 } as const;
 
 export const collectableCards = {
@@ -185,7 +188,8 @@ export const collectableCards = {
 "windstorm-obelysk": "windstorm-obelysk",
 "zephyr": "zephyr",
 "chronomancer": "chronomancer",
-"red-synja": "red-synja"
+"red-synja": "red-synja",
+"tutorial-silverguard-outpost": "tutorial-silverguard-outpost"
 } as const;
 
 type CardSet = Array<{id: string; collectable: boolean; rarity: Rarity, kind: CardKind}>;
@@ -725,6 +729,26 @@ export const cardsBySet: Record<string, CardSet> = {
     "rarity": "legendary",
     "kind": "MINION"
   }
+],
+"TUTORIAL": [
+  {
+    "id": "bloodbound-invader",
+    "collectable": false,
+    "rarity": "token",
+    "kind": "MINION"
+  },
+  {
+    "id": "tutorial-windblade-adept",
+    "collectable": false,
+    "rarity": "token",
+    "kind": "MINION"
+  },
+  {
+    "id": "tutorial-silverguard-outpost",
+    "collectable": true,
+    "rarity": "rare",
+    "kind": "DESTINY"
+  }
 ]
 };
 
@@ -817,7 +841,10 @@ export const cardShortIds: Record<string, number> = {
 "windstorm-obelysk": 88,
 "zephyr": 89,
 "chronomancer": 90,
-"red-synja": 91
+"red-synja": 91,
+"bloodbound-invader": 92,
+"tutorial-windblade-adept": 93,
+"tutorial-silverguard-outpost": 94
 } as const;
 
 export const cardIdByShortId: Record<number, string> = {
@@ -909,5 +936,8 @@ export const cardIdByShortId: Record<number, string> = {
 "88": "windstorm-obelysk",
 "89": "zephyr",
 "90": "chronomancer",
-"91": "red-synja"
+"91": "red-synja",
+"92": "bloodbound-invader",
+"93": "tutorial-windblade-adept",
+"94": "tutorial-silverguard-outpost"
 } as const;

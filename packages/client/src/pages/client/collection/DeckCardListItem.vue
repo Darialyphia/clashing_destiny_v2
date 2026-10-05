@@ -136,7 +136,7 @@ const { activeFrameRect, bgPosition, imageBg } = useSprite({
   border: solid var(--border-size-1) #73473a;
   border-top-color: #af7d48;
   border-left-color: #af7d48;
-  padding: var(--size-3) var(--size-3);
+  padding: calc(var(--size-2) + var(--size-1)) var(--size-3);
   cursor: url('@/assets/ui/cursor-hover.png'), auto;
   background-image: linear-gradient(to right, #2b2136 25%, transparent);
   background-repeat: no-repeat;

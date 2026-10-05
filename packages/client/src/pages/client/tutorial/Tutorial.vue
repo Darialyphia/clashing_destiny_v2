@@ -4,12 +4,14 @@ import GameScene from '@/game/components/GameScene.vue';
 import { provideTutorial } from './useTutorial';
 import TutorialHighlight from './TutorialHighlight.vue';
 import TutorialTextBox from './TutorialTextBox.vue';
+import SingleBattlefield from '@/game/components/MinionZone/SingleBattlefield.vue';
 
 const { options } = defineProps<{
   options: Parameters<typeof provideTutorial>[0];
 }>();
 
-const { client, currentStepError } = provideTutorial(options);
+const { client, currentStepError, start } = provideTutorial(options);
+onMounted(start);
 </script>
 
 <template>
@@ -21,6 +23,10 @@ const { client, currentStepError } = provideTutorial(options);
         variant="error"
         :to="{ name: 'ClientHome' }"
       />
+    </template>
+
+    <template #battlefield>
+      <SingleBattlefield />
     </template>
   </GameScene>
   <TutorialHighlight />

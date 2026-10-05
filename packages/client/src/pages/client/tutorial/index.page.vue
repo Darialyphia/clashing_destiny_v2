@@ -13,7 +13,7 @@ definePage({
     <section class="surface">
       <h1 class="dual-text" data-text="How to play">How to play</h1>
       <div class="divider" />
-      <h2 class="dual-text" data-text="Rule book">Rule book</h2>
+      <!-- <h2 class="dual-text" data-text="Rule book">Rule book</h2>
       <p>
         For a comprehensive guide on how to play the game, please refer to our
         <RouterLink
@@ -23,7 +23,7 @@ definePage({
           How To Play
         </RouterLink>
         section.
-      </p>
+      </p> -->
 
       <h2 class="dual-text" data-text="Tutorial Missions">Tutorial Missions</h2>
       <ul>

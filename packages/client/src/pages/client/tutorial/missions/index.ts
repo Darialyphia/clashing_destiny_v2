@@ -1,7 +1,5 @@
 import type { UseTutorialOptions } from '../useTutorial';
-import { combatTutorial } from './combat';
-import { destinyCardsTutorial } from './destiny-cards';
-import { playCardTutorial } from './play-cards';
+import { basicsTutorial } from './basics';
 
 export type TutorialMission = {
   id: string;
@@ -9,8 +7,4 @@ export type TutorialMission = {
   options: UseTutorialOptions;
 };
 
-export const missions = [
-  playCardTutorial,
-  combatTutorial,
-  destinyCardsTutorial
-];
+export const missions = [basicsTutorial];

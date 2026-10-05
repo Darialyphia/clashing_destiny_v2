@@ -2,15 +2,7 @@
 import FancyButton from '@/ui/components/FancyButton.vue';
 import { useTutorial } from './useTutorial';
 
-const {
-  currentStepTextBox,
-  currentStepError,
-  next,
-  canRetry,
-  retry,
-  isFinished,
-  nextMission
-} = useTutorial();
+const { currentStepTextBox, next } = useTutorial();
 </script>
 
 <template>
@@ -30,20 +22,13 @@ const {
     >
       {{ currentStepTextBox?.text }}
       <FancyButton
-        v-if="currentStepTextBox?.canGoNext"
+        v-if="currentStepTextBox?.canManuallyAdvance"
         text="Next"
         class="mt-4 ml-auto"
         @click="next"
       />
-      <FancyButton
-        v-if="currentStepError && canRetry"
-        text="Retry"
-        class="mt-4 ml-auto"
-        variant="error"
-        @click="retry"
-      />
-      <FancyButton
-        v-if="isFinished"
+      <!-- <FancyButton
+        v-if="tutorial"
         class="mt-4 ml-auto"
         :to="
           nextMission
@@ -51,7 +36,7 @@ const {
             : { name: 'TutorialHome' }
         "
         :text="nextMission ? 'New Mission' : 'Back to Missions'"
-      />
+      /> -->
     </div>
   </div>
 </template>

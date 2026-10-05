@@ -31,7 +31,7 @@ export type TutorialContext<T extends AnyObject = AnyObject> = {
   retryCount: number;
   currentStep: TutorialStep<T>;
   meta: T;
-  next: () => MaybePromise<void>; // manually goes to the next step
+  next: () => Promise<void>;
 };
 
 export type TutorialTextBox<T extends AnyObject = AnyObject> = {
@@ -77,7 +77,7 @@ export type TutorialStep<T extends AnyObject = AnyObject> = {
   canRetry: (ctx: TutorialContext<T>) => boolean;
 };
 
-export type TutorialInterface<T extends AnyObject = AnyObject> = {
+export type Tutorial<T extends AnyObject = AnyObject> = {
   currentStep: TutorialStep<T>;
   meta: T;
   initialize: (client: GameClient) => Promise<void>;
@@ -90,10 +90,9 @@ export type TutorialOptions<T extends AnyObject = AnyObject> = {
   gameOptions: GameOptions;
   steps: TutorialStep<T>[]; // the first step is the root, default order is the array order
   meta: T;
-  onSnapshot: (snapshot: GameStateSnapshot<PatchBasedSnapshotDiff>) => void;
 };
 
-export class Tutorial<T extends AnyObject = AnyObject> implements TutorialInterface<T> {
+export class TutorialV2<T extends AnyObject = AnyObject> implements Tutorial<T> {
   private readonly gameOptions: GameOptions;
 
   private game: Game;
@@ -104,8 +103,6 @@ export class Tutorial<T extends AnyObject = AnyObject> implements TutorialInterf
 
   private stepIndex = 0;
 
-  private textBoxIndex = 0;
-
   private _status: TutorialStatus = 'not_started';
 
   private _retryCount = 0;
@@ -114,7 +111,10 @@ export class Tutorial<T extends AnyObject = AnyObject> implements TutorialInterf
 
   private historyForCurrentStep: SerializedInput[] = [];
 
-  private snapshotCallback: (snapshot: GameStateSnapshot<PatchBasedSnapshotDiff>) => void;
+  private snapshotCallbacks: Array<
+    (snapshot: GameStateSnapshot<PatchBasedSnapshotDiff>) => void
+  > = [];
+  private enterStepCallbacks: Array<(ctx: TutorialContext<T>) => MaybePromise<void>> = [];
 
   constructor(options: TutorialOptions<T>) {
     if (!options.steps.length) {
@@ -124,11 +124,10 @@ export class Tutorial<T extends AnyObject = AnyObject> implements TutorialInterf
     this.game = new Game(options.gameOptions);
     this.steps = options.steps;
     this.meta = options.meta;
-    this.snapshotCallback = options.onSnapshot;
     this.next = this.next.bind(this);
   }
 
-  private get ctx(): TutorialContext<T> {
+  get ctx(): TutorialContext<T> {
     return {
       game: this.game,
       client: this.client,
@@ -152,16 +151,31 @@ export class Tutorial<T extends AnyObject = AnyObject> implements TutorialInterf
     return this._retryCount;
   }
 
-  next() {
+  onSnapshot(callback: (snapshot: GameStateSnapshot<PatchBasedSnapshotDiff>) => void) {
+    this.snapshotCallbacks.push(callback);
+  }
+
+  onEnterStep(callback: (ctx: TutorialContext<T>) => MaybePromise<void>) {
+    this.enterStepCallbacks.push(callback);
+  }
+
+  async next() {
+    await this.leaveStep();
     this.stepIndex++;
     this.historyForCurrentStep = this.game.inputSystem.serialize();
     this._retryCount = 0;
+    await this.enterStep();
   }
 
   async initialize(client: GameClient) {
     this.client = client;
     await this.game.initialize();
-    this.game.subscribeOmniscient(this.snapshotCallback);
+    this.game.subscribeOmniscient(async snapshot => {
+      console.log('received snapshot', snapshot);
+      for (const callback of this.snapshotCallbacks) {
+        await callback(snapshot);
+      }
+    });
     this.game.on(GAME_EVENTS.INPUT_END, () => {
       const successful = this.currentStep.solveCondition(this.ctx);
       if (successful) {
@@ -175,10 +189,22 @@ export class Tutorial<T extends AnyObject = AnyObject> implements TutorialInterf
     });
   }
 
+  private async enterStep() {
+    await this.currentStep.setup(this.ctx);
+    for (const callback of this.enterStepCallbacks) {
+      await callback(this.ctx);
+    }
+  }
+
+  private async leaveStep() {
+    await this.currentStep.teardown(this.ctx);
+  }
+
   async start() {
     assert(this._status === TUTORIAL_STATUSES.NOT_STARTED);
     this._status = TUTORIAL_STATUSES.IN_PROGRESS;
 
+    await this.enterStep();
     return this.game.snapshotSystem.getLatestOmniscientSnapshot();
   }
 
@@ -190,7 +216,11 @@ export class Tutorial<T extends AnyObject = AnyObject> implements TutorialInterf
     this.game = new Game({ ...this.gameOptions, history: this.historyForCurrentStep });
 
     await this.game.initialize();
-    this.game.subscribeOmniscient(this.snapshotCallback);
+    this.game.subscribeOmniscient(async snapshot => {
+      for (const callback of this.snapshotCallbacks) {
+        await callback(snapshot);
+      }
+    });
 
     this._status = TUTORIAL_STATUSES.IN_PROGRESS;
     return this.game.snapshotSystem.getLatestOmniscientSnapshot();

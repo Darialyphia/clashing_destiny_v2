@@ -8,3 +8,9 @@ export const simpleStepValidation =
     schema().safeParse(input).success
       ? { status: 'success' }
       : { status: 'error', errorMessage: msg };
+
+export const makeTutorialDeck = (deck: Array<[string, number]>) => {
+  return deck.flatMap(([cardId, count]) =>
+    Array(count).fill({ blueprintId: cardId, isFoil: false })
+  );
+};

@@ -12,14 +12,13 @@ import {
   CARD_SPEED,
   RARITIES
 } from '../../../card.enums';
-import { WhileOnBoardModifier } from '../../../../modifier/modifiers/while-on-board.modifier';
 import type { DestinyCard } from '../../../entities/destiny.entity';
 import { CardAuraModifierMixin } from '../../../../modifier/mixins/aura.mixin';
-import type { ArtifactCard } from '../../../entities/artifact.entity';
 import { SimpleStatsBuffModifier } from '../../../../modifier/modifiers/simple-stats-modifier';
 import { ZealModifier } from '../../../../modifier/modifiers/zeal.modifier';
-import { SimpleAttackBuffModifier } from '../../../../modifier/modifiers/simple-attack-buff.modifier';
 import { UntilEndOfTurnModifierMixin } from '../../../../modifier/mixins/until-end-of-turn.mixin';
+import { Modifier } from '../../../../modifier/modifier.entity';
+import type { Player } from '../../../../player/player.entity';
 
 export const dynastyStandard: ArtifactBlueprint = {
   id: 'dynasty-standard',
@@ -42,7 +41,7 @@ export const dynastyStandard: ArtifactBlueprint = {
       id: 'dynasty-standard-ability',
       label: 'Equip',
       description: dedent /*html*/ `
-      Give allies at a battlefield: "<rt-keyword>Zeal 3</rt-keyword>: I have +0/+2/+0."
+      Give allies at a battlefield: "<rt-keyword>Zeal 2</rt-keyword>: I have +0/+2/+0. This loses 1 durability."
       `,
       manaCost: 1,
       canUse: (game, card) => singleAllyMinionTargetRules.canPlay(game, card),
@@ -56,12 +55,11 @@ export const dynastyStandard: ArtifactBlueprint = {
           aiHints: { shouldPick: () => 1 }
         }),
       async onResolve(game, card, targets) {
-        console.log(targets);
         const target = targets.cards[0] as DestinyCard;
         if (!target) return;
 
-        await card.modifiers.add(
-          new WhileOnBoardModifier<ArtifactCard>('dynasty-standard-aura', game, card, {
+        await card.player.modifiers.add(
+          new Modifier<Player>('dynasty-standard-aura', game, card, {
             mixins: [
               new UntilEndOfTurnModifierMixin(game),
               new CardAuraModifierMixin(game, card, {
@@ -71,7 +69,7 @@ export const dynastyStandard: ArtifactBlueprint = {
                 getModifiers() {
                   return [
                     new ZealModifier('dynasty-standard-zeal', game, card, {
-                      amount: 3,
+                      amount: 2,
                       zealedModifiers: [
                         new SimpleStatsBuffModifier(
                           'dynasty-standard-attack-buff',
@@ -87,6 +85,8 @@ export const dynastyStandard: ArtifactBlueprint = {
             ]
           })
         );
+
+        await card.loseDurability(1);
       },
       aiHints: {
         shouldUse: () => 1

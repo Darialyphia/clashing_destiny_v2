@@ -21,7 +21,7 @@ const opponent = useOpponentPlayer();
 
 const pointsToWin = computed(() => state.value.config.VICTORY_POINTS_TO_WIN);
 const pointsPerColumn = computed(() =>
-  pointsToWin.value > 7 ? pointsToWin.value / 2 : 7
+  pointsToWin.value > 7 ? pointsToWin.value / 2 : pointsToWin.value
 );
 const hasInitiative = computed(() => {
   return client.value.getActivePlayerIds().includes(myPlayer.value.id);
@@ -235,7 +235,7 @@ const opponentHasInitiative = computed(() => {
 .middle-side {
   position: absolute;
   top: 270px;
-  right: 0;
+  left: 200px;
   height: 320px;
   translate: -50% -50%;
   display: flex;
