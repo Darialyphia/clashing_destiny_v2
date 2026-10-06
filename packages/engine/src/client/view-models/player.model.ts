@@ -113,6 +113,10 @@ export class PlayerViewModel {
     });
   }
 
+  get boardSide() {
+    return this.data.boardSide;
+  }
+
   get leftBattlefield() {
     return {
       id: this.data.boardSide.leftBattlefield.id,
@@ -123,6 +127,7 @@ export class PlayerViewModel {
       spaces: this.data.boardSide.leftBattlefield.spaces.map(spaceId => {
         return this.getEntities()[spaceId] as BoardSpaceViewModel;
       }),
+      zone: this.data.boardSide.leftBattlefield.zone,
       destinyCard: this.getEntities()[
         this.data.boardSide.leftBattlefield.destinyCard
       ] as CardViewModel,
@@ -144,6 +149,7 @@ export class PlayerViewModel {
       spaces: this.data.boardSide.rightBattlefield.spaces.map(spaceId => {
         return this.getEntities()[spaceId] as BoardSpaceViewModel;
       }),
+      zone: this.data.boardSide.rightBattlefield.zone,
       destinyCard: this.getEntities()[
         this.data.boardSide.rightBattlefield.destinyCard
       ] as CardViewModel,

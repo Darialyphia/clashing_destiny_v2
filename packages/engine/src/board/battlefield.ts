@@ -18,6 +18,7 @@ export type SerializedBattlefield = {
   commandmentScore: number;
   opponentCommandmentScore: number;
   player: string;
+  zone: 'left_battlefield' | 'right_battlefield';
 };
 export class Battlefield
   extends Entity<EmptyObject>
@@ -128,7 +129,8 @@ export class Battlefield
       secretCard: this.secretCard?.id ?? null,
       commandmentScore: this.commandmentScore,
       opponentCommandmentScore: this.opponentCommandmentScore,
-      player: this.player.id
+      player: this.player.id,
+      zone: this.zone
     };
   }
 }

@@ -115,6 +115,9 @@ export class TutorialV2<T extends AnyObject = AnyObject> implements Tutorial<T> 
     (snapshot: GameStateSnapshot<PatchBasedSnapshotDiff>) => void
   > = [];
   private enterStepCallbacks: Array<(ctx: TutorialContext<T>) => MaybePromise<void>> = [];
+  private validationCallbacks: Array<
+    (result: TutorialStepValidationResult, ctx: TutorialContext<T>) => MaybePromise<void>
+  > = [];
 
   constructor(options: TutorialOptions<T>) {
     if (!options.steps.length) {
@@ -159,19 +162,27 @@ export class TutorialV2<T extends AnyObject = AnyObject> implements Tutorial<T> 
     this.enterStepCallbacks.push(callback);
   }
 
+  onValidation(
+    callback: (
+      result: TutorialStepValidationResult,
+      ctx: TutorialContext<T>
+    ) => MaybePromise<void>
+  ) {
+    this.validationCallbacks.push(callback);
+  }
+
   async next() {
     await this.leaveStep();
     this.stepIndex++;
     this.historyForCurrentStep = this.game.inputSystem.serialize();
     this._retryCount = 0;
-    await this.enterStep();
+    void this.enterStep();
   }
 
   async initialize(client: GameClient) {
     this.client = client;
     await this.game.initialize();
     this.game.subscribeOmniscient(async snapshot => {
-      console.log('received snapshot', snapshot);
       for (const callback of this.snapshotCallbacks) {
         await callback(snapshot);
       }
@@ -194,6 +205,7 @@ export class TutorialV2<T extends AnyObject = AnyObject> implements Tutorial<T> 
     for (const callback of this.enterStepCallbacks) {
       await callback(this.ctx);
     }
+    await this.game.snapshotSystem.takeSnapshot();
   }
 
   private async leaveStep() {
@@ -230,6 +242,10 @@ export class TutorialV2<T extends AnyObject = AnyObject> implements Tutorial<T> 
     assert(this._status === TUTORIAL_STATUSES.IN_PROGRESS);
 
     const validationResult = this.currentStep.validateInput(input, this.ctx);
+    for (const callback of this.validationCallbacks) {
+      void callback(validationResult, this.ctx);
+    }
+
     if (validationResult.isValid) {
       void this.game.dispatch(input);
     }

@@ -12,7 +12,7 @@ export const tutorialWindbladeAdept: MinionBlueprint = {
   art: defaultCardArt('minions/windblade-adept'),
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.TOKEN,
-  manaCost: 1,
+  manaCost: 0,
   manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],

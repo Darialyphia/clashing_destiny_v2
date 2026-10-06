@@ -27,7 +27,7 @@ const {
   sideOffset,
   align,
   closeDelay = 0,
-  openDelay = 200,
+  openDelay = 300,
   enabled = true,
   pixelScale = 2
 } = defineProps<

@@ -6,6 +6,7 @@ import type {
 import { type GameOptions } from '@game/engine/src/game/game';
 import {
   TutorialV2,
+  type TutorialContext,
   type TutorialOptions,
   type TutorialStep,
   type TutorialTextBox
@@ -21,6 +22,11 @@ type ClientTutorialTextBox = TutorialTextBox & {
   right?: string;
   bottom?: string;
   centered?: { x?: boolean; y?: boolean };
+  gesture?: {
+    from: (ctx: TutorialContext) => Nullable<HTMLElement>;
+    to: (ctx: TutorialContext) => Nullable<HTMLElement>;
+  };
+  hideDuringOpponentInitiative?: boolean;
 };
 
 export type UseTutorialOptions = Override<
@@ -41,7 +47,7 @@ export type UseTutorialOptions = Override<
   }
 >;
 
-export type TutorialContext = {
+export type UseTutorialContext = {
   client: Ref<GameClient>;
   tutorial: Ref<TutorialV2>;
   currentStep: Ref<TutorialStep | null>;
@@ -54,7 +60,7 @@ export type TutorialContext = {
 
 export const TUTORIAL_INJECTION_KEY = Symbol(
   'TutorialContext'
-) as InjectionKey<TutorialContext>;
+) as InjectionKey<UseTutorialContext>;
 
 export const provideTutorial = (options: UseTutorialOptions) => {
   const tutorial = ref() as Ref<TutorialV2>;
@@ -105,6 +111,14 @@ export const provideTutorial = (options: UseTutorialOptions) => {
     currentStepTextboxIndex.value = 0;
     await currentStepTextBox.value?.onEnter?.(tutorial.value.ctx);
   });
+  tutorial.value.onValidation(result => {
+    if (!result.isValid) {
+      currentStepError.value = result.reason || 'Invalid input';
+      setTimeout(() => {
+        currentStepError.value = null;
+      }, 3000);
+    }
+  });
   // @ts-expect-error
   window.__debugGame = () => {
     console.log(tutorial.value.ctx.game);
@@ -129,7 +143,7 @@ export const provideTutorial = (options: UseTutorialOptions) => {
     stopClientUpdate?.();
   });
 
-  const ctx: TutorialContext = {
+  const ctx: UseTutorialContext = {
     client,
     tutorial,
     currentStep,

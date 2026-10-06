@@ -8,6 +8,7 @@ import { GAME_EVENTS, type SerializedStarEvent } from '../../game/game.events';
 import type { BoardSpaceViewModel } from '../view-models/board-space.model';
 import { SelectSpaceOnBoardAction } from '../actions/select-space-on-board';
 import { MoveAction } from '../actions/move';
+import type { CardLocation } from '../../card/card.enums';
 
 export type BoardCellClickRule = {
   predicate: (tile: BoardSpaceViewModel, state: GameClientState) => boolean;
@@ -31,7 +32,7 @@ export class DOMSelector {
   ) {}
 
   get selector() {
-    return `${this.selectorPrefix} #${this.id} ${this.selectorSuffix}`;
+    return `${this.selectorPrefix} ${this.id.startsWith('.') ? '' : '#'}${this.id} ${this.selectorSuffix}`;
   }
 
   get element() {
@@ -98,20 +99,25 @@ export class UiController {
     anyCardOnPlayCardZone: new DOMSelector('played-card', '', '.card'),
     minionZone: (playerId: string) => new DOMSelector(`${playerId}-minion-zone`),
     actionButton: (actionId: string) => new DOMSelector(`action-button-${actionId}`),
-    globalActionButtons: new DOMSelector('global-action-buttons')
+    globalActionButtons: new DOMSelector('global-action-buttons'),
+    cardCommandment: (cardId: string) =>
+      new DOMSelector('.commandment', this.DOMSelectors.cardOnBoard(cardId).selector),
+    cardHp: (cardId: string) =>
+      new DOMSelector('.hp', this.DOMSelectors.cardOnBoard(cardId).selector),
+    cardAttack: (cardId: string) =>
+      new DOMSelector('.atk', this.DOMSelectors.cardOnBoard(cardId).selector),
+    victoryPoints: (playerId: string) => new DOMSelector(`victory-points-${playerId}`),
+    influence: (playerId: string, zone: CardLocation) =>
+      new DOMSelector(`influence-${playerId}-${zone}`),
+    passButton: new DOMSelector('pass-button')
   };
 
   displayedElements = {
     hand: true,
     playerInfos: true,
-    artifacts: true,
-    unlockedDestinyCards: true,
-    destinyZone: true,
-    actionButtons: true,
-    destinyPhaseModal: true,
-    phaseTracker: true,
-    attackZone: true,
-    defenseZone: true
+    passButton: true,
+    victoryPoints: true,
+    mana: true
   };
 
   highlightedElement: HTMLElement | null = null;

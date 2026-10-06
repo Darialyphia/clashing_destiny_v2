@@ -15,7 +15,7 @@ import {
 } from '../game.enums';
 import { GameError } from '../game-error';
 import { CARD_EVENTS } from '../../card/card.enums';
-import { CardScoreEvent } from '../../card/card.events';
+import { CardAfterScoreEvent, CardScoreEvent } from '../../card/card.events';
 
 export type Attacker = MinionCard;
 export type AttackTarget = MinionCard;
@@ -112,17 +112,19 @@ export class ScoringSystem
   private async resolveScoring() {
     this.stateMachine.dispatch(SCORING_STEP_TRANSITIONS.RESOLVE_SCORING);
 
-    if (this._scoringCard?.isOnBattlefield) {
-      await this._scoringCard.battlefield?.gainScore(this._scoringCard.commandment);
+    const battlefield = this._scoringCard?.battlefield;
+    if (battlefield) {
+      await battlefield.gainScore(this._scoringCard!.commandment);
+      const newScore = battlefield.commandmentScore;
 
       await this.game.emit(
         CARD_EVENTS.AFTER_SCORE,
-        new CardScoreEvent({
+        new CardAfterScoreEvent({
           card: this._scoringCard!,
-          battlefield: this._scoringCard!.battlefield!,
+          battlefield,
+          newScore,
           destinyCard:
-            this._scoringCard!.battlefield!.destinyCard ??
-            this._scoringCard!.battlefield!.opponentBattlefield.destinyCard!
+            battlefield!.destinyCard ?? battlefield!.opponentBattlefield.destinyCard!
         })
       );
     }

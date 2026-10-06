@@ -117,7 +117,9 @@ export class DrawPhase implements GamePhaseController, Serializable<EmptyObject>
     } else {
       await this.rotateDestinyCards();
       await this.recollectSupply();
-      await this.mulligan(this.game.config.CARDS_MULLIGANED_PER_TURN, false);
+      if (this.game.config.CARDS_MULLIGANED_PER_TURN > 0) {
+        await this.mulligan(this.game.config.CARDS_MULLIGANED_PER_TURN, false);
+      }
       await this.drawForTurn();
       await this.game.gamePhaseSystem.sendTransition(
         GAME_PHASE_TRANSITIONS.DRAWN_FOR_TURN
