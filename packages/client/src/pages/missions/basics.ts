@@ -83,7 +83,7 @@ export const basicsTutorial: TutorialMission = {
           if (input.type !== 'move') {
             return {
               isValid: false,
-              reason: 'Move your creature to the specified space'
+              reason: 'Move your minion to the specified space'
             };
           }
           if (
@@ -92,7 +92,7 @@ export const basicsTutorial: TutorialMission = {
           ) {
             return {
               isValid: false,
-              reason: 'Move your creature to the designated space'
+              reason: 'Move your minion to the designated space'
             };
           }
           return {
@@ -443,7 +443,7 @@ export const basicsTutorial: TutorialMission = {
           if (input.type !== 'move') {
             return {
               isValid: false,
-              reason: 'Move your creature to the specified space'
+              reason: 'Move your minion to the specified space'
             };
           }
           if (
@@ -454,7 +454,7 @@ export const basicsTutorial: TutorialMission = {
           ) {
             return {
               isValid: false,
-              reason: 'Move your creature to the designated space'
+              reason: 'Move your minion to the designated space'
             };
           }
           return {
@@ -544,6 +544,12 @@ export const basicsTutorial: TutorialMission = {
           };
         },
         textBoxes: [
+          {
+            text: 'Moving does not exhaust your minion. However, a minion can only move once per turn.',
+            right: '13%',
+            bottom: '40%',
+            canManuallyAdvance: true
+          },
           {
             text: 'Your opponent chose to score again. Time to take advantage of this!',
             right: '13%',
@@ -758,7 +764,7 @@ export const basicsTutorial: TutorialMission = {
             }
           },
           {
-            text: 'Play it, move it to the battlefield and score with it to win this round!',
+            text: 'Play it, move it to the battlefield and score with it get ahead in influence.',
             right: '13%',
             bottom: '40%',
             canManuallyAdvance: false,
@@ -814,7 +820,7 @@ export const basicsTutorial: TutorialMission = {
         },
         textBoxes: [
           {
-            text: 'Good job! You now have more influence than your opponent, the round is secure.',
+            text: 'Good job! You now have more influence than your opponent, the turn is secure.',
             right: '13%',
             bottom: '40%',
             canManuallyAdvance: true
@@ -884,42 +890,20 @@ export const basicsTutorial: TutorialMission = {
                 'tutorial-silverguard-knight',
                 false
               );
-              const windblade = await p1.generateCard(
-                'tutorial-windblade-adept',
-                false
-              );
+
               await silverGuardKnight.addToHand();
-              await windblade.addToHand();
 
               await ctx.game.snapshotSystem.takeSnapshot();
             }
           },
           {
-            text: 'Use the minions in your base and hand to secure the last Victory Point.',
+            text: 'You need one more Victory Point. Gain more influence than the enemy, then end the turn. Choose which minions will fight and which will score.',
             right: '13%',
             bottom: '40%',
             canManuallyAdvance: true
           },
           {
-            text: 'Let me just leave you with a few tips',
-            right: '13%',
-            bottom: '40%',
-            canManuallyAdvance: true
-          },
-          {
-            text: 'If you run out of room on the battlefield, you can move them back to your base. Be careful: a minion can only move once per turn!',
-            right: '13%',
-            bottom: '40%',
-            canManuallyAdvance: true
-          },
-          {
-            text: 'Sometimes, it can be advantageous to pass and let the opponent make the first move. But be careful ! If your opponent has more influence, they can pass back to end the turn and win the round !',
-            right: '13%',
-            bottom: '40%',
-            canManuallyAdvance: true
-          },
-          {
-            text: " You're on your own now! Repel the Bloodbound invaders !",
+            text: "You're on your own now! Repel the Bloodbound invaders !",
             right: '13%',
             bottom: '40%',
             canManuallyAdvance: false,
