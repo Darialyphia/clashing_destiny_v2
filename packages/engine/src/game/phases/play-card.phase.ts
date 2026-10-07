@@ -55,6 +55,7 @@ export class PlayCardPhase
 
     this.indexInHand = player.cardManager.hand.findIndex(c => c.equals(card));
     this.manaCost = card.manaCost;
+
     if (this._card.canPlay()) {
       await this.playCard();
     } else {

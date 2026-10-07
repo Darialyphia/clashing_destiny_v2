@@ -51,14 +51,12 @@ export class OptimisticStateManager {
   }
 
   cancelPlayingCard() {
-    console.log('cancel playing card');
     this._state.playedCardId = null;
     this._state.isCancellingPlayCard = true;
     this.client.triggerStateUpdate();
   }
 
   resetCancellingPlayCard() {
-    console.log('reset cancelling play card');
     this._state.isCancellingPlayCard = false;
     this.client.triggerStateUpdate();
   }

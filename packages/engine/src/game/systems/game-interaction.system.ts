@@ -361,6 +361,7 @@ export class GameInteractionSystem
     );
 
     const { ctx } = this.getContext<'select_space_on_board'>();
+    console.log('elligibleSpaces', ctx.elligibleSpaces.length);
     if (ctx.elligibleSpaces.length === 0) {
       await this.sendTransition(
         INTERACTION_STATE_TRANSITIONS.COMMIT_SELECTING_SPACE_ON_BOARD,

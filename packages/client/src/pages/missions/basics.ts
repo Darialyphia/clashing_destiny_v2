@@ -37,7 +37,7 @@ export const basicsTutorial: TutorialMission = {
         config: {
           SHOULD_ROTATE_DESTINIES: false,
           SHUFFLE_DECK_ON_GAME_START: false,
-          CARDS_DRAWN_PER_TURN: 2,
+          CARDS_DRAWN_PER_TURN: 1,
           CARDS_MULLIGANED_PER_TURN: 0,
           INITIAL_HAND_SIZE: 0,
           PLAYER_1_CARDS_DRAWN_ON_FIRST_TURN: 0,
@@ -229,10 +229,6 @@ export const basicsTutorial: TutorialMission = {
               const card =
                 ctx.game.playerSystem.player1.boardSide.leftBattlefield
                   .spaces[1].card!;
-              console.log(
-                ctx.client.ui.DOMSelectors.cardCommandment(card.id),
-                ctx.client.ui.DOMSelectors.cardCommandment(card.id).element
-              );
               ctx.client.ui.highlightedElement =
                 ctx.client.ui.DOMSelectors.cardCommandment(card.id).element;
             }
@@ -266,7 +262,7 @@ export const basicsTutorial: TutorialMission = {
             canManuallyAdvance: true,
             async onEnter(ctx) {
               ctx.client.ui.highlightedElement = null;
-              await waitFor(2000);
+              await waitFor(1000);
               ctx.game.dispatch({
                 type: 'score',
                 payload: {
@@ -330,6 +326,17 @@ export const basicsTutorial: TutorialMission = {
                 isValid: false,
                 reason: 'Drag your minion on the highlighted space.'
               };
+            }
+            if (input.type === 'selectSpaceOnBoard') {
+              if (
+                input.payload.id !==
+                ctx.game.playerSystem.player1.boardSide.base[2].id
+              ) {
+                return {
+                  isValid: false,
+                  reason: 'Drag your minion on the highlighted space.'
+                };
+              }
             }
           }
           return {
@@ -424,6 +431,89 @@ export const basicsTutorial: TutorialMission = {
         async setup() {},
         teardown() {},
         solveCondition(ctx) {
+          return isDefined(
+            ctx.game.playerSystem.player1.boardSide.leftBattlefield.spaces[0]
+              .card
+          );
+        },
+        validateInput(input) {
+          if (input.type !== 'move') {
+            return {
+              isValid: false,
+              reason: 'Move your creature to the specified space'
+            };
+          }
+          if (
+            input.payload.zone !== CARD_LOCATIONS.LEFT_BATTLEFIELD ||
+            input.payload.index !== 0
+          ) {
+            return {
+              isValid: false,
+              reason: 'Move your creature to the designated space'
+            };
+          }
+          return {
+            isValid: true
+          };
+        },
+        textBoxes: [
+          {
+            text: 'Minions are played in your <b>Base</b>.',
+            right: '13%',
+            bottom: '40%',
+            canManuallyAdvance: true
+          },
+          {
+            text: 'Your opponent played a minion of their own.',
+            right: '13%',
+            bottom: '40%',
+            canManuallyAdvance: true,
+            hideDuringOpponentInitiative: true,
+            async onEnter(ctx) {
+              await waitFor(500);
+              ctx.game.dispatch({
+                type: 'declarePlayCard',
+                payload: {
+                  playerId: ctx.game.playerSystem.player2.id,
+                  id: ctx.game.playerSystem.player2.cardManager.hand[0].id
+                }
+              });
+              await waitFor(500);
+              ctx.game.dispatch({
+                type: 'selectSpaceOnBoard',
+                payload: {
+                  playerId: ctx.game.playerSystem.player2.id,
+                  id: ctx.game.playerSystem.player2.boardSide.base[2].id
+                }
+              });
+            }
+          },
+          {
+            text: 'Move your new minion to prepare for the assault.',
+            right: '13%',
+            bottom: '40%',
+            canManuallyAdvance: false,
+            advanceCondition() {
+              return false;
+            },
+            gesture: {
+              from: ctx =>
+                ctx.client.ui.DOMSelectors.boardSpace('p1-base-2').element!,
+              to: ctx =>
+                ctx.client.ui.DOMSelectors.boardSpace('p1-left_battlefield-0')
+                  .element!
+            }
+          }
+        ]
+      },
+      {
+        id: 5,
+        canRetry: () => false,
+        failedCondition: () => false,
+        meta: {},
+        async setup() {},
+        teardown() {},
+        solveCondition(ctx) {
           return !!ctx.game.playerSystem.player1.boardSide.leftBattlefield
             .spaces[1].card?.isExhausted;
         },
@@ -439,12 +529,6 @@ export const basicsTutorial: TutorialMission = {
           };
         },
         textBoxes: [
-          {
-            text: 'Minions are played in your <b>Base</b>.',
-            right: '13%',
-            bottom: '40%',
-            canManuallyAdvance: true
-          },
           {
             text: 'Your opponent chose to score again. Time to take advantage of this!',
             right: '13%',
@@ -484,7 +568,7 @@ export const basicsTutorial: TutorialMission = {
         ]
       },
       {
-        id: 5,
+        id: 6,
         canRetry: () => false,
         failedCondition: () => false,
         meta: {},
@@ -504,7 +588,8 @@ export const basicsTutorial: TutorialMission = {
             right: '13%',
             bottom: '40%',
             canManuallyAdvance: true,
-            onEnter(ctx) {
+            async onEnter(ctx) {
+              await waitFor(1000);
               const card =
                 ctx.game.playerSystem.player1.boardSide.leftBattlefield
                   .spaces[1].card!;

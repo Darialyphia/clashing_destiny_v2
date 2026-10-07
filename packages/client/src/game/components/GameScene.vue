@@ -53,6 +53,10 @@ useGameKeyboardControls();
 const isOutOfScreen = usePageLeave();
 
 const resetUiState = async () => {
+  if (!client.value.getActivePlayerIds().includes(myPlayer.value.id)) {
+    return false;
+  }
+
   await nextTick();
   const actionTaken = ui.value.reset();
   if (actionTaken) {

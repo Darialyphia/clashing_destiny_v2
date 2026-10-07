@@ -21,6 +21,7 @@ export class SelectSpaceOnBoardInput extends Input<typeof schema> {
   protected payloadSchema = schema;
 
   async impl() {
+    console.log(this.game.interaction.getState());
     assert(
       this.game.interaction.getState() === INTERACTION_STATES.SELECTING_SPACE_ON_BOARD,
       new InvalidInteractionStateError()

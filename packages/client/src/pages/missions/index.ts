@@ -1,4 +1,4 @@
-import type { UseTutorialOptions } from '../useTutorial';
+import type { UseTutorialOptions } from '../client/tutorial/useTutorial';
 import { basicsTutorial } from './basics';
 
 export type TutorialMission = {

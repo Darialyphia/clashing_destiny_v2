@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router';
-import { missions } from './missions';
+import { missions } from '../../missions';
 import AuthenticatedHeader from '@/AuthenticatedHeader.vue';
 
 definePage({

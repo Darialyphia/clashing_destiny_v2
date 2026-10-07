@@ -554,6 +554,7 @@ export class MinionCard extends Card<
   }
 
   async play() {
+    console.log('play', this.id);
     await this.game.emit(
       CARD_EVENTS.CARD_DECLARE_PLAY,
       new CardPlayEvent({ card: this })
