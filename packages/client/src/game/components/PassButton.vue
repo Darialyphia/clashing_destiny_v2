@@ -9,15 +9,17 @@ const passAction = computed(() => {
 </script>
 
 <template>
-  <button
-    v-if="passAction"
-    :disabled="passAction.isDisabled"
-    class="pass-button"
-    aria-label="Pass"
-    :id="ui.DOMSelectors.passButton.id"
-    @click="passAction.onClick()"
-  />
-  <div v-else class="enemy-turn-indicator" />
+  <template v-if="ui.displayedElements.passButton">
+    <button
+      v-if="passAction"
+      :disabled="passAction.isDisabled"
+      class="pass-button"
+      aria-label="Pass"
+      :id="ui.DOMSelectors.passButton.id"
+      @click="passAction.onClick()"
+    />
+    <div v-else class="enemy-turn-indicator" />
+  </template>
 </template>
 
 <style scoped lang="postcss">

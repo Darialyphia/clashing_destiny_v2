@@ -117,7 +117,10 @@ export class UiController {
     playerInfos: true,
     passButton: true,
     victoryPoints: true,
-    mana: true
+    supplyZone: true,
+    mana: true,
+    initiativeIndicator: true,
+    battleLog: true
   };
 
   highlightedElement: HTMLElement | null = null;

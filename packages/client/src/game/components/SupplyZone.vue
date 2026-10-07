@@ -57,6 +57,7 @@ const onMouseleave = () => {
 
 <template>
   <div
+    v-if="ui.displayedElements.supplyZone"
     class="supply-zone"
     :class="{ hoverable: canSupply, hovered: isHovered }"
     @mouseup="onMouseup"
