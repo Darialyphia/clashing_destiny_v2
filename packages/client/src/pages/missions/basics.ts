@@ -710,7 +710,14 @@ export const basicsTutorial: TutorialMission = {
               .commandmentScore !== 3
           );
         },
-        validateInput() {
+        validateInput(input) {
+          if (input.type === 'pass') {
+            return {
+              isValid: false,
+              reason:
+                'Try to score with your Silverguard Knight before passing.'
+            };
+          }
           return {
             isValid: true
           };
@@ -779,7 +786,7 @@ export const basicsTutorial: TutorialMission = {
                     event.data.newInitiativePlayer ===
                     ctx.game.playerSystem.player2
                   ) {
-                    await waitFor(100);
+                    await waitFor(300);
                     ctx.game.dispatch({
                       type: 'pass',
                       payload: { playerId: ctx.game.playerSystem.player2.id }
