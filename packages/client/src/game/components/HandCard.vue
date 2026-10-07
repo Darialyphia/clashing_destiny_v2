@@ -73,22 +73,21 @@ const isVisible = computed(() => {
 });
 
 const myPlayer = useMyPlayer();
+const isHovered = ref(false);
 const onMouseenter = () => {
   if (!card) return;
+  isHovered.value = true;
   if (card.player.equals(myPlayer.value)) {
     ui.value.hoverCardInHand(card);
   }
 };
 const onMouseleave = () => {
   if (!card) return;
+  isHovered.value = false;
   if (card.player.equals(myPlayer.value)) {
     ui.value.unhoverCardInHand();
   }
 };
-
-const isHovered = computed(() => {
-  return card ? ui.value.hoveredCardInHand?.equals(card) : false;
-});
 </script>
 
 <template>
