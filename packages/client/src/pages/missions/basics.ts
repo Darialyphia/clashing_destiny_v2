@@ -8,7 +8,7 @@ import { GAME_PHASES } from '@game/engine/src/game/game.enums';
 import { match } from 'ts-pattern';
 
 export const basicsTutorial: TutorialMission = {
-  id: 'play-card',
+  id: 'basics',
   name: 'Mission 1: Basics',
   options: {
     gameOptions: {
@@ -101,13 +101,13 @@ export const basicsTutorial: TutorialMission = {
         },
         textBoxes: [
           {
-            text: 'The Bloodbound invaders are trying to take over our outpost!',
+            text: 'The Bloodbound invaders are trying to take over our outpost !',
             right: '22%',
             bottom: '45%',
             canManuallyAdvance: true
           },
           {
-            text: 'Use your minions to defend our position!',
+            text: 'Use your minions to defend our position !',
             right: '22%',
             bottom: '45%',
             canManuallyAdvance: false,
@@ -165,7 +165,7 @@ export const basicsTutorial: TutorialMission = {
             }
           },
           {
-            text: 'You need to <b>SCORE</b> to strengthen your position!',
+            text: 'You need to <b>SCORE</b> to strengthen your position !',
             right: '22%',
             bottom: '45%',
             canManuallyAdvance: false,
@@ -246,7 +246,7 @@ export const basicsTutorial: TutorialMission = {
             }
           },
           {
-            text: 'Fill up your Victory Points gauge to win the game!',
+            text: 'Fill up your Victory Points gauge to win the game !',
             left: '-5%',
             bottom: '25%',
             canManuallyAdvance: true,
@@ -258,7 +258,7 @@ export const basicsTutorial: TutorialMission = {
             }
           },
           {
-            text: 'The enemy scored as well! You are now tied in influence.',
+            text: 'The enemy scored as well ! You are now tied in influence.',
             left: '50%',
             top: '25%',
             hideDuringOpponentInitiative: true,
@@ -383,7 +383,7 @@ export const basicsTutorial: TutorialMission = {
           },
 
           {
-            text: "You got some reinforcements! Let's use them to turn the tides of battle!",
+            text: "You got some reinforcements ! Let's use them to turn the tides of battle !",
             right: '22%',
             bottom: '45%',
             canManuallyAdvance: true,
@@ -551,7 +551,7 @@ export const basicsTutorial: TutorialMission = {
             canManuallyAdvance: true
           },
           {
-            text: 'Your opponent chose to score again. Time to take advantage of this!',
+            text: 'Your opponent chose to score again. Time to take advantage of this !',
             right: '22%',
             bottom: '45%',
             canManuallyAdvance: true,
@@ -731,7 +731,7 @@ export const basicsTutorial: TutorialMission = {
             }
           },
           {
-            text: 'This is because the enemy was <b>READY</b>. Ready minions strike back, keep that in mind!',
+            text: 'This is because the enemy was <b>READY</b>. Ready minions strike back, keep that in mind !',
             right: '22%',
             bottom: '45%',
             canManuallyAdvance: true
@@ -746,7 +746,7 @@ export const basicsTutorial: TutorialMission = {
             }
           },
           {
-            text: 'Here are another card in your hand. Thankfully it has an influence of 3!',
+            text: 'Here are another card in your hand. Thankfully it has an influence of 3 !',
             right: '22%',
             bottom: '45%',
             canManuallyAdvance: true,
@@ -820,7 +820,7 @@ export const basicsTutorial: TutorialMission = {
         },
         textBoxes: [
           {
-            text: 'Good job! You now have more influence than your opponent, the turn is secure.',
+            text: 'Good job ! You now have more influence than your opponent, the turn is secure.',
             left: '0%',
             bottom: '35%',
             canManuallyAdvance: true
@@ -855,7 +855,7 @@ export const basicsTutorial: TutorialMission = {
         },
         textBoxes: [
           {
-            text: 'You are only one point away from victory!',
+            text: 'You are only one point away from victory !',
             left: '0%',
             bottom: '35%',
             canManuallyAdvance: true,

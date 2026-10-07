@@ -84,7 +84,6 @@ const handleMouseup = async (e: MouseEvent) => {
   display: grid;
   place-content: center;
   position: relative;
-  transform-style: preserve-3d;
   &.is-in-aoe,
   &.can-attack {
     background-image: url('@/assets/ui/board-small-card-slot-in-aoe.png');
