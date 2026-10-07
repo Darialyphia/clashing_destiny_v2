@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import {
+  useFxEvent,
   useGameClient,
   useGameState,
   useGameUi,
@@ -30,6 +31,8 @@ import Deck from './Deck.vue';
 import GamePhaseIndicator from './GamePhaseIndicator.vue';
 import Debug from './Debug.vue';
 import BattleLog from './BattleLog.vue';
+import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
+import FancyButton from '@/ui/components/FancyButton.vue';
 
 const { clocks } = defineProps<{
   clocks?: Record<string, PlayerClockState>;
@@ -87,6 +90,12 @@ const isScreenDimmed = computed(() => {
   if (state.value.effectChain?.state === 'BUILDING') return true;
   return false;
 });
+
+const winners = ref<string[]>([]);
+useFxEvent(FX_EVENTS.GAME_OVER, event => {
+  winners.value = event.winners;
+});
+const hasWon = computed(() => winners.value.includes(myPlayer.value.id));
 </script>
 
 <template>
@@ -145,7 +154,11 @@ const isScreenDimmed = computed(() => {
   <PlayerInfos class="my-player" :player="myPlayer" /> -->
 
   <DraggedCard />
-
+  <div v-if="winners.length" class="game-over">
+    <p v-if="hasWon">You have won the game!</p>
+    <p v-else>You have lost the game.</p>
+    <FancyButton text="Back to Home" :to="{ name: 'ClientHome' }" />
+  </div>
   <GameMenu>
     <template #menu>
       <slot name="menu" />
@@ -268,5 +281,19 @@ const isScreenDimmed = computed(() => {
   position: absolute;
   left: var(--size-2);
   bottom: var(--size-5);
+}
+.game-over {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-6);
+  z-index: 20;
+  p {
+    color: white;
+  }
 }
 </style>

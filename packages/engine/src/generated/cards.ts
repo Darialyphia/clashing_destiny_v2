@@ -97,7 +97,10 @@ export const cards = {
 "red-synja": "red-synja",
 "bloodbound-invader": "bloodbound-invader",
 "tutorial-windblade-adept": "tutorial-windblade-adept",
-"tutorial-silverguard-outpost": "tutorial-silverguard-outpost"
+"tutorial-silverguard-outpost": "tutorial-silverguard-outpost",
+"tutorial-silverguard-knight": "tutorial-silverguard-knight",
+"bloodbound-executor": "bloodbound-executor",
+"bloodbound-shaman": "bloodbound-shaman"
 } as const;
 
 export const collectableCards = {
@@ -748,6 +751,24 @@ export const cardsBySet: Record<string, CardSet> = {
     "collectable": true,
     "rarity": "rare",
     "kind": "DESTINY"
+  },
+  {
+    "id": "tutorial-silverguard-knight",
+    "collectable": false,
+    "rarity": "token",
+    "kind": "MINION"
+  },
+  {
+    "id": "bloodbound-executor",
+    "collectable": false,
+    "rarity": "token",
+    "kind": "MINION"
+  },
+  {
+    "id": "bloodbound-shaman",
+    "collectable": false,
+    "rarity": "token",
+    "kind": "MINION"
   }
 ]
 };
@@ -844,7 +865,10 @@ export const cardShortIds: Record<string, number> = {
 "red-synja": 91,
 "bloodbound-invader": 92,
 "tutorial-windblade-adept": 93,
-"tutorial-silverguard-outpost": 94
+"tutorial-silverguard-outpost": 94,
+"tutorial-silverguard-knight": 95,
+"bloodbound-executor": 96,
+"bloodbound-shaman": 97
 } as const;
 
 export const cardIdByShortId: Record<number, string> = {
@@ -939,5 +963,8 @@ export const cardIdByShortId: Record<number, string> = {
 "91": "red-synja",
 "92": "bloodbound-invader",
 "93": "tutorial-windblade-adept",
-"94": "tutorial-silverguard-outpost"
+"94": "tutorial-silverguard-outpost",
+"95": "tutorial-silverguard-knight",
+"96": "bloodbound-executor",
+"97": "bloodbound-shaman"
 } as const;
