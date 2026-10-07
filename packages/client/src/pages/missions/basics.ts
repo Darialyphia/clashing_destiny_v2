@@ -907,25 +907,7 @@ export const basicsTutorial: TutorialMission = {
               await silverGuardKnight.addToHand();
 
               await ctx.game.snapshotSystem.takeSnapshot();
-            }
-          },
-          {
-            text: 'You need one more Victory Point. Gain more influence than the enemy, then end the turn. Choose which minions will fight and which will score.',
-            right: '22%',
-            bottom: '45%',
-            canManuallyAdvance: true
-          },
-          {
-            text: "You're on your own now! Repel the Bloodbound invaders !",
-            right: '22%',
-            bottom: '45%',
-            canManuallyAdvance: false,
-            advanceCondition() {
-              return false;
-            },
-            async onEnter(ctx) {
-              const p1 = ctx.game.playerSystem.player1;
-              const p2 = ctx.game.playerSystem.player2;
+
               ctx.client.onUpdateCompleted(async () => {
                 const shouldPlay = ctx.game.activePlayers
                   .map(p => p.id)
@@ -1107,6 +1089,21 @@ export const basicsTutorial: TutorialMission = {
                     });
                   });
               });
+            }
+          },
+          {
+            text: 'You need one more Victory Point. Gain more influence than the enemy, then end the turn. Choose which minions will fight and which will score.',
+            right: '22%',
+            bottom: '45%',
+            canManuallyAdvance: true
+          },
+          {
+            text: "You're on your own now! Repel the Bloodbound invaders !",
+            right: '22%',
+            bottom: '45%',
+            canManuallyAdvance: false,
+            advanceCondition() {
+              return false;
             }
           }
         ]
