@@ -67,9 +67,7 @@ const isInspectable = computed(() => {
 <template>
   <HoverCardRoot :open-delay="openDelay" :close-delay="closeDelay">
     <HoverCardTrigger as-child>
-      <div class="inspectable-card" v-bind="$attrs">
-        <slot />
-      </div>
+      <slot />
     </HoverCardTrigger>
     <HoverCardPortal to="#card-portal">
       <HoverCardContent :side="side" :side-offset="sideOffset" :align="align">
@@ -137,7 +135,7 @@ ul {
 li {
   max-inline-size: calc(var(--card-v2-width) * var(--pixel-scale));
   background-color: hsla(0, 0%, 0%, 0.65);
-  backdrop-filter: blur(4px);
+  /* backdrop-filter: blur(4px); */
   color: #efef9f;
   /* padding: var(--size-1) var(--size-3); */
   font-family: 'Lato';

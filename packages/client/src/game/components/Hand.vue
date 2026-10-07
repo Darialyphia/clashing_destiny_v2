@@ -163,13 +163,13 @@ watch(width, v => {
         :key="card.card.id"
         :card="card.card"
         :is-interactive="isMyHand"
+        :hover-y-offset="-190"
         :style="{
           '--x': `${card.x}px`,
           '--y': `${card.y}px`,
           '--z': card.z,
           '--keyboard-shortcut-right': '50%'
         }"
-        :hover-scale="2"
       />
     </section>
   </OnClickOutside>

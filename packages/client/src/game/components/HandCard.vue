@@ -12,13 +12,11 @@ import CardBack from '@/card/components/CardBack.vue';
 const {
   card,
   isInteractive,
-  hoverYOffset = 0,
-  hoverScale = 2
+  hoverYOffset = 0
 } = defineProps<{
   card?: CardViewModel;
   isInteractive: boolean;
   hoverYOffset?: number;
-  hoverScale?: number;
 }>();
 
 const ui = useGameUi();
@@ -87,6 +85,10 @@ const onMouseleave = () => {
     ui.value.unhoverCardInHand();
   }
 };
+
+const isHovered = computed(() => {
+  return card ? ui.value.hoveredCardInHand?.equals(card) : false;
+});
 </script>
 
 <template>
@@ -101,7 +103,7 @@ const onMouseleave = () => {
       },
       card?.keywords.map(k => `keyword-${k.toLocaleLowerCase()}`)
     ]"
-    :style="{ '--hover-y-offset': hoverYOffset, '--hover-scale': hoverScale }"
+    :style="{ '--hover-y-offset': hoverYOffset }"
     @mousedown="onMouseDown($event)"
   >
     <p class="violation-warning" v-if="violationWarning">
@@ -115,6 +117,7 @@ const onMouseleave = () => {
       :actions-offset="15"
       :is-interactive="isInteractive"
       show-disabled-message
+      :pixel-scale="isHovered ? 2 : 1"
       @mouseenter="onMouseenter()"
       @mouseleave="onMouseleave()"
     />
@@ -139,10 +142,10 @@ const onMouseleave = () => {
   left: 0;
   --hover-offset: 0px;
   --offset-y: var(--hover-offset);
-  --scale: 1;
+  --pixel-scale: 1;
+
   transform-origin: 0% 100%;
-  transform: translateX(var(--x)) translateY(var(--offset-y))
-    scale(var(--scale));
+  transform: translateX(var(--x)) translateY(var(--offset-y));
   z-index: var(--z);
   transition:
     transform 0.2s var(--ease-2),
@@ -152,7 +155,6 @@ const onMouseleave = () => {
     filter: brightness(3.5) saturate(2) !important;
   }
   &.hoverable:hover {
-    --scale: var(--hover-scale);
     --hover-offset: calc(var(--hover-y-offset) * 1px);
     z-index: var(--hand-size);
   }

@@ -142,9 +142,5 @@ const shouldHide = computed(() => {
   :global(b) {
     color: var(--primary);
   }
-
-  :global(b) {
-    color: var(--primary);
-  }
 }
 </style>

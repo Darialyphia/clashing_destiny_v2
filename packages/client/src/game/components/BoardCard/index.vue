@@ -146,6 +146,7 @@ const isFaceDown = computed(
         @art-sequence-end="onAnimationSequenceEnd"
       />
     </InspectableCard>
+
     <Transition>
       <AbilityMenu
         v-if="isHovered"
@@ -174,6 +175,12 @@ const isFaceDown = computed(
 </template>
 
 <style scoped lang="postcss">
+.test {
+  width: var(--card-small-v3-width);
+  height: var(--card-small-v3-height);
+  background: linear-gradient(yellow, orange);
+}
+
 .board-card {
   --pixel-scale: 1;
   /* width: var(--card-small-v2-width);

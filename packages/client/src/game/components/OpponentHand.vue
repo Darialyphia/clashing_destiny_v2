@@ -173,7 +173,6 @@ const { height } = useWindowSize();
           '--keyboard-shortcut-right': '50%'
         }"
         :hover-y-offset="height <= 920 ? 230 : 180"
-        :hover-scale="2"
       />
     </section>
   </OnClickOutside>

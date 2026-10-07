@@ -58,6 +58,7 @@ const parallaxFn = useRafFn(({ delta }) => {
 });
 
 watchEffect(() => {
+  if (!route) return;
   if (route.name === 'ClientHome') {
     parallaxFn.resume();
   } else {
