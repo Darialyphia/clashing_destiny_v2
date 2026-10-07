@@ -12,6 +12,7 @@ import Arrow from '../Arrow.vue';
 import type { BoardSpaceViewModel } from '@game/engine/src/client/view-models/board-space.model';
 import { useCellHighlights } from '../../composables/useCellHighlights';
 import BoardCard from '../BoardCard/index.vue';
+import { useFloating, autoUpdate } from '@floating-ui/vue';
 
 const { cellId } = defineProps<{
   cellId: string;
@@ -35,6 +36,15 @@ const handleMouseup = async (e: MouseEvent) => {
   const actionTaken = ui.value.onBoardSpaceClick(cell.value);
   if (actionTaken) e.stopPropagation();
 };
+
+const rootEl = useTemplateRef('root');
+const errorMessageEl = useTemplateRef('errorMessage');
+
+const { floatingStyles } = useFloating(rootEl, errorMessageEl, {
+  placement: 'top',
+  strategy: 'absolute',
+  whileElementsMounted: autoUpdate
+});
 </script>
 
 <template>
@@ -48,6 +58,7 @@ const handleMouseup = async (e: MouseEvent) => {
       'can-attack': canAttack && !client.isPlayingFx,
       'is-moving-unit': isMovingUnit
     }"
+    ref="root"
     @mouseup="handleMouseup"
     @mousedown="dragSelection.onMousedown"
   >
@@ -56,14 +67,18 @@ const handleMouseup = async (e: MouseEvent) => {
       :card="cell.card"
       :is-shaking="dragSelection.isShaking.value"
     />
-    <Transition name="cannot-select-msg">
-      <div
-        v-if="dragSelection.isShowingMessage.value && cannotSelectReason"
-        class="cannot-select-msg"
-      >
-        {{ cannotSelectReason }}
-      </div>
-    </Transition>
+    <Teleport to="body">
+      <Transition name="cannot-select-msg">
+        <div
+          ref="errorMessage"
+          v-if="dragSelection.isShowingMessage.value && cannotSelectReason"
+          :style="floatingStyles"
+          class="cannot-select-msg"
+        >
+          {{ cannotSelectReason }}
+        </div>
+      </Transition>
+    </Teleport>
 
     <Teleport to="#arrows" defer>
       <Arrow v-if="path" :path="path" :color="pathColor" />
@@ -123,10 +138,7 @@ const handleMouseup = async (e: MouseEvent) => {
 }
 
 .cannot-select-msg {
-  position: absolute;
-  bottom: calc(100% + var(--size-3));
-  left: 50%;
-  transform: translateX(-50%);
+  z-index: 99;
   color: white;
   text-align: center;
   font-size: var(--size-3);

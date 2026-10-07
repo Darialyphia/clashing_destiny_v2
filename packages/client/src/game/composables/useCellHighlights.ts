@@ -44,6 +44,7 @@ export const useCellHighlights = (cell: Ref<BoardSpaceViewModel>) => {
 
   const cannotSelectReason = computed((): string | null => {
     if (!cell.value.card) return null;
+    if (cell.value.card.player.id !== playerId.value) return null;
     if (!client.value.isActive()) return 'You are not the active player !';
     if (cell.value.card.isExhausted) return 'This card is exhausted !';
     if (state.value.interaction.state !== INTERACTION_STATES.IDLE) return ''; // no need to show reason when in the middle of an interaction
