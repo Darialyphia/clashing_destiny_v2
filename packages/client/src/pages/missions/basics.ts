@@ -768,17 +768,7 @@ export const basicsTutorial: TutorialMission = {
                 type: 'pass',
                 payload: { playerId: ctx.game.playerSystem.player2.id }
               });
-            }
-          },
-          {
-            text: 'Play it, move it to the battlefield and score with it get ahead in influence.',
-            right: '22%',
-            bottom: '45%',
-            canManuallyAdvance: false,
-            advanceCondition() {
-              return false;
-            },
-            async onEnter(ctx) {
+
               const unsub = ctx.game.on(
                 GAME_EVENTS.TURN_INITATIVE_CHANGE,
                 async event => {
@@ -795,6 +785,15 @@ export const basicsTutorial: TutorialMission = {
                 }
               );
               ctx.game.once(GAME_EVENTS.TURN_START, unsub);
+            }
+          },
+          {
+            text: 'Play it, move it to the battlefield and score with it get ahead in influence.',
+            right: '22%',
+            bottom: '45%',
+            canManuallyAdvance: false,
+            advanceCondition() {
+              return false;
             }
           }
         ]
@@ -908,25 +907,7 @@ export const basicsTutorial: TutorialMission = {
               await silverGuardKnight.addToHand();
 
               await ctx.game.snapshotSystem.takeSnapshot();
-            }
-          },
-          {
-            text: 'You need one more Victory Point. Gain more influence than the enemy, then end the turn. Choose which minions will fight and which will score.',
-            right: '22%',
-            bottom: '45%',
-            canManuallyAdvance: true
-          },
-          {
-            text: "You're on your own now! Repel the Bloodbound invaders !",
-            right: '22%',
-            bottom: '45%',
-            canManuallyAdvance: false,
-            advanceCondition() {
-              return false;
-            },
-            async onEnter(ctx) {
-              const p1 = ctx.game.playerSystem.player1;
-              const p2 = ctx.game.playerSystem.player2;
+
               ctx.client.onUpdateCompleted(async () => {
                 const shouldPlay = ctx.game.activePlayers
                   .map(p => p.id)
@@ -1108,6 +1089,21 @@ export const basicsTutorial: TutorialMission = {
                     });
                   });
               });
+            }
+          },
+          {
+            text: 'You need one more Victory Point. Gain more influence than the enemy, then end the turn. Choose which minions will fight and which will score.',
+            right: '22%',
+            bottom: '45%',
+            canManuallyAdvance: true
+          },
+          {
+            text: "You're on your own now! Repel the Bloodbound invaders !",
+            right: '22%',
+            bottom: '45%',
+            canManuallyAdvance: false,
+            advanceCondition() {
+              return false;
             }
           }
         ]
