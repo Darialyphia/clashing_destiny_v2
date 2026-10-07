@@ -172,7 +172,7 @@ const { height } = useWindowSize();
           '--z': card.z,
           '--keyboard-shortcut-right': '50%'
         }"
-        :hover-y-offset="height <= 920 ? 230 : 180"
+        :hover-y-offset="height <= 920 ? 45 : 0"
       />
     </section>
   </OnClickOutside>
@@ -193,16 +193,10 @@ const { height } = useWindowSize();
   }
 }
 .hand {
-  --pixel-scale: 1;
-  --hover-offset: 120px; /* used in HandCard.vue */
+  /* --pixel-scale: 1; */
   position: relative;
   z-index: 1;
   width: 100%;
   transition: transform 0.15s var(--ease-elastic-2);
-
-  &:hover {
-    --pixel-scale: 1;
-    /* transform: translateY(-60px); */
-  }
 }
 </style>
