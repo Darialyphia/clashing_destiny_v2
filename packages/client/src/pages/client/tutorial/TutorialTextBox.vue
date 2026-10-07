@@ -1,22 +1,30 @@
 <script setup lang="ts">
 import FancyButton from '@/ui/components/FancyButton.vue';
 import { useTutorial } from './useTutorial';
+import { useGameState, useMyPlayer } from '@/game/composables/useGameClient';
 
-const {
-  currentStepTextBox,
-  currentStepError,
-  next,
-  canRetry,
-  retry,
-  isFinished,
-  nextMission
-} = useTutorial();
+const { currentStepTextBox, next } = useTutorial();
+
+const state = useGameState();
+
+const myPlayer = useMyPlayer();
+
+const shouldHide = computed(() => {
+  if (!currentStepTextBox.value) return true;
+  if (
+    currentStepTextBox.value.hideDuringOpponentInitiative &&
+    state.value.turn.initiativePlayer !== myPlayer.value.id
+  ) {
+    return true;
+  }
+  return false;
+});
 </script>
 
 <template>
   <div class="text-box-container">
     <div
-      v-if="currentStepTextBox"
+      v-if="currentStepTextBox && !shouldHide"
       class="surface text-box"
       :key="currentStepTextBox?.text"
       :style="{
@@ -28,22 +36,15 @@ const {
         '--y-offset': currentStepTextBox.centered?.y ? '-50%' : '0'
       }"
     >
-      {{ currentStepTextBox?.text }}
+      <div v-html="currentStepTextBox?.text" />
       <FancyButton
-        v-if="currentStepTextBox?.canGoNext"
+        v-if="currentStepTextBox?.canManuallyAdvance"
         text="Next"
         class="mt-4 ml-auto"
         @click="next"
       />
-      <FancyButton
-        v-if="currentStepError && canRetry"
-        text="Retry"
-        class="mt-4 ml-auto"
-        variant="error"
-        @click="retry"
-      />
-      <FancyButton
-        v-if="isFinished"
+      <!-- <FancyButton
+        v-if="tutorial"
         class="mt-4 ml-auto"
         :to="
           nextMission
@@ -51,7 +52,7 @@ const {
             : { name: 'TutorialHome' }
         "
         :text="nextMission ? 'New Mission' : 'Back to Missions'"
-      />
+      /> -->
     </div>
   </div>
 </template>
@@ -85,6 +86,10 @@ const {
   @starting-style {
     opacity: 0;
     scale: 0.5;
+  }
+
+  :global(b) {
+    color: var(--primary);
   }
 }
 </style>

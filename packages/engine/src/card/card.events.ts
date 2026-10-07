@@ -315,6 +315,20 @@ export class CardScoreEvent extends TypedSerializableEvent<
   }
 }
 
+export class CardAfterScoreEvent extends TypedSerializableEvent<
+  { card: AnyCard; battlefield: Battlefield; destinyCard: DestinyCard; newScore: number },
+  { card: string; battlefield: string; destinyCard: string; newScore: number }
+> {
+  serialize() {
+    return {
+      card: this.data.card.id,
+      battlefield: this.data.battlefield.id,
+      destinyCard: this.data.destinyCard.id,
+      newScore: this.data.newScore
+    };
+  }
+}
+
 export type CardEventMap = {
   [CARD_EVENTS.CARD_EXHAUST]: CardExhaustEvent;
   [CARD_EVENTS.CARD_WAKE_UP]: CardWakeUpEvent;
@@ -340,5 +354,5 @@ export type CardEventMap = {
   [CARD_EVENTS.CARD_BEFORE_MOVE]: CardBeforeMoveEvent;
   [CARD_EVENTS.CARD_AFTER_MOVE]: CardAfterMoveEvent;
   [CARD_EVENTS.BEFORE_SCORE]: CardScoreEvent;
-  [CARD_EVENTS.AFTER_SCORE]: CardScoreEvent;
+  [CARD_EVENTS.AFTER_SCORE]: CardAfterScoreEvent;
 };

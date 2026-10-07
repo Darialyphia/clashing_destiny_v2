@@ -1,4 +1,4 @@
-import type { BetterExtract, EmptyObject, Serializable } from '@game/shared';
+import type { BetterExtract, EmptyObject, Serializable, Values } from '@game/shared';
 import { CARD_LOCATIONS, type CardLocation } from '../card/card.enums';
 import type { Game } from '../game/game';
 import type { Player } from '../player/player.entity';
@@ -9,6 +9,7 @@ import { Entity } from '../entity';
 import { GAME_EVENTS } from '../game/game.events';
 import type { AnyCard } from '../card/entities/card.entity';
 import type { SecretCard } from '../card/entities/secret.entity';
+import { TypedSerializableEvent } from '../utils/typed-emitter';
 
 export type SerializedBattlefield = {
   id: string;
@@ -18,6 +19,7 @@ export type SerializedBattlefield = {
   commandmentScore: number;
   opponentCommandmentScore: number;
   player: string;
+  zone: 'left_battlefield' | 'right_battlefield';
 };
 export class Battlefield
   extends Entity<EmptyObject>
@@ -110,10 +112,18 @@ export class Battlefield
 
   async gainScore(amount: number) {
     this._commandmentScore += amount;
+    await this.game.emit(
+      BATTLEFIELD_EVENTS.SCORE_CHANGE,
+      new BoardScoreChangeEvent({ amount })
+    );
   }
 
   async loseScore(amount: number) {
     this._commandmentScore -= Math.max(0, amount);
+    await this.game.emit(
+      BATTLEFIELD_EVENTS.SCORE_CHANGE,
+      new BoardScoreChangeEvent({ amount })
+    );
   }
 
   has(card: MinionCard) {
@@ -128,7 +138,27 @@ export class Battlefield
       secretCard: this.secretCard?.id ?? null,
       commandmentScore: this.commandmentScore,
       opponentCommandmentScore: this.opponentCommandmentScore,
-      player: this.player.id
+      player: this.player.id,
+      zone: this.zone
     };
   }
 }
+
+export const BATTLEFIELD_EVENTS = {
+  SCORE_CHANGE: 'scoreChange'
+} as const;
+export type BattlefieldEvent = Values<typeof BATTLEFIELD_EVENTS>;
+export class BoardScoreChangeEvent extends TypedSerializableEvent<
+  { amount: number },
+  { amount: number }
+> {
+  serialize() {
+    return {
+      amount: this.data.amount
+    };
+  }
+}
+
+export type BattlefieldEventMap = {
+  [BATTLEFIELD_EVENTS.SCORE_CHANGE]: BoardScoreChangeEvent;
+};

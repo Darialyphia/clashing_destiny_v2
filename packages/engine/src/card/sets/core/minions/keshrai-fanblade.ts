@@ -33,7 +33,7 @@ export const keshraiFanblade: MinionBlueprint = {
   tags: [],
   atk: 3,
   maxHp: 5,
-  commandment: 3,
+  commandment: 2,
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {

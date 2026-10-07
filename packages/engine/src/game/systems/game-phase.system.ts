@@ -1,4 +1,10 @@
-import { assert, StateMachine, stateTransition, type BetterExtract } from '@game/shared';
+import {
+  assert,
+  StateMachine,
+  stateTransition,
+  waitFor,
+  type BetterExtract
+} from '@game/shared';
 import type { Player } from '../../player/player.entity';
 import type { Game } from '../game';
 import { TypedSerializableEvent } from '../../utils/typed-emitter';
@@ -140,22 +146,33 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
         GAME_PHASES.DRAW,
         GAME_PHASE_TRANSITIONS.PLAYER_WON,
         GAME_PHASES.GAME_END
+      ),
+      stateTransition(
+        GAME_PHASES.PLAY_CARD,
+        GAME_PHASE_TRANSITIONS.PLAYER_WON,
+        GAME_PHASES.GAME_END
+      ),
+      stateTransition(
+        GAME_PHASES.END,
+        GAME_PHASE_TRANSITIONS.PLAYER_WON,
+        GAME_PHASES.GAME_END
       )
     ]);
   }
 
-  async initialize() {
-    const stop = this.game.on(GAME_EVENTS.NEW_SNAPSHOT, async () => {
-      const winners: Player[] = [];
-      for (const player of this.game.playerSystem.players) {
-        if (this.game.winCondition(this.game, player)) {
-          winners.push(player);
-        }
+  async initialize() {}
+
+  private async checkWinners() {
+    const winners: Player[] = [];
+    for (const player of this.game.playerSystem.players) {
+      if (this.game.winCondition(this.game, player)) {
+        winners.push(player);
       }
-      if (!winners.length) return;
-      stop();
-      await this.declareWinner(winners);
-    });
+    }
+    if (!winners.length) return;
+    stop();
+
+    return winners;
   }
 
   async startGame() {
@@ -208,7 +225,12 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
     await this.sendTransition(GAME_PHASE_TRANSITIONS.END_TURN);
 
     await (this._ctx as EndPhase).scoreBattlefields();
-    await (this._ctx as EndPhase).terminateTurn();
+    const winners = await this.checkWinners();
+    if (winners?.length) {
+      await this.declareWinner(winners);
+    } else {
+      await (this._ctx as EndPhase).terminateTurn();
+    }
   }
 
   async startTurn() {

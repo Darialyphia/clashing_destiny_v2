@@ -16,14 +16,14 @@ export const holyImmolation = defineSecretBlueprint({
   id: 'holy-immolation',
   name: 'Holy Immolation',
   description: dedent /*html*/ `
-  When an ally minion is attacked and you have 3 or more influence here, heal all allies here for 3 and deal 3 damage to the attacker.
+  When an ally minion is attacked and you have 2 or more influence here, heal all allies here for 3 and deal 3 damage to the attacker.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
   art: defaultCardArt('secrets/holy-immolation'),
   kind: CARD_KINDS.SECRET,
   rarity: RARITIES.EPIC,
-  affinities: [AFFINITIES.LIGHT, AFFINITIES.LIGHT, AFFINITIES.NEUTRAL],
+  affinities: [AFFINITIES.LIGHT, AFFINITIES.LIGHT],
   manaCost: 3,
   manaSupply: 3,
   speed: CARD_SPEED.FAST,
@@ -38,7 +38,7 @@ export const holyImmolation = defineSecretBlueprint({
       return (
         event.data.target.isAlly(card) &&
         event.data.target.location === card.location &&
-        card.battlefield!.commandmentScore >= 3
+        card.battlefield!.commandmentScore >= 2
       );
     }
   },

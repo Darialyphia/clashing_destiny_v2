@@ -53,6 +53,7 @@ export const CARD_SPEED = {
 export type CardSpeed = Values<typeof CARD_SPEED>;
 
 export const CARD_SETS = {
+  TUTORIAL: 'TUTORIAL',
   CORE: 'CORE'
 } as const;
 

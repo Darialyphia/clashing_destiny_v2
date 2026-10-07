@@ -115,18 +115,6 @@ export class GameClient {
     this.playerId = options.playerId;
     this.isSpectator = options.isSpectator;
 
-    this.networkAdapter.subscribe(async snapshot => {
-      console.groupCollapsed(`Snapshot Update: ${snapshot.id}`);
-      if (snapshot.kind === 'state') {
-        console.log('state', snapshot.state);
-      }
-      console.log('events', snapshot.events);
-      console.groupEnd();
-      this.queue.push(snapshot);
-      if (this._processingUpdate || !this.isReady) return;
-      await this.processQueue();
-    });
-
     this.cancelInteraction = this.cancelInteraction.bind(this);
   }
 
@@ -188,6 +176,17 @@ export class GameClient {
     this.lastSnapshotId = -1;
     this.snapshots.clear();
     this.queue = [];
+    this.networkAdapter.subscribe(async snapshot => {
+      console.groupCollapsed(`Snapshot Update: ${snapshot.id}`);
+      if (snapshot.kind === 'state') {
+        console.log('state', snapshot.state);
+      }
+      console.log('events', snapshot.events);
+      console.groupEnd();
+      this.queue.push(snapshot);
+      if (this._processingUpdate || !this.isReady) return;
+      await this.processQueue();
+    });
     if (snapshot.kind === 'error') {
       throw new Error('Cannot initialize client with error snapshot');
     }

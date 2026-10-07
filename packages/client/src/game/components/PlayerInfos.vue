@@ -27,7 +27,7 @@ watch(
 
     gsap.to(displayedMana, {
       value,
-      duration: 0.42,
+      duration: 0.4,
       ease: 'power3.out',
       onUpdate: () => {
         displayedMana.value = Number(displayedMana.value.toFixed(0));

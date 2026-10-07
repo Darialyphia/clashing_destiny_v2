@@ -1,7 +1,7 @@
 <template>
   <header class="flex items-center gap-4 surface">
     <RouterLink :to="{ name: 'Home' }">
-      <h1>Clashing Destinies</h1>
+      <h1>Duelyst Dominion</h1>
     </RouterLink>
     <nav class="ml-auto">
       <ul class="flex gap-4">

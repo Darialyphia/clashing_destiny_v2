@@ -875,7 +875,7 @@
  ],
  "meta": {
   "app": "https://www.aseprite.org/",
-  "version": "1.3.18.5-x64",
+  "version": "1.3.18.6-x64",
   "image": "argeon-highmane.png",
   "format": "RGBA8888",
   "size": { "w": 9700, "h": 100 },

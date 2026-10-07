@@ -3,22 +3,17 @@ import type {
   GameClient,
   NetworkAdapter
 } from '@game/engine/src/client/client';
-import { Game, type GameOptions } from '@game/engine/src/game/game';
-import { CARDS_DICTIONARY } from '@game/engine/src/card/sets';
+import { type GameOptions } from '@game/engine/src/game/game';
 import {
-  Tutorial,
+  TutorialV2,
+  type TutorialContext,
+  type TutorialOptions,
   type TutorialStep,
   type TutorialTextBox
-} from '@game/engine/src/tutorial/tutorial';
+} from '@game/engine/src/tutorial/v2/tutorial';
 import { useFxAdapter } from '@/game/composables/useFxAdapter';
 import { provideGameClient } from '@/game/composables/useGameClient';
-import type { Config } from '@game/engine/src/config';
-import type {
-  IndexedRecord,
-  MaybePromise,
-  Nullable,
-  Override
-} from '@game/shared';
+import type { Nullable, Override } from '@game/shared';
 import { useSafeInject } from '@/shared/composables/useSafeInject';
 
 type ClientTutorialTextBox = TutorialTextBox & {
@@ -27,83 +22,55 @@ type ClientTutorialTextBox = TutorialTextBox & {
   right?: string;
   bottom?: string;
   centered?: { x?: boolean; y?: boolean };
+  gesture?: {
+    from: (ctx: TutorialContext) => Nullable<HTMLElement>;
+    to: (ctx: TutorialContext) => Nullable<HTMLElement>;
+  };
+  hideDuringOpponentInitiative?: boolean;
 };
 
-export type UseTutorialOptions = Pick<
-  GameOptions,
-  'players' | 'rngSeed' | 'history'
-> & {
-  steps: IndexedRecord<
-    Override<
-      TutorialStep,
-      {
-        onEnter?(
-          game: Game,
-          step: TutorialStep,
-          client: GameClient
-        ): MaybePromise<void>;
-        textBoxes: ClientTutorialTextBox[];
-      }
-    >,
-    'id'
-  >;
-  setup: (game: Game, client: GameClient) => Promise<void>;
-  reset?: (game: Game, client: GameClient) => MaybePromise<void>;
-  config?: Partial<Config>;
-  next?: string;
-};
+export type UseTutorialOptions = Override<
+  TutorialOptions,
+  {
+    gameOptions: Pick<
+      GameOptions,
+      'players' | 'rngSeed' | 'history' | 'overrides'
+    >;
+    steps: Array<
+      Override<
+        TutorialStep,
+        {
+          textBoxes: Array<ClientTutorialTextBox>;
+        }
+      >
+    >;
+  }
+>;
 
-export type TutorialContext = {
+export type UseTutorialContext = {
   client: Ref<GameClient>;
+  tutorial: Ref<TutorialV2>;
   currentStep: Ref<TutorialStep | null>;
   currentStepTextBox: Ref<Nullable<ClientTutorialTextBox>>;
   currentStepError: Ref<string | null>;
   next: () => Promise<void>;
-  progress: Ref<{ current: number; total: number }>;
-  attemptCount: Ref<number>;
   status: Ref<string | null>;
-  canRetry: Ref<boolean>;
-  retry: () => Promise<void>;
-  isFinished: Ref<boolean>;
-  nextMission: string | undefined;
+  start: () => Promise<void>;
 };
 
 export const TUTORIAL_INJECTION_KEY = Symbol(
   'TutorialContext'
-) as InjectionKey<TutorialContext>;
+) as InjectionKey<UseTutorialContext>;
 
 export const provideTutorial = (options: UseTutorialOptions) => {
-  const game = new Game({
-    id: 'sandbox',
-    enableSnapshots: true,
-    rngSeed: options.rngSeed,
-    history: options.history,
-    overrides: {
-      cardPool: CARDS_DICTIONARY,
-      config: {
-        SHUFFLE_DECK_ON_GAME_START: false,
-        ...(options.config ?? {})
-      }
-    },
-    players: options.players
-  });
-
-  // @ts-expect-error
-  window.__debugGame = () => {
-    console.log(game);
-  };
-  // @ts-expect-error
-  window.__debugClient = () => {
-    console.log(client.value);
-  };
-  const tutorial = ref() as Ref<Tutorial>;
+  const tutorial = ref() as Ref<TutorialV2>;
 
   const networkAdapter: NetworkAdapter = {
     dispatch: input => {
       return tutorial.value.dispatch(input);
     },
     subscribe(cb) {
-      game.subscribeOmniscient(cb);
+      return tutorial.value.onSnapshot(cb);
     },
     sync(lastSnapshotId) {
       console.log('TODO: sync snapshots from sandbox', lastSnapshotId);
@@ -130,81 +97,65 @@ export const provideTutorial = (options: UseTutorialOptions) => {
   const currentStepError = ref<string | null>(null);
   let isDisposed = false;
 
-  tutorial.value = new Tutorial(
-    game,
-    Object.fromEntries(
-      Object.entries(options.steps).map(([id, step]) => [
-        id,
-        {
-          ...step,
-          async onEnter(game, newStep) {
-            await currentStepTextBox.value?.onLeave?.(game, client.value);
-            if (isDisposed) return;
-            currentStep.value = newStep;
-            currentStepTextboxIndex.value = 0;
-            currentStepError.value = null;
-            await step.onEnter?.(game, newStep, client.value);
-            await currentStepTextBox.value?.onEnter?.(game, client.value, next);
-          },
-          onFail(game, input, errorMessage) {
-            currentStepError.value = errorMessage;
-            return step.onFail?.(game, input, errorMessage);
-          }
-        }
-      ])
-    )
-  );
+  tutorial.value = new TutorialV2({
+    gameOptions: {
+      ...options.gameOptions,
+      id: 'tutorial'
+    },
+    steps: options.steps,
+    meta: {}
+  });
+
+  tutorial.value.onEnterStep(async ctx => {
+    currentStep.value = ctx.currentStep;
+    currentStepTextboxIndex.value = 0;
+    await currentStepTextBox.value?.onEnter?.(tutorial.value.ctx);
+  });
+  tutorial.value.onValidation(result => {
+    if (!result.isValid) {
+      currentStepError.value = result.reason || 'Invalid input';
+      setTimeout(() => {
+        currentStepError.value = null;
+      }, 3000);
+    }
+  });
+  // @ts-expect-error
+  window.__debugGame = () => {
+    console.log(tutorial.value.ctx.game);
+  };
+  // @ts-expect-error
+  window.__debugClient = () => {
+    console.log(tutorial.value.ctx);
+  };
 
   const stopClientUpdate = client.value.onUpdate(() => {
     triggerRef(tutorial);
   });
 
-  (async function () {
-    await game.initialize();
-    if (isDisposed) return;
-    await options.setup(game, client.value);
-    if (isDisposed) return;
-    await game.snapshotSystem.takeSnapshot();
-
-    client.value.initialize(game.snapshotSystem.getOmniscientSnapshotAt(0));
-    await tutorial.value.initialize(client.value);
-    if (options.reset) {
-      tutorial.value.setCheckpoint(options.reset);
-    }
-  })();
-
   const advanceTextBox = async () => {
-    await currentStepTextBox.value?.onLeave?.(game, client.value);
     if (isDisposed) return;
     currentStepTextboxIndex.value++;
-    await currentStepTextBox.value?.onEnter?.(game, client.value, next);
+    await currentStepTextBox.value?.onEnter?.(tutorial.value.ctx);
   };
-
-  const next = advanceTextBox;
 
   onUnmounted(() => {
     isDisposed = true;
     stopClientUpdate?.();
-    tutorial.value.dispose();
   });
 
-  const ctx: TutorialContext = {
+  const ctx: UseTutorialContext = {
     client,
+    tutorial,
     currentStep,
     currentStepTextBox,
     currentStepError,
     next: advanceTextBox,
-    progress: computed(() => tutorial.value.progress),
-    attemptCount: computed(() => tutorial.value.attemptCount),
-    status: computed(() => tutorial.value.status),
-    canRetry: computed(() => tutorial.value.hasCheckpoint),
-    async retry() {
-      await tutorial.value.resetToCheckpoint();
+    start: async () => {
+      await tutorial.value.initialize(client.value);
+      const snapshot = await tutorial.value.start();
+      await client.value.initialize(snapshot);
     },
-    nextMission: options.next,
-    isFinished: computed(() => {
-      return tutorial.value.isFinished;
-    })
+    status: computed(() => tutorial.value.status)
   };
 
   provide(TUTORIAL_INJECTION_KEY, ctx);

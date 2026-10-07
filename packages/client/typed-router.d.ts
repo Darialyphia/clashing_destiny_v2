@@ -31,12 +31,12 @@ declare module 'vue-router/auto-routes' {
     'SelectMode': RouteRecordInfo<'SelectMode', '/client/select-mode', Record<never, never>, Record<never, never>>,
     'Shop': RouteRecordInfo<'Shop', '/client/shop', Record<never, never>, Record<never, never>>,
     'TutorialHome': RouteRecordInfo<'TutorialHome', '/client/tutorial', Record<never, never>, Record<never, never>>,
-    'TutorialMission': RouteRecordInfo<'TutorialMission', '/client/tutorial/missions/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
     'HowToPlay': RouteRecordInfo<'HowToPlay', '/client/tutorial/rules', Record<never, never>, Record<never, never>>,
     'WatchGame': RouteRecordInfo<'WatchGame', '/client/watch/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
     'FoilVisualizer': RouteRecordInfo<'FoilVisualizer', '/foil-visualizer', Record<never, never>, Record<never, never>>,
     'Home': RouteRecordInfo<'Home', '/', Record<never, never>, Record<never, never>>,
     'Login': RouteRecordInfo<'Login', '/login', Record<never, never>, Record<never, never>>,
+    'TutorialMission': RouteRecordInfo<'TutorialMission', '/missions/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
     'Register': RouteRecordInfo<'Register', '/register', Record<never, never>, Record<never, never>>,
     'HowToPlayPublic': RouteRecordInfo<'HowToPlayPublic', '/rules', Record<never, never>, Record<never, never>>,
   }

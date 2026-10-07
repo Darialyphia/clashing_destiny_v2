@@ -34,6 +34,7 @@ export type Config = {
   SHOULD_SWITCH_INITIATIVE_AFTER_SCORING: boolean;
   SHOULD_EXHAUST_MINIONS_ON_SUMMON: boolean;
   SHOULD_CREATE_CHAIN_ON_SCORE: boolean;
+  SHOULD_ROTATE_DESTINIES: boolean;
 
   EFFECT_CHAIN: boolean;
 
@@ -52,7 +53,7 @@ export const defaultConfig: Config = {
   INITIAL_HAND_SIZE: 6,
   MAX_HAND_SIZE: 10,
   SHUFFLE_DECK_ON_GAME_START: true,
-  CARDS_DRAWN_PER_TURN: 5,
+  CARDS_DRAWN_PER_TURN: 6,
   CARD_DRAW_MODE: 'threshold',
 
   CARDS_MULLIGANED_PER_TURN: 2,
@@ -77,6 +78,7 @@ export const defaultConfig: Config = {
   SHOULD_SWITCH_INITIATIVE_AFTER_SCORING: true,
   SHOULD_EXHAUST_MINIONS_ON_SUMMON: false,
   SHOULD_CREATE_CHAIN_ON_SCORE: false,
+  SHOULD_ROTATE_DESTINIES: true,
 
   EFFECT_CHAIN: false,
 

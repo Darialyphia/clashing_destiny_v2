@@ -1,19 +1,18 @@
 <script setup lang="ts">
-// import BlueprintCard from '@/card/components/BlueprintCard.vue';
+import BlueprintCard from '@/card/components/BlueprintCard.vue';
 import FancyButton from '@/ui/components/FancyButton.vue';
-// import { CARDS_DICTIONARY } from '@game/engine/src/card/sets';
+import { CARDS_DICTIONARY } from '@game/engine/src/card/sets';
 </script>
 
 <template>
   <section class="hero-section">
     <div class="hero-content">
       <div>
-        <h1>Clashing Destinies</h1>
+        <h1>Duelyst Dominion</h1>
         <p class="hero-tagline">Forge Your Legend in Strategic Card Combat</p>
         <p class="hero-description">
-          Master the art of tactical warfare in this immersive fantasy card
-          game. Build your destiny deck, command powerful heroes, and clash
-          against opponents in epic duels where every decision shapes your fate.
+          Something something another duelyst game something something easy to
+          learn hard to master
         </p>
         <div class="hero-actions">
           <RouterLink :to="{ name: 'Register' }">
@@ -21,34 +20,37 @@ import FancyButton from '@/ui/components/FancyButton.vue';
           </RouterLink>
         </div>
       </div>
-      <!-- <div class="hero-visual">
+      <div class="hero-visual">
         <div class="floating-cards">
           <div class="card-phantom card-4">
             <BlueprintCard
-              :blueprint="CARDS_DICTIONARY['radiant-celestial']"
+              :blueprint="CARDS_DICTIONARY['argeon-highmane']"
               is-foil
             />
           </div>
           <div class="card-phantom card-5">
             <BlueprintCard
-              :blueprint="CARDS_DICTIONARY['ruler-of-tempest-fire']"
+              :blueprint="CARDS_DICTIONARY['holy-immolation']"
               is-foil
             />
           </div>
           <div class="card-phantom card-1">
-            <BlueprintCard :blueprint="CARDS_DICTIONARY['erina-lv2']" is-foil />
-          </div>
-          <div class="card-phantom card-2">
             <BlueprintCard
-              :blueprint="CARDS_DICTIONARY['navala-surging-catalyst']"
+              :blueprint="CARDS_DICTIONARY['sunbreaker']"
               is-foil
             />
           </div>
+          <div class="card-phantom card-2">
+            <BlueprintCard :blueprint="CARDS_DICTIONARY['red-synja']" is-foil />
+          </div>
           <div class="card-phantom card-3">
-            <BlueprintCard :blueprint="CARDS_DICTIONARY['aiden-lv2']" is-foil />
+            <BlueprintCard
+              :blueprint="CARDS_DICTIONARY['zirix-starstrider']"
+              is-foil
+            />
           </div>
         </div>
-      </div> -->
+      </div>
     </div>
   </section>
 </template>
@@ -58,9 +60,15 @@ import FancyButton from '@/ui/components/FancyButton.vue';
   background-attachment: fixed;
   background:
     linear-gradient(to top, hsl(0 0% 0% / 0.8) 20%, transparent 80%),
-    url('@/assets/backgrounds/home_hero.jpg');
+    url('@/assets/backgrounds/main-menu-front.png'),
+    url('@/assets/backgrounds/main-menu-middle.png'),
+    url('@/assets/backgrounds/main-menu-back.png');
   background-size: cover;
-  background-position: center, center, bottom;
+  background-position:
+    center,
+    center,
+    center,
+    100px center;
   position: relative;
   display: flex;
   align-items: center;
@@ -89,7 +97,7 @@ h1 {
   background-clip: text;
   position: relative;
   &::after {
-    content: 'Clashing Destinies';
+    content: 'Duelyst Dominion';
     position: absolute;
     inset: 0;
     color: transparent;

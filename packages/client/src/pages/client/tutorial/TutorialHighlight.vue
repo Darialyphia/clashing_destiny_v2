@@ -44,5 +44,9 @@ const RECT_PADDING = 15;
     translate 0.5s var(--ease-3),
     scale 0.5s var(--ease-3);
   animation: highlight-pulse 2s infinite;
+  transition: box-shadow 0.3s var(--ease-3);
+  @starting-style {
+    box-shadow: 0 0 0 100vmax hsl(0 0 0 / 0);
+  }
 }
 </style>

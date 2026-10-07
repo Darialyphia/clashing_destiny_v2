@@ -121,7 +121,6 @@ export class Tutorial {
         this._lastError = null;
         await this.game.dispatch(input);
         const next = step.next(input);
-        await step.onSuccess?.(this.game, input, next ? this.steps[next] : null);
 
         if (isDefined(next)) {
           this.currentStepId = next;
@@ -133,7 +132,6 @@ export class Tutorial {
         }
       } else if (result.status === 'error') {
         this._lastError = result.errorMessage;
-        await step.onFail?.(this.game, input, result.errorMessage);
       }
     } finally {
       this.isDispatching = false;

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import Tutorial from '../Tutorial.vue';
-import { missions } from '../missions';
+import Tutorial from '../client/tutorial/Tutorial.vue';
+import { missions } from './index.js';
 
 definePage({
   name: 'TutorialMission'
