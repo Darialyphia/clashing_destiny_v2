@@ -768,17 +768,7 @@ export const basicsTutorial: TutorialMission = {
                 type: 'pass',
                 payload: { playerId: ctx.game.playerSystem.player2.id }
               });
-            }
-          },
-          {
-            text: 'Play it, move it to the battlefield and score with it get ahead in influence.',
-            right: '22%',
-            bottom: '45%',
-            canManuallyAdvance: false,
-            advanceCondition() {
-              return false;
-            },
-            async onEnter(ctx) {
+
               const unsub = ctx.game.on(
                 GAME_EVENTS.TURN_INITATIVE_CHANGE,
                 async event => {
@@ -795,6 +785,15 @@ export const basicsTutorial: TutorialMission = {
                 }
               );
               ctx.game.once(GAME_EVENTS.TURN_START, unsub);
+            }
+          },
+          {
+            text: 'Play it, move it to the battlefield and score with it get ahead in influence.',
+            right: '22%',
+            bottom: '45%',
+            canManuallyAdvance: false,
+            advanceCondition() {
+              return false;
             }
           }
         ]

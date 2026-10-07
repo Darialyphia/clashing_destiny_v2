@@ -142,5 +142,8 @@ const shouldHide = computed(() => {
   :global(b) {
     color: var(--primary);
   }
+  > div {
+    text-wrap: pretty;
+  }
 }
 </style>
