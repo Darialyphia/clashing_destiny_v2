@@ -13,6 +13,9 @@ import Battlefield from '../Battlefield.vue';
 import RuneZone from '../RuneZone.vue';
 import SupplyZone from '../SupplyZone.vue';
 
+const { hasSupply = true } = defineProps<{
+  hasSupply?: boolean;
+}>();
 const ui = useGameUi();
 const state = useGameState();
 const { client } = useGameClient();
@@ -33,7 +36,11 @@ const opponentHasInitiative = computed(() => {
 </script>
 
 <template>
-  <div class="minions-zone" :id="ui.DOMSelectors.boardInner.id">
+  <div
+    class="minions-zone"
+    :id="ui.DOMSelectors.boardInner.id"
+    :class="{ 'has-supply': hasSupply }"
+  >
     <div class="left-destiny">
       <Battlefield :battlefield="myPlayer.leftBattlefield" />
     </div>
@@ -143,7 +150,7 @@ const opponentHasInitiative = computed(() => {
 .minions-zone {
   width: calc(2 * 674px);
   height: 548px;
-  background: url(@/assets/ui/board-tutorial.png);
+  background: url(@/assets/ui/board-tutorial-no-supply.png);
   background-size: cover;
   margin-inline: auto;
   display: flex;
@@ -154,6 +161,9 @@ const opponentHasInitiative = computed(() => {
   left: 50%;
   translate: -50% calc(-50% - 40px);
   transform-style: preserve-3d;
+  &.has-supply {
+    background-image: url(@/assets/ui/board-tutorial.png);
+  }
   .zone {
     transform-style: preserve-3d;
     height: 100px;

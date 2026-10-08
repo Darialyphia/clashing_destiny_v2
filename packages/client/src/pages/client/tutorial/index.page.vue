@@ -1,18 +1,26 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router';
 import { missions } from '../../missions';
-import AuthenticatedHeader from '@/AuthenticatedHeader.vue';
+import FancyButton from '@/ui/components/FancyButton.vue';
+import PageTitle from '@/shared/components/PageTitle.vue';
 
 definePage({
-  name: 'TutorialHome'
+  name: 'TutorialHome',
+  meta: {
+    wrapperClass: 'page-blur'
+  }
 });
 </script>
 <template>
   <div class="page">
-    <AuthenticatedHeader />
+    <FancyButton
+      class="absolute top-10 left-8 lt-lg:top-3 lt-lg:left-0"
+      text="Back"
+      size="md"
+      :to="{ name: 'ClientHome' }"
+    />
+    <PageTitle title="Learn to Play" />
     <section class="surface">
-      <h1 class="dual-text" data-text="How to play">How to play</h1>
-      <div class="divider" />
       <!-- <h2 class="dual-text" data-text="Rule book">Rule book</h2>
       <p>
         For a comprehensive guide on how to play the game, please refer to our
@@ -42,12 +50,18 @@ definePage({
 <style scoped lang="postcss">
 .page {
   min-height: 100dvh;
+  background: url('@/assets/backgrounds/main-menu-overlay.png');
+  background-size: 100% 100%;
+  padding-top: var(--size-12);
+
+  @screen lt-lg {
+    padding-top: var(--size-3);
+  }
 }
 
 section {
   max-width: fit-content;
   margin: var(--size-6) auto;
-  padding: var(--size-8);
   box-shadow: var(--shadow-4);
 }
 
@@ -82,17 +96,6 @@ section {
   }
 }
 
-h1 {
-  font-size: var(--font-size-7);
-  font-weight: var(--font-weight-8);
-  margin-block-end: var(--size-2);
-  text-align: center;
-  color: var(--text-1);
-  font-family: 'Cinzel Decorative', serif;
-  letter-spacing: 0.02em;
-  position: relative;
-}
-
 h2 {
   font-size: var(--font-size-4);
   font-weight: var(--font-weight-6);
@@ -100,24 +103,6 @@ h2 {
   margin-block-end: var(--size-3);
   color: var(--accent-9);
   font-family: 'Cinzel Decorative', serif;
-}
-
-p {
-  font-size: var(--font-size-2);
-  line-height: 1.6;
-  color: var(--text-2);
-
-  :deep(a) {
-    color: var(--accent-10);
-    font-weight: var(--font-weight-6);
-    text-decoration: none;
-    border-bottom: 2px solid transparent;
-    transition: border-color 0.2s ease;
-
-    &:hover {
-      border-bottom-color: var(--accent-8);
-    }
-  }
 }
 
 ul {

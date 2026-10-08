@@ -60,11 +60,12 @@ const onMouseleave = () => {
     v-if="ui.displayedElements.supplyZone"
     class="supply-zone"
     :class="{ hoverable: canSupply, hovered: isHovered }"
+    :id="ui.DOMSelectors.supplyZone(player.id).id"
     @mouseup="onMouseup"
     @mouseenter="onMouseenter"
     @mouseleave="onMouseleave"
   >
-    <div class="player-mana">
+    <div class="player-mana" :id="ui.DOMSelectors.currentMana(player.id).id">
       <rt-mana>{{ player.mana }}</rt-mana>
     </div>
     <div v-for="card in player.supplyZone" :key="card.id" class="supply-card">

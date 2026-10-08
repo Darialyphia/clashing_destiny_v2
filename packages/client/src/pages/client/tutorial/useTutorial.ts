@@ -44,6 +44,7 @@ export type UseTutorialOptions = Override<
         }
       >
     >;
+    boardType: 'single' | 'single-no-supply' | 'double';
   }
 >;
 

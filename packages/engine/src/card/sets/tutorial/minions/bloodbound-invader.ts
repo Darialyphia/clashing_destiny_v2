@@ -1,15 +1,7 @@
 import dedent from 'dedent';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import { defaultCardArt } from '../../../card-utils';
-import {
-  CARD_SETS,
-  CARD_KINDS,
-  RARITIES,
-  CARD_SPEED,
-  AFFINITIES
-} from '../../../card.enums';
-import { SimpleAttackBuffModifier } from '../../../../modifier/modifiers/simple-attack-buff.modifier';
-import { ZealModifier } from '../../../../modifier/modifiers/zeal.modifier';
+import { CARD_SETS, CARD_KINDS, RARITIES, CARD_SPEED } from '../../../card.enums';
 
 export const bloodboundInvader: MinionBlueprint = {
   id: 'bloodbound-invader',
@@ -20,7 +12,7 @@ export const bloodboundInvader: MinionBlueprint = {
   art: defaultCardArt('minions/bloodbound-invader'),
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.TOKEN,
-  manaCost: 0,
+  manaCost: 1,
   manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],

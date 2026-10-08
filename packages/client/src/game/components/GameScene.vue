@@ -33,6 +33,7 @@ import Debug from './Debug.vue';
 import BattleLog from './BattleLog.vue';
 import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
 import FancyButton from '@/ui/components/FancyButton.vue';
+import HighlightedCard from './HighlightedCard.vue';
 
 const { clocks } = defineProps<{
   clocks?: Record<string, PlayerClockState>;
@@ -166,6 +167,7 @@ const hasWon = computed(() => winners.value.includes(myPlayer.value.id));
   </GameMenu>
   <TurnIndicator />
   <GamePhaseIndicator />
+  <HighlightedCard />
 
   <slot name="board-additional" />
 

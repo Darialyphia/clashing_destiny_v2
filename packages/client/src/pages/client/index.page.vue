@@ -7,6 +7,7 @@ import PlayerBadge from '@/player/components/PlayerBadge.vue';
 import MainMenu from './MainMenu.vue';
 import PremiumGemIcon from '@/player/components/PremiumGemIcon.vue';
 import { useGifts } from '@/player/composables/useGifts.js';
+import { useLogout } from '@/auth/composables/useLogout.js';
 definePage({
   name: 'ClientHome',
   meta: {
@@ -30,6 +31,8 @@ const unclaimedGiftsCount = computed(() => {
     gifts.value?.filter(gift => gift.state === GIFT_STATES.ISSUED).length ?? 0
   );
 });
+
+const { mutate: logout } = useLogout();
 </script>
 
 <template>
@@ -53,7 +56,7 @@ const unclaimedGiftsCount = computed(() => {
       class="flex gap-3 absolute top-4 left-8"
     />
 
-    <div v-if="me" class="currencies absolute top-4 right-8">
+    <div v-if="me" class="currencies absolute top-6 right-8">
       <GodlIcon />
       <span class="dual-text" :data-text="me.wallet.gold">
         {{ me.wallet.gold }}
@@ -73,6 +76,7 @@ const unclaimedGiftsCount = computed(() => {
       </RouterLink>
       <button class="friends" />
       <button class="settings" />
+      <button class="logout" @click="logout({})" />
     </div>
   </div>
 </template>
@@ -166,6 +170,12 @@ const unclaimedGiftsCount = computed(() => {
   width: 64px;
   height: 64px;
   background-image: url('@/assets/icons/friends.png');
+  background-size: cover;
+}
+.logout {
+  width: 64px;
+  height: 64px;
+  background-image: url('@/assets/icons/logout.png');
   background-size: cover;
 }
 </style>
