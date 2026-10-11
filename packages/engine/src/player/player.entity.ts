@@ -84,7 +84,7 @@ export class Player
     this.eventTracker = new EventTracker(game);
     this.cardManager = new CardManagerComponent(game, this, {
       maxHandSize: this.game.config.MAX_HAND_SIZE,
-      shouldShuffleDeck: true,
+      shouldShuffleDeck: this.game.config.SHUFFLE_DECK_ON_GAME_START,
       deck: options.deck.cards
     });
   }

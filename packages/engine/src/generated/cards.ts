@@ -100,7 +100,8 @@ export const cards = {
 "tutorial-silverguard-outpost": "tutorial-silverguard-outpost",
 "tutorial-silverguard-knight": "tutorial-silverguard-knight",
 "bloodbound-executor": "bloodbound-executor",
-"bloodbound-shaman": "bloodbound-shaman"
+"bloodbound-shaman": "bloodbound-shaman",
+"tutorial-suntide-maiden": "tutorial-suntide-maiden"
 } as const;
 
 export const collectableCards = {
@@ -769,6 +770,12 @@ export const cardsBySet: Record<string, CardSet> = {
     "collectable": false,
     "rarity": "token",
     "kind": "MINION"
+  },
+  {
+    "id": "tutorial-suntide-maiden",
+    "collectable": false,
+    "rarity": "token",
+    "kind": "MINION"
   }
 ]
 };
@@ -868,7 +875,8 @@ export const cardShortIds: Record<string, number> = {
 "tutorial-silverguard-outpost": 94,
 "tutorial-silverguard-knight": 95,
 "bloodbound-executor": 96,
-"bloodbound-shaman": 97
+"bloodbound-shaman": 97,
+"tutorial-suntide-maiden": 98
 } as const;
 
 export const cardIdByShortId: Record<number, string> = {
@@ -966,5 +974,6 @@ export const cardIdByShortId: Record<number, string> = {
 "94": "tutorial-silverguard-outpost",
 "95": "tutorial-silverguard-knight",
 "96": "bloodbound-executor",
-"97": "bloodbound-shaman"
+"97": "bloodbound-shaman",
+"98": "tutorial-suntide-maiden"
 } as const;

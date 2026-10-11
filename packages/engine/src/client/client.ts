@@ -263,8 +263,16 @@ export class GameClient {
     return () => this.emitter.off('update', cb);
   }
 
-  onUpdateCompleted(cb: (snapshot: GameStateSnapshot<PatchBasedSnapshotDiff>) => void) {
-    this.emitter.on('updateCompleted', cb);
+  onUpdateCompleted(
+    cb: (snapshot: GameStateSnapshot<PatchBasedSnapshotDiff>) => void,
+    options?: { once?: boolean }
+  ) {
+    if (options?.once) {
+      this.emitter.once('updateCompleted', cb);
+    } else {
+      this.emitter.on('updateCompleted', cb);
+    }
+
     return () => this.emitter.off('updateCompleted', cb);
   }
 

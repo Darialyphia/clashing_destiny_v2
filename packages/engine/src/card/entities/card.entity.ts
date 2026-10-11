@@ -233,6 +233,8 @@ export abstract class Card<
   }
 
   get fulfillsAffinities() {
+    if (!this.game.config.SHOULD_CHECK_AFFINITIES) return true;
+
     const available = Object.fromEntries(
       Object.values(AFFINITIES).map(affinity => [affinity, 0])
     ) as Record<Affinity, number>;

@@ -47,7 +47,8 @@ export const basicsTutorial: TutorialMission = {
           PLAYER_2_CARDS_DRAWN_ON_FIRST_TURN: 0,
           START_OF_GAME_MULLIGANED_CARDS: 0,
           VICTORY_POINTS_TO_WIN: 2,
-          SHOULD_PAY_MANA: false
+          SHOULD_PAY_MANA: false,
+          SHOULD_CHECK_AFFINITIES: false
         }
       }
     },
@@ -66,6 +67,7 @@ export const basicsTutorial: TutorialMission = {
           ctx.client.ui.displayedElements.initiativeIndicator = false;
           ctx.client.ui.displayedElements.battleLog = false;
           ctx.client.ui.displayedElements.mana = false;
+          ctx.client.ui.displayedElements.affinities = false;
 
           const [allyUnit] =
             ctx.game.playerSystem.player1.cardManager.mainDeck.draw(1);

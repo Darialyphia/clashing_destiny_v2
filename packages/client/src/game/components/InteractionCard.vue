@@ -3,7 +3,8 @@ import GameCard from './GameCard.vue';
 import {
   useGameClient,
   useGameState,
-  useGameUi
+  useGameUi,
+  useMyPlayer
 } from '../composables/useGameClient';
 import InspectableCard from '@/card/components/InspectableCard.vue';
 import FancyButton from '@/ui/components/FancyButton.vue';
@@ -16,11 +17,15 @@ const state = useGameState();
 const ui = useGameUi();
 
 const interactionState = computed(() => state.value.interaction);
-
+const myPlayer = useMyPlayer();
 const isDisplayed = computed(() => {
   if (ui.value.selectedCard) {
     return false;
   }
+  if (!interactionState.value.ctx.players.includes(myPlayer.value.id)) {
+    return false;
+  }
+
   return (
     interactionState.value.state ===
       INTERACTION_STATES.SELECTING_CARDS_ON_BOARD ||

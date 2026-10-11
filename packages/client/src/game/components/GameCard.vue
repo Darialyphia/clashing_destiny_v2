@@ -106,7 +106,10 @@ const sprite = computed(() => {
     v-if="card"
     class="game-card-container"
     :data-game-card="card.id"
-    :class="{ 'no-mana': !ui.displayedElements.mana }"
+    :class="{
+      'no-mana': !ui.displayedElements.mana,
+      'no-affinities': !ui.displayedElements.affinities
+    }"
   >
     <CardActionsPopover
       :card-id="card.id"
@@ -236,6 +239,9 @@ const sprite = computed(() => {
   position: relative;
 
   &.no-mana :deep(:is(.mana-cost, .supply)) {
+    display: none;
+  }
+  &.no-affinities :deep(:is(.affinity-flags)) {
     display: none;
   }
 }

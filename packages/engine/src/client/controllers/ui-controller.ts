@@ -117,8 +117,11 @@ export class UiController {
       new DOMSelector('.mana-cost', this.DOMSelectors.highlightedCard.selector),
     highlightedCardSupply: () =>
       new DOMSelector('.supply', this.DOMSelectors.highlightedCard.selector),
+    highlightedCardAffinities: () =>
+      new DOMSelector('.affinity-flags', this.DOMSelectors.highlightedCard.selector),
     supplyZone: (playerId: string) => new DOMSelector(`supply-zone-${playerId}`),
-    currentMana: (playerId: string) => new DOMSelector(`current-mana-${playerId}`)
+    currentMana: (playerId: string) => new DOMSelector(`current-mana-${playerId}`),
+    runeZone: (playerId: string) => new DOMSelector(`rune-zone-${playerId}`)
   };
 
   displayedElements = {
@@ -129,6 +132,7 @@ export class UiController {
     supplyZone: true,
     mana: true,
     initiativeIndicator: true,
+    affinities: true,
     battleLog: true
   };
 
