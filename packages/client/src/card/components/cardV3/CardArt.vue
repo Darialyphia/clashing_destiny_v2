@@ -73,6 +73,7 @@ const { activeFrameRect, bgPosition, imageBg } = useSprite({
   bottom: calc(100px * var(--pixel-scale));
   overflow: hidden;
   pointer-events: none;
+  z-index: 1;
 
   &.spell,
   &.rune,

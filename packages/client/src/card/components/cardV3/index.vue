@@ -160,6 +160,13 @@ const _animationSequence = computed(() => {
       :data-flip-id="`card_${card.id}`"
     >
       <div class="card-front" :style="{ '--tint': tint }">
+        <ManaCost
+          v-if="isDefined(card.manaCost)"
+          :cost="card.manaCost"
+          :baseCost="card.baseManaCost ?? card.manaCost"
+          :mana-supply="card.manaSupply"
+        />
+        <AffinityFlags :affinities="card.affinities" />
         <CardArtComponent
           v-if="sprite"
           :art="card.art"
@@ -184,15 +191,8 @@ const _animationSequence = computed(() => {
           <FoilBluespark v-if="card.art.foil.blueSpark" />
         </template>
 
-        <ManaCost
-          v-if="isDefined(card.manaCost)"
-          :cost="card.manaCost"
-          :baseCost="card.baseManaCost ?? card.manaCost"
-          :mana-supply="card.manaSupply"
-        />
         <CardRarity :rarity="card.rarity" />
 
-        <AffinityFlags :affinities="card.affinities" />
         <CardName :name="card.name" />
 
         <div class="kind parallax" />

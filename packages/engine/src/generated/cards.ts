@@ -95,6 +95,9 @@ export const cards = {
 "zephyr": "zephyr",
 "chronomancer": "chronomancer",
 "red-synja": "red-synja",
+"sworn-defender": "sworn-defender",
+"paddo": "paddo",
+"sapphire-seer": "sapphire-seer",
 "bloodbound-invader": "bloodbound-invader",
 "tutorial-windblade-adept": "tutorial-windblade-adept",
 "tutorial-silverguard-outpost": "tutorial-silverguard-outpost",
@@ -193,6 +196,9 @@ export const collectableCards = {
 "zephyr": "zephyr",
 "chronomancer": "chronomancer",
 "red-synja": "red-synja",
+"sworn-defender": "sworn-defender",
+"paddo": "paddo",
+"sapphire-seer": "sapphire-seer",
 "tutorial-silverguard-outpost": "tutorial-silverguard-outpost"
 } as const;
 
@@ -732,6 +738,24 @@ export const cardsBySet: Record<string, CardSet> = {
     "collectable": true,
     "rarity": "legendary",
     "kind": "MINION"
+  },
+  {
+    "id": "sworn-defender",
+    "collectable": true,
+    "rarity": "rare",
+    "kind": "MINION"
+  },
+  {
+    "id": "paddo",
+    "collectable": true,
+    "rarity": "legendary",
+    "kind": "MINION"
+  },
+  {
+    "id": "sapphire-seer",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "MINION"
   }
 ],
 "TUTORIAL": [
@@ -870,6 +894,9 @@ export const cardShortIds: Record<string, number> = {
 "zephyr": 89,
 "chronomancer": 90,
 "red-synja": 91,
+"sworn-defender": 99,
+"paddo": 100,
+"sapphire-seer": 102,
 "bloodbound-invader": 92,
 "tutorial-windblade-adept": 93,
 "tutorial-silverguard-outpost": 94,
@@ -975,5 +1002,8 @@ export const cardIdByShortId: Record<number, string> = {
 "95": "tutorial-silverguard-knight",
 "96": "bloodbound-executor",
 "97": "bloodbound-shaman",
-"98": "tutorial-suntide-maiden"
+"98": "tutorial-suntide-maiden",
+"99": "sworn-defender",
+"100": "paddo",
+"102": "sapphire-seer"
 } as const;
