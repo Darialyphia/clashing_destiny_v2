@@ -169,6 +169,7 @@ const _animationSequence = computed(() => {
         <AffinityFlags :affinities="card.affinities" />
         <CardArtComponent
           v-if="sprite"
+          class="card-art"
           :art="card.art"
           :sprite="sprite"
           :kind="card.kind"
@@ -357,6 +358,10 @@ const _animationSequence = computed(() => {
   inherits: true;
   initial-value: 0;
 }
+
+/* .card-front:hover .card-art {
+  z-index: 1;
+} */
 
 .text-separator {
   margin-top: calc(3px * var(--pixel-scale));

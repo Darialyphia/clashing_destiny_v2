@@ -26,7 +26,7 @@ const rarityBg = computed(() => {
   position: absolute;
   top: calc(80px * var(--pixel-scale));
   left: 50%;
-  transform: translateX(calc(-50% - 1px * var(--pixel-scale)));
+  transform: translateX(-50%);
   width: calc(11px * var(--pixel-scale));
   height: calc(12px * var(--pixel-scale));
   background-image: v-bind(rarityBg);
