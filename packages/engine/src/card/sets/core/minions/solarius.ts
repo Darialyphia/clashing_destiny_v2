@@ -23,7 +23,7 @@ export const solarius: MinionBlueprint = {
   name: 'Solarius',
   description: dedent /*html*/ `
   When you win at a battlefield with at least 3 more points than your opponent, <rt-keyword>Empower</rt-keyword> me.
-  While I am <rt-keyword>Empowered</rt-keyword>, I have +1/+2/+2 and <rt-keyword>Vigilant</rt-keyword>.
+  While I am <rt-keyword>Empowered</rt-keyword>, I have +2/+2/+2 and <rt-keyword>Vigilant</rt-keyword>.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -70,7 +70,7 @@ export const solarius: MinionBlueprint = {
 
     await card.modifiers.add(
       new SimpleStatsBuffModifier('solarius-stats-buff', game, card, {
-        atk: 1,
+        atk: 2,
         cmd: 2,
         hp: 2,
         mixins: [

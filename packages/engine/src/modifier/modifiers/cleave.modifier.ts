@@ -22,7 +22,6 @@ export class CleaveModifier extends Modifier<MinionCard> {
       isUnique: true,
       name: KEYWORDS.CLEAVE.name,
       description: KEYWORDS.CLEAVE.description,
-      icon: 'icons/keyword-cleave',
       mixins: [
         new KeywordModifierMixin(game, KEYWORDS.CLEAVE),
         new GameEventModifierMixin(game, {

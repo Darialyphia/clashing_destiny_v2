@@ -21,7 +21,7 @@ definePage({
     />
     <PageTitle title="Learn to Play" />
     <section class="surface">
-      <!-- <h2 class="dual-text" data-text="Rule book">Rule book</h2>
+      <h2 class="dual-text" data-text="Rule book">Rule book</h2>
       <p>
         For a comprehensive guide on how to play the game, please refer to our
         <RouterLink
@@ -31,7 +31,7 @@ definePage({
           How To Play
         </RouterLink>
         section.
-      </p> -->
+      </p>
 
       <h2 class="dual-text" data-text="Tutorial Missions">Tutorial Missions</h2>
       <ul>
@@ -125,7 +125,7 @@ ul {
     display: block;
     font-weight: var(--font-weight-5);
     padding: var(--size-3) var(--size-4);
-    padding-inline-start: var(--size-8);
+    padding-inline-start: var(--size-6);
     border-radius: var(--radius-2);
     text-decoration: none;
     color: var(--text-1);

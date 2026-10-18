@@ -52,7 +52,7 @@ export const zephyr: MinionBlueprint = {
           game,
           card,
           predicate: minion =>
-            minion.equals(card) && minion.canMove && minion.isOnBattlefield,
+            !minion.equals(card) && minion.canMove && minion.isOnBattlefield,
           aiHints: {
             shouldPick: () => 1
           },

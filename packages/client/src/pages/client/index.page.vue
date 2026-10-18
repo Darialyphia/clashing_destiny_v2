@@ -2,12 +2,11 @@
 import { useAuthedQuery } from '@/auth/composables/useAuth';
 import { api, GIFT_STATES } from '@game/api';
 import { useMe } from '@/auth/composables/useMe';
-import GodlIcon from '@/player/components/GodlIcon.vue';
 import PlayerBadge from '@/player/components/PlayerBadge.vue';
 import MainMenu from './MainMenu.vue';
-import PremiumGemIcon from '@/player/components/PremiumGemIcon.vue';
 import { useGifts } from '@/player/composables/useGifts.js';
 import { useLogout } from '@/auth/composables/useLogout.js';
+import PlayerCurrencies from '@/player/components/PlayerCurrencies.vue';
 definePage({
   name: 'ClientHome',
   meta: {
@@ -56,16 +55,7 @@ const { mutate: logout } = useLogout();
       class="flex gap-3 absolute top-4 left-8"
     />
 
-    <div v-if="me" class="currencies absolute top-6 right-8">
-      <GodlIcon />
-      <span class="dual-text" :data-text="me.wallet.gold">
-        {{ me.wallet.gold }}
-      </span>
-      <PremiumGemIcon />
-      <span class="dual-text" :data-text="me.wallet.premium">
-        {{ me.wallet.premium }}
-      </span>
-    </div>
+    <PlayerCurrencies class="absolute top-6 right-8" />
 
     <div class="bottom-menu">
       <!-- <button class="menu" /> -->
@@ -109,18 +99,6 @@ const { mutate: logout } = useLogout();
   &:hover {
     filter: brightness(1.3) drop-shadow(0 0 5px var(--yellow-3));
   }
-}
-
-.currencies {
-  --pixel-scale: 1;
-  display: flex;
-  align-items: center;
-  gap: var(--size-2);
-  font-size: var(--font-size-3);
-  --dual-text-stroke-offset-y: calc(-1px * var(--pixel-scale));
-  background: #000000aa;
-  padding: var(--size-2) var(--size-3);
-  border-radius: var(--radius-pill);
 }
 
 .bottom-menu {

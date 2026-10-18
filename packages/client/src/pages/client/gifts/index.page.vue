@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import FancyButton from '@/ui/components/FancyButton.vue';
 import { GIFT_KINDS, GIFT_STATES } from '@game/api';
-import AuthenticatedHeader from '@/AuthenticatedHeader.vue';
 import {
   AccordionContent,
   AccordionHeader,
@@ -15,51 +14,47 @@ import {
 import { CARDS_DICTIONARY } from '@game/engine/src/card/sets';
 import BlueprintCard from '@/card/components/BlueprintCard.vue';
 import { useClaimGift, useGifts } from '@/player/composables/useGifts';
+import { useDayjs } from '@/shared/composables/useDayjs';
+import PageTitle from '@/shared/components/PageTitle.vue';
 
 definePage({
-  name: 'Gifts'
+  name: 'Gifts',
+  meta: {
+    wrapperClass: 'page-blur'
+  }
 });
-
 const { isLoading, data: gifts } = useGifts();
 
 const { mutate: claim } = useClaimGift();
 
+const dayjs = useDayjs();
 const formatTimeAgo = (timestamp: number) => {
-  const now = Date.now();
-  const diff = now - timestamp;
-  const seconds = Math.floor(diff / 1000);
-  const minutes = Math.floor(seconds / 60);
-  const hours = Math.floor(minutes / 60);
-  const days = Math.floor(hours / 24);
-  const weeks = Math.floor(days / 7);
-  const months = Math.floor(days / 30);
-  const years = Math.floor(days / 365);
-
-  if (years > 0) return `${years} year${years > 1 ? 's' : ''} ago`;
-  if (months > 0) return `${months} month${months > 1 ? 's' : ''} ago`;
-  if (weeks > 0) return `${weeks} week${weeks > 1 ? 's' : ''} ago`;
-  if (days > 0) return `${days} day${days > 1 ? 's' : ''} ago`;
-  if (hours > 0) return `${hours} hour${hours > 1 ? 's' : ''} ago`;
-  if (minutes > 0) return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
-  return 'Just now';
+  return dayjs(timestamp).fromNow();
 };
 </script>
 
 <template>
   <div class="gifts-page">
-    <AuthenticatedHeader />
+    <FancyButton
+      class="absolute top-10 left-8 lt-lg:top-3 lt-lg:left-0"
+      text="Back"
+      size="md"
+      :to="{ name: 'ClientHome' }"
+    />
 
     <div v-if="isLoading" class="loading-state">Loading your gifts...</div>
 
     <div
       v-else
-      class="container"
+      class="container inner"
       :style="{ '--container-size': 'var(--size-md)' }"
     >
-      <h2 class="my-6">Your Gifts</h2>
+      <div>
+        <PageTitle title="Your Gifts" />
+      </div>
       <AccordionRoot
         v-if="gifts && gifts.length > 0"
-        class="flex flex-col gap-4"
+        class="list fancy-scrollbar"
         type="multiple"
       >
         <AccordionItem
@@ -126,3 +121,31 @@ const formatTimeAgo = (timestamp: number) => {
     </div>
   </div>
 </template>
+
+<style scoped lang="postcss">
+.gifts-page {
+  height: 100dvh;
+  overflow: hidden;
+  background: url('@/assets/backgrounds/main-menu-overlay.png');
+  background-size: 100% 100%;
+  padding-top: var(--size-10);
+  @screen lt-lg {
+    padding-top: var(--size-3);
+  }
+}
+
+.inner {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  height: 100%;
+  overflow: hidden;
+  padding-bottom: var(--size-6);
+}
+
+.list {
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-4);
+}
+</style>

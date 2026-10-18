@@ -64,7 +64,20 @@ export const useBattleLog = () => {
           });
           tokens.push({
             kind: 'text',
-            text: `draw ${event.amount} card${event.amount > 1 ? 's' : ''}.`
+            text: `drew ${event.amount} card${event.amount > 1 ? 's' : ''}.`
+          });
+        }
+
+        if (eventName === GAME_EVENTS.CARD_DISCARD) {
+          const card = state.value.entities[event.card.id] as CardViewModel;
+          tokens.push({
+            kind: 'player',
+            player: card.player
+          });
+
+          tokens.push({
+            kind: 'text',
+            text: `discarded a card.`
           });
         }
 

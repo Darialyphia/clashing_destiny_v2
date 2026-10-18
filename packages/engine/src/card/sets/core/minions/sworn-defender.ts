@@ -20,7 +20,7 @@ export const swornDefender: MinionBlueprint = {
   id: 'sworn-defender',
   name: 'Sworn Defender',
   description: dedent /*html*/ `
-  <rt-keyword>Protector</rt-keyword>
+  <rt-keyword>Protector</rt-keyword><br/>
   <rt-timing>Once per turn</rt-timing> When an ally minion moves to a battlefield, you may move me here.
   `,
   collectable: true,
@@ -28,13 +28,13 @@ export const swornDefender: MinionBlueprint = {
   art: defaultCardArt('minions/sworn-defender'),
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.RARE,
-  affinities: [AFFINITIES.NEUTRAL, AFFINITIES.NEUTRAL, AFFINITIES.NEUTRAL],
+  affinities: [AFFINITIES.NEUTRAL, AFFINITIES.NEUTRAL],
   manaCost: 3,
   manaSupply: 3,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 2,
-  maxHp: 6,
+  maxHp: 5,
   commandment: 2,
   canPlay: () => true,
   abilities: [],
@@ -47,6 +47,7 @@ export const swornDefender: MinionBlueprint = {
           new GameEventModifierMixin(game, {
             eventName: GAME_EVENTS.CARD_AFTER_MOVE,
             filter(event) {
+              if (event.data.card.equals(card)) return false;
               if (event.data.card.isEnemy(card)) return false;
               if (event.data.to.position.zone === CARD_LOCATIONS.BASE) return false;
 

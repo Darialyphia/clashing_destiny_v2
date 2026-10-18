@@ -92,6 +92,8 @@ import { redSynja } from './core/minions/red-synja';
 import { swornDefender } from './core/minions/sworn-defender';
 import { paddo } from './core/minions/paddo';
 import { saphireSeer } from './core/minions/saphire-seer';
+import { portalGuardian } from './core/minions/portal-guardian';
+import { wither } from './core/spells/wither';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -188,6 +190,8 @@ export const coreSet: CardSet = {
     redSynja,
     swornDefender,
     paddo,
-    saphireSeer
+    saphireSeer,
+    portalGuardian,
+    wither
   ]
 };

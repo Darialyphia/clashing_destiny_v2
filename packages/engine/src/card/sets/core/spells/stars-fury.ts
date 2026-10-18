@@ -8,8 +8,6 @@ import {
   CARD_SPEED,
   RARITIES
 } from '../../../card.enums';
-import { EphemeralModifier } from '../../../../modifier/modifiers/ephemeral.modifier';
-import { askMandatoryYesNoQuestion } from '../../../card-actions-utils';
 import { isDefined } from '@game/shared';
 import { windDervish } from '../minions/wind-dervish';
 import type { MinionCard } from '../../../entities/minion.entity';
@@ -26,7 +24,7 @@ export const starsFury: SpellBlueprint = {
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.LEGENDARY,
   affinities: [AFFINITIES.AIR, AFFINITIES.AIR, AFFINITIES.AIR],
-  manaCost: 5,
+  manaCost: 4,
   manaSupply: 3,
   speed: CARD_SPEED.FAST,
   tags: [],

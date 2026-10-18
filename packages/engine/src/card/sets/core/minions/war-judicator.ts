@@ -9,7 +9,6 @@ import {
   AFFINITIES
 } from '../../../card.enums';
 import { ZealModifier } from '../../../../modifier/modifiers/zeal.modifier';
-import { Modifier } from '../../../../modifier/modifier.entity';
 import { SimpleSupplyModifier } from '../../../../modifier/modifiers/simple-supply-modifier';
 
 export const warJudicator: MinionBlueprint = {

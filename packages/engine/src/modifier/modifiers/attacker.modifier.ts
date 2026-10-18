@@ -20,7 +20,6 @@ export class AttackerModifier extends Modifier<MinionCard> {
     super(KEYWORDS.ATTACKER.id, game, source, {
       name: KEYWORDS.ATTACKER.name,
       description: KEYWORDS.ATTACKER.description,
-      icon: 'icons/keyword-attacker',
       mixins: [
         new KeywordModifierMixin(game, KEYWORDS.DOUBLE_ATTACK),
         new MinionInterceptorModifierMixin(game, {

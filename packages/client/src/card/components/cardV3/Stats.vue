@@ -39,8 +39,12 @@ const {} = defineProps<{
 
 <style scoped lang="postcss">
 .stats {
+  display: flex;
+  flex-direction: column;
+  gap: calc(2px * var(--pixel-scale));
   position: absolute;
-  inset: 0;
+  bottom: calc(94px * var(--pixel-scale));
+  right: calc(2px * var(--pixel-scale));
 }
 
 .stat {
@@ -63,34 +67,20 @@ const {} = defineProps<{
 .commandment {
   background-image: url('@/assets/ui/card/v3/commandment.png');
   background-size: cover;
-  position: absolute;
-  top: calc(2px * var(--pixel-scale));
-  right: calc(2px * var(--pixel-scale));
 }
 
 .atk {
-  background-image: url('@/assets/ui/card/v3/attack-inverted.png');
+  background-image: url('@/assets/ui/card/v3/attack.png');
   background-size: cover;
-  position: absolute;
-  top: calc(72px * var(--pixel-scale));
-  left: calc(2px * var(--pixel-scale));
-  padding-left: 0;
-  padding-right: calc(14px * var(--pixel-scale));
 }
 
 .hp {
   background-image: url('@/assets/ui/card/v3/health.png');
   background-size: cover;
-  position: absolute;
-  top: calc(72px * var(--pixel-scale));
-  right: calc(2px * var(--pixel-scale));
 }
 
 .durability {
   background-image: url('@/assets/ui/card/v3/durability.png');
   background-size: cover;
-  position: absolute;
-  top: calc(72px * var(--pixel-scale));
-  right: calc(2px * var(--pixel-scale));
 }
 </style>

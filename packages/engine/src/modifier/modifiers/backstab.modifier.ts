@@ -17,7 +17,6 @@ export class BackstabModifier<T extends MinionCard> extends Modifier<T> {
       name: () => KEYWORDS.BACKSTAB.name.replace('X', this.stacks.toString()),
       description: () =>
         KEYWORDS.BACKSTAB.description.replace('X', this.stacks.toString()),
-      icon: 'icons/keyword-backstab',
       isUnique: true,
       stacks: amount,
       mixins: [

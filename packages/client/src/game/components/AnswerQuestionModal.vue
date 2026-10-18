@@ -14,9 +14,20 @@ const { client, playerId } = useGameClient();
 const _isOpened = ref(false);
 const state = useGameState();
 
+const needAnswer = computed(() => {
+  return (
+    state.value.interaction.state === INTERACTION_STATES.ASK_QUESTION &&
+    state.value.interaction.ctx.players.includes(playerId.value)
+  );
+});
 const isOpened = computed({
   get() {
-    return _isOpened.value && !isShowingBoard.value;
+    return (
+      _isOpened.value &&
+      !isShowingBoard.value &&
+      client.value.isActive() &&
+      needAnswer.value
+    );
   },
   set(value: boolean) {
     _isOpened.value = value;
@@ -34,19 +45,9 @@ useFxEvent(FX_EVENTS.INTERACTION_AFTER_CHANGE_STATE, event => {
     return;
   }
 
-  if (
-    newInteraction.ctx.questionId !== currentQuestion.value &&
-    newInteraction.ctx.players.includes(playerId.value)
-  ) {
+  if (newInteraction.ctx.questionId !== currentQuestion.value) {
     _isOpened.value = true;
     currentQuestion.value = newInteraction.ctx.questionId;
-  }
-});
-
-watchEffect(() => {
-  if (!client.value.isActive()) {
-    _isOpened.value = false;
-    currentQuestion.value = null;
   }
 });
 

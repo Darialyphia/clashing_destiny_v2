@@ -98,6 +98,8 @@ export const cards = {
 "sworn-defender": "sworn-defender",
 "paddo": "paddo",
 "sapphire-seer": "sapphire-seer",
+"portal-guardian": "portal-guardian",
+"wither": "wither",
 "bloodbound-invader": "bloodbound-invader",
 "tutorial-windblade-adept": "tutorial-windblade-adept",
 "tutorial-silverguard-outpost": "tutorial-silverguard-outpost",
@@ -199,6 +201,8 @@ export const collectableCards = {
 "sworn-defender": "sworn-defender",
 "paddo": "paddo",
 "sapphire-seer": "sapphire-seer",
+"portal-guardian": "portal-guardian",
+"wither": "wither",
 "tutorial-silverguard-outpost": "tutorial-silverguard-outpost"
 } as const;
 
@@ -756,6 +760,18 @@ export const cardsBySet: Record<string, CardSet> = {
     "collectable": true,
     "rarity": "common",
     "kind": "MINION"
+  },
+  {
+    "id": "portal-guardian",
+    "collectable": true,
+    "rarity": "epic",
+    "kind": "MINION"
+  },
+  {
+    "id": "wither",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "SPELL"
   }
 ],
 "TUTORIAL": [
@@ -897,6 +913,8 @@ export const cardShortIds: Record<string, number> = {
 "sworn-defender": 99,
 "paddo": 100,
 "sapphire-seer": 102,
+"portal-guardian": 103,
+"wither": 104,
 "bloodbound-invader": 92,
 "tutorial-windblade-adept": 93,
 "tutorial-silverguard-outpost": 94,
@@ -1005,5 +1023,7 @@ export const cardIdByShortId: Record<number, string> = {
 "98": "tutorial-suntide-maiden",
 "99": "sworn-defender",
 "100": "paddo",
-"102": "sapphire-seer"
+"102": "sapphire-seer",
+"103": "portal-guardian",
+"104": "wither"
 } as const;

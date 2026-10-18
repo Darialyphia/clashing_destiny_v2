@@ -14,7 +14,6 @@ export class FlankingModifier<T extends MinionCard> extends Modifier<T> {
     options: { amount: number; mixins?: ModifierMixin<T>[] } = { mixins: [], amount: 1 }
   ) {
     super(KEYWORDS.FLANKING.id, game, source, {
-      icon: 'icons/keyword-flanking',
       name: KEYWORDS.FLANKING.name,
       description: KEYWORDS.FLANKING.description,
       isUnique: true,

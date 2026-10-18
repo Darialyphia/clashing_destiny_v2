@@ -61,8 +61,8 @@ const displayedModifiers = computed(() => {
 <style scoped lang="postcss">
 .modifiers {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-  direction: rtl;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1px;
 }
 
 .modifier-image {
@@ -74,6 +74,7 @@ const displayedModifiers = computed(() => {
   margin-block-start: var(--size-1);
   position: relative;
   transform: translateZ(10px);
+  box-shadow: 0 0 3px var(--primary);
   &::after {
     content: attr(data-stacks);
     position: absolute;
