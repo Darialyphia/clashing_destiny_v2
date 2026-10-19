@@ -32,6 +32,7 @@ const sprite = computed(() => {
 
 <template>
   <Card
+    v-if="blueprint"
     :card="{
       id: blueprint.id,
       name: blueprint.name,

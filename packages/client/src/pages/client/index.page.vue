@@ -38,16 +38,18 @@ const { mutate: logout } = useLogout();
   <div class="client-home-page">
     <MainMenu />
 
-    <RouterLink
-      v-if="unopenedPacks?.packs.length > 0"
-      class="boosters"
-      :to="{ name: 'Boosters' }"
-      aria-label="boosters"
-    >
-      <span class="dual-text" :data-text="boosterPackButtonLabel">
-        {{ boosterPackButtonLabel }}
-      </span>
-    </RouterLink>
+    <Transition name="boosters">
+      <RouterLink
+        v-if="unopenedPacks?.packs.length > 0"
+        class="boosters"
+        :to="{ name: 'Boosters' }"
+        aria-label="boosters"
+      >
+        <span class="dual-text" :data-text="boosterPackButtonLabel">
+          {{ boosterPackButtonLabel }}
+        </span>
+      </RouterLink>
+    </Transition>
 
     <PlayerBadge
       v-if="me"
@@ -98,6 +100,19 @@ const { mutate: logout } = useLogout();
   transition: all 0.3s ease;
   &:hover {
     filter: brightness(1.3) drop-shadow(0 0 5px var(--yellow-3));
+  }
+
+  &.boosters-enter-active,
+  &.boosters-leave-active {
+    transition:
+      opacity 0.3s var(--ease-2),
+      scale 0.3s var(--ease-elastic-3),
+      filter 0.3s var(--ease-elastic-3);
+  }
+  &.boosters-enter-from,
+  &.boosters-leave-to {
+    opacity: 0;
+    scale: 0;
   }
 }
 

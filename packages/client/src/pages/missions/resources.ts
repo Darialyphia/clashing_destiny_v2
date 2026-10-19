@@ -9,7 +9,7 @@ import {
   validateSupplyCard
 } from '../client/tutorial/tutorial-utils';
 import { CARD_LOCATIONS } from '@game/engine/src/card/card.enums';
-import { GAME_EVENTS } from '@game/engine/src/game/game.events';
+import type { MinionCard } from '@game/engine/src/card/entities/minion.entity';
 
 export const resourcesTutorial: TutorialMission = {
   id: 'resources',
@@ -399,20 +399,25 @@ export const resourcesTutorial: TutorialMission = {
         id: 3,
         canRetry: () => false,
         meta: {},
-        async setup() {},
-        teardown() {},
-        failedCondition: ctx => {
-          return ctx.game.playerSystem.player1.cardManager.discardPile.size > 0;
-        },
-        solveCondition(ctx) {
-          const windbladeAdept = ctx.game.playerSystem.player1.boardSide.base
+        async setup(ctx) {
+          ctx.meta.windbladeAdept = ctx.game.playerSystem.player1.boardSide.base
             .map(space => space.card)
             .find(card => card?.blueprintId === 'tutorial-windblade-adept');
 
-          return !isDefined(windbladeAdept);
+          ctx.meta.destination =
+            ctx.game.playerSystem.player1.boardSide.leftBattlefield.spaces[0];
+        },
+        teardown() {},
+        failedCondition: () => false,
+        solveCondition(ctx) {
+          return (ctx.meta.windbladeAdept as MinionCard).isOnBattlefield;
         },
         validateInput(input, ctx) {
-          return { isValid: true };
+          return validateMovingMinion(
+            ctx.meta.windbladeAdept,
+            input,
+            ctx.meta.destination
+          );
         },
         textBoxes: [
           {
@@ -442,7 +447,7 @@ export const resourcesTutorial: TutorialMission = {
             }
           },
           {
-            text: 'Try to win the Victory Point this turn without losing any minion',
+            text: 'Move your Windblade Adept to the battlefield',
             right: '22%',
             bottom: '45%',
             canManuallyAdvance: false,
@@ -451,19 +456,13 @@ export const resourcesTutorial: TutorialMission = {
             },
             gesture: {
               from(ctx) {
-                const space = ctx.game.playerSystem.player1.boardSide.base.find(
-                  space =>
-                    space.card?.blueprintId === 'tutorial-windblade-adept'
-                )!;
-
+                const space = (ctx.meta.windbladeAdept as MinionCard).position!;
                 return ctx.client.ui.DOMSelectors.boardSpace(space.id).element;
               },
               to(ctx) {
-                const space =
-                  ctx.game.playerSystem.player1.boardSide.leftBattlefield
-                    .spaces[0];
-
-                return ctx.client.ui.DOMSelectors.boardSpace(space.id).element;
+                return ctx.client.ui.DOMSelectors.boardSpace(
+                  ctx.meta.destination.id
+                ).element;
               }
             }
           }
