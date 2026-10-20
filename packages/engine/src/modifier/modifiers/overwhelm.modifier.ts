@@ -25,7 +25,6 @@ export class OverwhelmModifier extends Modifier<MinionCard> {
     super(KEYWORDS.OVERWHELM.id, game, source, {
       name: KEYWORDS.OVERWHELM.name,
       description: KEYWORDS.OVERWHELM.description,
-      icon: 'icons/keyword-overwhelm',
       isUnique: true,
       mixins: [
         new KeywordModifierMixin(game, KEYWORDS.OVERWHELM),

@@ -347,7 +347,7 @@ onUnmounted(() => {
             game about fighting over battlefields to earn
             <span class="game-term vp">Victory Points</span>
             . The first player to reach
-            <span class="game-term vp">6 Victory Points</span>
+            <span class="game-term vp">7 Victory Points</span>
             wins the game!
           </p>
           <p>
@@ -590,60 +590,6 @@ onUnmounted(() => {
           Card Types
         </h2>
         <div class="space-y-6 text-slate-300 text-sm leading-relaxed">
-          <!-- Heroes -->
-          <div class="border-b border-slate-900 pb-4">
-            <h3
-              class="text-md font-bold font-serif text-[#efef9f] mb-2 flex items-center gap-2"
-            >
-              <span class="i-mdi-crown-outline text-amber-400" />
-              Heroes
-            </h3>
-
-            <div class="mb-4 flex justify-center">
-              <BlueprintCard
-                :blueprint="CARDS_DICTIONARY['erina-violet-witch']"
-                class="mb-4"
-                style="--pixel-scale: 1.5"
-              />
-            </div>
-            <p class="mb-3">
-              Each deck has one Hero Card. While not present on the board,
-              Heroes play a large part in the game by determining which card can
-              be put into your deck
-            </p>
-            <p>
-              Heroes also have stats that will increase over the course of the
-              game, allowing to play stronger cards
-            </p>
-
-            <div class="flex justify-around flex-wrap gap-2 my-3">
-              <span
-                class="affinity bg-red-950/40 border border-red-500/30 text-red-400"
-              >
-                <img :src="assets[`ui/card/v2/might`].path" />
-                Might
-              </span>
-              <span
-                class="affinity bg-green-950/40 border border-green-500/30 text-green-400"
-              >
-                <img :src="assets[`ui/card/v2/focus`].path" />
-                Focus
-              </span>
-              <span
-                class="affinity bg-blue-950/40 border border-blue-500/30 text-blue-400"
-              >
-                <img :src="assets[`ui/card/v2/wisdom`].path" />
-                Wisdom
-              </span>
-            </div>
-
-            <blockquote style="--color: #d7ad42">
-              Heroes also have an ability, whether it's a passive trigger or an
-              activated ability. They are revealed at the start of the game and
-              always present on the board, but cannot be interacted with.
-            </blockquote>
-          </div>
-
           <!-- Units -->
           <div class="border-b border-slate-900 pb-4">
             <h3
@@ -654,7 +600,7 @@ onUnmounted(() => {
             </h3>
             <div class="mb-4 flex justify-center">
               <BlueprintCard
-                :blueprint="CARDS_DICTIONARY['pyromancer']"
+                :blueprint="CARDS_DICTIONARY['windblade-adept']"
                 class="mb-4"
                 style="--pixel-scale: 1.5"
               />
@@ -715,7 +661,7 @@ onUnmounted(() => {
 
           <div class="mb-4 flex justify-center">
             <BlueprintCard
-              :blueprint="CARDS_DICTIONARY['fireBall']"
+              :blueprint="CARDS_DICTIONARY['trueStrike']"
               class="mb-4"
               style="--pixel-scale: 1.5"
             />
@@ -736,7 +682,7 @@ onUnmounted(() => {
 
           <div class="mb-4 flex justify-center">
             <BlueprintCard
-              :blueprint="CARDS_DICTIONARY['runicCatalyst']"
+              :blueprint="CARDS_DICTIONARY['arclyte-regalia']"
               class="mb-4"
               style="--pixel-scale: 1.5"
             />

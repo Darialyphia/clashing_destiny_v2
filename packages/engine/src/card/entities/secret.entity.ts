@@ -18,7 +18,7 @@ import {
   type SerializedCard
 } from './card.entity';
 import type { DestinyCard } from './destiny.entity';
-import { GAME_EVENTS, type GameEventMap } from '../../game/game.events';
+import { type GameEventMap } from '../../game/game.events';
 
 export type SerializedSecretCard = SerializedCard;
 export type SecretCardInterceptors = CardInterceptors & {
@@ -171,11 +171,6 @@ export class SecretCard extends Card<
       battlefield.secretCard = this;
       this.game.on(this.blueprint.trigger.eventName, this.wrappedHandler as any);
       this.game.on(CARD_EVENTS.CARD_AFTER_CHANGE_LOCATION, this.onLeaveBoard);
-      this.game.once(GAME_EVENTS.TURN_END, async () => {
-        if (this.isOnBoard) {
-          await this.addToHand();
-        }
-      });
     });
 
     this.targets = null;

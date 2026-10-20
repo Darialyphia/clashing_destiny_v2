@@ -69,8 +69,9 @@ export class RemoveOnLeaveBoardModifierMixin extends ModifierMixin<
       CARD_LOCATIONS.MAIN_DECK,
       CARD_LOCATIONS.SUPPLY
     ];
+
     if (locations.includes(to)) {
-      await target.modifiers.remove(this.modifier as any);
+      await this.modifier.target.modifiers.remove(this.modifier as any);
     }
 
     this.game.off(GAME_EVENTS.CARD_AFTER_CHANGE_LOCATION, this.onLocationChange);

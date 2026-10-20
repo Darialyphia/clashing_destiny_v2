@@ -6,10 +6,8 @@ import {
   CARD_KINDS,
   RARITIES,
   CARD_SPEED,
-  AFFINITIES,
-  CARD_LOCATIONS
+  AFFINITIES
 } from '../../../card.enums';
-import { SpawnModifier } from '../../../../modifier/modifiers/spawn.modifier';
 import { windDervish } from './wind-dervish';
 import { StructureModifier } from '../../../../modifier/modifiers/structure.modifier';
 import type { MinionCard } from '../../../entities/minion.entity';
@@ -19,7 +17,6 @@ export const etherealObelysk: MinionBlueprint = {
   name: 'Ethereal Obelysk',
   description: dedent /*html*/ `
   <rt-keyword>Structure</rt-keyword>.
-  <rt-keyword>Spawn</rt-keyword>: <rt-card>Wind Dervish</rt-card>.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,

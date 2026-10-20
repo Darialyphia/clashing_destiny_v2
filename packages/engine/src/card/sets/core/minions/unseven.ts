@@ -12,6 +12,7 @@ import { WhileOnBoardModifier } from '../../../../modifier/modifiers/while-on-bo
 import { GameEventModifierMixin } from '../../../../modifier/mixins/game-event.mixin';
 import { GAME_EVENTS } from '../../../../game/game.events';
 import type { MinionCard } from '../../../entities/minion.entity';
+import { AttackerModifier } from '../../../../modifier/modifiers/attacker.modifier';
 
 export const unseven: MinionBlueprint = {
   id: 'unseven',
@@ -36,6 +37,7 @@ export const unseven: MinionBlueprint = {
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {
+    await card.modifiers.add(new AttackerModifier(game, card, { amount: 2 }));
     await card.modifiers.add(
       new WhileOnBoardModifier<MinionCard>('unseven', game, card, {
         mixins: [

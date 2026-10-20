@@ -16,14 +16,13 @@ export class ChannelModifier<T extends MinionCard> extends WhileOnBoardModifier<
     game: Game,
     source: AnyCard,
     options: {
-      handler: () => MaybePromise<void>;
+      handler: (modifier: ChannelModifier<T>) => MaybePromise<void>;
       mixins?: Array<ModifierMixin<T>>;
     }
   ) {
     super(modifierType, game, source, {
       name: KEYWORDS.CHANNEL.name,
       description: KEYWORDS.CHANNEL.description,
-      icon: 'icons/keyword-channel',
       mixins: [
         new KeywordModifierMixin(game, KEYWORDS.CHANNEL),
         new GameEventModifierMixin(game, {
@@ -39,7 +38,7 @@ export class ChannelModifier<T extends MinionCard> extends WhileOnBoardModifier<
                 message: `${this.target.blueprint.name} Channel effect triggered`
               })
             );
-            await options.handler();
+            await options.handler(this);
           }
         }),
         ...(options.mixins ?? [])

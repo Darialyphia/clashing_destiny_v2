@@ -12,12 +12,13 @@ import {
 import { ChannelModifier } from '../../../../modifier/modifiers/channel.modifier';
 import { BurnModifier } from '../../../../modifier/modifiers/burn.modifier';
 import { TogglableModifierMixin } from '../../../../modifier/mixins/togglable.mixin';
+import { EmpoweredModifier } from '../../../../modifier/modifiers/empowered.modifier';
 
 export const pyromancer: MinionBlueprint = {
   id: 'pyromancer',
   name: 'Pyromancer',
   description: dedent /*html*/ `
-  <rt-location locations="base"></rt-location> <rt-keyword>Channel</rt-keyword>: Inflict <rt-keyword>Burn 2</rt-keyword> to an enemy minion.
+  <rt-location locations="base"></rt-location> <rt-keyword>Channel</rt-keyword>: <rt-keyword>Empower</rt-keyword> me. If I was already <rt-keyword>Empowered</rt-keyword>, Inflict <rt-keyword>Burn 1</rt-keyword> to an enemy minion instead.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -28,7 +29,7 @@ export const pyromancer: MinionBlueprint = {
   manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
-  atk: 1,
+  atk: 2,
   maxHp: 2,
   affinities: [AFFINITIES.AIR],
   commandment: 1,
@@ -38,6 +39,11 @@ export const pyromancer: MinionBlueprint = {
     await card.modifiers.add(
       new ChannelModifier('pyromancer-burn', game, card, {
         async handler() {
+          if (!card.modifiers.has(EmpoweredModifier)) {
+            await card.modifiers.add(new EmpoweredModifier(game, card));
+            return;
+          }
+
           const hasTarget = singleEnemyMinionTargetRules.canPlay(game, card);
           if (!hasTarget) return;
 

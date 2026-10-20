@@ -15,7 +15,6 @@ export class InstantMoveModifier extends Modifier<MinionCard> {
     super(KEYWORDS.INSTANT_MOVE.id, game, source, {
       name: KEYWORDS.INSTANT_MOVE.name,
       description: KEYWORDS.INSTANT_MOVE.description,
-      icon: 'icons/keyword-instant-move',
       mixins: [
         new MinionInterceptorModifierMixin(game, {
           key: 'shouldSwitchInitiativeAfterMovingManually',

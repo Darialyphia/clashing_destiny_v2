@@ -16,12 +16,13 @@ import { VigilantModifier } from '../../../../modifier/modifiers/vigilant.modifi
 import { OnMoveModifier } from '../../../../modifier/modifiers/on-move.modifier';
 import { windDervish } from './wind-dervish';
 import type { MinionCard } from '../../../entities/minion.entity';
+import { OnEnterModifier } from '../../../../modifier/modifiers/on-enter.modifier';
 
 export const zirixStarstrider: MinionBlueprint = {
   id: 'zirix-starstrider',
   name: 'Zirix Starstrider',
   description: dedent /*html*/ `
-  <rt-keyword>Vigilant</rt-keyword>.
+  <rt-trigger>On Enter</rt-trigger> Summon a Wind Dervish in your base.
   <rt-trigger>On Move</rt-trigger> Move up to 2 <rt-card>Wind Dervish</rt-card> here and ready them. 
   `,
   collectable: true,
@@ -40,7 +41,31 @@ export const zirixStarstrider: MinionBlueprint = {
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {
-    await card.modifiers.add(new VigilantModifier(game, card));
+    await card.modifiers.add(
+      new OnEnterModifier(game, card, {
+        async handler() {
+          const hasRoom = emptyBoardSpaceTargetRules.canPlay(
+            game,
+            space => space.isInBase
+          );
+          if (!hasRoom) return;
+
+          const destination = emptyBoardSpaceTargetRules.defaultTimeoutFallback(
+            game,
+            space => space.isInBase
+          );
+
+          if (destination.length === 0) return;
+
+          const dervish = await card.player.generateCard<MinionCard>(
+            windDervish.id,
+            card.isFoil
+          );
+          await dervish.playImmediatelyAt(destination[0], { shouldExhaust: false });
+        }
+      })
+    );
+
     await card.modifiers.add(
       new OnMoveModifier(game, card, {
         async handler() {

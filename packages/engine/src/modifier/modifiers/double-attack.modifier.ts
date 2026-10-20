@@ -16,7 +16,6 @@ export class DoubleAttackModifier extends WhileOnBoardModifier<MinionCard> {
     options: { mixins?: ModifierMixin<MinionCard>[] } = { mixins: [] }
   ) {
     super(KEYWORDS.DOUBLE_ATTACK.id, game, source, {
-      icon: 'icons/keyword-double-attack',
       name: KEYWORDS.DOUBLE_ATTACK.name,
       description: KEYWORDS.DOUBLE_ATTACK.description,
       isUnique: true,

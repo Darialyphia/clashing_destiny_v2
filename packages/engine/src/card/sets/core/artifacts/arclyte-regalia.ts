@@ -38,7 +38,7 @@ export const arclyteRegalia: ArtifactBlueprint = {
       description: dedent /*html*/ `
       <rt-keyword>Equip</rt-keyword>: Give the equipped minion +1/+0/+0 and "<rt-timing>Start of turn</rt-timing> the next time this takes damage, prevent 2 of that damage.".
       `,
-      manaCost: 2,
+      manaCost: 1,
       canUse: (game, card) => singleAllyMinionTargetRules.canPlay(game, card),
       getTargets: (game, card) =>
         singleAllyMinionTargetRules.getTargets({

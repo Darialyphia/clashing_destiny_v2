@@ -40,6 +40,7 @@
     "arrow-line": "^0.7.5",
     "auto-text-size": "^0.2.3",
     "bezier-js": "^6.1.4",
+    "dayjs": "^1.11.23",
     "eslint-plugin-vue-scoped-css": "^2.10.0",
     "gsap": "^3.12.5",
     "key-display-names": "^2.0.0",

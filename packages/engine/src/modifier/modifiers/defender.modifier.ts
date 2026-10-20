@@ -19,7 +19,6 @@ export class DefenderModifier extends Modifier<MinionCard> {
     super(KEYWORDS.DEFENDER.id, game, source, {
       name: KEYWORDS.DEFENDER.name,
       description: KEYWORDS.DEFENDER.description,
-      icon: 'icons/keyword-defender',
       mixins: [
         new MinionInterceptorModifierMixin(game, {
           key: 'atk',

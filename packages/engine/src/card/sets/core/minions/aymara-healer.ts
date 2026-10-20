@@ -8,17 +8,19 @@ import {
   CARD_SPEED,
   AFFINITIES
 } from '../../../card.enums';
-import { ChannelModifier } from '../../../../modifier/modifiers/channel.modifier';
-import { TogglableModifierMixin } from '../../../../modifier/mixins/togglable.mixin';
-import { SimpleStatsBuffModifier } from '../../../../modifier/modifiers/simple-stats-modifier';
 import { ProtectorModifier } from '../../../../modifier/modifiers/protector.modifier';
+import { WhileOnBattlefieldModifier } from '../../../../modifier/modifiers/while-on-board.modifier';
+import { GameEventModifierMixin } from '../../../../modifier/mixins/game-event.mixin';
+import { GAME_EVENTS } from '../../../../game/game.events';
+import { CombatDamage } from '../../../../utils/damage';
+import type { MinionCard } from '../../../entities/minion.entity';
 
 export const aymaraHealer: MinionBlueprint = {
   id: 'aymara-healer',
   name: 'Aymara Healer',
   description: dedent /*html*/ `
-  <rt-keyword>Protector</rt-keyword><br/>
-  <rt-location locations="battlefield"></rt-location> <rt-keyword>Channel</rt-keyword>: Every enemy minion here gets -1/-1/-1. Heal allies here for 1 for each affected enemy minion.    
+  <rt-keyword>Protector</rt-keyword>.
+  <rt-location locations="battlefield"></rt-location> When I take combat damage, steal 1 influence here.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -31,37 +33,35 @@ export const aymaraHealer: MinionBlueprint = {
   tags: [],
   atk: 1,
   maxHp: 6,
-  affinities: [AFFINITIES.AIR, AFFINITIES.NEUTRAL],
   commandment: 2,
+  affinities: [AFFINITIES.AIR, AFFINITIES.NEUTRAL],
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {
     await card.modifiers.add(new ProtectorModifier(game, card));
     await card.modifiers.add(
-      new ChannelModifier('aymara-healer-channel', game, card, {
-        async handler() {
-          const enemies = card.player.enemyMinions.filter(
-            minion => minion.location === card.location
-          );
-          for (const enemy of enemies) {
-            await enemy.modifiers.add(
-              new SimpleStatsBuffModifier('aymara-healer-debuff', game, card, {
-                atk: -1,
-                cmd: -1,
-                hp: -1
-              })
-            );
-          }
-          const allies = card.player.minions.filter(
-            minion => minion.location === card.location
-          );
-          const healAmount = enemies.length;
-          for (const ally of allies) {
-            await ally.heal(healAmount);
-          }
-        },
-        mixins: [new TogglableModifierMixin(game, () => card.isOnBattlefield)]
-      })
+      new WhileOnBattlefieldModifier<MinionCard>(
+        'aymara-healer-influence-steal',
+        game,
+        card,
+        {
+          mixins: [
+            new GameEventModifierMixin(game, {
+              eventName: GAME_EVENTS.CARD_AFTER_TAKE_DAMAGE,
+              filter(event) {
+                return (
+                  event.data.card.equals(card) &&
+                  event.data.damage instanceof CombatDamage
+                );
+              },
+              async handler() {
+                await card.battlefield?.opponentBattlefield?.loseScore(1);
+                await card.battlefield?.gainScore(1);
+              }
+            })
+          ]
+        }
+      )
     );
   },
   async onPlay() {},

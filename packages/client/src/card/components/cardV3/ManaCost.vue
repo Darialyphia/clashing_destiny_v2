@@ -29,10 +29,7 @@ const costStatus = computed(() => {
       v-if="isDefined(manaSupply)"
       class="dual-text"
       :data-text="`+${manaSupply}`"
-      style="
-        --dual-text-stroke-offset-y: calc(-1px * var(--pixel-scale));
-        --dual-text-stroke: calc(0.5px * var(--pixel-scale));
-      "
+      style="--dual-text-stroke-offset-y: calc(-2px * var(--pixel-scale))"
     >
       +{{ manaSupply ?? 0 }}
     </div>
@@ -65,8 +62,8 @@ const costStatus = computed(() => {
 
 .supply {
   position: absolute;
-  top: calc(2px * var(--pixel-scale));
-  right: calc(2px * var(--pixel-scale));
+  top: calc(30px * var(--pixel-scale));
+  left: calc(4px * var(--pixel-scale));
   font-size: calc(var(--pixel-scale) * 12px);
   font-weight: var(--font-weight-9);
   z-index: 0;

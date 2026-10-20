@@ -26,7 +26,6 @@ export class ZealModifier extends WhileOnBoardModifier<MinionCard> {
     super(modifierType, game, source, {
       name: KEYWORDS.ZEAL.name,
       description: KEYWORDS.ZEAL.description.replace(' X', ` ${options.amount}`),
-      icon: 'icons/keyword-zeal',
       mixins: [
         new CardAuraModifierMixin<MinionCard>(game, source, {
           isElligible: candidate => {
