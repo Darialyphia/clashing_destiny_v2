@@ -30,6 +30,7 @@ export class DeckSubscribers {
     for (const deck of starterDecks) {
       await this.ctx.scheduler.runAfter(0, internal.gifts.give, {
         receiverId: event.userId,
+        icon: 'gift-default',
         name: `Welcome Gift: ${deck.name}`,
         source: GIFT_SOURCES.SIGNUP_GIFT,
         contents: [
@@ -44,6 +45,7 @@ export class DeckSubscribers {
     await this.ctx.scheduler.runAfter(0, internal.gifts.give, {
       receiverId: event.userId,
       name: 'Pre Alpha Welcome Gift: Full collection unlock !',
+      icon: 'gift-default',
       source: GIFT_SOURCES.PROMOTION,
       contents: [
         {
