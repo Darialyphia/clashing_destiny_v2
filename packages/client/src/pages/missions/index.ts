@@ -1,5 +1,6 @@
 import type { UseTutorialOptions } from '../client/tutorial/useTutorial';
 import { basicsTutorial } from './basics';
+import { resourcesTutorial } from './resources';
 
 export type TutorialMission = {
   id: string;
@@ -7,4 +8,4 @@ export type TutorialMission = {
   options: UseTutorialOptions;
 };
 
-export const missions = [basicsTutorial];
+export const missions = [basicsTutorial, resourcesTutorial];

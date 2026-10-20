@@ -6,6 +6,7 @@ import { tutorialSilverguardOutpost } from './tutorial/destiny/silverguard-outpo
 import { tutorialSilverguardKnight } from './tutorial/minions/silverguard-knight';
 import { bloodboundExecutor } from './tutorial/minions/bloodbound-executor';
 import { bloodboundShaman } from './tutorial/minions/bloodbound-shaman';
+import { tutorialSuntideMaiden } from './tutorial/minions/suntide-maiden';
 
 export const tutorialSet: CardSet = {
   id: CARD_SETS.TUTORIAL,
@@ -16,6 +17,7 @@ export const tutorialSet: CardSet = {
     tutorialSilverguardOutpost,
     tutorialSilverguardKnight,
     bloodboundExecutor,
-    bloodboundShaman
+    bloodboundShaman,
+    tutorialSuntideMaiden
   ]
 };

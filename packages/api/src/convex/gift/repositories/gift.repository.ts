@@ -88,14 +88,18 @@ export class GiftRepository {
   async create(data: {
     receiverId: UserId;
     name: string;
+    description?: string;
     source: GiftSource;
+    icon: string;
     contents: GiftDoc['contents'];
   }) {
     const giftId = await this.ctx.db.insert('gifts', {
       receiverId: data.receiverId,
       state: GIFT_STATES.ISSUED,
       name: data.name,
+      description: data.description,
       source: data.source,
+      icon: data.icon,
       contents: data.contents
     });
 

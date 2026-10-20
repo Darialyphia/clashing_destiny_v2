@@ -107,8 +107,8 @@ const step = computed(() => {
 const cards = computed(() => {
   if (handSize.value === 0) return [];
   const usedSpan = cardW.value + (handSize.value - 1) * step.value;
-
   const offset = (handContainerSize.value.w - usedSpan) / 2;
+
   const hoveredIndexInHand = ui.value.hoveredCardInHand
     ? player.value.hand.findIndex(c => c.equals(ui.value.hoveredCardInHand!))
     : null;

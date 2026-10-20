@@ -1,8 +1,4 @@
-<script setup lang="ts">
-import { useLogout } from '@/auth/composables/useLogout';
-
-const { mutate: logout } = useLogout();
-</script>
+<script setup lang="ts"></script>
 
 <template>
   <ul class="main-menu">
@@ -30,9 +26,13 @@ const { mutate: logout } = useLogout();
       </RouterLink>
     </li>
     <li>
-      <button @click="logout({})" class="dual-text" data-text="Logout">
-        Logout
-      </button>
+      <RouterLink
+        :to="{ name: 'TutorialHome' }"
+        class="dual-text"
+        data-text="Learn to Play"
+      >
+        Learn to Play
+      </RouterLink>
     </li>
   </ul>
 </template>

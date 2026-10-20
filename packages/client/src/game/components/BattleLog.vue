@@ -3,9 +3,11 @@ import InspectableCard from '@/card/components/InspectableCard.vue';
 import { useBattleLog } from '../composables/useBattleLog';
 import UiDrawer from '@/ui/components/UiDrawer.vue';
 import FancyButton from '@/ui/components/FancyButton.vue';
+import { useGameUi } from '../composables/useGameClient';
 
 const events = useBattleLog();
 const listEl = ref<HTMLElement>();
+const ui = useGameUi();
 
 watch(
   () => events.value.length,
@@ -33,7 +35,11 @@ watch(isOpened, opened => {
 </script>
 
 <template>
-  <FancyButton text="Battle Log" @click="isOpened = true" />
+  <FancyButton
+    v-if="ui.displayedElements.battleLog"
+    text="Battle Log"
+    @click="isOpened = true"
+  />
 
   <UiDrawer
     v-model:is-opened="isOpened"

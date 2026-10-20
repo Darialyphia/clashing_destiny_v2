@@ -16,7 +16,7 @@ export class StructureModifier<T extends MinionCard> extends Modifier<T> {
       mixins: [
         new KeywordModifierMixin(game, KEYWORDS.STRUCTURE),
         new MinionInterceptorModifierMixin(game, {
-          key: 'canMove',
+          key: 'canMoveManually',
           interceptor: () => false
         }),
         new MinionInterceptorModifierMixin(game, {

@@ -35,6 +35,8 @@ export type Config = {
   SHOULD_EXHAUST_MINIONS_ON_SUMMON: boolean;
   SHOULD_CREATE_CHAIN_ON_SCORE: boolean;
   SHOULD_ROTATE_DESTINIES: boolean;
+  SHOULD_PAY_MANA: boolean;
+  SHOULD_CHECK_AFFINITIES: boolean;
 
   EFFECT_CHAIN: boolean;
 
@@ -79,6 +81,8 @@ export const defaultConfig: Config = {
   SHOULD_EXHAUST_MINIONS_ON_SUMMON: false,
   SHOULD_CREATE_CHAIN_ON_SCORE: false,
   SHOULD_ROTATE_DESTINIES: true,
+  SHOULD_PAY_MANA: true,
+  SHOULD_CHECK_AFFINITIES: true,
 
   EFFECT_CHAIN: false,
 

@@ -25,7 +25,6 @@ export const windstormObelysk: MinionBlueprint = {
   name: 'Windstorm Obelysk',
   description: dedent /*html*/ `
   <rt-keyword>Structure</rt-keyword>.
-  <rt-keyword>Spawn</rt-keyword>: <rt-card>Wind Dervish</rt-card>.
   Your <rt-card>Wind Dervish</rt-card> have <rt-keyword>Instant Move</rt-keyword>.
   `,
   collectable: true,

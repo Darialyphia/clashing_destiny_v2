@@ -5,6 +5,7 @@ import { SHOP_CATEGORIES, type ShopCategory } from '@game/api';
 import ShopOffer from './ShopOffer.vue';
 import { useCatalogByCategory } from './useShop';
 import UiSpinner from '@/ui/components/UiSpinner.vue';
+import PlayerCurrencies from '@/player/components/PlayerCurrencies.vue';
 
 definePage({
   name: 'Shop',
@@ -25,6 +26,7 @@ const { data: catalog, isLoading } = useCatalogByCategory(selectedCategory);
   <div v-if="me" class="shop-page">
     <div class="shop-topbar">
       <FancyButton text="Back" :to="{ name: 'ClientHome' }" />
+      <PlayerCurrencies />
     </div>
 
     <main class="shop-layout surface-transparent">
@@ -224,13 +226,16 @@ const { data: catalog, isLoading } = useCatalogByCategory(selectedCategory);
   font-size: var(--font-size-7);
 }
 
-@media (max-width: 600px) {
+.shop-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-block-end: var(--size-5);
+}
+
+@screen lt-md {
   .shop-page {
     padding: var(--size-3);
-  }
-
-  .shop-topbar {
-    margin-block-end: var(--size-5);
   }
 
   .shop-layout {

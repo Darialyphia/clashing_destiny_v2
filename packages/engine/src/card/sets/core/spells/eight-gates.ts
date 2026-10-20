@@ -47,9 +47,6 @@ export const eightGates: SpellBlueprint<MinionCard> = {
     const target = targets.cards[0];
     if (!target) return;
 
-    await target.takeDamage(card, new SpellDamage(2, card));
-    if (!target.isAlive) return;
-
     await target.modifiers.add(
       new SimpleAttackBuffModifier('eight-gates-atk-buff', game, card, {
         amount: 4,

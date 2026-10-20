@@ -6,6 +6,7 @@ import TutorialHighlight from './TutorialHighlight.vue';
 import TutorialTextBox from './TutorialTextBox.vue';
 import TutorialGesture from './TutorialGesture.vue';
 import SingleBattlefield from '@/game/components/MinionZone/SingleBattlefield.vue';
+import DoubleBattlefield from '@/game/components/MinionZone/DoubleBattlefield.vue';
 
 const { options } = defineProps<{
   options: Parameters<typeof provideTutorial>[0];
@@ -27,7 +28,8 @@ onMounted(start);
     </template>
 
     <template #battlefield>
-      <SingleBattlefield />
+      <DoubleBattlefield v-if="options.boardType === 'double'" />
+      <SingleBattlefield v-else :has-supply="options.boardType === 'single'" />
     </template>
   </GameScene>
   <TutorialHighlight />

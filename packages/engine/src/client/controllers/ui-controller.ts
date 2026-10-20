@@ -49,6 +49,8 @@ export class UiController {
 
   private _hoveredCardInHand: CardViewModel | null = null;
 
+  private _hoveredCardInOpponentHand: CardViewModel | null = null;
+
   private _selectedCard: CardViewModel | null = null;
 
   private _draggedCard: CardViewModel | null = null;
@@ -109,7 +111,17 @@ export class UiController {
     victoryPoints: (playerId: string) => new DOMSelector(`victory-points-${playerId}`),
     influence: (playerId: string, zone: CardLocation) =>
       new DOMSelector(`influence-${playerId}-${zone}`),
-    passButton: new DOMSelector('pass-button')
+    passButton: new DOMSelector('pass-button'),
+    highlightedCard: new DOMSelector('highlighted-card'),
+    highlightedCardMana: () =>
+      new DOMSelector('.mana-cost', this.DOMSelectors.highlightedCard.selector),
+    highlightedCardSupply: () =>
+      new DOMSelector('.supply', this.DOMSelectors.highlightedCard.selector),
+    highlightedCardAffinities: () =>
+      new DOMSelector('.affinity-flags', this.DOMSelectors.highlightedCard.selector),
+    supplyZone: (playerId: string) => new DOMSelector(`supply-zone-${playerId}`),
+    currentMana: (playerId: string) => new DOMSelector(`current-mana-${playerId}`),
+    runeZone: (playerId: string) => new DOMSelector(`rune-zone-${playerId}`)
   };
 
   displayedElements = {
@@ -117,9 +129,14 @@ export class UiController {
     playerInfos: true,
     passButton: true,
     victoryPoints: true,
-    mana: true
+    supplyZone: true,
+    mana: true,
+    initiativeIndicator: true,
+    affinities: true,
+    battleLog: true
   };
 
+  highlightedCard: CardViewModel | null = null;
   highlightedElement: HTMLElement | null = null;
 
   selectedManaCostIndices: number[] = [];
@@ -194,6 +211,10 @@ export class UiController {
     return this._hoveredCardInHand;
   }
 
+  get hoveredCardInOpponentHand() {
+    return this._hoveredCardInOpponentHand;
+  }
+
   get draggedCard() {
     return this._draggedCard;
   }
@@ -227,6 +248,14 @@ export class UiController {
 
   unhoverCardInHand() {
     this._hoveredCardInHand = null;
+  }
+
+  hoverCardInOpponentHand(card: CardViewModel) {
+    this._hoveredCardInOpponentHand = card;
+  }
+
+  unhoverCardInOpponentHand() {
+    this._hoveredCardInOpponentHand = null;
   }
 
   startDraggingCard(card: CardViewModel) {

@@ -60,7 +60,6 @@ useFxEvent(FX_EVENTS.CARD_ADD_TO_HAND, async () => {
   //   ).finished;
   // }
 });
-
 const handContainer = useTemplateRef('hand') as Readonly<
   ShallowRef<HTMLElement | null>
 >; // somehow we have to cast it because it makes vue-tsc fail, yet it works in IDE...
@@ -111,13 +110,21 @@ const step = computed(() => {
 const cards = computed(() => {
   if (handSize.value === 0) return [];
   const usedSpan = cardW.value + (handSize.value - 1) * step.value;
-
   const offset = (handContainerSize.value.w - usedSpan) / 2;
 
+  const hoveredIndexInHand = ui.value.hoveredCardInOpponentHand
+    ? player.value.hand.findIndex(c =>
+        c.equals(ui.value.hoveredCardInOpponentHand!)
+      )
+    : null;
+
   return player.value.hand.map((card, i) => {
+    const isAfterHoveredCard =
+      hoveredIndexInHand !== null && i > hoveredIndexInHand ? 1 : 0;
+
     return {
       card,
-      x: i * step.value + offset,
+      x: i * step.value + offset + (isAfterHoveredCard ? cardW.value : 0),
       y: 0,
       z: i
     };
@@ -193,7 +200,7 @@ const { height } = useWindowSize();
   }
 }
 .hand {
-  /* --pixel-scale: 1; */
+  --pixel-scale: 1;
   position: relative;
   z-index: 1;
   width: 100%;

@@ -46,10 +46,13 @@ export const basicsTutorial: TutorialMission = {
           PLAYER_1_CARDS_DRAWN_ON_FIRST_TURN: 0,
           PLAYER_2_CARDS_DRAWN_ON_FIRST_TURN: 0,
           START_OF_GAME_MULLIGANED_CARDS: 0,
-          VICTORY_POINTS_TO_WIN: 2
+          VICTORY_POINTS_TO_WIN: 2,
+          SHOULD_PAY_MANA: false,
+          SHOULD_CHECK_AFFINITIES: false
         }
       }
     },
+    boardType: 'single-no-supply',
     meta: {},
     steps: [
       {
@@ -58,6 +61,14 @@ export const basicsTutorial: TutorialMission = {
         failedCondition: () => false,
         meta: {},
         async setup(ctx) {
+          ctx.client.ui.displayedElements.supplyZone = false;
+          ctx.client.ui.displayedElements.passButton = false;
+          ctx.client.ui.displayedElements.victoryPoints = false;
+          ctx.client.ui.displayedElements.initiativeIndicator = false;
+          ctx.client.ui.displayedElements.battleLog = false;
+          ctx.client.ui.displayedElements.mana = false;
+          ctx.client.ui.displayedElements.affinities = false;
+
           const [allyUnit] =
             ctx.game.playerSystem.player1.cardManager.mainDeck.draw(1);
           const [enemyUnit] =
@@ -101,13 +112,13 @@ export const basicsTutorial: TutorialMission = {
         },
         textBoxes: [
           {
-            text: 'The Bloodbound invaders are trying to take over our outpost !',
+            text: 'The Bloodbound invaders are trying to take over our outpost!',
             right: '22%',
             bottom: '45%',
             canManuallyAdvance: true
           },
           {
-            text: 'Use your minions to defend our position !',
+            text: 'Use your minions to defend our position!',
             right: '22%',
             bottom: '45%',
             canManuallyAdvance: false,
@@ -150,7 +161,7 @@ export const basicsTutorial: TutorialMission = {
         },
         textBoxes: [
           {
-            text: 'The opponent is making his move !',
+            text: 'The opponent is making his move!',
             right: '22%',
             bottom: '45%',
             canManuallyAdvance: true,
@@ -165,7 +176,7 @@ export const basicsTutorial: TutorialMission = {
             }
           },
           {
-            text: 'You need to <b>SCORE</b> to strengthen your position !',
+            text: 'You need to <b>SCORE</b> to strengthen your position!',
             right: '22%',
             bottom: '45%',
             canManuallyAdvance: false,
@@ -246,11 +257,16 @@ export const basicsTutorial: TutorialMission = {
             }
           },
           {
-            text: 'Fill up your Victory Points gauge to win the game !',
+            text: 'Fill up your Victory Points gauge to win the game!',
             left: '-5%',
             bottom: '25%',
             canManuallyAdvance: true,
-            onEnter(ctx) {
+            async onEnter(ctx) {
+              ctx.client.ui.displayedElements.victoryPoints = true;
+              ctx.client.ui.displayedElements.passButton = true;
+              ctx.client.ui.displayedElements.initiativeIndicator = true;
+
+              await waitFor(100);
               ctx.client.ui.highlightedElement =
                 ctx.client.ui.DOMSelectors.victoryPoints(
                   ctx.game.playerSystem.player1.id
@@ -258,7 +274,7 @@ export const basicsTutorial: TutorialMission = {
             }
           },
           {
-            text: 'The enemy scored as well ! You are now tied in influence.',
+            text: 'The enemy scored as well! You are now tied in influence.',
             left: '50%',
             top: '25%',
             hideDuringOpponentInitiative: true,
@@ -291,7 +307,7 @@ export const basicsTutorial: TutorialMission = {
             advanceCondition() {
               return false;
             },
-            onEnter(ctx) {
+            async onEnter(ctx) {
               ctx.client.ui.highlightedElement =
                 ctx.client.ui.DOMSelectors.passButton.element!;
             }
@@ -383,7 +399,7 @@ export const basicsTutorial: TutorialMission = {
           },
 
           {
-            text: "You got some reinforcements ! Let's use them to turn the tides of battle !",
+            text: "You got some reinforcements! Let's use them to turn the tides of battle!",
             right: '22%',
             bottom: '45%',
             canManuallyAdvance: true,
@@ -551,7 +567,7 @@ export const basicsTutorial: TutorialMission = {
             canManuallyAdvance: true
           },
           {
-            text: 'Your opponent chose to score again. Time to take advantage of this !',
+            text: 'Your opponent chose to score again. Time to take advantage of this!',
             right: '22%',
             bottom: '45%',
             canManuallyAdvance: true,
@@ -738,7 +754,7 @@ export const basicsTutorial: TutorialMission = {
             }
           },
           {
-            text: 'This is because the enemy was <b>READY</b>. Ready minions strike back, keep that in mind !',
+            text: 'This is because the enemy was <b>READY</b>. Ready minions strike back, keep that in mind!',
             right: '22%',
             bottom: '45%',
             canManuallyAdvance: true
@@ -753,7 +769,7 @@ export const basicsTutorial: TutorialMission = {
             }
           },
           {
-            text: 'Here are another card in your hand. Thankfully it has an influence of 3 !',
+            text: 'Here is another card in your hand. Thankfully it has an influence of 3!',
             right: '22%',
             bottom: '45%',
             canManuallyAdvance: true,
@@ -788,7 +804,7 @@ export const basicsTutorial: TutorialMission = {
             }
           },
           {
-            text: 'Play it, move it to the battlefield and score with it get ahead in influence.',
+            text: 'Play it, move it to the battlefield and score with it to  get ahead in influence.',
             right: '22%',
             bottom: '45%',
             canManuallyAdvance: false,
@@ -826,7 +842,7 @@ export const basicsTutorial: TutorialMission = {
         },
         textBoxes: [
           {
-            text: 'Good job ! You now have more influence than your opponent, the turn is secure.',
+            text: 'Good job! You now have more influence than your opponent, the turn is secured.',
             left: '0%',
             bottom: '35%',
             canManuallyAdvance: true
@@ -861,7 +877,7 @@ export const basicsTutorial: TutorialMission = {
         },
         textBoxes: [
           {
-            text: 'You are only one point away from victory !',
+            text: 'You are only one point away from victory!',
             left: '0%',
             bottom: '35%',
             canManuallyAdvance: true,
@@ -873,7 +889,7 @@ export const basicsTutorial: TutorialMission = {
             }
           },
           {
-            text: 'Let`s try to win this turn.',
+            text: "Let's try to win this turn.",
             right: '22%',
             bottom: '45%',
             canManuallyAdvance: true,
@@ -1098,7 +1114,7 @@ export const basicsTutorial: TutorialMission = {
             canManuallyAdvance: true
           },
           {
-            text: "You're on your own now! Repel the Bloodbound invaders !",
+            text: "You're on your own now! Repel the Bloodbound invaders!",
             right: '22%',
             bottom: '45%',
             canManuallyAdvance: false,

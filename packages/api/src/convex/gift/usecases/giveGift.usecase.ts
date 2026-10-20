@@ -8,7 +8,9 @@ import { AppError } from '../../utils/error';
 export type GiveGiftInput = {
   receiverId: UserId;
   name: string;
+  description?: string;
   source: GiftSource;
+  icon: string;
   contents: Array<
     | {
         kind: 'DECK';
@@ -61,7 +63,9 @@ export class GiveGiftUseCase implements UseCase<GiveGiftInput, GiveGiftOutput> {
     const gift = await this.ctx.giftRepo.create({
       receiverId: input.receiverId,
       name: input.name,
+      description: input.description,
       source: input.source,
+      icon: input.icon,
       contents: input.contents
     });
 

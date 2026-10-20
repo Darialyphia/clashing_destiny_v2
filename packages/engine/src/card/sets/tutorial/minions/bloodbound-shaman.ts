@@ -1,7 +1,13 @@
 import dedent from 'dedent';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import { defaultCardArt } from '../../../card-utils';
-import { CARD_SETS, CARD_KINDS, RARITIES, CARD_SPEED } from '../../../card.enums';
+import {
+  CARD_SETS,
+  CARD_KINDS,
+  RARITIES,
+  CARD_SPEED,
+  AFFINITIES
+} from '../../../card.enums';
 
 export const bloodboundShaman: MinionBlueprint = {
   id: 'bloodbound-shaman',
@@ -12,13 +18,13 @@ export const bloodboundShaman: MinionBlueprint = {
   art: defaultCardArt('minions/bloodbound-shaman'),
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.TOKEN,
-  manaCost: 0,
+  manaCost: 2,
   manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 1,
   maxHp: 1,
-  affinities: [],
+  affinities: [AFFINITIES.NEUTRAL],
   commandment: 4,
   canPlay: () => true,
   abilities: [],

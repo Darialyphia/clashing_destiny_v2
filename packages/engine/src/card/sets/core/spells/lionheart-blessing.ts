@@ -24,7 +24,7 @@ export const lionheartBlessing: SpellBlueprint<MinionCard> = {
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.COMMON,
   affinities: [AFFINITIES.LIGHT],
-  manaCost: 2,
+  manaCost: 1,
   manaSupply: 3,
   speed: CARD_SPEED.FAST,
   tags: [],

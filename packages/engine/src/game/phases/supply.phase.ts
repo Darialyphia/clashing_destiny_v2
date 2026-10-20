@@ -8,12 +8,6 @@ import type { Player } from '../../player/player.entity';
 export class SupplyPhase implements GamePhaseController, Serializable<EmptyObject> {
   constructor(private game: Game) {}
 
-  private async refillMana() {
-    for (const player of this.game.playerSystem.players) {
-      await player.manaManager.refill();
-    }
-  }
-
   private async emptyMana() {
     for (const player of this.game.playerSystem.players) {
       await player.manaManager.empty();

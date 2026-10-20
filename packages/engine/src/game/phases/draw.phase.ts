@@ -57,6 +57,7 @@ export class DrawPhase implements GamePhaseController, Serializable<EmptyObject>
   }
 
   private async rotateDestinyCards() {
+    if (!this.game.config.SHOULD_ROTATE_DESTINIES) return;
     // 1- remove card on right battlefield
     const rightCard =
       this.game.playerSystem.player1.boardSide.rightBattlefield.destinyCard ??

@@ -79,6 +79,8 @@ const onMouseenter = () => {
   isHovered.value = true;
   if (card.player.equals(myPlayer.value)) {
     ui.value.hoverCardInHand(card);
+  } else {
+    ui.value.hoverCardInOpponentHand(card);
   }
 };
 const onMouseleave = () => {
@@ -86,6 +88,8 @@ const onMouseleave = () => {
   isHovered.value = false;
   if (card.player.equals(myPlayer.value)) {
     ui.value.unhoverCardInHand();
+  } else {
+    ui.value.unhoverCardInOpponentHand();
   }
 };
 </script>

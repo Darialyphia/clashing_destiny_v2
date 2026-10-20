@@ -233,6 +233,8 @@ export abstract class Card<
   }
 
   get fulfillsAffinities() {
+    if (!this.game.config.SHOULD_CHECK_AFFINITIES) return true;
+
     const available = Object.fromEntries(
       Object.values(AFFINITIES).map(affinity => [affinity, 0])
     ) as Record<Affinity, number>;
@@ -263,12 +265,14 @@ export abstract class Card<
   }
 
   get canPayManaCost() {
+    if (!this.game.config.SHOULD_PAY_MANA) return true;
     return this.player.mana >= this.manaCost;
   }
 
   async payManaCost() {
     if (!this.canPayManaCost) return;
     const cost = this.manaCost;
+    if (!this.game.config.SHOULD_PAY_MANA) return;
     await this.player.manaManager.spend(this.manaCost);
     return cost;
   }

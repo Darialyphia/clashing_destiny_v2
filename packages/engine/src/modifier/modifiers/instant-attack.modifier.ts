@@ -15,7 +15,6 @@ export class InstantAttackModifier extends Modifier<MinionCard> {
     super(KEYWORDS.INSTANT_ATTACK.id, game, source, {
       name: KEYWORDS.INSTANT_ATTACK.name,
       description: KEYWORDS.INSTANT_ATTACK.description,
-      icon: 'icons/keyword-instant-attack',
       mixins: [
         new MinionInterceptorModifierMixin(game, {
           key: 'shouldSwitchInitiativeAfterAttacking',

@@ -196,7 +196,10 @@ const isFaceDown = computed(
 
   &.is-exhausted:not(.is-being-played) {
     rotate: 5deg;
-    filter: grayscale(70%) brightness(80%);
+
+    &:deep(.art) {
+      filter: grayscale(85%) brightness(50%);
+    }
   }
 
   &.is-being-played {
@@ -329,12 +332,9 @@ const isFaceDown = computed(
 
 .modifiers {
   position: absolute;
-  .is-enemy & {
-    top: calc(-28px * var(--pixel-scale));
-  }
-  .is-ally & {
-    bottom: calc(-28px * var(--pixel-scale));
-  }
+  top: 0;
+  left: 0;
+  z-index: 1;
   transform: translateZ(0px);
   /* translate: 0 5px; */
   /* opacity: 0; */

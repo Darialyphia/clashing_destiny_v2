@@ -63,10 +63,10 @@ definePage({
 
 <style lang="postcss" scoped>
 .page {
-  min-height: 100vh;
-  padding-top: var(--size-12);
+  min-height: 100dvh;
   background: url('@/assets/backgrounds/main-menu-overlay.png');
   background-size: 100% 100%;
+  padding-top: var(--size-12);
   @screen lt-lg {
     padding-top: var(--size-3);
   }

@@ -19,6 +19,10 @@ export class Gift extends Entity<GiftId, GiftDoc> {
     return this.data.name;
   }
 
+  get description() {
+    return this.data.description;
+  }
+
   get state() {
     return this.data.state;
   }
@@ -33,6 +37,10 @@ export class Gift extends Entity<GiftId, GiftDoc> {
 
   get openedAt() {
     return this.data.openedAt;
+  }
+
+  get icon() {
+    return this.data.icon;
   }
 
   isIssued(): boolean {

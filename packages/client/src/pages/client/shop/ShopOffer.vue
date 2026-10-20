@@ -224,6 +224,7 @@ const isFree = computed(() => offer.price.every(price => price.amount === 0));
   aspect-ratio: 1;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   --pixel-scale: 1;
   padding: var(--size-2) var(--size-3);
   border: solid 1px hsl(var(--color-primary-hsl) / 0.18);

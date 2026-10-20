@@ -1,23 +1,31 @@
 <script setup lang="ts">
 import { useGameUi } from '../composables/useGameClient';
 
+defineOptions({
+  inheritAttrs: false
+});
 const ui = useGameUi();
 
 const passAction = computed(() => {
   return ui.value.globalActions.find(action => action.id === 'pass');
 });
+
+const attrs = useAttrs();
 </script>
 
 <template>
-  <button
-    v-if="passAction"
-    :disabled="passAction.isDisabled"
-    class="pass-button"
-    aria-label="Pass"
-    :id="ui.DOMSelectors.passButton.id"
-    @click="passAction.onClick()"
-  />
-  <div v-else class="enemy-turn-indicator" />
+  <template v-if="ui.displayedElements.passButton">
+    <button
+      v-if="passAction"
+      v-bind="attrs"
+      :disabled="passAction.isDisabled"
+      class="pass-button"
+      aria-label="Pass"
+      :id="ui.DOMSelectors.passButton.id"
+      @click="passAction.onClick()"
+    />
+    <div v-else v-bind="attrs" class="enemy-turn-indicator" />
+  </template>
 </template>
 
 <style scoped lang="postcss">

@@ -25,7 +25,6 @@ export const fireblazeObelysk: MinionBlueprint = {
   name: 'Fireblaze Obelysk',
   description: dedent /*html*/ `
   <rt-keyword>Structure</rt-keyword>.
-  <rt-keyword>Spawn</rt-keyword>: <rt-card>Wind Dervish</rt-card>.
   Your <rt-card>Wind Dervish</rt-card> have <rt-trigger>On Attack</rt-trigger>: Infict <rt-keyword>Burn 1</rt-keyword>.
   `,
   collectable: true,

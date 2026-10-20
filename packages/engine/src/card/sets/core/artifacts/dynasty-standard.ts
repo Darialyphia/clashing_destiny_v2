@@ -30,7 +30,7 @@ export const dynastyStandard: ArtifactBlueprint = {
   kind: CARD_KINDS.ARTIFACT,
   rarity: RARITIES.RARE,
   affinities: [AFFINITIES.LIGHT, AFFINITIES.LIGHT],
-  manaCost: 4,
+  manaCost: 3,
   manaSupply: 2,
   durability: 2,
   speed: CARD_SPEED.FAST,

@@ -2,14 +2,21 @@
 import type { PlayerViewModel } from '@game/engine/src/client/view-models/player.model';
 import GameCard from './GameCard.vue';
 import InspectableCard from '@/card/components/InspectableCard.vue';
+import { useGameUi } from '@/game/composables/useGameClient';
 
 const { player } = defineProps<{
   player: PlayerViewModel;
 }>();
+
+const ui = useGameUi();
 </script>
 
 <template>
-  <div class="rune-zone">
+  <div
+    class="rune-zone"
+    v-if="ui.displayedElements.affinities"
+    :id="ui.DOMSelectors.runeZone(player.id).id"
+  >
     <div v-for="card in player.runeZone" :key="card.id">
       <InspectableCard :card-id="card.id" side="top" align="center">
         <GameCard :card-id="card.id" variant="small" />
