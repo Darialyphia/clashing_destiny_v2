@@ -26,10 +26,10 @@ export class GrantMissingCardsUseCase
     input: GrantMissingCardsUseCaseInput
   ): Promise<GrantMissingCardsUseCaseOutput> {
     const MAX_COPIES_PER_KIND: Record<CardKind, number> = {
-      MINION: 3,
-      SPELL: 3,
-      ARTIFACT: 3,
-      SECRET: 3,
+      MINION: 2,
+      SPELL: 2,
+      ARTIFACT: 2,
+      SECRET: 2,
       DESTINY: 1,
       RUNE: 10
     };
@@ -54,6 +54,7 @@ export class GrantMissingCardsUseCase
         receiverId: input.userId,
         source: GIFT_SOURCES.COMPENSATION,
         name: 'Collection Completion Gift',
+        icon: 'gift-default',
         contents: [
           {
             kind: GIFT_KINDS.CARDS,

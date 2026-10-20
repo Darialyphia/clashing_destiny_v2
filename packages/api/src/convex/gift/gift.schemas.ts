@@ -47,6 +47,7 @@ export const giftSchemas = {
     ),
     name: v.string(),
     description: v.optional(v.string()),
+    icon: v.optional(v.string()),
     openedAt: v.optional(v.number()),
     source: GIFT_SOURCE_VALIDATOR,
     contents: GIFT_CONTENTS_VALIDATOR

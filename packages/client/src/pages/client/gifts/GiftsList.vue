@@ -9,8 +9,8 @@ const { gifts, claimableGifts, isLoading } = useGiftsPage();
   <section class="gifts-list">
     <header>
       <span class="i-mdi-gift" />
-      {{ claimableGifts.length }}
-      {{ claimableGifts.length === 1 ? 'Gift' : 'Gifts' }} Available
+      {{ claimableGifts.length }} unclaimed
+      {{ claimableGifts.length === 1 ? 'Gift' : 'Gifts' }}
     </header>
 
     <div v-if="isLoading" class="state">Loading your gifts...</div>
@@ -29,12 +29,7 @@ const { gifts, claimableGifts, isLoading } = useGiftsPage();
   grid-template-rows: auto minmax(0, 1fr);
   gap: var(--size-2);
   min-height: 0;
-  padding: var(--size-3) var(--size-4);
-  background: hsl(260 40% 6% / 0.9);
-  border: 2px solid #8a6a2f;
-  box-shadow:
-    inset 0 0 0 3px #0c0a14,
-    inset 0 0 0 4px #5b4521;
+  padding: var(--size-3);
 }
 
 header {
@@ -54,9 +49,10 @@ header {
 .rows {
   display: flex;
   flex-direction: column;
-  gap: var(--size-2);
+  gap: var(--size-5);
   min-height: 0;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .state {

@@ -90,6 +90,7 @@ export class GiftRepository {
     name: string;
     description?: string;
     source: GiftSource;
+    icon: string;
     contents: GiftDoc['contents'];
   }) {
     const giftId = await this.ctx.db.insert('gifts', {
@@ -98,6 +99,7 @@ export class GiftRepository {
       name: data.name,
       description: data.description,
       source: data.source,
+      icon: data.icon,
       contents: data.contents
     });
 

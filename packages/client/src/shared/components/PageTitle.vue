@@ -22,6 +22,8 @@ h1 {
   margin-bottom: var(--size-1);
   font-family: 'Cinzel Decorative', serif;
   text-align: center;
+  filter: drop-shadow(0 0 5px black) drop-shadow(0 0 45px black)
+    drop-shadow(0 0 70px black) drop-shadow(0 0 100px black);
   @screen lt-lg {
     font-size: var(--font-size-6);
   }

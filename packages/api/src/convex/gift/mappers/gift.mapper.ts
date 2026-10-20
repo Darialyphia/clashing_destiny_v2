@@ -12,7 +12,8 @@ export class GiftMapper {
       description: gift.description,
       openedAt: gift.openedAt,
       source: gift.source,
-      contents: gift.contents
+      contents: gift.contents,
+      icon: gift.icon
     };
   }
 }

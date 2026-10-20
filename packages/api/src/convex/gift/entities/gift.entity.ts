@@ -39,6 +39,10 @@ export class Gift extends Entity<GiftId, GiftDoc> {
     return this.data.openedAt;
   }
 
+  get icon() {
+    return this.data.icon;
+  }
+
   isIssued(): boolean {
     return this.state === GIFT_STATES.ISSUED;
   }

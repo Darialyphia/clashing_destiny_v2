@@ -14,6 +14,7 @@ export type GetMyGiftsOutput = Array<{
   description?: string;
   state: GiftState;
   receivedAt: number;
+  icon?: string;
   contents: Array<
     | {
         kind: BetterExtract<GiftKind, 'DECK'>;
@@ -56,7 +57,8 @@ export class GetMyGiftsUseCase implements UseCase<GetMyGiftsInput, GetMyGiftsOut
       description: gift.description,
       state: gift.state,
       contents: gift.contents,
-      receivedAt: gift._creationTime
+      receivedAt: gift._creationTime,
+      icon: gift.icon
     }));
   }
 }

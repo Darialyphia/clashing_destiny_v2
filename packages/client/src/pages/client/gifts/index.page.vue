@@ -23,14 +23,15 @@ const { claimableGifts, isClaiming, claimAll } = provideGiftsPage();
       :to="{ name: 'ClientHome' }"
     />
 
-    <header class="page-header">
-      <PageTitle title="Gifts" />
-      <p>Redeem gifts you have received.</p>
-    </header>
+    <PageTitle title="Gifts" />
 
     <FancyButton
       class="redeem-all-button"
-      text="Redeem All"
+      :text="
+        claimableGifts.length > 0
+          ? `Redeem All (${claimableGifts.length})`
+          : 'All gifts claumed'
+      "
       :disabled="claimableGifts.length === 0"
       :is-loading="isClaiming"
       @click="claimAll"
@@ -40,7 +41,7 @@ const { claimableGifts, isClaiming, claimAll } = provideGiftsPage();
       </template>
     </FancyButton>
 
-    <GiftsList class="list" />
+    <GiftsList />
   </div>
 </template>
 
@@ -67,10 +68,5 @@ const { claimableGifts, isClaiming, claimAll } = provideGiftsPage();
   top: var(--size-9);
   right: var(--size-8);
   z-index: 1;
-}
-
-.page-header {
-  text-align: center;
-  color: var(--text-1);
 }
 </style>

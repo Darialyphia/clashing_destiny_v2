@@ -13,4 +13,16 @@ export const setPremiumCurrency = migrations.define({
   }
 });
 
-export const runAll = migrations.runner([internal.migrations.setPremiumCurrency]);
+export const setDefaultGiftIcon = migrations.define({
+  table: 'gifts',
+  migrateOne: async (ctx, doc) => {
+    if (doc.icon === undefined) {
+      await ctx.db.patch(doc._id, { icon: 'gift-default' });
+    }
+  }
+});
+
+export const runAll = migrations.runner([
+  internal.migrations.setPremiumCurrency,
+  internal.migrations.setDefaultGiftIcon
+]);
