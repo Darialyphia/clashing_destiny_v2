@@ -23,7 +23,9 @@ const { claimableGifts, isClaiming, claimAll } = provideGiftsPage();
       :to="{ name: 'ClientHome' }"
     />
 
-    <PageTitle title="Gifts" />
+    <div class="gifts-header">
+      <PageTitle title="Gifts" />
+    </div>
 
     <FancyButton
       class="redeem-all-button"
