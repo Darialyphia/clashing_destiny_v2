@@ -19,6 +19,10 @@ export class Gift extends Entity<GiftId, GiftDoc> {
     return this.data.name;
   }
 
+  get description() {
+    return this.data.description;
+  }
+
   get state() {
     return this.data.state;
   }

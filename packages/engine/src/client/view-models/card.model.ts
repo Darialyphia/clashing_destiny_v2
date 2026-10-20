@@ -339,7 +339,6 @@ export class CardViewModel {
   }
 
   canAttackAt(card: CardViewModel) {
-    console.log(this.id, card.id, this.potentialAttackTargets);
     if (!this.canAttack) return false;
     return this.potentialAttackTargets.some(target => target.id === card.id);
   }

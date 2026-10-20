@@ -27,7 +27,9 @@ useCurrentGameRedirect();
     <router-view v-slot="{ Component, route }">
       <div class="page-wrapper" :class="route.meta.wrapperClass">
         <Transition mode="out-in">
-          <component :is="Component" :key="route.path" />
+          <div :key="route.path">
+            <component :is="Component" />
+          </div>
         </Transition>
       </div>
     </router-view>

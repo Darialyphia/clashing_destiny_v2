@@ -11,6 +11,7 @@ export type GetMyGiftsInput = never;
 export type GetMyGiftsOutput = Array<{
   id: GiftId;
   name: string;
+  description?: string;
   state: GiftState;
   receivedAt: number;
   contents: Array<
@@ -52,6 +53,7 @@ export class GetMyGiftsUseCase implements UseCase<GetMyGiftsInput, GetMyGiftsOut
     return gifts.map(gift => ({
       id: gift._id,
       name: gift.name,
+      description: gift.description,
       state: gift.state,
       contents: gift.contents,
       receivedAt: gift._creationTime

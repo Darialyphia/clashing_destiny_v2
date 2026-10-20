@@ -88,6 +88,7 @@ export class GiftRepository {
   async create(data: {
     receiverId: UserId;
     name: string;
+    description?: string;
     source: GiftSource;
     contents: GiftDoc['contents'];
   }) {
@@ -95,6 +96,7 @@ export class GiftRepository {
       receiverId: data.receiverId,
       state: GIFT_STATES.ISSUED,
       name: data.name,
+      description: data.description,
       source: data.source,
       contents: data.contents
     });

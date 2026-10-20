@@ -205,6 +205,7 @@ button:is(.primary-button, .error-button) {
   position: relative;
   --_top-color: var(--top-color, #f8eabb);
   --_bottom-color: var(--bottom-color, #d1b07d);
+  --_gradient-threshold: var(--gradient-threshold, 50%);
   &::before,
   &::after {
     position: absolute;
@@ -215,8 +216,8 @@ button:is(.primary-button, .error-button) {
   &:after {
     background: linear-gradient(
       var(--_top-color),
-      var(--_top-color) 50%,
-      var(--_bottom-color) 50%
+      var(--_top-color) var(--_gradient-threshold),
+      var(--_bottom-color) var(--_gradient-threshold)
     );
     line-height: 1.2;
     background-clip: text;

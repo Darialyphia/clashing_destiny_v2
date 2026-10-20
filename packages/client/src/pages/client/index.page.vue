@@ -45,7 +45,17 @@ const { mutate: logout } = useLogout();
         :to="{ name: 'Boosters' }"
         aria-label="boosters"
       >
-        <span class="dual-text" :data-text="boosterPackButtonLabel">
+        <span
+          class="dual-text"
+          :data-text="boosterPackButtonLabel"
+          :style="{
+            '--dual-text-stroke': '6px',
+            '--dual-text-stroke-offset-y': '-4px',
+            '--top-color': 'var(--orange-3)',
+            '--bottom-color': 'var(--blue-3)',
+            '--gradient-threshold': '60%'
+          }"
+        >
           {{ boosterPackButtonLabel }}
         </span>
       </RouterLink>
@@ -94,11 +104,15 @@ const { mutate: logout } = useLogout();
   left: var(--size-13);
   display: grid;
   place-content: center;
-  font-size: var(--font-size-5);
+  font-size: var(--font-size-6);
   font-weight: var(--font-weight-7);
   z-index: 0;
-  transition: all 0.3s ease;
+  transition:
+    filter 0.3s var(--ease-3),
+    scale 0.3s var(--ease-elastic-3);
+  padding-bottom: var(--size-5);
   &:hover {
+    scale: 1.1;
     filter: brightness(1.3) drop-shadow(0 0 5px var(--yellow-3));
   }
 
@@ -106,8 +120,7 @@ const { mutate: logout } = useLogout();
   &.boosters-leave-active {
     transition:
       opacity 0.3s var(--ease-2),
-      scale 0.3s var(--ease-elastic-3),
-      filter 0.3s var(--ease-elastic-3);
+      scale 0.3s var(--ease-elastic-3);
   }
   &.boosters-enter-from,
   &.boosters-leave-to {

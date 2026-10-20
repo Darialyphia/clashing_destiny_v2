@@ -13,6 +13,7 @@ export const give = internalMutationWithContainer({
   args: {
     receiverId: v.id('users'),
     name: v.string(),
+    description: v.optional(v.string()),
     source: GIFT_SOURCE_VALIDATOR,
     contents: GIFT_CONTENTS_VALIDATOR
   },
@@ -22,6 +23,7 @@ export const give = internalMutationWithContainer({
     return usecase.execute({
       receiverId: input.receiverId,
       name: input.name,
+      description: input.description,
       source: input.source,
       contents: input.contents
     });
