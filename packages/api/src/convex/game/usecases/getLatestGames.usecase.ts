@@ -11,11 +11,11 @@ export type GetLatestGamesInput = {
 };
 
 export type GetLatestGamesOutput = {
-  games: Array<{
+  game: {
     id: GameId;
     status: GameStatus;
     players: Array<{ userId: UserId; deckId: DeckId }>;
-  }>;
+  } | null;
 };
 
 export class GetLatestGamesUseCase
@@ -31,23 +31,22 @@ export class GetLatestGamesUseCase
   ) {}
 
   async execute(input: GetLatestGamesInput): Promise<GetLatestGamesOutput> {
-    const games = await this.ctx.gameReadRepo.getLatestByStatus(input.status);
+    const game = await this.ctx.gameReadRepo.getLatestByStatus(input.status);
+    if (!game) {
+      return { game: null };
+    }
 
-    const gamesWithPlayers = await Promise.all(
-      games.map(async game => {
-        const players = await this.ctx.gamePlayerReadRepo.byGameId(game._id);
+    const players = await this.ctx.gamePlayerReadRepo.byGameId(game._id);
 
-        return {
-          id: game._id,
-          status: game.status,
-          players: players.map(p => ({
-            userId: p.userId,
-            deckId: p.deckId
-          }))
-        };
-      })
-    );
-
-    return { games: gamesWithPlayers };
+    return {
+      game: {
+        id: game._id,
+        status: game.status,
+        players: players.map(p => ({
+          userId: p.userId,
+          deckId: p.deckId
+        }))
+      }
+    };
   }
 }

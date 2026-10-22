@@ -35,8 +35,10 @@ export class GamesManager {
     status: GameStatus,
     cb: (game: GameDto) => Promise<void>
   ) {
-    this.ctx.convexClient.onUpdate(api.games.latest, { status }, async ({ games }) => {
-      await Promise.all(games.map(game => cb(game)));
+    this.ctx.convexClient.onUpdate(api.games.latest, { status }, async ({ game }) => {
+      if (!game) return;
+
+      await cb(game);
     });
   }
 

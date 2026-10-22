@@ -48,10 +48,14 @@ export class GameReadRepository {
   }
 
   async getLatestByStatus(status: GameStatus) {
-    return this.ctx.db
+    const [game] = await this.ctx.db
       .query('games')
       .withIndex('by_status', q => q.eq('status', status))
+      .order('desc')
       .take(1);
+
+    if (!game) return null;
+    return game;
   }
 }
 
