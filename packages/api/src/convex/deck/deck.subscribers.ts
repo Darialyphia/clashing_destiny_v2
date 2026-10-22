@@ -8,6 +8,7 @@ import { collectableCards } from '@game/engine/src/generated/cards';
 import { CardDestroyedEvent } from '../card/events/cardDestroyed.event';
 import type { DeckRepository } from './repositories/deck.repository';
 import type { CardRepository } from '../card/repositories/card.repository';
+import { isDefined } from '@game/shared';
 
 export class DeckSubscribers {
   static INJECTION_KEY = 'deckSubscribers' as const;
@@ -63,20 +64,24 @@ export class DeckSubscribers {
   private async onCardDestroyed(event: CardDestroyedEvent) {
     const decks = await this.ctx.deckRepo.findByOwnerId(event.data.userId);
     const card = await this.ctx.cardRepo.getById(event.data.cardId);
-    if (!card) return;
 
     for (const deck of decks) {
-      const copies = deck.getCopiesOfCard(event.data.cardId);
-      if (copies < card.copiesOwned.value) return;
+      const copiesInDeck = deck.getCopiesOfCard(event.data.cardId);
+      const copiesOwned = card?.copiesOwned.value ?? 0;
+      if (copiesInDeck < copiesOwned) return;
 
       deck.update({
-        cards: deck.cards.map(cardEntry => {
-          if (cardEntry.cardId !== event.data.cardId) return cardEntry;
-          return {
-            ...cardEntry,
-            copies: card.copiesOwned.value
-          };
-        })
+        cards: deck.cards
+          .map(cardEntry => {
+            if (cardEntry.cardId !== event.data.cardId) return cardEntry;
+            if (copiesOwned === 0) return null;
+
+            return {
+              ...cardEntry,
+              copies: copiesOwned
+            };
+          })
+          .filter(isDefined)
       });
       await this.ctx.deckRepo.save(deck);
     }
