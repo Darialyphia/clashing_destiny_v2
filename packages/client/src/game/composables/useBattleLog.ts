@@ -16,7 +16,8 @@ type BattleLogEventToken =
       player: PlayerViewModel;
     }
   | { kind: 'game-turn-start'; turn: number }
-  | { kind: 'game-phase-change'; phase: GamePhase };
+  | { kind: 'game-phase-change'; phase: GamePhase }
+  | { kind: 'initiative-change'; player: PlayerViewModel };
 
 export type BattleLogEvents = BattleLogEventToken[][];
 
@@ -68,6 +69,47 @@ export const useBattleLog = () => {
           });
         }
 
+        if (eventName === GAME_EVENTS.CARD_AFTER_TAKE_DAMAGE) {
+          tokens.push({
+            kind: 'card',
+            card: state.value.entities[event.card.id] as CardViewModel
+          });
+          tokens.push({
+            kind: 'text',
+            text: `Took ${event.amount} damage from`
+          });
+          tokens.push({
+            kind: 'card',
+            card: state.value.entities[event.source] as CardViewModel
+          });
+        }
+
+        if (eventName === GAME_EVENTS.MINION_AFTER_HEAL) {
+          tokens.push({
+            kind: 'card',
+            card: state.value.entities[event.card.id] as CardViewModel
+          });
+          tokens.push({
+            kind: 'text',
+            text: `got healed for ${event.amount} health.`
+          });
+        }
+
+        if (eventName === GAME_EVENTS.CARD_AFTER_DESTROY) {
+          tokens.push({
+            kind: 'card',
+            card: state.value.entities[event.card] as CardViewModel
+          });
+          tokens.push({
+            kind: 'text',
+            text: `was destroyed by`
+          });
+          tokens.push({
+            kind: 'card',
+            card: state.value.entities[event.source] as CardViewModel
+          });
+        }
+
         if (eventName === GAME_EVENTS.CARD_DISCARD) {
           const card = state.value.entities[event.card.id] as CardViewModel;
           tokens.push({
@@ -83,11 +125,7 @@ export const useBattleLog = () => {
 
         if (eventName === GAME_EVENTS.TURN_INITATIVE_CHANGE) {
           tokens.push({
-            kind: 'text',
-            text: `Initiative switched to`
-          });
-          tokens.push({
-            kind: 'player',
+            kind: 'initiative-change',
             player: state.value.entities[
               event.newInitiativePlayer
             ] as PlayerViewModel
@@ -139,17 +177,6 @@ export const useBattleLog = () => {
           tokens.push({
             kind: 'text',
             text: `Scores`
-          });
-        }
-
-        if (eventName === GAME_EVENTS.CARD_AFTER_DESTROY) {
-          tokens.push({
-            kind: 'card',
-            card: state.value.entities[event.card] as CardViewModel
-          });
-          tokens.push({
-            kind: 'text',
-            text: `was destroyed.`
           });
         }
 

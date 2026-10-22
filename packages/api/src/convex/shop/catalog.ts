@@ -47,8 +47,8 @@ export const shopCatalog: ShopCatalogEntry<string>[] = [
   {
     sku: 'core_booster_pack_1',
     category: SHOP_CATEGORIES.BOOSTER_PACKS,
-    name: 'Core Booster Pack X 1',
-    description: 'Contains 1 Core Standard Booster Pack.',
+    name: 'Core Booster Pack X1',
+    description: '1 Core Standard Booster Pack.',
     icon: 'core_booster_pack_1_icon',
     hot: false,
     price: [
@@ -78,7 +78,7 @@ export const shopCatalog: ShopCatalogEntry<string>[] = [
   {
     sku: 'core_booster_pack_10',
     category: SHOP_CATEGORIES.BOOSTER_PACKS,
-    name: 'Core Booster Pack X 10',
+    name: 'Core Booster Pack X10',
     description: 'Contains 10 Core Standard Booster Packs.',
     icon: 'core_booster_pack_10_icon',
     hot: false,

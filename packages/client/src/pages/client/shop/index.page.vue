@@ -6,6 +6,7 @@ import ShopOffer from './ShopOffer.vue';
 import { useCatalogByCategory } from './useShop';
 import UiSpinner from '@/ui/components/UiSpinner.vue';
 import PlayerCurrencies from '@/player/components/PlayerCurrencies.vue';
+import { Icon } from '@iconify/vue';
 
 definePage({
   name: 'Shop',
@@ -35,19 +36,19 @@ const { data: catalog, isLoading } = useCatalogByCategory(selectedCategory);
           <ul>
             <li
               v-for="category in Object.values(SHOP_CATEGORIES)"
-              :key="category"
+              :key="category.id"
             >
               <button
                 type="button"
                 class="category"
-                :class="{ selected: selectedCategory === category }"
+                :class="{ selected: selectedCategory.id === category.id }"
                 :aria-current="
-                  selectedCategory === category ? 'page' : undefined
+                  selectedCategory.id === category.id ? 'page' : undefined
                 "
                 @click="selectedCategory = category"
               >
                 <span class="category-dot" aria-hidden="true" />
-                {{ category.replace('_', ' ') }}
+                {{ category.name }}
               </button>
             </li>
           </ul>
@@ -60,8 +61,13 @@ const { data: catalog, isLoading } = useCatalogByCategory(selectedCategory);
           <span>Loading catalog...</span>
         </div>
         <div v-else-if="catalog.items.length === 0" class="empty-state">
-          <span class="empty-icon" aria-hidden="true">◌</span>
-          <h3>The catalog is empty for this category</h3>
+          <Icon
+            icon="mdi:emoticon-sad-outline"
+            width="48"
+            height="48"
+            class="empty-icon"
+          />
+          <h3>No product available for this category</h3>
           <p>Check another category for the next opportunity.</p>
         </div>
         <ul v-else class="offer-grid">
@@ -183,6 +189,7 @@ const { data: catalog, isLoading } = useCatalogByCategory(selectedCategory);
 
 .category-content {
   min-width: 0;
+  height: 100%;
 }
 
 .offer-grid {
@@ -196,7 +203,7 @@ const { data: catalog, isLoading } = useCatalogByCategory(selectedCategory);
 
 .loading-state,
 .empty-state {
-  min-height: 280px;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -207,23 +214,19 @@ const { data: catalog, isLoading } = useCatalogByCategory(selectedCategory);
   text-align: center;
 }
 
-.empty-state h3,
-.empty-state p {
-  margin: 0;
-}
+.empty-state {
+  h3 {
+    font-size: var(--font-size-3);
+  }
 
-.empty-state h3 {
-  color: var(--text-1);
-  font-size: var(--font-size-3);
-}
-
-.empty-state p {
-  color: var(--text-3);
+  h3,
+  p {
+    margin: 0;
+  }
 }
 
 .empty-icon {
   color: var(--primary);
-  font-size: var(--font-size-7);
 }
 
 .shop-topbar {

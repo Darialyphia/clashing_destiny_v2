@@ -24,7 +24,8 @@ export class ShieldModifier<T extends MinionCard> extends Modifier<T> {
           key: 'receivedDamage',
           interceptor: () => {
             return 0;
-          }
+          },
+          priority: 100
         }),
         new UntilEventModifierMixin(game, {
           eventName: GAME_EVENTS.CARD_AFTER_TAKE_DAMAGE,

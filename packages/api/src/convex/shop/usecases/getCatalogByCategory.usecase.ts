@@ -8,7 +8,7 @@ import { ensureAuthenticated } from '../../auth/auth.utils';
 import { CURRENCY_SOURCES } from '../../currency/currency.constants';
 
 export interface GetCatalogByCategoryInput {
-  category: ShopCategory;
+  category: ShopCategory['id'];
 }
 
 export interface GetCatalogByCategoryOutput {
@@ -47,7 +47,7 @@ export class GetCatalogByCategoryUseCase
 
     const now = new Date();
     const items = shopCatalog
-      .filter(offer => offer.category === input.category)
+      .filter(offer => offer.category.id === input.category)
       .filter(offer => offer.availability.every(rule => rule.isAvailable(now)));
     const transactions = await this.ctx.transactionReadRepo.getByUserIdAndSource(
       this.ctx.session!.userId,
