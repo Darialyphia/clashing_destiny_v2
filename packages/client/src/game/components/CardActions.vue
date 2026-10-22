@@ -7,17 +7,6 @@ const { card, showEmptyState = true } = defineProps<{
   card: CardViewModel;
   showEmptyState?: boolean;
 }>();
-const isOpened = defineModel<boolean>('isOpened', { required: true });
-watchEffect(() => {
-  if (!isOpened.value) return;
-  // if (card.actions.length === 0) {
-  //   setTimeout(() => {
-  //     isOpened.value = false;
-  //   }, 2000);
-  // }
-});
-
-const ui = useGameUi();
 </script>
 
 <template>

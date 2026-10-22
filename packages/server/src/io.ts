@@ -3,12 +3,10 @@ import type {
   GameStateSnapshot,
   PatchBasedSnapshotDiff,
   SerializedOmniscientState,
-  SerializedPlayerState,
-  SnapshotDiff
+  SerializedPlayerState
 } from '@game/engine/src/game/systems/game-snapshot.system';
 import type { SerializedInput } from '@game/engine/src/input/input-system';
 import type { HttpServer } from './http';
-import type { UserId } from '@game/api';
 import type { ClockState } from './clock-manager';
 
 type SocketData = {

@@ -78,7 +78,7 @@ export class Game extends Entity<GameId, GameData> {
     this.data.game.status = GAME_STATUS.ONGOING;
   }
 
-  canFinish() {
+  get canFinish() {
     return this.status === GAME_STATUS.ONGOING;
   }
 
