@@ -4,7 +4,11 @@ import type { Scheduler } from 'convex/server';
 import type { DeckId } from '../../deck/entities/deck.entity';
 import type { UserId } from '../../users/entities/user.entity';
 import { Game, type GameDoc, type GameId } from '../entities/game.entity';
-import { GAME_STATUS, GAME_TIMEOUT_MS, type GameStatus } from '../game.constants';
+import {
+  GAME_STATUS,
+  WAITING_FOR_PLAYERS_GAME_TIMEOUT_MS,
+  type GameStatus
+} from '../game.constants';
 import type { GameMapper } from '../mappers/game.mapper';
 import type {
   GamePlayerReadRepository,
@@ -56,6 +60,14 @@ export class GameReadRepository {
 
     if (!game) return null;
     return game;
+  }
+
+  async getByStatus(status: GameStatus, limit: number) {
+    return this.ctx.db
+      .query('games')
+      .withIndex('by_status', q => q.eq('status', status))
+      .order('desc')
+      .take(limit);
   }
 }
 
@@ -142,9 +154,12 @@ export class GameRepository {
     game.abortCancellation();
   }
 
-  async scheduleCancellation(game: Game) {
+  async scheduleCancellation(
+    game: Game,
+    timeoutMs = WAITING_FOR_PLAYERS_GAME_TIMEOUT_MS
+  ) {
     const cancellationId = await this.ctx.scheduler.runAfter(
-      GAME_TIMEOUT_MS,
+      timeoutMs,
       internal.games.internalCancel,
       { gameId: game.id }
     );

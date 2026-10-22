@@ -1,6 +1,7 @@
 import type { UseCase } from '../../usecase';
 import { AppError, DomainError } from '../../utils/error';
 import type { GameId } from '../entities/game.entity';
+import { ONGOING_GAME_TIMEOUT_MS } from '../game.constants';
 import type { GameRepository } from '../repositories/game.repository';
 
 export type StartGameInput = {
@@ -34,6 +35,7 @@ export class StartGameUseCase implements UseCase<StartGameInput, StartGameOutput
     if (game.cancellationId) {
       await this.ctx.gameRepo.abortCancellation(game);
     }
+    await this.ctx.gameRepo.scheduleCancellation(game, ONGOING_GAME_TIMEOUT_MS);
 
     await this.ctx.gameRepo.save(game);
 

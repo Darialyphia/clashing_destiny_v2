@@ -51,6 +51,20 @@ export class GamesManager {
     return next;
   }
 
+  private handleGame(
+    game: GameDto,
+    status: GameStatus,
+    cb: (game: GameDto) => Promise<void>
+  ) {
+    return this.enqueue(game.id, async () => {
+      const handledKey = `${game.id}:${status}`;
+      if (this.handled.has(handledKey)) return;
+
+      await cb(game);
+      this.handled.add(handledKey);
+    });
+  }
+
   private listenToGamesByStatus(
     status: GameStatus,
     cb: (game: GameDto) => Promise<void>
@@ -61,13 +75,7 @@ export class GamesManager {
       ({ game }) => {
         if (!game) return;
 
-        return this.enqueue(game.id, async () => {
-          const handledKey = `${game.id}:${status}`;
-          if (this.handled.has(handledKey)) return;
-
-          await cb(game);
-          this.handled.add(handledKey);
-        });
+        return this.handleGame(game, status, cb);
       },
       err => {
         console.error(`[GAMES MANAGER] Subscription error (${status})`, err);
@@ -75,7 +83,21 @@ export class GamesManager {
     );
   }
 
-  init() {
+  private async restoreGamesByStatus(
+    status: GameStatus,
+    cb: (game: GameDto) => Promise<void>
+  ) {
+    const { games } = await this.ctx.convexHttpClient.query(api.games.byStatus, {
+      status
+    });
+    console.log(`[GAMES MANAGER] Restoring ${games.length} game(s) with status`, status);
+
+    await Promise.all(games.map(game => this.handleGame(game, status, cb)));
+  }
+
+  async init() {
+    await this.restoreGamesByStatus(GAME_STATUS.ONGOING, this.onGameReady.bind(this));
+
     console.log('[GAMES MANAGER] Listening to game events');
     this.listenToGamesByStatus(
       GAME_STATUS.WAITING_FOR_PLAYERS,

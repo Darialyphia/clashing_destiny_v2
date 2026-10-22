@@ -36,6 +36,9 @@ export class FinishGameUseCase implements UseCase<FinishGameInput, FinishGameOut
     }
 
     game.finish(input.winnerId);
+    if (game.cancellationId) {
+      await this.ctx.gameRepo.abortCancellation(game);
+    }
     await this.ctx.gameRepo.save(game);
     await this.ctx.eventEmitter.emit(
       GameEndedEvent.EVENT_NAME,

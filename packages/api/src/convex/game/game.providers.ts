@@ -11,6 +11,7 @@ import { GameSubscribers } from './game.subscribers';
 import { SetupRankedGameUsecase } from './usecases/setupRankedGame.usecase';
 import { StartGameUseCase } from './usecases/startGame.usecase';
 import { GetLatestGamesUseCase } from './usecases/getLatestGames.usecase';
+import { GetGamesByStatusUseCase } from './usecases/getGamesByStatus.usecase';
 import { GetGameInfosUseCase } from './usecases/getGameInfos.usecase';
 import { FinishGameUseCase } from './usecases/finishGame.usecase';
 import type { DependenciesMap } from '../shared/container';
@@ -23,6 +24,7 @@ export const queryDependencies: DependenciesMap = {
   [GameMapper.INJECTION_KEY]: { resolver: asClass(GameMapper) },
   [GamePlayerMapper.INJECTION_KEY]: { resolver: asClass(GamePlayerMapper) },
   [GetLatestGamesUseCase.INJECTION_KEY]: { resolver: asClass(GetLatestGamesUseCase) },
+  [GetGamesByStatusUseCase.INJECTION_KEY]: { resolver: asClass(GetGamesByStatusUseCase) },
   [GetGameInfosUseCase.INJECTION_KEY]: { resolver: asClass(GetGameInfosUseCase) }
 };
 

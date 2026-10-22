@@ -9,4 +9,7 @@ export const GAME_STATUS = {
 
 export type GameStatus = Values<typeof GAME_STATUS>;
 
-export const GAME_TIMEOUT_MS = ONE_MINUTE_IN_MS;
+// safety net for games where players didnt manage to join in time
+export const WAITING_FOR_PLAYERS_GAME_TIMEOUT_MS = ONE_MINUTE_IN_MS;
+// safety net so abandoned ongoing games don't stay ongoing forever
+export const ONGOING_GAME_TIMEOUT_MS = ONE_MINUTE_IN_MS * 60 * 4;

@@ -10,6 +10,7 @@ import { SetupRankedGameUsecase } from './game/usecases/setupRankedGame.usecase'
 import type { UserId } from './users/entities/user.entity';
 import { StartGameUseCase } from './game/usecases/startGame.usecase';
 import { GetLatestGamesUseCase } from './game/usecases/getLatestGames.usecase';
+import { GetGamesByStatusUseCase } from './game/usecases/getGamesByStatus.usecase';
 import { gamestatusValidator } from './game/game.schemas';
 import { GetGameInfosUseCase } from './game/usecases/getGameInfos.usecase';
 import { ensureValidApiKey } from './auth/auth.utils';
@@ -83,6 +84,19 @@ export const latest = queryWithContainer({
   handler: async (ctx, input) => {
     const usecase = ctx.resolve<GetLatestGamesUseCase>(
       GetLatestGamesUseCase.INJECTION_KEY
+    );
+
+    return usecase.execute({
+      status: input.status
+    });
+  }
+});
+
+export const byStatus = queryWithContainer({
+  args: { status: gamestatusValidator },
+  handler: async (ctx, input) => {
+    const usecase = ctx.resolve<GetGamesByStatusUseCase>(
+      GetGamesByStatusUseCase.INJECTION_KEY
     );
 
     return usecase.execute({
