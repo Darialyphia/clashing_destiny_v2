@@ -1,15 +1,22 @@
 <script setup lang="ts">
 import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
-import { useFxEvent, useGameState } from '../composables/useGameClient';
+import {
+  useFxEvent,
+  useGameState,
+  useMyPlayer
+} from '../composables/useGameClient';
 import { CardViewModel } from '@game/engine/src/client/view-models/card.model';
 import { waitFor } from '@game/shared';
 import GameCard from './GameCard.vue';
 
 const card = ref<CardViewModel | null>(null);
 const state = useGameState();
-
+const myPlayer = useMyPlayer();
 useFxEvent(FX_EVENTS.CARD_BEFORE_PLAY, async event => {
   const playedCard = state.value.entities[event.card.id] as CardViewModel;
+  if (playedCard.player.equals(myPlayer.value)) {
+    return;
+  }
 
   card.value = playedCard;
 

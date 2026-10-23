@@ -6,7 +6,7 @@ export const useCatalogByCategory = (
 ) => {
   return useAuthedQuery(
     api.shop.catalogByCategory,
-    computed(() => ({ category: toValue(category) }))
+    computed(() => ({ category: toValue(category).id }))
   );
 };
 

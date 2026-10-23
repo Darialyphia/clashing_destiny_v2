@@ -80,6 +80,9 @@ watch(isOpened, opened => {
           <template v-else-if="token.kind === 'game-phase-change'">
             {{ token.phase.replace('_', ' ') }}
           </template>
+          <template v-else-if="token.kind === 'initiative-change'">
+            Initiative passed to {{ token.player.name }}
+          </template>
         </span>
       </li>
     </ul>
@@ -158,6 +161,7 @@ li {
   text-transform: capitalize;
   width: 100%;
   font-size: var(--font-size-2);
+  background: linear-gradient(to right, transparent, #53473a, transparent);
   text-align: center;
 }
 .game-turn-start {
@@ -166,8 +170,15 @@ li {
   font-weight: var(--font-weight-8);
   width: 100%;
   text-align: center;
-  background: linear-gradient(to right, transparent, #73473a, transparent);
+  background: linear-gradient(to right, transparent, #73273a, transparent);
   font-size: var(--font-size-4);
+}
+.initiative-change {
+  text-align: center;
+  width: 100%;
+  flex-grow: 1;
+  display: block;
+  background: linear-gradient(to right, transparent, #73473a, transparent);
 }
 
 :deep(.battle-log-card) {

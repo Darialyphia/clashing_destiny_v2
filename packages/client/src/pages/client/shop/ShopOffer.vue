@@ -92,7 +92,7 @@ const isFree = computed(() => offer.price.every(price => price.amount === 0));
 
 <template>
   <button
-    class="offer-card"
+    class="offer-card surface-transparent"
     :class="{ unavailable: !offer.canPurchase }"
     @click="isDetailsModalOpened = true"
   >
@@ -100,6 +100,8 @@ const isFree = computed(() => offer.price.every(price => price.amount === 0));
     <img v-if="icon" :src="icon" :alt="offer.name" class="icon" />
 
     <div class="name">{{ offer.name }}</div>
+
+    <p class="description">{{ offer.description }}</p>
 
     <div class="prices">
       <div v-if="isFree" class="free">Free</div>
@@ -220,14 +222,12 @@ const isFree = computed(() => offer.price.every(price => price.amount === 0));
 
 <style scoped lang="postcss">
 .offer-card {
-  width: 220px;
-  aspect-ratio: 1;
+  width: 260px;
+  aspect-ratio: 3/4;
   display: flex;
   flex-direction: column;
   justify-content: center;
   --pixel-scale: 1;
-  padding: var(--size-2) var(--size-3);
-  border: solid 1px hsl(var(--color-primary-hsl) / 0.18);
   -webkit-text-stroke: 3px black;
   paint-order: stroke fill;
   background: linear-gradient(to top, #0004, transparent);
@@ -275,10 +275,19 @@ const isFree = computed(() => offer.price.every(price => price.amount === 0));
 }
 
 .name {
-  margin-block-start: var(--size-3);
+  margin-block-start: var(--size-2);
+  font-size: var(--font-size-3);
+  font-weight: var(--font-weight-7);
+}
+
+.description {
+  opacity: 0.6;
+  font-size: var(--font-size-0);
+  text-align: left;
 }
 
 .prices {
+  margin-block-start: auto;
   display: flex;
   justify-content: center;
   gap: var(--size-2);

@@ -14,6 +14,7 @@ import { GameEventModifierMixin } from '../../../../modifier/mixins/game-event.m
 import { GAME_EVENTS } from '../../../../game/game.events';
 import { WhileOnBattlefieldModifier } from '../../../../modifier/modifiers/while-on-board.modifier';
 import { SimpleCommandmentBuffModifier } from '../../../../modifier/modifiers/simple-commandment-modifier';
+import { MinionInterceptorModifierMixin } from '../../../../modifier/mixins/interceptor.mixin';
 
 export const arclyteRegalia: ArtifactBlueprint = {
   id: 'arclyte-regalia',
@@ -71,12 +72,13 @@ export const arclyteRegalia: ArtifactBlueprint = {
                 card,
                 {
                   mixins: [
-                    new GameEventModifierMixin(game, {
-                      eventName: GAME_EVENTS.CARD_BEFORE_TAKE_DAMAGE,
-                      filter: event => event.data.card.equals(target),
-                      frequencyPerGameTurn: 1,
-                      async handler(event) {
-                        event.data.damage.addFlatModifier(-2);
+                    new MinionInterceptorModifierMixin(game, {
+                      key: 'receivedDamage',
+                      interceptor(value) {
+                        if (target.damageTracker.damageInstancesThisTurn.length === 0) {
+                          value -= 2;
+                        }
+                        return value;
                       }
                     })
                   ]

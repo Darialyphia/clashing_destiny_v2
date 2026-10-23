@@ -10,7 +10,7 @@ async function main() {
   try {
     net.setDefaultAutoSelectFamilyAttemptTimeout(1000);
     container.resolve<RoomManager>(RoomManager.INJECTION_KEY).init();
-    container.resolve<GamesManager>(GamesManager.INJECTION_KEY).listen();
+    await container.resolve<GamesManager>(GamesManager.INJECTION_KEY).init();
 
     const httpServer = container.resolve('http');
     httpServer.listen(PORT, () => {

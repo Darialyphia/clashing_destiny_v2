@@ -172,7 +172,7 @@ const { bgPosition, activeFrameRect, imageBg } = useSprite({
   transform-style: preserve-3d;
 
   &.artifact {
-    transform: translateX(-50%) translateY(calc(25px));
+    transform: translateX(-50%) translateY(calc(5px));
   }
 
   &.spell,

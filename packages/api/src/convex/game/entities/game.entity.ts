@@ -43,7 +43,10 @@ export class Game extends Entity<GameId, GameData> {
   }
 
   get canCancel() {
-    return this.status === GAME_STATUS.WAITING_FOR_PLAYERS;
+    return (
+      this.status === GAME_STATUS.WAITING_FOR_PLAYERS ||
+      this.status === GAME_STATUS.ONGOING
+    );
   }
 
   scheduleCancellation(scheduledFunctionId: Id<'_scheduled_functions'>) {
@@ -78,7 +81,7 @@ export class Game extends Entity<GameId, GameData> {
     this.data.game.status = GAME_STATUS.ONGOING;
   }
 
-  canFinish() {
+  get canFinish() {
     return this.status === GAME_STATUS.ONGOING;
   }
 

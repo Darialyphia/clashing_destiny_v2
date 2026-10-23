@@ -35,9 +35,9 @@ export class DeclareAttackInput extends Input<typeof schema> {
   async impl() {
     assert(this.player.isInteractive, new NotCurrentPlayerError());
     assert(this.attacker, new UnknownUnitError(this.payload.attackerId));
-    assert(this.attacker.canAttack, new IllegalAttackerError());
     assert(this.target, new UnknownUnitError(this.payload.targetId));
-    assert(this.target.canBeAttacked, new IllegalAttackTargetError());
+    assert(this.attacker.canAttack(this.target), new IllegalAttackerError());
+    assert(this.target.canBeAttacked(this.attacker), new IllegalAttackTargetError());
     assert(
       this.game.combatSystem.state === COMBAT_STEPS.DECLARE_ATTACKER,
       new AlreadyInCombatError()

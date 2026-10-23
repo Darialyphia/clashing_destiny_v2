@@ -109,7 +109,7 @@ const cardsWithParticles = computed(() => {
           </div>
         </div>
         <div v-if="!cardsWithParticles.length" class="instructions">
-          Click on a pack below to open it !
+          Click on a pack on the left to open it !
         </div>
         <Transition name="fade">
           <div v-if="dealingStatus === 'waiting'" class="stack-glow"></div>

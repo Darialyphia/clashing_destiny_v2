@@ -5,7 +5,6 @@ import { TypedEventEmitter } from '@game/engine/src/utils/typed-emitter';
 import type { AnyFunction, EmptyObject } from '@game/shared';
 import type { SerializedInput } from '@game/engine/src/input/input-system';
 import { GAME_EVENTS } from '@game/engine/src/game/game.events';
-import { GAME_PHASES } from '@game/engine/src/game/game.enums';
 import { ClockManager, CLOCK_MANAGER_EVENTS, type ClockState } from './clock-manager';
 
 export type RoomOptions = {
@@ -54,6 +53,8 @@ export class Room {
   private emitter = new TypedEventEmitter<RoomEventMap>('parallel');
 
   private engineInitPromise: Promise<void> | null = null;
+
+  private hasStarted = false;
 
   callbackSubscriptionsBysocket = new Map<
     IoSocket,
@@ -132,6 +133,9 @@ export class Room {
   }
 
   async start() {
+    if (this.hasStarted) return;
+    this.hasStarted = true;
+
     console.log('[ROOM] Starting room ', this.id);
     await this.initializeEngine();
     console.log('[ROOM] engine initialized ', this.id);
