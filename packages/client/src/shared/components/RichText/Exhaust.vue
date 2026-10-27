@@ -11,6 +11,7 @@
   background-size: cover;
   width: calc(20px * var(--pixel-scale) / 2);
   height: calc(20px * var(--pixel-scale) / 2);
+  margin-right: calc(3px * var(--pixel-scale));
 
   translate: 0 calc(1.5px * var(--pixel-scale));
 }
