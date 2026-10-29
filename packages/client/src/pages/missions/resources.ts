@@ -258,19 +258,13 @@ export const resourcesTutorial: TutorialMission = {
         },
         textBoxes: [
           {
-            text: 'The Bloodbound clan is back once more!',
+            text: 'The Bloodbound clan is back! We must establish a strong defense.',
             right: '22%',
             bottom: '45%',
             canManuallyAdvance: true
           },
           {
-            text: 'We must establish a strong defense!',
-            right: '22%',
-            bottom: '45%',
-            canManuallyAdvance: true
-          },
-          {
-            text: 'Cards cost <b>Mana</b> to play. ',
+            text: 'Cards cost <b>Mana</b> to play.',
             right: '22%',
             bottom: '45%',
             canManuallyAdvance: true,
@@ -365,12 +359,6 @@ export const resourcesTutorial: TutorialMission = {
                   ctx.game.playerSystem.player1.id
                 ).element;
             }
-          },
-          {
-            text: 'Note that cards in the Supply Zone are face up, so your opponent can see them!',
-            left: '10%',
-            bottom: '35%',
-            canManuallyAdvance: true
           },
           {
             text: 'Putting a card in Supply does not pass initiative, so now you can summon a minion right away.',
@@ -512,21 +500,12 @@ export const resourcesTutorial: TutorialMission = {
             }
           },
           {
-            text: 'That is because you do not have enough <b>Affinity</b>.',
-            right: '22%',
-            bottom: '45%',
-            canManuallyAdvance: true,
-            onEnter(ctx) {
-              ctx.client.ui.highlightedElement = null;
-              ctx.client.ui.displayedElements.affinities = true;
-            }
-          },
-          {
-            text: 'Cards need affinities to be played. For example, Suntide Maiden needs two Lyonar affinities.',
+            text: 'She needs two Lyonar <b>Affinities</b> to be played.',
             right: '22%',
             bottom: '45%',
             canManuallyAdvance: true,
             async onEnter(ctx) {
+              ctx.client.ui.displayedElements.affinities = true;
               const p1Id = ctx.client.state.players[0];
               const p1 = ctx.client.state.entities[p1Id] as PlayerViewModel;
               const card = p1.hand[1];
@@ -537,7 +516,7 @@ export const resourcesTutorial: TutorialMission = {
             }
           },
           {
-            text: 'You currently only have one Lyonar affinity.',
+            text: 'You only have one Lyonar affinity for now.',
             right: '22%',
             bottom: '45%',
             canManuallyAdvance: true,
@@ -747,13 +726,15 @@ export const resourcesTutorial: TutorialMission = {
         },
         teardown() {},
         solveCondition(ctx) {
+          // the next step explains the affinity choice while it is on screen
           return (
             ctx.game.turnSystem.elapsedTurns === 1 &&
-            ctx.game.gamePhaseSystem.getState() === GAME_PHASES.MAIN
+            ctx.game.interaction.getState() ===
+              INTERACTION_STATES.CHOOSING_CARDS
           );
         },
         validateInput(input) {
-          // chooseCards is needed to pick an affinity when the next turn starts
+          // the player can pick an affinity before the opponent does, which skips straight to the next step
           if (input.type === 'pass' || input.type === 'chooseCards') {
             return { isValid: true };
           }
@@ -764,7 +745,7 @@ export const resourcesTutorial: TutorialMission = {
         },
         textBoxes: [
           {
-            text: 'Ouch! The Executor took advantage of your exhausted Windblade Adept.',
+            text: 'Ouch! The Executor destroyed your exhausted Windblade Adept. Luckily, its influence stays, so you are still ahead.',
             right: '22%',
             bottom: '45%',
             canManuallyAdvance: true,
@@ -784,36 +765,13 @@ export const resourcesTutorial: TutorialMission = {
             }
           },
           {
-            text: 'But you still have more influence than the enemy. If the turn ends now, you will gain a <b>Victory Point</b>.',
-            right: '22%',
-            bottom: '45%',
-            canManuallyAdvance: true,
-            onEnter(ctx) {
-              ctx.client.ui.highlightedElement =
-                ctx.client.ui.DOMSelectors.influence(
-                  ctx.game.playerSystem.player1.id,
-                  CARD_LOCATIONS.LEFT_BATTLEFIELD
-                ).element;
-            }
-          },
-          {
-            text: 'At the start of each turn, you will choose a new affinity to add to your <b>Affinity Zone</b>.',
-            right: '22%',
-            bottom: '45%',
-            canManuallyAdvance: true,
-            onEnter(ctx) {
-              ctx.client.ui.highlightedElement =
-                ctx.client.ui.DOMSelectors.runeZone(
-                  ctx.game.playerSystem.player1.id
-                ).element;
-            }
-          },
-          {
             text: "You are out of mana, so let's pass to end the turn.",
             left: '0%',
             bottom: '35%',
             canManuallyAdvance: false,
             advanceCondition: () => false,
+            // hides it once the turn ends, so it does not show over the affinity choice
+            hideDuringOpponentInitiative: true,
             onEnter(ctx) {
               ctx.client.ui.highlightedElement =
                 ctx.client.ui.DOMSelectors.passButton.element;
@@ -823,6 +781,41 @@ export const resourcesTutorial: TutorialMission = {
       },
       {
         id: 6,
+        canRetry: () => false,
+        failedCondition: () => false,
+        meta: {},
+        async setup(ctx) {
+          ctx.client.ui.highlightedElement = null;
+        },
+        teardown() {},
+        solveCondition(ctx) {
+          return (
+            ctx.game.turnSystem.elapsedTurns === 1 &&
+            ctx.game.gamePhaseSystem.getState() === GAME_PHASES.MAIN
+          );
+        },
+        validateInput(input) {
+          if (input.type === 'chooseCards') {
+            return { isValid: true };
+          }
+          return {
+            isValid: false,
+            reason: 'Choose an affinity.'
+          };
+        },
+        textBoxes: [
+          {
+            // a single text box: the choice modal blocks clicks outside of it, so a "Next" button might not be usable
+            text: 'These two cards come from your <b>Affinity deck</b>. Each turn, you pick one to add to your Affinity Zone. In this mission your deck only has Lyonar affinities, so either choice works. With different affinities in your deck, you could play cards from several factions!',
+            left: '10%',
+            bottom: '35%',
+            canManuallyAdvance: false,
+            advanceCondition: () => false
+          }
+        ]
+      },
+      {
+        id: 7,
         canRetry: () => false,
         failedCondition: () => false,
         meta: {},
@@ -855,13 +848,16 @@ export const resourcesTutorial: TutorialMission = {
         },
         textBoxes: [
           {
-            text: 'A new turn begins! The enemy moved its Invader to the battlefield.',
-            right: '22%',
-            bottom: '45%',
+            text: 'A new turn begins! You won the last turn and gained a <b>Victory Point</b>.',
+            left: '-5%',
+            bottom: '25%',
             canManuallyAdvance: true,
-            hideDuringOpponentInitiative: false,
+            hideDuringOpponentInitiative: true,
             onEnter(ctx) {
-              ctx.client.ui.highlightedElement = null;
+              ctx.client.ui.highlightedElement =
+                ctx.client.ui.DOMSelectors.victoryPoints(
+                  ctx.game.playerSystem.player1.id
+                ).element;
               const p2 = ctx.game.playerSystem.player2;
               ctx.game.dispatch({
                 type: 'move',
@@ -875,43 +871,7 @@ export const resourcesTutorial: TutorialMission = {
             }
           },
           {
-            text: 'You had more influence at the end of the last turn, so you gained a <b>Victory Point</b>!',
-            left: '-5%',
-            bottom: '25%',
-            canManuallyAdvance: true,
-            onEnter(ctx) {
-              ctx.client.ui.highlightedElement =
-                ctx.client.ui.DOMSelectors.victoryPoints(
-                  ctx.game.playerSystem.player1.id
-                ).element;
-            }
-          },
-          {
-            text: 'You also chose a new affinity: you now have two Lyonar affinities',
-            right: '22%',
-            bottom: '45%',
-            canManuallyAdvance: true,
-            onEnter(ctx) {
-              ctx.client.ui.highlightedElement =
-                ctx.client.ui.DOMSelectors.runeZone(
-                  ctx.game.playerSystem.player1.id
-                ).element;
-            }
-          },
-          {
-            text: 'The cards in your Supply Zone came back to your hand, and you drew new cards.',
-            right: '22%',
-            bottom: '45%',
-            canManuallyAdvance: true,
-            onEnter(ctx) {
-              ctx.client.ui.highlightedElement =
-                ctx.client.ui.DOMSelectors.hand(
-                  ctx.game.playerSystem.player1.id
-                ).element;
-            }
-          },
-          {
-            text: 'However, your mana was emptied. Mana never carries over to the next turn, so use it or lose it!',
+            text: 'Your supplied cards came back to your hand, but your mana was emptied. Mana never carries over to the next turn.',
             left: '10%',
             bottom: '35%',
             canManuallyAdvance: true,
@@ -923,7 +883,7 @@ export const resourcesTutorial: TutorialMission = {
             }
           },
           {
-            text: 'You drew a <b>Spell</b>: True Strike! Spells are not summoned on the board. Instead, they have an immediate effect.',
+            text: 'You drew a <b>Spell</b>: True Strike! Spells have an immediate effect instead of being summoned. This one can destroy the Bloodbound Executor.',
             right: '22%',
             bottom: '45%',
             canManuallyAdvance: true,
@@ -936,25 +896,13 @@ export const resourcesTutorial: TutorialMission = {
             }
           },
           {
-            text: 'It deals 2 damage to an enemy minion: enough to destroy the Bloodbound Executor!',
-            right: '22%',
-            bottom: '45%',
-            canManuallyAdvance: true,
-            onEnter(ctx) {
-              ctx.client.ui.highlightedCard = null;
-              ctx.client.ui.highlightedElement =
-                ctx.client.ui.DOMSelectors.cardOnBoard(
-                  (ctx.meta.executor as MinionCard).id
-                ).element;
-            }
-          },
-          {
             text: 'First, you need some mana. Put your Windblade Adept in the Supply Zone.',
             right: '22%',
             bottom: '45%',
             canManuallyAdvance: false,
             advanceCondition: () => false,
             onEnter(ctx) {
+              ctx.client.ui.highlightedCard = null;
               ctx.client.ui.highlightedElement = null;
             },
             gesture: {
@@ -976,7 +924,7 @@ export const resourcesTutorial: TutorialMission = {
         ]
       },
       {
-        id: 7,
+        id: 8,
         canRetry: () => false,
         failedCondition: () => false,
         meta: {},
@@ -1016,7 +964,7 @@ export const resourcesTutorial: TutorialMission = {
         ]
       },
       {
-        id: 8,
+        id: 9,
         canRetry: () => false,
         failedCondition: () => false,
         meta: {},
@@ -1047,13 +995,21 @@ export const resourcesTutorial: TutorialMission = {
         },
         textBoxes: [
           {
-            text: 'Well done! The Executor is destroyed, and True Strike went to your discard pile.',
-            right: '22%',
-            bottom: '45%',
+            text: 'The Executor is destroyed! Meanwhile, the enemy Invader scored.',
+            left: '50%',
+            top: '25%',
             canManuallyAdvance: true,
             hideDuringOpponentInitiative: true,
             onEnter(ctx) {
               const p2 = ctx.game.playerSystem.player2;
+              // highlight the opponent influence once the Invader has scored
+              ctx.game.once(GAME_EVENTS.INPUT_END, () => {
+                ctx.client.ui.highlightedElement =
+                  ctx.client.ui.DOMSelectors.influence(
+                    p2.id,
+                    CARD_LOCATIONS.LEFT_BATTLEFIELD
+                  ).element;
+              });
               dispatchSequence(ctx, [
                 () => ({
                   type: 'score',
@@ -1066,33 +1022,7 @@ export const resourcesTutorial: TutorialMission = {
             }
           },
           {
-            text: 'Meanwhile, the enemy Invader scored. Your opponent now has 2 influence.',
-            left: '50%',
-            top: '25%',
-            canManuallyAdvance: true,
-            onEnter(ctx) {
-              ctx.client.ui.highlightedElement =
-                ctx.client.ui.DOMSelectors.influence(
-                  ctx.game.playerSystem.player2.id,
-                  CARD_LOCATIONS.LEFT_BATTLEFIELD
-                ).element;
-            }
-          },
-          {
-            text: 'Time to call for reinforcements. With two Lyonar affinities, you can finally play the Suntide Maiden!',
-            right: '22%',
-            bottom: '45%',
-            canManuallyAdvance: true,
-            onEnter(ctx) {
-              ctx.client.ui.highlightedElement =
-                ctx.client.ui.DOMSelectors.cardInHand(
-                  (ctx.meta.suntideMaiden as AnyCard).id,
-                  ctx.game.playerSystem.player1.id
-                ).element;
-            }
-          },
-          {
-            text: 'She costs 3 mana, but you only have 1 left.',
+            text: 'With two Lyonar affinities, you can now play the Suntide Maiden. She costs 3 mana, but you only have 1 left.',
             left: '10%',
             bottom: '35%',
             canManuallyAdvance: true,
@@ -1144,7 +1074,7 @@ export const resourcesTutorial: TutorialMission = {
       {
         // the opponent summons a minion before the player is on their own
         // this is a separate step so the AI doesn't start until the scripted moves are done
-        id: 9,
+        id: 10,
         canRetry: () => false,
         failedCondition: () => false,
         meta: {},
@@ -1205,7 +1135,7 @@ export const resourcesTutorial: TutorialMission = {
         ]
       },
       {
-        id: 10,
+        id: 11,
         canRetry: () => false,
         failedCondition: () => false,
         meta: {},
@@ -1224,13 +1154,7 @@ export const resourcesTutorial: TutorialMission = {
         },
         textBoxes: [
           {
-            text: 'The enemy put a card in its Supply Zone to summon a <b>Bloodbound Shaman</b>.',
-            right: '22%',
-            bottom: '45%',
-            canManuallyAdvance: true
-          },
-          {
-            text: 'Shamans have 4 influence! If it scores, your opponent will have 6 influence.',
+            text: 'The enemy summoned a <b>Bloodbound Shaman</b>, with 4 influence! If it scores, your opponent will have 6 influence.',
             left: '50%',
             top: '25%',
             canManuallyAdvance: true,
@@ -1242,7 +1166,7 @@ export const resourcesTutorial: TutorialMission = {
             }
           },
           {
-            text: 'Luckily, you also drew <b>Lionheart Blessing</b>. This spell gives an ally minion +2 Influence.',
+            text: 'Luckily, you drew <b>Lionheart Blessing</b>. It gives an ally minion +2 influence, so cast it before scoring!',
             right: '22%',
             bottom: '45%',
             canManuallyAdvance: true,
@@ -1255,20 +1179,14 @@ export const resourcesTutorial: TutorialMission = {
             }
           },
           {
-            text: 'Influence is only gained when a minion scores, so cast it before scoring!',
-            right: '22%',
-            bottom: '45%',
-            canManuallyAdvance: true,
-            onEnter(ctx) {
-              ctx.client.ui.highlightedCard = null;
-            }
-          },
-          {
             text: "You're on your own now! Win the battlefield to claim your second Victory Point.",
             right: '22%',
             bottom: '45%',
             canManuallyAdvance: false,
-            advanceCondition: () => false
+            advanceCondition: () => false,
+            onEnter(ctx) {
+              ctx.client.ui.highlightedCard = null;
+            }
           }
         ]
       }

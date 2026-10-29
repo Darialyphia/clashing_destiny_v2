@@ -115,6 +115,8 @@ const shouldHide = computed(() => {
 
 <style scoped lang="postcss">
 .text-box-container {
+  /* above modals (z-index 1 and 2), so text boxes can explain a choice while it is on screen */
+  z-index: 3;
   top: 0;
   left: 0;
   width: 100vw;
