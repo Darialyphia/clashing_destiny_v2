@@ -7,6 +7,8 @@ import { tutorialSilverguardKnight } from './tutorial/minions/silverguard-knight
 import { bloodboundExecutor } from './tutorial/minions/bloodbound-executor';
 import { bloodboundShaman } from './tutorial/minions/bloodbound-shaman';
 import { tutorialSuntideMaiden } from './tutorial/minions/suntide-maiden';
+import { tutorialLionheartBlessing } from './tutorial/spells/lionheart-blessing';
+import { tutorialTrueStrike } from './tutorial/spells/true-strike';
 
 export const tutorialSet: CardSet = {
   id: CARD_SETS.TUTORIAL,
@@ -18,6 +20,8 @@ export const tutorialSet: CardSet = {
     tutorialSilverguardKnight,
     bloodboundExecutor,
     bloodboundShaman,
-    tutorialSuntideMaiden
+    tutorialSuntideMaiden,
+    tutorialLionheartBlessing,
+    tutorialTrueStrike
   ]
 };

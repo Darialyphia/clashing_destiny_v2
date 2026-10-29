@@ -106,7 +106,9 @@ export const cards = {
 "tutorial-silverguard-knight": "tutorial-silverguard-knight",
 "bloodbound-executor": "bloodbound-executor",
 "bloodbound-shaman": "bloodbound-shaman",
-"tutorial-suntide-maiden": "tutorial-suntide-maiden"
+"tutorial-suntide-maiden": "tutorial-suntide-maiden",
+"tutorial-lionheart-blessing": "tutorial-lionheart-blessing",
+"tutorial-true-strike": "tutorial-true-strike"
 } as const;
 
 export const collectableCards = {
@@ -816,6 +818,18 @@ export const cardsBySet: Record<string, CardSet> = {
     "collectable": false,
     "rarity": "token",
     "kind": "MINION"
+  },
+  {
+    "id": "tutorial-lionheart-blessing",
+    "collectable": false,
+    "rarity": "token",
+    "kind": "SPELL"
+  },
+  {
+    "id": "tutorial-true-strike",
+    "collectable": false,
+    "rarity": "token",
+    "kind": "SPELL"
   }
 ]
 };
@@ -921,7 +935,9 @@ export const cardShortIds: Record<string, number> = {
 "tutorial-silverguard-knight": 95,
 "bloodbound-executor": 96,
 "bloodbound-shaman": 97,
-"tutorial-suntide-maiden": 98
+"tutorial-suntide-maiden": 98,
+"tutorial-lionheart-blessing": 105,
+"tutorial-true-strike": 106
 } as const;
 
 export const cardIdByShortId: Record<number, string> = {
@@ -1025,5 +1041,7 @@ export const cardIdByShortId: Record<number, string> = {
 "100": "paddo",
 "102": "sapphire-seer",
 "103": "portal-guardian",
-"104": "wither"
+"104": "wither",
+"105": "tutorial-lionheart-blessing",
+"106": "tutorial-true-strike"
 } as const;

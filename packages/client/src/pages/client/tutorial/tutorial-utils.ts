@@ -6,6 +6,7 @@ import type {
   TutorialStepValidationResult
 } from '@game/engine/src/tutorial/v2/tutorial';
 import { waitFor } from '@game/shared';
+import { GAME_PHASES } from '@game/engine/src/game/game.enums';
 
 export const dispatchSequence = async (
   ctx: TutorialContext,
@@ -31,17 +32,14 @@ export const validatePlayingCard = (
   followupSpaces: BoardSpace[]
 ): TutorialStepValidationResult => {
   const gamePhaseState = ctx.game.gamePhaseSystem.getState();
-  if (gamePhaseState === 'main_phase') {
-    if (input.type !== 'declarePlayCard') {
+  if (gamePhaseState === GAME_PHASES.MAIN) {
+    if (
+      input.type !== 'declarePlayCard' ||
+      input.payload.id !== cardToPlay.id
+    ) {
       return {
         isValid: false,
-        reason: 'Play the Windblade Adept in your hand.'
-      };
-    }
-    if (input.payload.id !== cardToPlay.id) {
-      return {
-        isValid: false,
-        reason: `Put your ${cardToPlay.blueprint.name} in the Supply Zone.`
+        reason: `Play the ${cardToPlay.blueprint.name} in your hand.`
       };
     }
   } else {
@@ -76,7 +74,7 @@ export const validateSupplyCard = (
   ctx: TutorialContext
 ): TutorialStepValidationResult => {
   const gamePhaseState = ctx.game.gamePhaseSystem.getState();
-  if (gamePhaseState === 'main_phase') {
+  if (gamePhaseState === GAME_PHASES.MAIN) {
     if (input.type !== 'declarePlayCard') {
       return {
         isValid: false,
@@ -133,4 +131,47 @@ export const validateMovingMinion = (
   return {
     isValid: true
   };
+};
+
+export const validatePlayingSpell = (
+  spell: AnyCard,
+  input: SerializedInput,
+  ctx: TutorialContext,
+  allowedTargets: AnyCard[]
+): TutorialStepValidationResult => {
+  const gamePhaseState = ctx.game.gamePhaseSystem.getState();
+  if (gamePhaseState === GAME_PHASES.MAIN) {
+    if (input.type !== 'declarePlayCard' || input.payload.id !== spell.id) {
+      return {
+        isValid: false,
+        reason: `Play the ${spell.blueprint.name} in your hand.`
+      };
+    }
+    return { isValid: true };
+  }
+
+  if (
+    input.type === 'cancelInteraction' ||
+    input.type === 'cancelPlayingCard'
+  ) {
+    return { isValid: true };
+  }
+
+  const targetNames = [
+    ...new Set(allowedTargets.map(target => target.blueprint.name))
+  ].join(' or ');
+  if (input.type !== 'selectCardOnBoard') {
+    return {
+      isValid: false,
+      reason: `Drag your ${spell.blueprint.name} onto the ${targetNames}.`
+    };
+  }
+  if (!allowedTargets.some(target => target.id === input.payload.cardId)) {
+    return {
+      isValid: false,
+      reason: `Target the ${targetNames} with your ${spell.blueprint.name}.`
+    };
+  }
+
+  return { isValid: true };
 };
