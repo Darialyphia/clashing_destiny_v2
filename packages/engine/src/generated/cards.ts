@@ -108,7 +108,16 @@ export const cards = {
 "bloodbound-shaman": "bloodbound-shaman",
 "tutorial-suntide-maiden": "tutorial-suntide-maiden",
 "tutorial-lionheart-blessing": "tutorial-lionheart-blessing",
-"tutorial-true-strike": "tutorial-true-strike"
+"tutorial-true-strike": "tutorial-true-strike",
+"tutorial-sunstone-templar": "tutorial-sunstone-templar",
+"tutorial-arclyte-regalia": "tutorial-arclyte-regalia",
+"tutorial-holy-immolation": "tutorial-holy-immolation",
+"tutorial-azurite-lion": "tutorial-azurite-lion",
+"tutorial-ironcliffe-guardian": "tutorial-ironcliffe-guardian",
+"tutorial-sunbreaker": "tutorial-sunbreaker",
+"tutorial-bloodsun-arena": "tutorial-bloodsun-arena",
+"tutorial-mistveil-marsh": "tutorial-mistveil-marsh",
+"tutorial-moonlit-pass": "tutorial-moonlit-pass"
 } as const;
 
 export const collectableCards = {
@@ -830,6 +839,60 @@ export const cardsBySet: Record<string, CardSet> = {
     "collectable": false,
     "rarity": "token",
     "kind": "SPELL"
+  },
+  {
+    "id": "tutorial-sunstone-templar",
+    "collectable": false,
+    "rarity": "token",
+    "kind": "MINION"
+  },
+  {
+    "id": "tutorial-arclyte-regalia",
+    "collectable": false,
+    "rarity": "token",
+    "kind": "ARTIFACT"
+  },
+  {
+    "id": "tutorial-holy-immolation",
+    "collectable": false,
+    "rarity": "token",
+    "kind": "SECRET"
+  },
+  {
+    "id": "tutorial-azurite-lion",
+    "collectable": false,
+    "rarity": "token",
+    "kind": "MINION"
+  },
+  {
+    "id": "tutorial-ironcliffe-guardian",
+    "collectable": false,
+    "rarity": "token",
+    "kind": "MINION"
+  },
+  {
+    "id": "tutorial-sunbreaker",
+    "collectable": false,
+    "rarity": "token",
+    "kind": "MINION"
+  },
+  {
+    "id": "tutorial-bloodsun-arena",
+    "collectable": false,
+    "rarity": "token",
+    "kind": "DESTINY"
+  },
+  {
+    "id": "tutorial-mistveil-marsh",
+    "collectable": false,
+    "rarity": "token",
+    "kind": "DESTINY"
+  },
+  {
+    "id": "tutorial-moonlit-pass",
+    "collectable": false,
+    "rarity": "token",
+    "kind": "DESTINY"
   }
 ]
 };
@@ -937,7 +1000,16 @@ export const cardShortIds: Record<string, number> = {
 "bloodbound-shaman": 97,
 "tutorial-suntide-maiden": 98,
 "tutorial-lionheart-blessing": 105,
-"tutorial-true-strike": 106
+"tutorial-true-strike": 106,
+"tutorial-sunstone-templar": 107,
+"tutorial-arclyte-regalia": 108,
+"tutorial-holy-immolation": 109,
+"tutorial-azurite-lion": 110,
+"tutorial-ironcliffe-guardian": 111,
+"tutorial-sunbreaker": 112,
+"tutorial-bloodsun-arena": 113,
+"tutorial-mistveil-marsh": 114,
+"tutorial-moonlit-pass": 115
 } as const;
 
 export const cardIdByShortId: Record<number, string> = {
@@ -1043,5 +1115,14 @@ export const cardIdByShortId: Record<number, string> = {
 "103": "portal-guardian",
 "104": "wither",
 "105": "tutorial-lionheart-blessing",
-"106": "tutorial-true-strike"
+"106": "tutorial-true-strike",
+"107": "tutorial-sunstone-templar",
+"108": "tutorial-arclyte-regalia",
+"109": "tutorial-holy-immolation",
+"110": "tutorial-azurite-lion",
+"111": "tutorial-ironcliffe-guardian",
+"112": "tutorial-sunbreaker",
+"113": "tutorial-bloodsun-arena",
+"114": "tutorial-mistveil-marsh",
+"115": "tutorial-moonlit-pass"
 } as const;

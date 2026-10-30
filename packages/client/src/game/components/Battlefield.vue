@@ -12,6 +12,7 @@ import {
 } from '../composables/useGameClient';
 import BoardCard from './BoardCard/index.vue';
 import { waitFor } from '@game/shared';
+import { CARD_LOCATIONS } from '@game/engine/src/card/card.enums';
 
 const { battlefield } = defineProps<{
   battlefield: PlayerViewModel['leftBattlefield'];
@@ -86,16 +87,22 @@ useFxEvent(FX_EVENTS.AFTER_SCORE, async event => {
   )!;
   if (scoredBattlefield.zone !== battlefield.zone) return;
 
+  // update the battlefield that was scored, not always the left one
+  const key =
+    battlefield.zone === CARD_LOCATIONS.RIGHT_BATTLEFIELD
+      ? 'rightBattlefield'
+      : 'leftBattlefield';
+  const currentBattlefield = myPlayer.value.boardSide[key];
   myPlayer.value.update({
     boardSide: {
       ...myPlayer.value.boardSide,
-      leftBattlefield: {
-        ...myPlayer.value.boardSide.leftBattlefield,
+      [key]: {
+        ...currentBattlefield,
         commandmentScore: card.player.equals(myPlayer.value)
           ? event.newScore
-          : myPlayer.value.boardSide.leftBattlefield.commandmentScore,
+          : currentBattlefield.commandmentScore,
         opponentCommandmentScore: card.player.equals(myPlayer.value)
-          ? myPlayer.value.boardSide.leftBattlefield.opponentCommandmentScore
+          ? currentBattlefield.opponentCommandmentScore
           : event.newScore
       }
     }

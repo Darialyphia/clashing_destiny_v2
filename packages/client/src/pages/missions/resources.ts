@@ -2,9 +2,12 @@ import type { TutorialMission } from '.';
 import { makeTutorialDeck } from './utils';
 import { isDefined, waitFor } from '@game/shared';
 import type { PlayerViewModel } from '@game/engine/src/client/view-models/player.model';
-import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
 import {
   dispatchSequence,
+  findCardInHand,
+  getCardViewModel,
+  makeOpponentChooseAffinity,
+  makeOpponentPassUntilNextTurn,
   validateMovingMinion,
   validatePlayingCard,
   validatePlayingSpell,
@@ -19,42 +22,6 @@ import {
   GAME_PHASES,
   INTERACTION_STATES
 } from '@game/engine/src/game/game.enums';
-
-const getCardViewModel = (ctx: TutorialContext, card: AnyCard) =>
-  ctx.client.state.entities[card.id] as CardViewModel;
-
-const findCardInHand = (ctx: TutorialContext, blueprintId: string) =>
-  ctx.game.playerSystem.player1.cardManager.hand.find(
-    card => card.blueprintId === blueprintId
-  );
-
-const makeOpponentPassUntilNextTurn = (ctx: TutorialContext) => {
-  const p2 = ctx.game.playerSystem.player2;
-  const unsub = ctx.game.on(GAME_EVENTS.TURN_INITATIVE_CHANGE, async event => {
-    if (!event.data.newInitiativePlayer.equals(p2)) return;
-    await waitFor(500);
-    ctx.game.dispatch({ type: 'pass', payload: { playerId: p2.id } });
-  });
-  ctx.game.once(GAME_EVENTS.TURN_START, unsub);
-};
-
-const makeOpponentChooseAffinity = (ctx: TutorialContext) => {
-  const p2 = ctx.game.playerSystem.player2;
-  let hasChosen = false;
-  const stop = ctx.client.onUpdateCompleted(async () => {
-    if (hasChosen) return;
-    if (ctx.game.interaction.getState() !== INTERACTION_STATES.CHOOSING_CARDS) {
-      return;
-    }
-    hasChosen = true;
-    stop();
-    await waitFor(300);
-    ctx.game.dispatch({
-      type: 'chooseCards',
-      payload: { playerId: p2.id, indices: [0] }
-    });
-  });
-};
 
 /**
  * Simple AI used for the last part of the mission. It only uses the minions on the board:

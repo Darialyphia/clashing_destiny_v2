@@ -5,7 +5,7 @@ import { useTutorial } from './useTutorial';
 import { useGameState, useMyPlayer } from '@/game/composables/useGameClient';
 import { useFloating, shift, autoUpdate } from '@floating-ui/vue';
 
-const { currentStepTextBox, next } = useTutorial();
+const { currentStepTextBox, next, tutorial } = useTutorial();
 
 const textBox = ref<HTMLElement | null>(null);
 
@@ -73,13 +73,15 @@ const myPlayer = useMyPlayer();
 
 const shouldHide = computed(() => {
   if (!currentStepTextBox.value) return true;
-  if (
-    currentStepTextBox.value.hideDuringOpponentInitiative &&
-    state.value.turn.initiativePlayer !== myPlayer.value.id
-  ) {
-    return true;
-  }
-  return false;
+  if (!currentStepTextBox.value.hideDuringOpponentInitiative) return false;
+  // the client state lags behind the game while it plays animations, so check both:
+  // the box stays hidden from the moment the opponent gets the initiative until its actions are done animating
+  const engineInitiativePlayer =
+    tutorial.value.ctx.game.turnSystem.initiativePlayer.id;
+  return (
+    state.value.turn.initiativePlayer !== myPlayer.value.id ||
+    engineInitiativePlayer !== myPlayer.value.id
+  );
 });
 </script>
 

@@ -170,7 +170,6 @@ export class GamePhaseSystem extends StateMachine<GamePhase, GamePhaseTransition
       }
     }
     if (!winners.length) return;
-    stop();
 
     return winners;
   }
