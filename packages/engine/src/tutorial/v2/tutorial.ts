@@ -14,7 +14,7 @@ import type {
   SerializedOmniscientState
 } from '../../game/systems/game-snapshot.system';
 import { GAME_EVENTS } from '../../game/game.events';
-import { Logger } from '../../utils/logger';
+import { consoleLogger, Logger } from '../../utils/logger';
 
 export const TUTORIAL_STATUSES = {
   NOT_STARTED: 'not_started',
@@ -127,10 +127,16 @@ export class TutorialV2<T extends AnyObject = AnyObject> implements Tutorial<T> 
       throw new Error('Tutorial needs at least one step');
     }
     this.gameOptions = options.gameOptions;
-    this.game = new Game(options.gameOptions);
+    this.game = this.createGame(options.gameOptions);
     this.steps = options.steps;
     this.meta = options.meta;
     this.next = this.next.bind(this);
+  }
+
+  private createGame(options: GameOptions) {
+    const game = new Game(options);
+    game.logger.addLogger(consoleLogger);
+    return game;
   }
 
   get ctx(): TutorialContext<T> {
@@ -232,7 +238,10 @@ export class TutorialV2<T extends AnyObject = AnyObject> implements Tutorial<T> 
       this._status === TUTORIAL_STATUSES.IN_PROGRESS ||
         this._status === TUTORIAL_STATUSES.FAILED
     );
-    this.game = new Game({ ...this.gameOptions, history: this.historyForCurrentStep });
+    this.game = this.createGame({
+      ...this.gameOptions,
+      history: this.historyForCurrentStep
+    });
 
     await this.game.initialize();
     this.game.subscribeOmniscient(async snapshot => {

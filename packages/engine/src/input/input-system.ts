@@ -166,7 +166,7 @@ export class InputSystem extends System<never> {
 
   private async flushSchedule() {
     if (this.isRunning) {
-      console.warn('already flushing !');
+      this.game.logger.warn('already flushing !');
       return;
     }
     this.isRunning = true;
@@ -184,13 +184,11 @@ export class InputSystem extends System<never> {
   }
 
   private async handleError(err: unknown) {
-    console.groupCollapsed('%c[INPUT SYSTEM]: ERROR', 'color: #ff0000');
-    console.error(err);
-    console.log({
+    this.game.logger.error('[INPUT SYSTEM]: ERROR', err);
+    this.game.logger.debug('[INPUT SYSTEM]: game state at the error', {
       initialState: this.game.options,
       history: this.game.inputSystem.serialize()
     });
-    console.groupEnd();
 
     const serialized = this.game.serialize();
     if (this._currentAction) {
@@ -214,10 +212,11 @@ export class InputSystem extends System<never> {
   }
 
   async dispatch(input: SerializedInput) {
-    console.groupCollapsed(`[InputSystem]: ${input.type}`);
-    console.log(input);
-    console.groupEnd();
-    if (!this.isActionType(input.type)) return;
+    this.game.logger.debug(`[InputSystem]: ${input.type}`, input);
+    if (!this.isActionType(input.type)) {
+      this.game.logger.warn(`[InputSystem]: unknown input type ${input.type}, ignored`);
+      return;
+    }
     if (this.isPaused) {
       // if the game is paused, run the input immediately
       try {

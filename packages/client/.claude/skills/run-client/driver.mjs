@@ -88,7 +88,9 @@ await page.addInitScript(() => {
     const { client, tutorial } = window.__debug ?? {};
     const loggers = [
       ['client', client?.().logger],
-      ['tutorial', tutorial?.().logger]
+      ['tutorial', tutorial?.().logger],
+      // a tutorial retry creates a new game, the WeakSet lets the next poll attach to it
+      ['game', tutorial?.().ctx.game.logger]
     ];
     for (const [scope, logger] of loggers) {
       if (!logger || attached.has(logger)) continue;
@@ -225,13 +227,13 @@ const interpolate = async line => {
   return result;
 };
 
-// prints what the game loggers said since the last call: warnings, errors and step changes, debug titles with --verbose
+// prints what the game loggers said since the last call: warnings, errors and step changes, logs and debug titles with --verbose
 const flushLogs = async () => {
   const entries = await page
     .evaluate(() => window.__drv?.drainLogs() ?? [])
     .catch(() => []);
   for (const { level, scope, head, text } of entries) {
-    if (level === 'debug' && !verbose) continue;
+    if ((level === 'debug' || level === 'log') && !verbose) continue;
     if (level === 'error') {
       loggedErrorHeads.push(head);
       if (!errors.some(e => e.startsWith(`console: ${head}`)))

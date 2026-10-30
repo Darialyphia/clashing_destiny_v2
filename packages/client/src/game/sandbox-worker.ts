@@ -3,6 +3,7 @@ import { CARDS_DICTIONARY } from '@game/engine/src/card/sets';
 import { Game, type GameOptions } from '@game/engine/src/game/game';
 import type { SerializedInput } from '@game/engine/src/input/input-system';
 import { match } from 'ts-pattern';
+import { consoleLogger } from '@game/engine/src/utils/logger';
 import type { AnyCard } from '@game/engine/src/card/entities/card.entity';
 
 type SandboxWorkerEvent =
@@ -52,6 +53,7 @@ self.addEventListener('message', ({ data }) => {
         players: payload.options.players,
         enableSnapshots: true
       });
+      game.logger.addLogger(consoleLogger);
 
       await game.initialize();
       self.postMessage({
@@ -85,6 +87,7 @@ self.addEventListener('message', ({ data }) => {
       }
       const history = game.inputSystem.serialize().slice(0, payload.step + 1);
       game = new Game({ ...game.options, history });
+      game.logger.addLogger(consoleLogger);
 
       await game.initialize();
 

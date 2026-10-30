@@ -328,7 +328,7 @@ export const battlefieldTargetingRules = {
       canCancel,
       aiHints,
       isElligible(candidate) {
-        console.log(candidate.blueprintId);
+        game.logger.log(candidate.blueprintId);
         if (!isDestiny(candidate)) {
           return false;
         }

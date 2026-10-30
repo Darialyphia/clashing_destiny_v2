@@ -12,6 +12,7 @@ export class InputSimulator {
       history: game.inputSystem.serialize(),
       isSimulation: true
     });
+    this.game.logger.addLogger(game.logger);
     this.inputs = inputs;
   }
 
