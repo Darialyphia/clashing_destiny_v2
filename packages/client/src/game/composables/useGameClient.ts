@@ -21,6 +21,16 @@ const GAME_CLIENT_INJECTION_KEY = Symbol(
 
 export const provideGameClient = (options: GameClientOptions) => {
   const client = ref(new GameClient(options)) as Ref<GameClient>;
+  client.value.logger.addLogger({
+    log: console.log,
+    error: console.error,
+    warn: console.warn,
+    debug: (title, ...args) => {
+      console.groupCollapsed(title);
+      args.forEach(arg => console.log(arg));
+      console.groupEnd();
+    }
+  });
   client.value.onUpdate(async () => {
     triggerRef(client);
   });

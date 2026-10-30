@@ -194,7 +194,7 @@ export const locationsTutorial: TutorialMission = {
         },
         textBoxes: [
           {
-            text: 'The Bloodbound clan is back for another assault!',
+            text: 'The Bloodbound clan is back for another assault! (again...)',
             right: '22%',
             bottom: '45%',
             canManuallyAdvance: true

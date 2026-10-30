@@ -52,11 +52,17 @@ export const provideSandbox = (
 
   // @ts-expect-error
   window.__debugClient = () => {
-    console.log(client.value);
+    client.value.inspect();
   };
   // @ts-expect-error
   window.__debugGame = () => {
     worker.postMessage({ type: 'debug' });
+  };
+
+  // @ts-expect-error
+  window.__debug = {
+    client: () => client.value,
+    playerId: () => playerId.value
   };
 
   const networkAdapter: NetworkAdapter = {

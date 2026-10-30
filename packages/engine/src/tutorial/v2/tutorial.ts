@@ -14,6 +14,7 @@ import type {
   SerializedOmniscientState
 } from '../../game/systems/game-snapshot.system';
 import { GAME_EVENTS } from '../../game/game.events';
+import { Logger } from '../../utils/logger';
 
 export const TUTORIAL_STATUSES = {
   NOT_STARTED: 'not_started',
@@ -107,6 +108,8 @@ export class TutorialV2<T extends AnyObject = AnyObject> implements Tutorial<T> 
 
   private _retryCount = 0;
 
+  readonly logger = new Logger();
+
   readonly meta: T;
 
   private historyForCurrentStep: SerializedInput[] = [];
@@ -152,6 +155,10 @@ export class TutorialV2<T extends AnyObject = AnyObject> implements Tutorial<T> 
 
   get retryCount() {
     return this._retryCount;
+  }
+
+  inspect() {
+    this.logger.log(this.ctx);
   }
 
   onSnapshot(callback: (snapshot: GameStateSnapshot<PatchBasedSnapshotDiff>) => void) {

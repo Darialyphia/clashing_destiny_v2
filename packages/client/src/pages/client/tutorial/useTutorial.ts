@@ -126,7 +126,13 @@ export const provideTutorial = (options: UseTutorialOptions) => {
   };
   // @ts-expect-error
   window.__debugClient = () => {
-    console.log(tutorial.value.ctx);
+    tutorial.value.inspect();
+  };
+  // @ts-expect-error
+  window.__debug = {
+    tutorial: () => tutorial.value,
+    client: () => client.value,
+    currentStep: () => currentStep.value
   };
 
   const stopClientUpdate = client.value.onUpdate(() => {

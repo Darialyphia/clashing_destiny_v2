@@ -1,6 +1,6 @@
 // Headless Chrome driver for the client.
 // Reads commands from stdin, one per line, runs them in order against a single page, then closes the browser.
-// Usage: node driver.mjs [--base http://localhost:3000] [--out <dir>] [--headed] < script.txt
+// Usage: node driver.mjs [--base http://localhost:3000] [--out <dir>] [--headed] [--verbose] < script.txt
 // See SKILL.md for the command list.
 import { chromium } from 'playwright-core';
 import fs from 'node:fs';
@@ -20,6 +20,7 @@ const outDir = path.resolve(
   option('--out', path.join(os.tmpdir(), 'run-client', 'shots'))
 );
 const headed = args.includes('--headed');
+const verbose = args.includes('--verbose');
 
 fs.rmSync(outDir, { recursive: true, force: true });
 fs.mkdirSync(outDir, { recursive: true });
@@ -49,30 +50,89 @@ page.on('pageerror', err => {
   const where = (err.stack ?? '').split('\n').slice(1, 4).join(' <');
   recordError(`pageerror: ${err.message} ${where}`);
 });
+// first words of the game loggers' errors, which the client also forwards to console.error
+const loggedErrorHeads = [];
 page.on('console', msg => {
-  if (msg.type() === 'error') recordError(`console: ${msg.text()}`);
+  if (msg.type() !== 'error') return;
+  const text = msg.text();
+  if (loggedErrorHeads.some(head => text.startsWith(head))) return;
+  recordError(`console: ${text}`);
 });
 
 // helpers available to `eval`, `wait-until` and `{{...}}` placeholders
 await page.addInitScript(() => {
-  // useTutorial only exposes the tutorial context through a function that console.logs it
+  // missions expose tutorial(), client() and currentStep(), the sandbox client() and playerId()
   const ctx = () => {
-    if (!window.__debugClient)
+    if (!window.__debug?.tutorial)
       throw new Error(
-        'no tutorial on this page (window.__debugClient is missing)'
+        'no tutorial on this page (window.__debug.tutorial is missing)'
       );
-    let captured;
-    const log = console.log;
-    console.log = value => {
-      captured = value;
-    };
-    try {
-      window.__debugClient();
-    } finally {
-      console.log = log;
-    }
-    return captured;
+    return window.__debug.tutorial().ctx;
   };
+
+  // the client and tutorial loggers and the tutorial's step and validation callbacks fill this buffer,
+  // the driver prints it after each command
+  const logs = [];
+  const summarize = value => {
+    if (typeof value === 'string') return value;
+    if (value instanceof Error)
+      return `${value.name}: ${value.message} ${(value.stack ?? '').split('\n').slice(1, 3).join(' <')}`;
+    try {
+      return JSON.stringify(value)?.slice(0, 300) ?? String(value);
+    } catch {
+      return `[${value?.constructor?.name ?? typeof value}]`;
+    }
+  };
+  const attached = new WeakSet();
+  const attachLoggers = () => {
+    const { client, tutorial } = window.__debug ?? {};
+    const loggers = [
+      ['client', client?.().logger],
+      ['tutorial', tutorial?.().logger]
+    ];
+    for (const [scope, logger] of loggers) {
+      if (!logger || attached.has(logger)) continue;
+      attached.add(logger);
+      const push =
+        level =>
+        (...args) =>
+          logs.push({
+            level,
+            scope,
+            head: summarize(args[0]),
+            text: args.map(summarize).join(' ')
+          });
+      logger.addLogger({
+        log: push('log'),
+        warn: push('warn'),
+        error: push('error'),
+        // debug entries carry whole snapshots, the title is enough
+        debug: title => logs.push({ level: 'debug', scope, text: title })
+      });
+    }
+    const t = tutorial?.();
+    if (t && !attached.has(t)) {
+      attached.add(t);
+      t.onEnterStep(c =>
+        logs.push({
+          level: 'step',
+          scope: 'tutorial',
+          text: `entered step ${c.currentStep?.id}`
+        })
+      );
+      t.onValidation((result, c) => {
+        if (result.isValid) return;
+        logs.push({
+          level: 'warn',
+          scope: 'tutorial',
+          text: `input rejected by step ${c.currentStep?.id}: ${result.reason ?? '(no reason)'}`
+        });
+      });
+    }
+  };
+  // window.__debug appears when the page mounts, poll so the first logs are not missed
+  setInterval(attachLoggers, 100);
+  const drainLogs = () => logs.splice(0);
   const game = () => ctx().game;
   const p1 = () => game().playerSystem.player1;
   const p2 = () => game().playerSystem.player2;
@@ -125,7 +185,17 @@ await page.addInitScript(() => {
         game().turnSystem.initiativePlayer.id
     );
   };
-  window.__drv = { ctx, game, p1, p2, hand, board, state, isClientSettled };
+  window.__drv = {
+    ctx,
+    game,
+    p1,
+    p2,
+    hand,
+    board,
+    state,
+    isClientSettled,
+    drainLogs
+  };
 });
 
 const evaluate = expression =>
@@ -155,9 +225,30 @@ const interpolate = async line => {
   return result;
 };
 
+// prints what the game loggers said since the last call: warnings, errors and step changes, debug titles with --verbose
+const flushLogs = async () => {
+  const entries = await page
+    .evaluate(() => window.__drv?.drainLogs() ?? [])
+    .catch(() => []);
+  for (const { level, scope, head, text } of entries) {
+    if (level === 'debug' && !verbose) continue;
+    if (level === 'error') {
+      loggedErrorHeads.push(head);
+      if (!errors.some(e => e.startsWith(`console: ${head}`)))
+        recordError(`${scope} error: ${text}`);
+      continue;
+    }
+    const prefix = level === 'step' ? '--' : '..';
+    console.log(
+      `  ${prefix} ${scope} ${level === 'step' ? '' : `${level}: `}${text}`
+    );
+  }
+};
+
 const pollUntil = async (label, expression, timeout) => {
   const start = Date.now();
   while (true) {
+    await flushLogs();
     if (JSON.parse((await evaluate(expression)) ?? 'false')) return;
     if (Date.now() - start > timeout)
       throw new Error(`timed out waiting for ${label}`);
@@ -251,6 +342,14 @@ const commands = {
       30_000
     );
   },
+  // for clicks during an interaction (e.g. picking a target), where `my-turn` doesn't apply
+  async settled() {
+    await pollUntil(
+      'the client to finish animating',
+      'isClientSettled()',
+      30_000
+    );
+  },
   async textbox() {
     console.log(`  ${await textBoxText()}`);
   },
@@ -286,9 +385,11 @@ try {
     if (!command) throw new Error(`unknown command: ${name}`);
     console.log(`> ${line}`);
     await command(rest.join(' '));
+    await flushLogs();
   }
 } catch (err) {
   exitCode = 1;
+  await flushLogs();
   console.log(`FAILED: ${err.message.split('\n')[0]}`);
   await screenshot('failure').catch(() => {});
   if (errors.length) console.log(errors.map(e => `  ${e}`).join('\n'));
