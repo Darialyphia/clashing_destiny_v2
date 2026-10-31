@@ -5,6 +5,7 @@ import { TypedEventEmitter } from '@game/engine/src/utils/typed-emitter';
 import type { AnyFunction, EmptyObject } from '@game/shared';
 import type { SerializedInput } from '@game/engine/src/input/input-system';
 import { GAME_EVENTS } from '@game/engine/src/game/game.events';
+import { consoleLogger } from '@game/engine/src/utils/logger';
 import { ClockManager, CLOCK_MANAGER_EVENTS, type ClockState } from './clock-manager';
 
 export type RoomOptions = {
@@ -67,6 +68,7 @@ export class Room {
     private options: RoomOptions
   ) {
     this.engine = new Game(this.options.initialState);
+    this.engine.logger.addLogger(consoleLogger);
     this.clockManager = new ClockManager({
       playerIds: this.options.game.players.map(p => p.userId),
       clockTime: PLAYER_ACTION_CLOCK_TIME,

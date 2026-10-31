@@ -6,11 +6,13 @@ import type {
 import { type GameOptions } from '@game/engine/src/game/game';
 import {
   TutorialV2,
+  TUTORIAL_STATUSES,
   type TutorialContext,
   type TutorialOptions,
   type TutorialStep,
   type TutorialTextBox
 } from '@game/engine/src/tutorial/v2/tutorial';
+import { GAME_PHASES } from '@game/engine/src/game/game.enums';
 import { useFxAdapter } from '@/game/composables/useFxAdapter';
 import { provideGameClient } from '@/game/composables/useGameClient';
 import type { Nullable, Override } from '@game/shared';
@@ -56,7 +58,12 @@ export type UseTutorialContext = {
   currentStepError: Ref<string | null>;
   next: () => Promise<void>;
   status: Ref<string | null>;
+  isCurrentStepFailed: Ref<boolean>;
+  isGameOver: Ref<boolean>;
+  // changes every time the game is recreated by a retry, components holding game state can use it as a key
+  gameKey: Ref<number>;
   start: () => Promise<void>;
+  retry: () => Promise<void>;
 };
 
 export const TUTORIAL_INJECTION_KEY = Symbol(
@@ -96,6 +103,7 @@ export const provideTutorial = (options: UseTutorialOptions) => {
       null) as Nullable<ClientTutorialTextBox>;
   });
   const currentStepError = ref<string | null>(null);
+  const gameKey = ref(0);
   let isDisposed = false;
 
   tutorial.value = new TutorialV2({
@@ -126,7 +134,13 @@ export const provideTutorial = (options: UseTutorialOptions) => {
   };
   // @ts-expect-error
   window.__debugClient = () => {
-    console.log(tutorial.value.ctx);
+    tutorial.value.inspect();
+  };
+  // @ts-expect-error
+  window.__debug = {
+    tutorial: () => tutorial.value,
+    client: () => client.value,
+    currentStep: () => currentStep.value
   };
 
   const stopClientUpdate = client.value.onUpdate(() => {
@@ -156,7 +170,23 @@ export const provideTutorial = (options: UseTutorialOptions) => {
       const snapshot = await tutorial.value.start();
       await client.value.initialize(snapshot);
     },
-    status: computed(() => tutorial.value.status)
+    retry: async () => {
+      currentStepError.value = null;
+      const snapshot = await tutorial.value.retry();
+      await client.value.initialize(snapshot);
+      gameKey.value++;
+    },
+    gameKey,
+    isGameOver: computed(
+      () =>
+        tutorial.value.ctx.game.gamePhaseSystem.getState() ===
+        GAME_PHASES.GAME_END
+    ),
+    status: computed(() => tutorial.value.status),
+    // the engine checks the step's failedCondition after each input and flags the tutorial as failed
+    isCurrentStepFailed: computed(
+      () => tutorial.value.status === TUTORIAL_STATUSES.FAILED
+    )
   };
 
   provide(TUTORIAL_INJECTION_KEY, ctx);

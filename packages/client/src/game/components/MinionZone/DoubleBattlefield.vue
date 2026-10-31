@@ -142,7 +142,10 @@ const opponentHasInitiative = computed(() => {
     </div>
 
     <div class="middle-side">
-      <div class="victory-points">
+      <div
+        class="victory-points"
+        :id="ui.DOMSelectors.victoryPoints(opponent.id).id"
+      >
         <div
           v-for="point in state.config.VICTORY_POINTS_TO_WIN"
           :key="point"
@@ -156,7 +159,10 @@ const opponentHasInitiative = computed(() => {
       />
       <PassButton class="pass-button" />
       <div class="initiative-indicator" :class="{ active: hasInitiative }" />
-      <div class="victory-points">
+      <div
+        class="victory-points"
+        :id="ui.DOMSelectors.victoryPoints(myPlayer.id).id"
+      >
         <div
           v-for="point in state.config.VICTORY_POINTS_TO_WIN"
           :key="point"

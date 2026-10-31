@@ -156,9 +156,11 @@ const hasWon = computed(() => winners.value.includes(myPlayer.value.id));
 
   <DraggedCard />
   <div v-if="winners.length" class="game-over">
-    <p v-if="hasWon">You have won the game!</p>
-    <p v-else>You have lost the game.</p>
-    <FancyButton text="Back to Home" :to="{ name: 'ClientHome' }" />
+    <slot name="game-over" :has-won="hasWon">
+      <p v-if="hasWon">You have won the game!</p>
+      <p v-else>You have lost the game.</p>
+      <FancyButton text="Back to Home" :to="{ name: 'ClientHome' }" />
+    </slot>
   </div>
   <GameMenu>
     <template #menu>

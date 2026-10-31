@@ -6,10 +6,15 @@ import { CARD_LOCATIONS } from '@game/engine/src/card/card.enums';
 import { GAME_EVENTS } from '@game/engine/src/game/game.events';
 import { GAME_PHASES } from '@game/engine/src/game/game.enums';
 import { match } from 'ts-pattern';
+import {
+  isFreePlayFailed,
+  startFreePlay
+} from '../../tutorial/tutorial-utils';
 
 export const basicsTutorial: TutorialMission = {
   id: 'basics',
   name: 'Mission 1: Basics',
+  nextMission: 'resources',
   options: {
     gameOptions: {
       players: [
@@ -862,14 +867,14 @@ export const basicsTutorial: TutorialMission = {
         id: 9,
         canRetry: () => false,
         meta: {},
-        async setup() {},
+        async setup(ctx) {
+          startFreePlay(ctx);
+        },
         teardown() {},
         solveCondition() {
           return false;
         },
-        failedCondition() {
-          return false;
-        },
+        failedCondition: isFreePlayFailed,
         validateInput() {
           return {
             isValid: true
@@ -939,7 +944,6 @@ export const basicsTutorial: TutorialMission = {
                     const emptySpace = p2.boardSide.base.find(
                       space => space.isEmpty
                     )!;
-                    console.log('AI dispatch selectSpaceOnBoard');
                     return ctx.game.dispatch({
                       type: 'selectSpaceOnBoard',
                       payload: {
@@ -952,7 +956,6 @@ export const basicsTutorial: TutorialMission = {
                     // first play all cards in hand. This gives the player clear information of what they are facing
                     if (p2.cardManager.hand.length > 0) {
                       const card = p2.cardManager.hand[0];
-                      console.log('AI dispatch declarePlayCard', card.id);
                       return ctx.game.dispatch({
                         type: 'declarePlayCard',
                         payload: {
@@ -1012,11 +1015,6 @@ export const basicsTutorial: TutorialMission = {
                         return 0;
                       })[0];
                       if (attackTarget) {
-                        console.log(
-                          'AI dispatch declareAttack',
-                          executor.id,
-                          attackTarget.id
-                        );
                         return ctx.game.dispatch({
                           type: 'declareAttack',
                           payload: {
@@ -1032,7 +1030,6 @@ export const basicsTutorial: TutorialMission = {
                     ) as MinionCard;
                     if (shaman) {
                       // shaman always scores
-                      console.log('AI dispatch score', shaman.id);
                       return ctx.game.dispatch({
                         type: 'score',
                         payload: {
@@ -1049,7 +1046,6 @@ export const basicsTutorial: TutorialMission = {
                       // invader always scores if AI has lower influence, otherwise attacks with same rules as executor
                       const isLosing = p2.boardSide.leftBattlefield.isLosing;
                       if (isLosing) {
-                        console.log('AI dispatch score', invader.id);
                         return ctx.game.dispatch({
                           type: 'score',
                           payload: {
@@ -1072,11 +1068,6 @@ export const basicsTutorial: TutorialMission = {
                           return 0;
                         })[0];
                         if (attackTarget) {
-                          console.log(
-                            'AI dispatch declareAttack',
-                            invader.id,
-                            attackTarget.id
-                          );
                           return ctx.game.dispatch({
                             type: 'declareAttack',
                             payload: {

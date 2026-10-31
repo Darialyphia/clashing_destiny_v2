@@ -31,6 +31,7 @@ import { generateRandomString } from '../utils/utils';
 import { CombatSystem } from './systems/combat.system';
 import { EffectChainSystem } from './systems/effect-chain.system';
 import { ScoringSystem } from './systems/scoring.system';
+import { Logger } from '../utils/logger';
 
 export type GameOptions = {
   id: string;
@@ -88,6 +89,8 @@ export class Game implements Serializable<SerializedGame> {
 
   readonly isSimulation: boolean;
 
+  readonly logger = new Logger();
+
   readonly modifierIdFactory = modifierIdFactory();
 
   readonly cardPool: IndexedRecord<CardBlueprint, 'id'>;
@@ -121,57 +124,69 @@ export class Game implements Serializable<SerializedGame> {
     let now = start;
 
     this.rngSystem.initialize({ seed: this.options.rngSeed });
-    console.log(`RNG initialized in ${(performance.now() - now).toFixed(0)}ms`);
+    this.logger.log(`RNG initialized in ${(performance.now() - now).toFixed(0)}ms`);
     now = performance.now();
 
     this.cardSystem.initialize({ cardPool: this.cardPool });
-    console.log(`Card system initialized in ${(performance.now() - now).toFixed(0)}ms`);
+    this.logger.log(
+      `Card system initialized in ${(performance.now() - now).toFixed(0)}ms`
+    );
     now = performance.now();
 
     await this.playerSystem.initialize({
       players: this.options.players
     });
-    console.log(`Player system initialized in ${(performance.now() - now).toFixed(0)}ms`);
+    this.logger.log(
+      `Player system initialized in ${(performance.now() - now).toFixed(0)}ms`
+    );
     now = performance.now();
 
     this.snapshotSystem.initialize({ enabled: this.options.enableSnapshots ?? true });
-    console.log(
+    this.logger.log(
       `Snapshot system initialized in ${(performance.now() - now).toFixed(0)}ms`
     );
     now = performance.now();
 
     await this.boardSystem.initialize();
-    console.log(`Board system initialized in ${(performance.now() - now).toFixed(0)}ms`);
+    this.logger.log(
+      `Board system initialized in ${(performance.now() - now).toFixed(0)}ms`
+    );
     now = performance.now();
 
     this.interaction.initialize();
-    console.log(
+    this.logger.log(
       `Interaction system initialized in ${(performance.now() - now).toFixed(0)}ms`
     );
     now = performance.now();
 
     this.effectChainSystem.initialize();
-    console.log(
+    this.logger.log(
       `Effect chain system initialized in ${(performance.now() - now).toFixed(0)}ms`
     );
     now = performance.now();
 
     await this.gamePhaseSystem.initialize();
-    console.log(
+    this.logger.log(
       `Game phase system initialized in ${(performance.now() - now).toFixed(0)}ms`
     );
     now = performance.now();
 
     await this.turnSystem.initialize();
-    console.log(`Turn system initialized in ${(performance.now() - now).toFixed(0)}ms`);
+    this.logger.log(
+      `Turn system initialized in ${(performance.now() - now).toFixed(0)}ms`
+    );
     now = performance.now();
 
     this.inputSystem.initialize();
-    console.log(`Input system initialized in ${(performance.now() - now).toFixed(0)}ms`);
+    this.logger.log(
+      `Input system initialized in ${(performance.now() - now).toFixed(0)}ms`
+    );
     now = performance.now();
 
     await this.combatSystem.initialize();
-    console.log(`Combat system initialized in ${(performance.now() - now).toFixed(0)}ms`);
+    this.logger.log(
+      `Combat system initialized in ${(performance.now() - now).toFixed(0)}ms`
+    );
     now = performance.now();
 
     await this.emit(GAME_EVENTS.READY, new GameReadyEvent({}));
@@ -182,7 +197,7 @@ export class Game implements Serializable<SerializedGame> {
       await this.inputSystem.applyHistory(this.options.history);
     }
     await this.snapshotSystem.takeSnapshot();
-    console.log(
+    this.logger.log(
       `%cGame ${this.id} initialized in ${(performance.now() - start).toFixed(0)}ms`,
       'color: blue; font-weight: bold;'
     );
@@ -292,6 +307,7 @@ export class Game implements Serializable<SerializedGame> {
       id: `simulation_${id}`,
       history: this.inputSystem.serialize()
     });
+    game.logger.addLogger(this.logger);
     await game.initialize();
 
     return game;

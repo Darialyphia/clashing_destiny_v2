@@ -23,6 +23,7 @@ import type { BoardSpaceViewModel } from './view-models/board-space.model';
 import { EFFECT_CHAIN_STATES } from '../game/effect-chain';
 import { OptimisticStateManager } from './controllers/optimistic-state.controller';
 import { GAME_PHASES } from '../game/game.enums';
+import { Logger } from '../utils/logger';
 
 export const GAME_TYPES = {
   LOCAL: 'local',
@@ -96,12 +97,18 @@ export class GameClient {
 
   private queue: Array<GameStateSnapshot<PatchBasedSnapshotDiff>> = [];
 
+  // the client can be initialized several times (tutorial retries, sandbox resets...)
+  // but must only subscribe to the network once, or it would receive every snapshot multiple times
+  private isSubscribedToNetwork = false;
+
   history: SerializedInput[] = [];
 
   private emitter = new TypedEventEmitter<{
     update: EmptyObject;
     updateCompleted: GameStateSnapshot<PatchBasedSnapshotDiff>;
   }>('sequential');
+
+  readonly logger = new Logger();
 
   readonly isSpectator: boolean = false;
 
@@ -130,13 +137,19 @@ export class GameClient {
     return this.stateManager.state;
   }
 
+  inspect() {
+    this.logger.log(this);
+  }
+
   private async processQueue() {
     if (!this.isReady) {
-      console.warn('Waiting for game client to be ready to process queue...');
+      this.logger.warn('Waiting for game client to be ready to process queue...');
       return;
     }
     if (this._processingUpdate || this.queue.length === 0) {
-      console.warn('Already processing updates or queue is empty, skipping processing.');
+      this.logger.warn(
+        'Already processing updates or queue is empty, skipping processing.'
+      );
       return;
     }
 
@@ -164,29 +177,39 @@ export class GameClient {
     return this.getActivePlayerIds().includes(this.playerId);
   }
 
+  private subscribeToNetwork() {
+    if (this.isSubscribedToNetwork) return;
+    this.isSubscribedToNetwork = true;
+    this.networkAdapter.subscribe(async snapshot => {
+      if (snapshot.kind === 'state') {
+        this.logger.debug(`Snapshot Update: ${snapshot.id}`, {
+          state: snapshot.state,
+          events: snapshot.events
+        });
+      } else {
+        this.logger.debug(`Snapshot Update: ${snapshot.id}`, {
+          events: snapshot.events
+        });
+      }
+
+      this.queue.push(snapshot);
+      if (this._processingUpdate || !this.isReady) return;
+      await this.processQueue();
+    });
+  }
+
   async initialize(
     snapshot: GameStateSnapshot<SerializedOmniscientState | SerializedPlayerState>,
     history: SerializedInput[] = []
   ) {
-    console.groupCollapsed('Initializing Game Client');
-    console.log('Initial Snapshot:', snapshot);
-    console.groupEnd();
+    this.logger.debug('Initializing Game Client', 'Initial Snapshot:', snapshot);
+
     this.isReady = false;
     this.history = history;
     this.lastSnapshotId = -1;
     this.snapshots.clear();
     this.queue = [];
-    this.networkAdapter.subscribe(async snapshot => {
-      console.groupCollapsed(`Snapshot Update: ${snapshot.id}`);
-      if (snapshot.kind === 'state') {
-        console.log('state', snapshot.state);
-      }
-      console.log('events', snapshot.events);
-      console.groupEnd();
-      this.queue.push(snapshot);
-      if (this._processingUpdate || !this.isReady) return;
-      await this.processQueue();
-    });
+    this.subscribeToNetwork();
     if (snapshot.kind === 'error') {
       throw new Error('Cannot initialize client with error snapshot');
     }
@@ -213,14 +236,14 @@ export class GameClient {
 
   async update(snapshot: GameStateSnapshot<PatchBasedSnapshotDiff>) {
     if (snapshot.id <= this.lastSnapshotId) {
-      console.log(
+      this.logger.warn(
         `Stale snapshot, latest is ${this.lastSnapshotId}, received is ${snapshot.id}. skipping`
       );
       return;
     }
 
     if (snapshot.id > this.nextSnapshotId) {
-      console.warn(
+      this.logger.warn(
         `Missing snapshots, latest is ${this.lastSnapshotId}, received is ${snapshot.id}`
       );
       return await this.onInvalidSnapshot();
@@ -254,7 +277,7 @@ export class GameClient {
       await this.emitter.emit('update', {});
       await this.emitter.emit('updateCompleted', snapshot);
     } catch (err) {
-      console.error(err);
+      this.logger.error(`Error processing snapshot ${snapshot.id}`, err);
     }
   }
 

@@ -14,6 +14,7 @@ import type {
   SerializedOmniscientState
 } from '../../game/systems/game-snapshot.system';
 import { GAME_EVENTS } from '../../game/game.events';
+import { consoleLogger, Logger } from '../../utils/logger';
 
 export const TUTORIAL_STATUSES = {
   NOT_STARTED: 'not_started',
@@ -107,6 +108,8 @@ export class TutorialV2<T extends AnyObject = AnyObject> implements Tutorial<T> 
 
   private _retryCount = 0;
 
+  readonly logger = new Logger();
+
   readonly meta: T;
 
   private historyForCurrentStep: SerializedInput[] = [];
@@ -124,10 +127,18 @@ export class TutorialV2<T extends AnyObject = AnyObject> implements Tutorial<T> 
       throw new Error('Tutorial needs at least one step');
     }
     this.gameOptions = options.gameOptions;
-    this.game = new Game(options.gameOptions);
+    // retrying the first step must replay the initial history, not start from an empty game
+    this.historyForCurrentStep = options.gameOptions.history ?? [];
+    this.game = this.createGame(options.gameOptions);
     this.steps = options.steps;
     this.meta = options.meta;
     this.next = this.next.bind(this);
+  }
+
+  private createGame(options: GameOptions) {
+    const game = new Game(options);
+    game.logger.addLogger(consoleLogger);
+    return game;
   }
 
   get ctx(): TutorialContext<T> {
@@ -152,6 +163,10 @@ export class TutorialV2<T extends AnyObject = AnyObject> implements Tutorial<T> 
 
   get retryCount() {
     return this._retryCount;
+  }
+
+  inspect() {
+    this.logger.log(this.ctx);
   }
 
   onSnapshot(callback: (snapshot: GameStateSnapshot<PatchBasedSnapshotDiff>) => void) {
@@ -182,11 +197,19 @@ export class TutorialV2<T extends AnyObject = AnyObject> implements Tutorial<T> 
   async initialize(client: GameClient) {
     this.client = client;
     await this.game.initialize();
+    this.forwardSnapshots();
+    this.watchStepConditions();
+  }
+
+  private forwardSnapshots() {
     this.game.subscribeOmniscient(async snapshot => {
       for (const callback of this.snapshotCallbacks) {
         await callback(snapshot);
       }
     });
+  }
+
+  private watchStepConditions() {
     this.game.on(GAME_EVENTS.INPUT_END, () => {
       const successful = this.currentStep.solveCondition(this.ctx);
       if (successful) {
@@ -225,16 +248,23 @@ export class TutorialV2<T extends AnyObject = AnyObject> implements Tutorial<T> 
       this._status === TUTORIAL_STATUSES.IN_PROGRESS ||
         this._status === TUTORIAL_STATUSES.FAILED
     );
-    this.game = new Game({ ...this.gameOptions, history: this.historyForCurrentStep });
-
-    await this.game.initialize();
-    this.game.subscribeOmniscient(async snapshot => {
-      for (const callback of this.snapshotCallbacks) {
-        await callback(snapshot);
-      }
+    await this.leaveStep();
+    // removes every listener on the old game, including the ones set up by the step,
+    // so it can't send snapshots to the client anymore
+    this.game.shutdown();
+    this.game = this.createGame({
+      ...this.gameOptions,
+      history: this.historyForCurrentStep
     });
 
+    await this.game.initialize();
+    this.watchStepConditions();
+
     this._status = TUTORIAL_STATUSES.IN_PROGRESS;
+    await this.enterStep();
+    // only forward snapshots once the step is entered: the client still holds the old game's state
+    // until it is initialized with the snapshot returned here
+    this.forwardSnapshots();
     return this.game.snapshotSystem.getLatestOmniscientSnapshot();
   }
 

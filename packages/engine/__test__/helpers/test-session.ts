@@ -11,6 +11,7 @@ import type {
 } from '../../src/game/systems/game-snapshot.system';
 import type { SerializedInput } from '../../src/input/input-system';
 import type { Player, PlayerOptions } from '../../src/player/player.entity';
+import { consoleLogger } from '../../src/utils/logger';
 
 export const TEST_PLAYER_IDS = {
   player1: 'test-player-1',
@@ -103,6 +104,7 @@ export class TestSessionBuilder {
       enableSnapshots: this.enableSnapshots
     };
     const game = new Game(options);
+    game.logger.addLogger(consoleLogger);
     await game.initialize();
 
     return new TestSession(game, this.enableSnapshots);

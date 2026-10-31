@@ -26,11 +26,12 @@ export class SimpleCommandmentBuffModifier extends Modifier<MinionCard> {
         if (name) return name;
 
         const amount = isFunction(options.amount) ? options.amount() : options.amount;
-        return amount > 0 ? 'Commandment Buff' : 'Commandment Debuff';
+        // shown to players, who know commandment as influence
+        return amount > 0 ? 'Influence Buff' : 'Influence Debuff';
       },
       description: () => {
         const amount = isFunction(options.amount) ? options.amount() : options.amount;
-        return `${amount > 0 ? '+' : ''}${options.amount} Commandment`;
+        return `${amount > 0 ? '+' : ''}${amount} influence`;
       },
       mixins: [
         new RemoveOnDestroyedMixin(game),

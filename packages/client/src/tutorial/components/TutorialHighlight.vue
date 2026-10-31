@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useElementBounding } from '@vueuse/core';
-import { useTutorial } from './useTutorial';
+import { useTutorial } from '../../pages/client/tutorial/useTutorial';
 
 const { client } = useTutorial();
 
