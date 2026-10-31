@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useTutorial } from './useTutorial';
+import { useTutorial } from '../../pages/client/tutorial/useTutorial';
 
 const { currentStepTextBox, tutorial } = useTutorial();
 

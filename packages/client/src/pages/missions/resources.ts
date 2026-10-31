@@ -12,7 +12,7 @@ import {
   validatePlayingCard,
   validatePlayingSpell,
   validateSupplyCard
-} from '../client/tutorial/tutorial-utils';
+} from '../../tutorial/tutorial-utils';
 import { CARD_LOCATIONS } from '@game/engine/src/card/card.enums';
 import type { MinionCard } from '@game/engine/src/card/entities/minion.entity';
 import type { AnyCard } from '@game/engine/src/card/entities/card.entity';

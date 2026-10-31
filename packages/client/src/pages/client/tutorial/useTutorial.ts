@@ -6,6 +6,7 @@ import type {
 import { type GameOptions } from '@game/engine/src/game/game';
 import {
   TutorialV2,
+  TUTORIAL_STATUSES,
   type TutorialContext,
   type TutorialOptions,
   type TutorialStep,
@@ -56,7 +57,9 @@ export type UseTutorialContext = {
   currentStepError: Ref<string | null>;
   next: () => Promise<void>;
   status: Ref<string | null>;
+  isCurrentStepFailed: Ref<boolean>;
   start: () => Promise<void>;
+  retry: () => Promise<void>;
 };
 
 export const TUTORIAL_INJECTION_KEY = Symbol(
@@ -162,7 +165,16 @@ export const provideTutorial = (options: UseTutorialOptions) => {
       const snapshot = await tutorial.value.start();
       await client.value.initialize(snapshot);
     },
-    status: computed(() => tutorial.value.status)
+    retry: async () => {
+      currentStepError.value = null;
+      const snapshot = await tutorial.value.retry();
+      await client.value.initialize(snapshot);
+    },
+    status: computed(() => tutorial.value.status),
+    // the engine checks the step's failedCondition after each input and flags the tutorial as failed
+    isCurrentStepFailed: computed(
+      () => tutorial.value.status === TUTORIAL_STATUSES.FAILED
+    )
   };
 
   provide(TUTORIAL_INJECTION_KEY, ctx);

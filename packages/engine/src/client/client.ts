@@ -97,6 +97,10 @@ export class GameClient {
 
   private queue: Array<GameStateSnapshot<PatchBasedSnapshotDiff>> = [];
 
+  // the client can be initialized several times (tutorial retries, sandbox resets...)
+  // but must only subscribe to the network once, or it would receive every snapshot multiple times
+  private isSubscribedToNetwork = false;
+
   history: SerializedInput[] = [];
 
   private emitter = new TypedEventEmitter<{
@@ -173,17 +177,9 @@ export class GameClient {
     return this.getActivePlayerIds().includes(this.playerId);
   }
 
-  async initialize(
-    snapshot: GameStateSnapshot<SerializedOmniscientState | SerializedPlayerState>,
-    history: SerializedInput[] = []
-  ) {
-    this.logger.debug('Initializing Game Client', 'Initial Snapshot:', snapshot);
-
-    this.isReady = false;
-    this.history = history;
-    this.lastSnapshotId = -1;
-    this.snapshots.clear();
-    this.queue = [];
+  private subscribeToNetwork() {
+    if (this.isSubscribedToNetwork) return;
+    this.isSubscribedToNetwork = true;
     this.networkAdapter.subscribe(async snapshot => {
       if (snapshot.kind === 'state') {
         this.logger.debug(`Snapshot Update: ${snapshot.id}`, {
@@ -200,6 +196,20 @@ export class GameClient {
       if (this._processingUpdate || !this.isReady) return;
       await this.processQueue();
     });
+  }
+
+  async initialize(
+    snapshot: GameStateSnapshot<SerializedOmniscientState | SerializedPlayerState>,
+    history: SerializedInput[] = []
+  ) {
+    this.logger.debug('Initializing Game Client', 'Initial Snapshot:', snapshot);
+
+    this.isReady = false;
+    this.history = history;
+    this.lastSnapshotId = -1;
+    this.snapshots.clear();
+    this.queue = [];
+    this.subscribeToNetwork();
     if (snapshot.kind === 'error') {
       throw new Error('Cannot initialize client with error snapshot');
     }

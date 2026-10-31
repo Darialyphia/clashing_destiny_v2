@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Tutorial from '../client/tutorial/Tutorial.vue';
+import Tutorial from '@/tutorial/components/Tutorial.vue';
 import { missions } from './index.js';
 
 definePage({

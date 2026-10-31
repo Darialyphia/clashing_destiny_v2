@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import FancyButton from '@/ui/components/FancyButton.vue';
 import GameScene from '@/game/components/GameScene.vue';
-import { provideTutorial } from './useTutorial';
+import { provideTutorial } from '../../pages/client/tutorial/useTutorial';
 import TutorialHighlight from './TutorialHighlight.vue';
 import TutorialTextBox from './TutorialTextBox.vue';
 import TutorialGesture from './TutorialGesture.vue';
+import TutorialRetryButton from './TutorialRetryButton.vue';
 import SingleBattlefield from '@/game/components/MinionZone/SingleBattlefield.vue';
 import DoubleBattlefield from '@/game/components/MinionZone/DoubleBattlefield.vue';
 
@@ -42,6 +43,7 @@ onMounted(start);
 
   <TutorialTextBox />
   <TutorialGesture />
+  <TutorialRetryButton />
 </template>
 
 <style scoped lang="postcss">

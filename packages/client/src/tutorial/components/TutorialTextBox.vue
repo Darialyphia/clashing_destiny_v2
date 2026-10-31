@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useWindowSize } from '@vueuse/core';
 import FancyButton from '@/ui/components/FancyButton.vue';
-import { useTutorial } from './useTutorial';
+import { useTutorial } from '../../pages/client/tutorial/useTutorial';
 import { useGameState, useMyPlayer } from '@/game/composables/useGameClient';
 import { useFloating, shift, autoUpdate } from '@floating-ui/vue';
 
