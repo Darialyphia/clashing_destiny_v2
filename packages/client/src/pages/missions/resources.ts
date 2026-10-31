@@ -141,6 +141,7 @@ const startOpponentAI = (ctx: TutorialContext) => {
 export const resourcesTutorial: TutorialMission = {
   id: 'resources',
   name: 'Mission 2: Mana & Affinities',
+  nextMission: 'artifacts-secrets',
   options: {
     gameOptions: {
       players: [

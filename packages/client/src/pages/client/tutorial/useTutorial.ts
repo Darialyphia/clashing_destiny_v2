@@ -12,6 +12,7 @@ import {
   type TutorialStep,
   type TutorialTextBox
 } from '@game/engine/src/tutorial/v2/tutorial';
+import { GAME_PHASES } from '@game/engine/src/game/game.enums';
 import { useFxAdapter } from '@/game/composables/useFxAdapter';
 import { provideGameClient } from '@/game/composables/useGameClient';
 import type { Nullable, Override } from '@game/shared';
@@ -58,6 +59,9 @@ export type UseTutorialContext = {
   next: () => Promise<void>;
   status: Ref<string | null>;
   isCurrentStepFailed: Ref<boolean>;
+  isGameOver: Ref<boolean>;
+  // changes every time the game is recreated by a retry, components holding game state can use it as a key
+  gameKey: Ref<number>;
   start: () => Promise<void>;
   retry: () => Promise<void>;
 };
@@ -99,6 +103,7 @@ export const provideTutorial = (options: UseTutorialOptions) => {
       null) as Nullable<ClientTutorialTextBox>;
   });
   const currentStepError = ref<string | null>(null);
+  const gameKey = ref(0);
   let isDisposed = false;
 
   tutorial.value = new TutorialV2({
@@ -169,7 +174,14 @@ export const provideTutorial = (options: UseTutorialOptions) => {
       currentStepError.value = null;
       const snapshot = await tutorial.value.retry();
       await client.value.initialize(snapshot);
+      gameKey.value++;
     },
+    gameKey,
+    isGameOver: computed(
+      () =>
+        tutorial.value.ctx.game.gamePhaseSystem.getState() ===
+        GAME_PHASES.GAME_END
+    ),
     status: computed(() => tutorial.value.status),
     // the engine checks the step's failedCondition after each input and flags the tutorial as failed
     isCurrentStepFailed: computed(

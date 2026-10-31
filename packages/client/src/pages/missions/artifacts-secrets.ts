@@ -58,6 +58,7 @@ const makeOpponentScoreThenPass = (
 export const artifactsSecretsTutorial: TutorialMission = {
   id: 'artifacts-secrets',
   name: 'Mission 3: Artifacts & Secrets',
+  nextMission: 'locations',
   options: {
     gameOptions: {
       players: [

@@ -2,7 +2,7 @@
 import FancyButton from '@/ui/components/FancyButton.vue';
 import { useTutorial } from '../../pages/client/tutorial/useTutorial';
 
-const { isCurrentStepFailed, retry } = useTutorial();
+const { isCurrentStepFailed, isGameOver, retry } = useTutorial();
 
 const isRetrying = ref(false);
 const onClick = async () => {
@@ -17,7 +17,8 @@ const onClick = async () => {
 
 <template>
   <Transition>
-    <div v-if="isCurrentStepFailed" class="tutorial-retry">
+    <!-- when the game is over, the game over screen offers to retry instead -->
+    <div v-if="isCurrentStepFailed && !isGameOver" class="tutorial-retry">
       <p>Mission failed. Please try again.</p>
       <FancyButton
         text="Retry"

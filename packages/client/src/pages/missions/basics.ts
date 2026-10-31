@@ -14,6 +14,7 @@ import {
 export const basicsTutorial: TutorialMission = {
   id: 'basics',
   name: 'Mission 1: Basics',
+  nextMission: 'resources',
   options: {
     gameOptions: {
       players: [

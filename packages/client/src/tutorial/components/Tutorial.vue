@@ -9,16 +9,33 @@ import TutorialRetryButton from './TutorialRetryButton.vue';
 import SingleBattlefield from '@/game/components/MinionZone/SingleBattlefield.vue';
 import DoubleBattlefield from '@/game/components/MinionZone/DoubleBattlefield.vue';
 
-const { options } = defineProps<{
+const { options, nextMission } = defineProps<{
   options: Parameters<typeof provideTutorial>[0];
+  nextMission?: string;
 }>();
 
-const { client, currentStepError, start } = provideTutorial(options);
+const { client, currentStepError, start, retry, gameKey } =
+  provideTutorial(options);
 onMounted(start);
+
+const isRetrying = ref(false);
+const onRetry = async () => {
+  isRetrying.value = true;
+  try {
+    await retry();
+  } finally {
+    isRetrying.value = false;
+  }
+};
 </script>
 
 <template>
-  <GameScene v-if="client.isReady" :options="{ teachingMode: false }">
+  <!-- keyed so the game over screen goes away after a retry -->
+  <GameScene
+    v-if="client.isReady"
+    :key="gameKey"
+    :options="{ teachingMode: false }"
+  >
     <template #menu>
       <FancyButton
         text="Quit"
@@ -31,6 +48,25 @@ onMounted(start);
     <template #battlefield>
       <DoubleBattlefield v-if="options.boardType === 'double'" />
       <SingleBattlefield v-else :has-supply="options.boardType === 'single'" />
+    </template>
+
+    <template #game-over="{ hasWon }">
+      <p class="game-over-title">{{ hasWon ? 'Mission complete!' : 'Mission failed.' }}</p>
+      <div class="game-over-actions">
+        <FancyButton
+          v-if="hasWon && nextMission"
+          text="Next Mission"
+          :to="{ name: 'TutorialMission', params: { id: nextMission } }"
+        />
+        <FancyButton
+          v-if="!hasWon"
+          text="Retry"
+          variant="error"
+          :is-loading="isRetrying"
+          @click="onRetry"
+        />
+        <FancyButton text="Main Menu" :to="{ name: 'ClientHome' }" />
+      </div>
     </template>
   </GameScene>
   <TutorialHighlight />
@@ -47,6 +83,17 @@ onMounted(start);
 </template>
 
 <style scoped lang="postcss">
+/* GameScene's scoped styles don't reach slot content */
+.game-over-title {
+  color: white;
+}
+
+.game-over-actions {
+  display: flex;
+  gap: var(--size-4);
+  margin-block-start: var(--size-6);
+}
+
 .tutorial-error {
   z-index: 10;
   position: fixed;

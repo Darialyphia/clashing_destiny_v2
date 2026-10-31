@@ -8,6 +8,8 @@ export type TutorialMission = {
   id: string;
   name: string;
   options: UseTutorialOptions;
+  // id of the mission offered to the player once this one is won
+  nextMission?: string;
 };
 
 export const missions = [

@@ -8,13 +8,19 @@ definePage({
 
 const route = useRoute<'TutorialMission'>();
 
-const options = computed(
-  () => missions.find(mission => mission.id === route.params.id)?.options
+const mission = computed(() =>
+  missions.find(mission => mission.id === route.params.id)
 );
 </script>
 
 <template>
-  <Tutorial v-if="options" :options="options" />
+  <!-- keyed so going to the next mission starts a new tutorial instead of reusing this one -->
+  <Tutorial
+    v-if="mission"
+    :key="mission.id"
+    :options="mission.options"
+    :next-mission="mission.nextMission"
+  />
   <div v-else class="page">
     <section class="surface px-8 text-center">
       <h1>Tutorial Mission Not Found</h1>
