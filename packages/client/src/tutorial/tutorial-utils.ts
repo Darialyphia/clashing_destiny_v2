@@ -420,3 +420,20 @@ export const startOpponentAI = (ctx: TutorialContext) => {
   const stop = ctx.client.onUpdateCompleted(run);
   void run();
 };
+
+/**
+ * The free play portion at the end of a mission must be won before the turn ends.
+ * Call in the step setup, then use isFreePlayFailed as its failedCondition.
+ */
+export const startFreePlay = (ctx: TutorialContext) => {
+  ctx.meta.freePlayTurn = ctx.game.turnSystem.elapsedTurns;
+};
+
+export const isFreePlayFailed = (ctx: TutorialContext) => {
+  if (ctx.game.gamePhaseSystem.getState() === GAME_PHASES.GAME_END) {
+    return !ctx.game.gamePhaseSystem.winners.some(player =>
+      player.equals(ctx.game.playerSystem.player1)
+    );
+  }
+  return ctx.game.turnSystem.elapsedTurns > ctx.meta.freePlayTurn;
+};

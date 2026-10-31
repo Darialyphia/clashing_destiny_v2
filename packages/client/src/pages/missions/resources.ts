@@ -11,7 +11,9 @@ import {
   validateMovingMinion,
   validatePlayingCard,
   validatePlayingSpell,
-  validateSupplyCard
+  validateSupplyCard,
+  startFreePlay,
+  isFreePlayFailed
 } from '../../tutorial/tutorial-utils';
 import { CARD_LOCATIONS } from '@game/engine/src/card/card.enums';
 import type { MinionCard } from '@game/engine/src/card/entities/minion.entity';
@@ -1104,9 +1106,10 @@ export const resourcesTutorial: TutorialMission = {
       {
         id: 11,
         canRetry: () => false,
-        failedCondition: () => false,
+        failedCondition: isFreePlayFailed,
         meta: {},
         async setup(ctx) {
+          startFreePlay(ctx);
           ctx.meta.shaman = ctx.game.playerSystem.player2.minions.find(
             minion => minion.blueprintId === 'bloodbound-shaman'
           );

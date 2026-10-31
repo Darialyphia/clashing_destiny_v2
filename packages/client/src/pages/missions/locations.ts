@@ -17,6 +17,8 @@ import {
   validatePlayingCard,
   validateScoring,
   validateSupplyCard,
+  startFreePlay,
+  isFreePlayFailed,
   type BattlefieldZone
 } from '../../tutorial/tutorial-utils';
 import { CARD_LOCATIONS } from '@game/engine/src/card/card.enums';
@@ -751,9 +753,10 @@ export const locationsTutorial: TutorialMission = {
       {
         id: 6,
         canRetry: () => false,
-        failedCondition: () => false,
+        failedCondition: isFreePlayFailed,
         meta: {},
         async setup(ctx) {
+          startFreePlay(ctx);
           startOpponentAI(ctx);
         },
         teardown() {},

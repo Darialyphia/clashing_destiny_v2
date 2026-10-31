@@ -18,6 +18,7 @@ const onClick = async () => {
 <template>
   <Transition>
     <div v-if="isCurrentStepFailed" class="tutorial-retry">
+      <p>Mission failed. Please try again.</p>
       <FancyButton
         text="Retry"
         variant="error"
@@ -34,9 +35,12 @@ const onClick = async () => {
   /* above the text boxes */
   z-index: 10;
   position: fixed;
-  left: 50%;
-  top: 50%;
-  translate: -50% -50%;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: var(--size-4);
+  background-color: rgba(0, 0, 0, 0.5);
 
   &.v-enter-active,
   &.v-leave-active {
@@ -49,5 +53,11 @@ const onClick = async () => {
     opacity: 0;
     scale: 0.8;
   }
+}
+
+p {
+  text-align: center;
+  font-size: var(--font-size-6);
+  font-weight: var(--font-weight-5);
 }
 </style>
