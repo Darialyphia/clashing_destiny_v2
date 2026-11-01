@@ -1,10 +1,6 @@
 import type { Control } from '@/shared/composables/useKeyboardControl';
 
 export const defaultKeyBindings = {
-  showHand: {
-    label: 'Shows / hides your hand',
-    control: { key: 'KeyC', modifier: null }
-  },
   toggleDiscardPile: {
     label: 'Shows / hides the discard pile',
     control: { key: 'KeyD', modifier: null }
@@ -21,17 +17,9 @@ export const defaultKeyBindings = {
     label: "Shows / hides your opponent's banish pile",
     control: { key: 'KeyF', modifier: 'shift' }
   },
-  toggleDestinyDeck: {
-    label: 'Shows / hides the destiny deck',
-    control: { key: 'KeyG', modifier: null }
-  },
   pass: {
     label: 'Pass',
     control: { key: 'KeyP', modifier: null }
-  },
-  showFullCardText: {
-    label: 'Show full card text when hovering cards',
-    control: { key: 'ShiftLeft', modifier: null }
   },
   openSettings: {
     label: 'Open settings',

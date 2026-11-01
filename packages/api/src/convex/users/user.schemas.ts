@@ -11,5 +11,11 @@ export const userSchemas = {
   })
     .index('by_username', ['username'])
     .index('by_slug', ['slug'])
-    .index('by_email', ['email'])
+    .index('by_email', ['email']),
+
+  userSettings: defineTable({
+    userId: v.id('users'),
+    settings: v.any(),
+    version: v.number()
+  }).index('by_user_id', ['userId'])
 };

@@ -150,6 +150,7 @@ useFxEvent(FX_EVENTS.PRE_AFTER_SCORE, async event => {
   <button
     class="battlefield"
     :class="{
+      'is-right': battlefield.zone === CARD_LOCATIONS.RIGHT_BATTLEFIELD,
       win: battlefield.commandmentScore > battlefield.opponentCommandmentScore,
       lose: battlefield.commandmentScore < battlefield.opponentCommandmentScore
     }"
@@ -226,14 +227,16 @@ useFxEvent(FX_EVENTS.PRE_AFTER_SCORE, async event => {
   }
 }
 
+/* stacked beside the location card, facing the middle column, so they never cover the head of a minion in the middle space */
 .my-score,
 .opponent-score {
   position: absolute;
   z-index: 0;
-  /* centered with margins rather than translate, which gsap would fold into its transforms when popping the counter */
-  left: 0;
-  right: 0;
-  margin-inline: auto;
+  left: calc(100% + 6px);
+  .battlefield.is-right & {
+    left: auto;
+    right: calc(100% + 6px);
+  }
   font-size: 24px;
   font-weight: bold;
   color: var(--color-text);
@@ -243,12 +246,12 @@ useFxEvent(FX_EVENTS.PRE_AFTER_SCORE, async event => {
   aspect-ratio: 1;
 }
 .opponent-score {
-  top: -19px;
+  top: 0;
   background: url('@/assets/ui/opponent-score.png');
   background-size: cover;
 }
 .my-score {
-  bottom: -19px;
+  bottom: 0;
   background: url('@/assets/ui/my-score.png');
   background-size: cover;
 }
