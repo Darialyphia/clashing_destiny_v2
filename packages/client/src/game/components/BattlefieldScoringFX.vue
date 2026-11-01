@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useSoundEffect } from '@/shared/composables/useSoundEffect';
 import gsap from 'gsap';
 
 const MAX_MOTES = 6;
@@ -19,6 +20,8 @@ const waveEl = useTemplateRef('wave');
 const shineBandEl = useTemplateRef('shineBand');
 const gainEl = useTemplateRef('gain');
 const moteEls = useTemplateRef<HTMLElement[]>('motes');
+
+const scoreSound = useSoundEffect('score');
 
 const getCenter = (el: HTMLElement) => {
   const rect = el.getBoundingClientRect();
@@ -136,6 +139,7 @@ const play = ({
 
       // the motion path starts from the mote's current position, so it has to sit on the minion beforehand
       gsap.set(mote, { x: from.x, y: from.y });
+      scoreSound.value?.play();
       tl.fromTo(
         mote,
         { scale: 0, autoAlpha: 1 },

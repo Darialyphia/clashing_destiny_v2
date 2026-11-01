@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useSoundEffect } from '@/shared/composables/useSoundEffect';
 import gsap from 'gsap';
 
 const SPARK_COUNT = 14;
@@ -10,10 +11,9 @@ const ringEl = useTemplateRef('ring');
 const waveEl = useTemplateRef('wave');
 const sparkEls = useTemplateRef<HTMLElement[]>('sparks');
 
-/**
- * Drops the card onto its space.
- * Resolves as soon as the card has landed, the rest of the fx keeps playing in the background.
- */
+const playSound = useSoundEffect('play-card');
+const playSound2 = useSoundEffect('play-card-2');
+
 const play = (
   card: HTMLElement,
   { onComplete }: { onComplete?: () => void } = {}
@@ -25,7 +25,6 @@ const play = (
 
     const tl = gsap.timeline({
       onComplete() {
-        // restoring the transition first lets the card ease into its resting state (exhausted, selected...)
         card.style.transition = '';
         gsap.set(card, {
           clearProps: 'transform,filter,opacity,visibility,zIndex'
@@ -35,6 +34,10 @@ const play = (
     });
 
     // the card falls down a beam of light while a ring closes in on its space
+    playSound.value?.play();
+    setTimeout(() => {
+      playSound2.value?.play();
+    }, 500);
     tl.fromTo(
       card,
       {

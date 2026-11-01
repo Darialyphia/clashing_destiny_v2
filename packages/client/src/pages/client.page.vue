@@ -3,6 +3,7 @@ import { useAuth } from '@/auth/composables/useAuth';
 import { useCurrentGameRedirect, useMe } from '@/auth/composables/useMe';
 import PlayerMatchmakingStatus from '@/player/components/PlayerMatchmakingStatus.vue';
 import ClientParallaxBackground from './ClientParallaxBackground.vue';
+import { provideUserSettings } from '@/shared/composables/useUserSettings.js';
 
 definePage({
   name: 'Client',
@@ -19,6 +20,7 @@ watch(error, err => {
   }
 });
 
+provideUserSettings();
 useCurrentGameRedirect();
 </script>
 

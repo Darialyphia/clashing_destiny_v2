@@ -18,7 +18,7 @@ export const USER_SETTINGS_INJECTION_KEY = Symbol(
   'user_settings'
 ) as InjectionKey<UserSettingsContext>;
 
-export const useUserSettingsProvider = () => {
+export const provideUserSettings = () => {
   const { sessionId } = useAuth();
 
   const settings = ref(getDefaultSettings());

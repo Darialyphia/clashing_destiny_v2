@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import gsap from 'gsap';
+import { useSoundEffect } from '@/shared/composables/useSoundEffect';
 import type { PlayerViewModel } from '@game/engine/src/client/view-models/player.model';
 import {
   useGameClient,
@@ -47,8 +48,10 @@ const onMouseup = (event: MouseEvent) => {
 };
 
 const isHovered = ref(false);
+const hoverSound = useSoundEffect('valid-drop');
 const onMouseenter = () => {
   isHovered.value = true;
+  if (ui.value.draggedCard) hoverSound.value?.play();
 };
 
 const onMouseleave = () => {
@@ -62,11 +65,14 @@ const GLOW_COLOR = '255, 212, 59';
 // so we pulse an inner wrapper instead
 const manaPulseEl = useTemplateRef('manaPulse');
 
+const supplyCardSound = useSoundEffect('supply-card');
+
 const onCardEnter = (el: Element, done: () => void) => {
   const card = el as HTMLElement;
   const ring = card.querySelector('.supply-card-ring');
   const sparks = card.querySelectorAll<HTMLElement>('.supply-card-spark');
 
+  supplyCardSound.value?.play();
   const tl = gsap.timeline({
     onComplete() {
       gsap.set(card, { clearProps: 'transform,filter,opacity,visibility' });
@@ -195,7 +201,8 @@ const onCardEnter = (el: Element, done: () => void) => {
         <rt-mana>{{ player.mana }}</rt-mana>
       </div>
     </div>
-    <TransitionGroup :css="false" @enter="onCardEnter">
+    <!-- keyed by player so that swapping perspective (sandbox) remounts the group instead of playing enter fx for every card -->
+    <TransitionGroup :key="player.id" :css="false" @enter="onCardEnter">
       <div v-for="card in player.supplyZone" :key="card.id" class="supply-card">
         <div class="supply-card-ring" />
         <InspectableCard :card-id="card.id" side="top" align="center">

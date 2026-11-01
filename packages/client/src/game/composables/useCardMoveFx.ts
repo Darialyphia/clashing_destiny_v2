@@ -1,10 +1,12 @@
 import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
 import { useFxEvent, useGameUi } from './useGameClient';
 import type { BoardSpaceViewModel } from '@game/engine/src/client/view-models/board-space.model';
+import { useSoundEffect } from '@/shared/composables/useSoundEffect';
 
 export const useCardMoveFx = (cell: Ref<BoardSpaceViewModel>) => {
   const ui = useGameUi();
   const isMovingUnit = ref(false);
+  const moveSound = useSoundEffect('move-card');
 
   useFxEvent(FX_EVENTS.CARD_AFTER_MOVE, async event => {
     // Source cell: just remove the unit
@@ -17,6 +19,7 @@ export const useCardMoveFx = (cell: Ref<BoardSpaceViewModel>) => {
     // Destination cell: add unit and animate from old position
     if (event.to.id === cell.value.id) {
       isMovingUnit.value = true;
+      moveSound.value?.play();
       // Get the old position before any DOM changes
       const oldElement = ui.value.DOMSelectors.cardOnBoard(event.card).element;
       const oldRect = oldElement?.getBoundingClientRect();

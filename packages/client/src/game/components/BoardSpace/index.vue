@@ -13,6 +13,7 @@ import type { BoardSpaceViewModel } from '@game/engine/src/client/view-models/bo
 import { useCellHighlights } from '../../composables/useCellHighlights';
 import BoardCard from '../BoardCard/index.vue';
 import { useFloating, autoUpdate } from '@floating-ui/vue';
+import { useSoundEffect } from '@/shared/composables/useSoundEffect';
 
 const { cellId } = defineProps<{
   cellId: string;
@@ -45,6 +46,14 @@ const { floatingStyles } = useFloating(rootEl, errorMessageEl, {
   strategy: 'absolute',
   whileElementsMounted: autoUpdate
 });
+
+const hoverSound = useSoundEffect('valid-drop', {
+  rateVariance: 0.025,
+  throttle: 150
+});
+const onMouseEnter = () => {
+  if (isTargetable && ui.value.draggedCard) hoverSound.value?.play();
+};
 </script>
 
 <template>
@@ -61,6 +70,7 @@ const { floatingStyles } = useFloating(rootEl, errorMessageEl, {
     ref="root"
     @mouseup="handleMouseup"
     @mousedown="dragSelection.onMousedown"
+    @mouseenter="onMouseEnter"
   >
     <BoardCard
       v-if="cell.card"

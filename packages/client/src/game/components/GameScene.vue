@@ -34,6 +34,7 @@ import BattleLog from './BattleLog.vue';
 import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
 import FancyButton from '@/ui/components/FancyButton.vue';
 import HighlightedCard from './HighlightedCard.vue';
+import { useGlobalGameSounds } from '../composables/useGlobalGameSounds';
 
 const { clocks } = defineProps<{
   clocks?: Record<string, PlayerClockState>;
@@ -42,6 +43,7 @@ const { clocks } = defineProps<{
   };
 }>();
 
+useGlobalGameSounds();
 const ui = useGameUi();
 const { client } = useGameClient();
 const state = useGameState();

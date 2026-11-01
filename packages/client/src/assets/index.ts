@@ -2,6 +2,11 @@ export const rawAssets = import.meta.glob('./**/*.{png,jpg}', {
   eager: true,
   query: 'url'
 }) as Record<string, { default: string }>;
+
+export const rawSoundAssets = import.meta.glob('./**/*.{mp3,ogg}', {
+  eager: true,
+  query: 'url'
+}) as Record<string, { default: string }>;
 export class Asset {
   constructor(public path: string) {}
 
@@ -20,13 +25,32 @@ for (const [path, url] of Object.entries(rawAssets)) {
   assets[cleanedPath] = new Asset(url.default);
 }
 
-export const preloadAsset = (path: string) => {
+for (const [path, url] of Object.entries(rawSoundAssets)) {
+  const cleanedPath = path
+    .replace('.mp3', '')
+    .replace('.ogg', '')
+    .replace('./', '');
+
+  assets[cleanedPath] = new Asset(url.default);
+}
+
+export const preloadImage = (path: string) => {
   const img = new Image();
   img.src = assets[path].path;
 
   return new Promise<void>((resolve, reject) => {
     img.onload = () => resolve();
     img.onerror = err => reject(err);
+  });
+};
+
+export const preloadSound = (path: string) => {
+  const audio = new Audio();
+  audio.src = assets[path].path;
+
+  return new Promise<void>((resolve, reject) => {
+    audio.oncanplaythrough = () => resolve();
+    audio.onerror = err => reject(err);
   });
 };
 

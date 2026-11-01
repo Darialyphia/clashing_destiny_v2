@@ -9,6 +9,7 @@ import {
 import GameCard from './GameCard.vue';
 import { GAME_PHASES } from '@game/engine/src/game/game.enums';
 import CardBack from '@/card/components/CardBack.vue';
+import { useSoundEffect } from '@/shared/composables/useSoundEffect';
 const {
   card,
   isInteractive,
@@ -39,12 +40,15 @@ const violationWarning = ref('');
 //   }, 2500);
 // };
 
+const dragStartSound = useSoundEffect('card-drag-start');
+
 let startY = 0;
 const onMousemove = (e: MouseEvent) => {
   if (!card) return;
   const deltaY = startY - e.clientY;
   if (deltaY >= DRAG_THRESHOLD_PX && !ui.value.draggedCard) {
     ui.value.startDraggingCard(card);
+    dragStartSound.value?.play();
     card.play();
     document.body.removeEventListener('mousemove', onMousemove);
   }
