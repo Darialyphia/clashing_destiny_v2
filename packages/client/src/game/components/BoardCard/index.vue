@@ -69,6 +69,7 @@ const playFx = useTemplateRef('playFx');
 
 const {
   isBeingPlayed,
+  isScoring,
   isAttacking,
   isTakingDamage,
   isGettingHealed,
@@ -107,6 +108,7 @@ const isFaceDown = computed(
         'is-exhausted': card.isExhausted,
         'is-selected': ui.selectedCard?.equals(card),
         'is-being-played': isBeingPlayed,
+        'is-scoring': isScoring,
         'is-attacking': isAttacking,
         'is-taking-damage': isTakingDamage,
         'is-getting-healed': isGettingHealed,
@@ -195,7 +197,7 @@ const isFaceDown = computed(
     box-shadow: 0 6px 30px 4px black;
   }
 
-  &.is-exhausted:not(.is-being-played) {
+  &.is-exhausted:not(.is-being-played):not(.is-scoring) {
     rotate: 5deg;
 
     &:deep(.art) {

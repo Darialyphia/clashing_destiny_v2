@@ -131,8 +131,22 @@ export const useBoardCardFxEvents = (
     });
   });
 
+  // a scoring minion is exhausted right before scoring, but only shows it once its influence
+  // has been transferred, which the battlefield plays on PRE_AFTER_SCORE
+  const isScoring = ref(false);
+  useFxEvent(FX_EVENTS.PRE_BEFORE_SCORE, async event => {
+    if (event.card !== card.id) return;
+    isScoring.value = true;
+  });
+  useFxEvent(FX_EVENTS.AFTER_SCORE, async event => {
+    if (event.card !== card.id) return;
+    isScoring.value = false;
+  });
+
   useFxEvent(FX_EVENTS.CARD_WAKE_UP, async event => {
     if (event.card !== card.id) return;
+    // in case the scoring never resolved
+    isScoring.value = false;
     card.update({ isExhausted: false });
   });
 
@@ -164,6 +178,7 @@ export const useBoardCardFxEvents = (
 
   return {
     isBeingPlayed,
+    isScoring,
     isAttacking,
     isTakingDamage,
     isGettingHealed,

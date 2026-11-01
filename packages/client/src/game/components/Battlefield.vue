@@ -11,7 +11,7 @@ import {
   useOpponentPlayer
 } from '../composables/useGameClient';
 import BoardCard from './BoardCard/index.vue';
-import { waitFor } from '@game/shared';
+import BattlefieldScoringFX from './BattlefieldScoringFX.vue';
 import { CARD_LOCATIONS } from '@game/engine/src/card/card.enums';
 
 const { battlefield } = defineProps<{
@@ -42,7 +42,6 @@ const onMouseup = (e: MouseEvent) => {
 const myPlayer = useMyPlayer();
 const opponent = useOpponentPlayer();
 
-const scoringPlayer = ref<string | null>(null);
 const myScore = ref(battlefield.commandmentScore);
 const opponentScore = ref(battlefield.opponentCommandmentScore);
 
@@ -73,7 +72,13 @@ watch(
   }
 );
 
-useFxEvent(FX_EVENTS.AFTER_SCORE, async event => {
+const myScoreEl = useTemplateRef('myScoreEl');
+const opponentScoreEl = useTemplateRef('opponentScoreEl');
+const scoringFx = useTemplateRef('scoringFx');
+
+// played before AFTER_SCORE so the scoring minion only shows as exhausted
+// once its influence has been transferred (see useBoardCardFx)
+useFxEvent(FX_EVENTS.PRE_AFTER_SCORE, async event => {
   const card = state.value.entities[event.card] as CardViewModel;
 
   const battlefields = [
@@ -86,6 +91,37 @@ useFxEvent(FX_EVENTS.AFTER_SCORE, async event => {
     bf => bf.id === event.battlefield
   )!;
   if (scoredBattlefield.zone !== battlefield.zone) return;
+
+  const isMine = card.player.equals(myPlayer.value);
+  const previousScore = isMine
+    ? battlefield.commandmentScore
+    : battlefield.opponentCommandmentScore;
+  const otherScore = isMine
+    ? battlefield.opponentCommandmentScore
+    : battlefield.commandmentScore;
+  const displayedScore = isMine ? myScore : opponentScore;
+
+  const minion = ui.value.DOMSelectors.cardOnBoard(event.card).element;
+  const location = ui.value.DOMSelectors.cardOnBoard(event.destinyCard).element;
+  const scorerCounter = isMine ? myScoreEl.value : opponentScoreEl.value;
+  const otherCounter = isMine ? opponentScoreEl.value : myScoreEl.value;
+  if (minion && location && scorerCounter && otherCounter && scoringFx.value) {
+    await scoringFx.value.play({
+      minion,
+      badge:
+        ui.value.DOMSelectors.cardCommandment(event.card).element ?? minion,
+      location,
+      scorerCounter,
+      otherCounter,
+      amount: event.newScore - previousScore,
+      isAlly: isMine,
+      isTakingTheLead:
+        previousScore <= otherScore && event.newScore > otherScore,
+      onTick: amount => {
+        displayedScore.value += amount;
+      }
+    });
+  }
 
   // update the battlefield that was scored, not always the left one
   const key =
@@ -107,9 +143,6 @@ useFxEvent(FX_EVENTS.AFTER_SCORE, async event => {
       }
     }
   });
-  scoringPlayer.value = card.player.id;
-  await waitFor(1000);
-  scoringPlayer.value = null;
 });
 </script>
 
@@ -124,7 +157,9 @@ useFxEvent(FX_EVENTS.AFTER_SCORE, async event => {
   >
     <BoardCard v-if="battlefield.destinyCard" :card="battlefield.destinyCard" />
 
-    <div class="my-score" :class="{ scoring: scoringPlayer === myPlayer.id }">
+    <BattlefieldScoringFX ref="scoringFx" />
+
+    <div ref="myScoreEl" class="my-score">
       <div
         :id="
           ui.DOMSelectors.influence(
@@ -142,10 +177,7 @@ useFxEvent(FX_EVENTS.AFTER_SCORE, async event => {
         {{ myScore }}
       </div>
     </div>
-    <div
-      class="opponent-score"
-      :class="{ scoring: scoringPlayer === opponent.id }"
-    >
+    <div ref="opponentScoreEl" class="opponent-score">
       <div
         class="dual-text"
         :data-text="opponentScore"
@@ -197,8 +229,11 @@ useFxEvent(FX_EVENTS.AFTER_SCORE, async event => {
 .my-score,
 .opponent-score {
   position: absolute;
-  left: 50%;
-  translate: -50% 0;
+  z-index: 0;
+  /* centered with margins rather than translate, which gsap would fold into its transforms when popping the counter */
+  left: 0;
+  right: 0;
+  margin-inline: auto;
   font-size: 24px;
   font-weight: bold;
   color: var(--color-text);
@@ -206,9 +241,6 @@ useFxEvent(FX_EVENTS.AFTER_SCORE, async event => {
   place-content: center;
   width: 38px;
   aspect-ratio: 1;
-  &.scoring {
-    animation: scoring 0.4s var(--ease-3);
-  }
 }
 .opponent-score {
   top: -19px;
@@ -219,17 +251,5 @@ useFxEvent(FX_EVENTS.AFTER_SCORE, async event => {
   bottom: -19px;
   background: url('@/assets/ui/my-score.png');
   background-size: cover;
-}
-
-@keyframes scoring {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.5);
-  }
-  100% {
-    transform: scale(1);
-  }
 }
 </style>
