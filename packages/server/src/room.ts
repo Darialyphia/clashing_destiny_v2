@@ -2,7 +2,7 @@ import { GAME_STATUS, type GameId, type GameStatus } from '@game/api';
 import { Game, type GameOptions } from '@game/engine/src/game/game';
 import type { Ioserver, IoSocket } from './io';
 import { TypedEventEmitter } from '@game/engine/src/utils/typed-emitter';
-import type { AnyFunction, EmptyObject } from '@game/shared';
+import type { EmptyObject } from '@game/shared';
 import type { SerializedInput } from '@game/engine/src/input/input-system';
 import { GAME_EVENTS } from '@game/engine/src/game/game.events';
 import { consoleLogger } from '@game/engine/src/utils/logger';
@@ -57,10 +57,8 @@ export class Room {
 
   private hasStarted = false;
 
-  callbackSubscriptionsBysocket = new Map<
-    IoSocket,
-    { eventName: string; callback: AnyFunction }[]
-  >();
+  // listeners registered for each socket, removed when the socket leaves the room
+  private socketCleanups = new Map<IoSocket, Array<() => void>>();
 
   constructor(
     readonly id: string,
@@ -96,14 +94,23 @@ export class Room {
     await this.engine.shutdown();
     this.clockManager.shutdown();
 
-    this.callbackSubscriptionsBysocket.forEach((subscriptions, socket) => {
-      subscriptions.forEach(({ eventName, callback }) => {
-        socket.off(eventName, callback);
-      });
-    });
-    this.callbackSubscriptionsBysocket.clear();
+    for (const socket of [...this.socketCleanups.keys()]) {
+      this.cleanupSocket(socket);
+    }
 
     this.io.in(this.id).disconnectSockets();
+  }
+
+  private addSocketCleanup(socket: IoSocket, cleanup: () => void) {
+    if (!this.socketCleanups.has(socket)) {
+      this.socketCleanups.set(socket, []);
+    }
+    this.socketCleanups.get(socket)!.push(cleanup);
+  }
+
+  private cleanupSocket(socket: IoSocket) {
+    this.socketCleanups.get(socket)?.forEach(cleanup => cleanup());
+    this.socketCleanups.delete(socket);
   }
 
   initializeEngine() {
@@ -197,9 +204,12 @@ export class Room {
       snapshot: state,
       history: this.engine.inputSystem.serialize()
     });
-    this.engine.subscribeOmniscient(snapshot => {
-      spectatorSocket.emit('gameSnapshot', snapshot);
-    });
+    this.addSocketCleanup(
+      spectatorSocket,
+      this.engine.subscribeOmniscient(snapshot => {
+        spectatorSocket.emit('gameSnapshot', snapshot);
+      })
+    );
   }
 
   private handlePlayerSubscription(playerSocket: IoSocket) {
@@ -210,9 +220,12 @@ export class Room {
         history: this.engine.inputSystem.serialize()
       });
 
-      this.engine.subscribeOmniscient(snapshot => {
-        playerSocket.emit('gameSnapshot', snapshot);
-      });
+      this.addSocketCleanup(
+        playerSocket,
+        this.engine.subscribeOmniscient(snapshot => {
+          playerSocket.emit('gameSnapshot', snapshot);
+        })
+      );
     } else {
       const state = this.engine.snapshotSystem.getLatestSnapshotForPlayer(
         playerSocket.data.user.id
@@ -222,24 +235,21 @@ export class Room {
         history: this.engine.inputSystem.serialize()
       });
 
-      this.engine.subscribeForPlayer(playerSocket.data.user.id, snapshot => {
-        playerSocket.emit('gameSnapshot', snapshot);
-      });
+      this.addSocketCleanup(
+        playerSocket,
+        this.engine.subscribeForPlayer(playerSocket.data.user.id, snapshot => {
+          playerSocket.emit('gameSnapshot', snapshot);
+        })
+      );
     }
 
-    if (!this.callbackSubscriptionsBysocket.has(playerSocket)) {
-      this.callbackSubscriptionsBysocket.set(playerSocket, []);
-    }
     const onInput = async (input: SerializedInput) => {
       this.clockManager.recordPlayerInput(playerSocket.data.user.id);
       input.payload.playerId = playerSocket.data.user.id; // Ensure playerId is set correctly to prevent cheating
       await this.engine.inputSystem.dispatch(input);
     };
-    this.callbackSubscriptionsBysocket.get(playerSocket)!.push({
-      eventName: 'gameInput',
-      callback: onInput
-    });
     playerSocket.on('gameInput', onInput);
+    this.addSocketCleanup(playerSocket, () => playerSocket.off('gameInput', onInput));
   }
 
   async join(socket: IoSocket, type: 'spectator' | 'player') {
@@ -251,14 +261,13 @@ export class Room {
   }
 
   async leave(socket: IoSocket) {
-    if (this.players.has(socket.data.user.id)) {
+    // a reconnected player may already have replaced this socket
+    if (this.players.get(socket.data.user.id)?.socket === socket) {
       this.players.delete(socket.data.user.id);
-      await socket.leave(this.id);
     }
-    if (this.spectators.has(socket)) {
-      this.spectators.delete(socket);
-      await socket.leave(this.id);
-    }
+    this.spectators.delete(socket);
+    this.cleanupSocket(socket);
+    await socket.leave(this.id);
   }
 
   private async joinAsPlayer(socket: IoSocket) {
@@ -267,6 +276,14 @@ export class Room {
       console.error('Room is full, cannot join as player');
       return;
     }
+
+    const previousSocket = this.players.get(socket.data.user.id)?.socket;
+    if (previousSocket === socket) return;
+    // the player reconnected before the server noticed their previous socket was gone
+    if (previousSocket) {
+      await this.leave(previousSocket);
+    }
+
     if (this.players.size >= this.options.game.players.length) {
       console.error('Room is full, cannot join as player');
       return;
@@ -283,14 +300,8 @@ export class Room {
     const onDisconnect = async () => {
       await this.leave(socket);
     };
-    if (!this.callbackSubscriptionsBysocket.has(socket)) {
-      this.callbackSubscriptionsBysocket.set(socket, []);
-    }
-    this.callbackSubscriptionsBysocket.get(socket)!.push({
-      eventName: 'disconnect',
-      callback: onDisconnect
-    });
     socket.on('disconnect', onDisconnect);
+    this.addSocketCleanup(socket, () => socket.off('disconnect', onDisconnect));
 
     if (this.options.game.status === GAME_STATUS.ONGOING) {
       this.handlePlayerSubscription(socket);
@@ -319,15 +330,9 @@ export class Room {
     const onDisconnect = async () => {
       await this.leave(socket);
     };
-
-    if (!this.callbackSubscriptionsBysocket.has(socket)) {
-      this.callbackSubscriptionsBysocket.set(socket, []);
-    }
-    this.callbackSubscriptionsBysocket.get(socket)!.push({
-      eventName: 'disconnect',
-      callback: onDisconnect
-    });
     socket.on('disconnect', onDisconnect);
+    this.addSocketCleanup(socket, () => socket.off('disconnect', onDisconnect));
+
     if (this.options.game.status === GAME_STATUS.ONGOING) {
       this.handleSpectatorSubscription(socket);
     }

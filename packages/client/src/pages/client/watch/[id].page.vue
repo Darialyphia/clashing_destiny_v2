@@ -33,5 +33,8 @@ const { data: gameInfos, error } = useGameInfos(
       <FancyButton :href="href" text="Back to Home" @click="navigate" />
     </RouterLink>
   </div>
+  <p v-else-if="gameInfos?.status === GAME_STATUS.INITIALIZING">
+    The game is being prepared...
+  </p>
   <SpectatorGame v-else-if="gameInfos" :game="gameInfos" />
 </template>

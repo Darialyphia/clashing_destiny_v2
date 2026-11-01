@@ -59,28 +59,29 @@ export const useGameSocket = () => {
     })
   ) as Ref<Socket<ServerToClientEvents, ClientToServerEvents>>;
 
+  // the game page only mounts once the game server has created the room, so it can be joined right away.
+  // joining on every connection puts the player back in the game after a reconnection
+  socket.value.on('connect', () => {
+    socketError.value = null;
+    socket.value.emit('join', {
+      gameId: me.value.currentGame!.id as GameId,
+      type: 'player'
+    });
+  });
+  socket.value.on('gameInitialState', data => {
+    console.log('Received initial game state from server', data);
+  });
+  socket.value.on('connect_error', err => {
+    socketError.value = err.message;
+  });
+  socket.value.on('error', err => {
+    socketError.value = err;
+  });
+
   until(auth.sessionId)
     .toBeTruthy()
     .then(() => {
       socket.value.connect();
-
-      // @HACK to give time to the game server to register the game room from convex update.
-      // This should be fixed by adding a new status to the game : CREATED => WAITING_FOR_PLAYERS so that clients know when it's safe to join
-      setTimeout(() => {
-        socket.value.emit('join', {
-          gameId: me.value.currentGame!.id as GameId,
-          type: 'player'
-        });
-      }, 2000);
-      socket.value.on('gameInitialState', data => {
-        console.log('Received initial game state from server', data);
-      });
-      socket.value.on('connect_error', err => {
-        socketError.value = err.message;
-      });
-      socket.value.on('error', err => {
-        socketError.value = err;
-      });
     });
 
   onUnmounted(() => {

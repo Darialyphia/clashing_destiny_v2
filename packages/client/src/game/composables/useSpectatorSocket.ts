@@ -43,26 +43,25 @@ export const useSpectatorSocket = (gameId: GameId) => {
     })
   ) as Ref<Socket<ServerToClientEvents, ClientToServerEvents>>;
 
+  // the watch page only mounts once the game server has created the room, so it can be joined right away.
+  // joining on every connection puts the spectator back in the game after a reconnection
+  socket.value.on('connect', () => {
+    socket.value.emit('join', {
+      gameId,
+      type: 'spectator'
+    });
+  });
+  socket.value.on('connect_error', err => {
+    console.log('socket connect error', err);
+  });
+  socket.value.on('error', err => {
+    console.log('socket error', err);
+  });
+
   until(auth.sessionId)
     .toBeTruthy()
     .then(() => {
       socket.value.connect();
-
-      // @HACK to give time to the game server to register the game room from convex update.
-      // This should be fixed by adding a new status to the game : CREATED => WAITING_FOR_PLAYERS so that clients know when it's safe to join
-      setTimeout(() => {
-        socket.value.emit('join', {
-          gameId,
-          type: 'spectator'
-        });
-      }, 2000);
-
-      socket.value.on('connect_error', err => {
-        console.log('socket connect error', err);
-      });
-      socket.value.on('error', err => {
-        console.log('socket error', err);
-      });
     });
 
   onUnmounted(() => {

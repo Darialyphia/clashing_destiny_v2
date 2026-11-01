@@ -10,10 +10,10 @@ import { CancelGameUseCase } from './usecases/cancelGame.usecase';
 import { GameSubscribers } from './game.subscribers';
 import { SetupRankedGameUsecase } from './usecases/setupRankedGame.usecase';
 import { StartGameUseCase } from './usecases/startGame.usecase';
-import { GetLatestGamesUseCase } from './usecases/getLatestGames.usecase';
-import { GetGamesByStatusUseCase } from './usecases/getGamesByStatus.usecase';
+import { GetLiveGamesUseCase } from './usecases/getLiveGames.usecase';
 import { GetGameInfosUseCase } from './usecases/getGameInfos.usecase';
 import { FinishGameUseCase } from './usecases/finishGame.usecase';
+import { MarkGameReadyUseCase } from './usecases/markGameReady.usecase';
 import type { DependenciesMap } from '../shared/container';
 
 export const queryDependencies: DependenciesMap = {
@@ -23,8 +23,7 @@ export const queryDependencies: DependenciesMap = {
   },
   [GameMapper.INJECTION_KEY]: { resolver: asClass(GameMapper) },
   [GamePlayerMapper.INJECTION_KEY]: { resolver: asClass(GamePlayerMapper) },
-  [GetLatestGamesUseCase.INJECTION_KEY]: { resolver: asClass(GetLatestGamesUseCase) },
-  [GetGamesByStatusUseCase.INJECTION_KEY]: { resolver: asClass(GetGamesByStatusUseCase) },
+  [GetLiveGamesUseCase.INJECTION_KEY]: { resolver: asClass(GetLiveGamesUseCase) },
   [GetGameInfosUseCase.INJECTION_KEY]: { resolver: asClass(GetGameInfosUseCase) }
 };
 
@@ -35,6 +34,7 @@ export const mutationDependencies: DependenciesMap = {
   [GamePlayerMapper.INJECTION_KEY]: { resolver: asClass(GamePlayerMapper) },
   [GameSubscribers.INJECTION_KEY]: { resolver: asClass(GameSubscribers), eager: true },
   [CancelGameUseCase.INJECTION_KEY]: { resolver: asClass(CancelGameUseCase) },
+  [MarkGameReadyUseCase.INJECTION_KEY]: { resolver: asClass(MarkGameReadyUseCase) },
   [StartGameUseCase.INJECTION_KEY]: { resolver: asClass(StartGameUseCase) },
   [FinishGameUseCase.INJECTION_KEY]: { resolver: asClass(FinishGameUseCase) },
   [SetupRankedGameUsecase.INJECTION_KEY]: { resolver: asClass(SetupRankedGameUsecase) }

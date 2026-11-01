@@ -6,7 +6,8 @@ import type { UserId } from '../../users/entities/user.entity';
 import { Game, type GameDoc, type GameId } from '../entities/game.entity';
 import {
   GAME_STATUS,
-  WAITING_FOR_PLAYERS_GAME_TIMEOUT_MS,
+  INITIALIZING_GAME_TIMEOUT_MS,
+  LIVE_GAME_STATUSES,
   type GameStatus
 } from '../game.constants';
 import type { GameMapper } from '../mappers/game.mapper';
@@ -51,23 +52,18 @@ export class GameReadRepository {
     return game;
   }
 
-  async getLatestByStatus(status: GameStatus) {
-    const [game] = await this.ctx.db
-      .query('games')
-      .withIndex('by_status', q => q.eq('status', status))
-      .order('desc')
-      .take(1);
+  // not truncated on purpose: the game server destroys the room of any game missing from this list
+  async getLive() {
+    const games = await Promise.all(
+      LIVE_GAME_STATUSES.map(status =>
+        this.ctx.db
+          .query('games')
+          .withIndex('by_status', q => q.eq('status', status))
+          .collect()
+      )
+    );
 
-    if (!game) return null;
-    return game;
-  }
-
-  async getByStatus(status: GameStatus, limit: number) {
-    return this.ctx.db
-      .query('games')
-      .withIndex('by_status', q => q.eq('status', status))
-      .order('desc')
-      .take(limit);
+    return games.flat();
   }
 }
 
@@ -125,7 +121,7 @@ export class GameRepository {
   ) {
     const gameId = await this.ctx.db.insert('games', {
       seed: `${Date.now()}`,
-      status: GAME_STATUS.WAITING_FOR_PLAYERS,
+      status: GAME_STATUS.INITIALIZING,
       options
     });
 
@@ -137,9 +133,11 @@ export class GameRepository {
       });
     }
 
-    const game = await this.getById(gameId);
+    const game = (await this.getById(gameId))!;
+    await this.scheduleCancellation(game, INITIALIZING_GAME_TIMEOUT_MS);
+    await this.save(game);
 
-    return game!;
+    return game;
   }
 
   async save(game: Game) {
@@ -154,10 +152,7 @@ export class GameRepository {
     game.abortCancellation();
   }
 
-  async scheduleCancellation(
-    game: Game,
-    timeoutMs = WAITING_FOR_PLAYERS_GAME_TIMEOUT_MS
-  ) {
+  async scheduleCancellation(game: Game, timeoutMs: number) {
     const cancellationId = await this.ctx.scheduler.runAfter(
       timeoutMs,
       internal.games.internalCancel,

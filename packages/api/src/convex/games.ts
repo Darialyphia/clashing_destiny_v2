@@ -9,12 +9,11 @@ import type { DeckId } from './deck/entities/deck.entity';
 import { SetupRankedGameUsecase } from './game/usecases/setupRankedGame.usecase';
 import type { UserId } from './users/entities/user.entity';
 import { StartGameUseCase } from './game/usecases/startGame.usecase';
-import { GetLatestGamesUseCase } from './game/usecases/getLatestGames.usecase';
-import { GetGamesByStatusUseCase } from './game/usecases/getGamesByStatus.usecase';
-import { gamestatusValidator } from './game/game.schemas';
+import { GetLiveGamesUseCase } from './game/usecases/getLiveGames.usecase';
 import { GetGameInfosUseCase } from './game/usecases/getGameInfos.usecase';
 import { ensureValidApiKey } from './auth/auth.utils';
 import { FinishGameUseCase } from './game/usecases/finishGame.usecase';
+import { MarkGameReadyUseCase } from './game/usecases/markGameReady.usecase';
 
 export const internalCancel = internalMutationWithContainer({
   args: { gameId: v.id('games') },
@@ -32,6 +31,18 @@ export const cancel = mutationWithContainer({
   handler: async (ctx, input) => {
     ensureValidApiKey(input.apiKey);
     const usecase = ctx.resolve<CancelGameUseCase>(CancelGameUseCase.INJECTION_KEY);
+
+    return usecase.execute({
+      gameId: input.gameId
+    });
+  }
+});
+
+export const markReady = mutationWithContainer({
+  args: { gameId: v.id('games'), apiKey: v.string() },
+  handler: async (ctx, input) => {
+    ensureValidApiKey(input.apiKey);
+    const usecase = ctx.resolve<MarkGameReadyUseCase>(MarkGameReadyUseCase.INJECTION_KEY);
 
     return usecase.execute({
       gameId: input.gameId
@@ -79,29 +90,12 @@ export const infosById = queryWithContainer({
   }
 });
 
-export const latest = queryWithContainer({
-  args: { status: gamestatusValidator },
-  handler: async (ctx, input) => {
-    const usecase = ctx.resolve<GetLatestGamesUseCase>(
-      GetLatestGamesUseCase.INJECTION_KEY
-    );
+export const live = queryWithContainer({
+  args: {},
+  handler: async ctx => {
+    const usecase = ctx.resolve<GetLiveGamesUseCase>(GetLiveGamesUseCase.INJECTION_KEY);
 
-    return usecase.execute({
-      status: input.status
-    });
-  }
-});
-
-export const byStatus = queryWithContainer({
-  args: { status: gamestatusValidator },
-  handler: async (ctx, input) => {
-    const usecase = ctx.resolve<GetGamesByStatusUseCase>(
-      GetGamesByStatusUseCase.INJECTION_KEY
-    );
-
-    return usecase.execute({
-      status: input.status
-    });
+    return usecase.execute();
   }
 });
 
