@@ -1,5 +1,8 @@
 import { defaultKeyBindings } from './keybindings';
 
+// bump this when making a breaking change to the settings shape
+export const SETTINGS_VERSION = 1;
+
 export const getDefaultSettings = () => ({
   bindings: defaultKeyBindings,
   sound: {

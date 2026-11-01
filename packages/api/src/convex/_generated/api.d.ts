@@ -33,6 +33,7 @@ import type * as shop from "../shop.js";
 import type * as shop_catalog from "../shop/catalog.js";
 import type * as shop_shopPurchase from "../shop/shopPurchase.js";
 import type * as usecase from "../usecase.js";
+import type * as users from "../users.js";
 import type * as users_username from "../users/username.js";
 import type * as utils_email from "../utils/email.js";
 import type * as utils_error from "../utils/error.js";
@@ -71,6 +72,7 @@ declare const fullApi: ApiFromModules<{
   "shop/catalog": typeof shop_catalog;
   "shop/shopPurchase": typeof shop_shopPurchase;
   usecase: typeof usecase;
+  users: typeof users;
   "users/username": typeof users_username;
   "utils/email": typeof utils_email;
   "utils/error": typeof utils_error;

@@ -1,9 +1,15 @@
 import { api } from '@game/api';
-import type { InjectionKey } from 'vue';
-import { useMe } from '@/auth/composables/useMe';
-import { getDefaultSettings, type Settings } from '@/utils/settings';
-import { useAuth } from '@/auth/composables/useAuth';
-import { useConvexMutation, useConvexQuery } from '@convex-vue/core';
+import type { InjectionKey, Ref } from 'vue';
+import {
+  getDefaultSettings,
+  SETTINGS_VERSION,
+  type Settings
+} from '@/utils/settings';
+import {
+  useAuth,
+  useAuthedMutation,
+  useAuthedQuery
+} from '@/auth/composables/useAuth';
 import { useSafeInject } from './useSafeInject';
 import { defu } from 'defu';
 
@@ -18,27 +24,27 @@ export const useUserSettingsProvider = () => {
   const settings = ref(getDefaultSettings());
   const isLoggedIn = computed(() => !!sessionId.value);
 
-  const { data: savedSettings } = useConvexQuery(
+  const { data: savedSettings } = useAuthedQuery(
     api.users.settings,
-    computed(() => ({ sessionId: sessionId.value! })),
+    {},
     { enabled: isLoggedIn }
   );
   watchEffect(() => {
     if (savedSettings.value) {
       settings.value = defu(
-        savedSettings.value,
+        savedSettings.value.settings,
         getDefaultSettings()
       ) as Settings;
     }
   });
 
-  const { mutate: saveSettings } = useConvexMutation(api.users.saveSettings);
+  const { mutate: saveSettings } = useAuthedMutation(api.users.saveSettings);
 
   provide(USER_SETTINGS_INJECTION_KEY, {
     settings,
     save: () => {
-      if (!sessionId.value) return;
-      saveSettings({ settings: settings.value, sessionId: sessionId.value });
+      if (!isLoggedIn.value) return;
+      saveSettings({ version: SETTINGS_VERSION, settings: settings.value });
     }
   });
 };

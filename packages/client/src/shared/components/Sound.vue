@@ -2,6 +2,8 @@
 import { type Nullable, isFunction, isString } from '@game/shared';
 import { Slot as RadixSlot } from 'reka-ui';
 import { nanoid } from 'nanoid';
+import { useSoundEffect } from '../composables/useSoundEffect';
+import { useEventListener } from '@vueuse/core';
 
 const {
   sound,
