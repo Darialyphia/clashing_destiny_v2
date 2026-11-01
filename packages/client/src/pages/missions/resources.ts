@@ -775,8 +775,14 @@ export const resourcesTutorial: TutorialMission = {
         },
         textBoxes: [
           {
-            // a single text box: the choice modal blocks clicks outside of it, so a "Next" button might not be usable
-            text: 'These two cards come from your <b>Affinity deck</b>. Each turn, you pick one to add to your Affinity Zone. In this mission your deck only has Lyonar affinities, so either choice works. With different affinities in your deck, you could play cards from several factions!',
+            text: 'These two cards come from your <b>Affinity deck</b>. Each turn, you pick one to add to your Affinity Zone.',
+            left: '10%',
+            bottom: '35%',
+            canManuallyAdvance: false,
+            advanceCondition: () => false
+          },
+          {
+            text: 'In this mission your deck only has Lyonar affinities, so either choice works. With different affinities in your deck, you could play cards from several factions!',
             left: '10%',
             bottom: '35%',
             canManuallyAdvance: false,

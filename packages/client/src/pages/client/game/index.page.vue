@@ -41,5 +41,8 @@ const { data: gameInfos } = useGameInfos(
       <FancyButton :href="href" text="Back to Home" @click="navigate" />
     </RouterLink>
   </div>
+  <p v-else-if="me.currentGame.status === GAME_STATUS.INITIALIZING">
+    Preparing your game...
+  </p>
   <PVPGame v-else :key="me?.currentGame?.id" />
 </template>

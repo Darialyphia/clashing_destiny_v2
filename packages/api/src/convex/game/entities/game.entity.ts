@@ -2,7 +2,7 @@ import type { Doc, Id } from '../../_generated/dataModel';
 import { Entity } from '../../shared/entity';
 import type { UserId } from '../../users/entities/user.entity';
 import { DomainError } from '../../utils/error';
-import { GAME_STATUS } from '../game.constants';
+import { GAME_STATUS, LIVE_GAME_STATUSES } from '../game.constants';
 import { GamePlayer } from './gamePlayer.entity';
 
 export type GameData = {
@@ -43,10 +43,7 @@ export class Game extends Entity<GameId, GameData> {
   }
 
   get canCancel() {
-    return (
-      this.status === GAME_STATUS.WAITING_FOR_PLAYERS ||
-      this.status === GAME_STATUS.ONGOING
-    );
+    return LIVE_GAME_STATUSES.includes(this.status);
   }
 
   scheduleCancellation(scheduledFunctionId: Id<'_scheduled_functions'>) {
@@ -68,6 +65,17 @@ export class Game extends Entity<GameId, GameData> {
       throw new DomainError('Game cannot be cancelled');
     }
     this.data.game.status = GAME_STATUS.CANCELLED;
+  }
+
+  get canMarkReady() {
+    return this.status === GAME_STATUS.INITIALIZING;
+  }
+
+  markReady() {
+    if (!this.canMarkReady) {
+      throw new DomainError('Game cannot be marked as ready');
+    }
+    this.data.game.status = GAME_STATUS.WAITING_FOR_PLAYERS;
   }
 
   get canStart() {

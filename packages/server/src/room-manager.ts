@@ -109,6 +109,8 @@ export class RoomManager {
           winnerId: winnerId as UserId | null,
           apiKey: process.env.CONVEX_API_KEY!
         });
+        // @TODO generate game replay from engine snapshots and upload to convex
+
         // destroying the room waits for pending history writes, so the keys can't be recreated after deletion
         await this.destroyRoom(id);
         await deleteGameKeys(this.ctx.redis, id);

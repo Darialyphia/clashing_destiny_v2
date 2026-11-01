@@ -3,20 +3,17 @@ import type { Redis } from '@upstash/redis';
 import {
   api,
   GAME_STATUS,
-  type DeckId,
-  type UserId,
   type GameId,
+  type GameInfos,
   type GameStatus
 } from '@game/api';
 import { type GameOptions } from '@game/engine/src/game/game';
 import type { RoomManager } from './room-manager';
-import type { Nullable } from '@game/shared';
 import { deleteGameKeys, REDIS_KEYS, REDIS_TTL_SECONDS } from './redis';
 
-type GameDto = {
+type LiveGame = {
   id: GameId;
   status: GameStatus;
-  players: Array<{ userId: UserId; deckId: DeckId }>;
 };
 
 export class GamesManager {
@@ -34,8 +31,11 @@ export class GamesManager {
   // handlers of a same game are chained so they never run concurrently
   private queues = new Map<GameId, Promise<void>>();
 
-  // (game, status) pairs that were successfully handled, convex can deliver the same game several times
-  private handled = new Set<string>();
+  // live games this server has, or is setting up, a room for
+  private trackedGames = new Set<GameId>();
+
+  // convex pushes the whole live games list on every change, unchanged games are skipped
+  private syncedStatuses = new Map<GameId, GameStatus>();
 
   private enqueue(gameId: GameId, task: () => Promise<void>) {
     const previous = this.queues.get(gameId) ?? Promise.resolve();
@@ -51,171 +51,111 @@ export class GamesManager {
     return next;
   }
 
-  private handleGame(
-    game: GameDto,
-    status: GameStatus,
-    cb: (game: GameDto) => Promise<void>
-  ) {
-    return this.enqueue(game.id, async () => {
-      const handledKey = `${game.id}:${status}`;
-      if (this.handled.has(handledKey)) return;
-
-      await cb(game);
-      this.handled.add(handledKey);
+  // resolves once the games that were live when the server started have their room back
+  init() {
+    console.log('[GAMES MANAGER] Listening to live games');
+    return new Promise<void>((resolve, reject) => {
+      this.ctx.convexClient.onUpdate(
+        api.games.live,
+        {},
+        async ({ games }) => {
+          await this.reconcile(games);
+          resolve();
+        },
+        err => {
+          console.error('[GAMES MANAGER] Subscription error', err);
+          // no-op once the first update went through
+          reject(err);
+        }
+      );
     });
   }
 
-  private listenToGamesByStatus(
-    status: GameStatus,
-    cb: (game: GameDto) => Promise<void>
-  ) {
-    this.ctx.convexClient.onUpdate(
-      api.games.latest,
-      { status },
-      ({ game }) => {
-        if (!game) return;
+  private reconcile(games: LiveGame[]) {
+    const liveIds = new Set(games.map(game => game.id));
+    // games leave the live list once they are finished or cancelled
+    const endedIds = [...this.trackedGames].filter(id => !liveIds.has(id));
 
-        return this.handleGame(game, status, cb);
-      },
-      err => {
-        console.error(`[GAMES MANAGER] Subscription error (${status})`, err);
-      }
-    );
+    games.forEach(game => this.trackedGames.add(game.id));
+    endedIds.forEach(id => this.trackedGames.delete(id));
+
+    return Promise.all([
+      ...games.map(game => this.enqueue(game.id, () => this.syncGame(game))),
+      ...endedIds.map(id => this.enqueue(id, () => this.teardownGame(id)))
+    ]);
   }
 
-  private async restoreGamesByStatus(
-    status: GameStatus,
-    cb: (game: GameDto) => Promise<void>
-  ) {
-    const { games } = await this.ctx.convexHttpClient.query(api.games.byStatus, {
-      status
-    });
-    console.log(`[GAMES MANAGER] Restoring ${games.length} game(s) with status`, status);
+  private async syncGame(game: LiveGame) {
+    if (this.syncedStatuses.get(game.id) === game.status) return;
+    console.log('[GAMES MANAGER] Syncing game', game.id, game.status);
 
-    await Promise.all(games.map(game => this.handleGame(game, status, cb)));
+    const room = await this.ensureRoom(game);
+
+    switch (game.status) {
+      case GAME_STATUS.INITIALIZING:
+        // players join as soon as convex says so, the room must already accept them by then
+        room.updateStatus(GAME_STATUS.WAITING_FOR_PLAYERS);
+        await this.ctx.convexHttpClient.mutation(api.games.markReady, {
+          gameId: game.id,
+          apiKey: process.env.CONVEX_API_KEY!
+        });
+        break;
+      case GAME_STATUS.WAITING_FOR_PLAYERS:
+        room.updateStatus(GAME_STATUS.WAITING_FOR_PLAYERS);
+        break;
+      case GAME_STATUS.ONGOING:
+        await room.start();
+        room.updateStatus(GAME_STATUS.ONGOING);
+        break;
+    }
+
+    this.syncedStatuses.set(game.id, game.status);
   }
 
-  async init() {
-    await this.restoreGamesByStatus(GAME_STATUS.ONGOING, this.onGameReady.bind(this));
-
-    console.log('[GAMES MANAGER] Listening to game events');
-    this.listenToGamesByStatus(
-      GAME_STATUS.WAITING_FOR_PLAYERS,
-      this.onGameCreated.bind(this)
-    );
-    this.listenToGamesByStatus(GAME_STATUS.ONGOING, this.onGameReady.bind(this));
-    this.listenToGamesByStatus(GAME_STATUS.FINISHED, this.onGameFinished.bind(this));
-    this.listenToGamesByStatus(GAME_STATUS.CANCELLED, this.onGameCancelled.bind(this));
-  }
-
-  private async onGameCreated(game: GameDto) {
-    console.log('[GAMES MANAGER] Game created', game.id);
-    const redisStateResult = await this.setupRedisState(game.id);
-    if (redisStateResult.cancelled) return;
-    await this.createRoom(game);
-  }
-
-  private async onGameReady(game: GameDto) {
-    console.log('[GAMES MANAGER] Game ready', game.id);
-    const redisStateResult = await this.setupRedisState(game.id);
-    if (redisStateResult.cancelled) return;
-
-    const createRoomResult = await this.createRoom(game);
-    if (createRoomResult.cancelled) return;
-
-    const room = this.ctx.roomManager.getRoom(game.id);
-    await room?.start();
-    room?.updateStatus(GAME_STATUS.ONGOING);
-  }
-
-  private async onGameFinished(game: GameDto) {
-    console.log('[GAMES MANAGER] Game finished', game.id);
-    await this.ctx.roomManager.destroyRoom(game.id);
-    await this.cleanupRedisState(game.id);
-    this.updateRoomStatusIfExists(game.id, game.status);
-
-    // @TODO generate game replay from engine snapshots and upload to convex
-  }
-
-  private async onGameCancelled(game: GameDto) {
-    console.log('[GAMES MANAGER] Game cancelled', game.id);
-    await this.ctx.roomManager.destroyRoom(game.id);
-    await this.cleanupRedisState(game.id);
-  }
-
-  private async cleanupRedisState(gameId: GameId) {
+  private async teardownGame(gameId: GameId) {
+    console.log('[GAMES MANAGER] Game ended', gameId);
+    await this.ctx.roomManager.destroyRoom(gameId);
     await deleteGameKeys(this.ctx.redis, gameId);
+    this.syncedStatuses.delete(gameId);
   }
 
-  private async setupRedisState(gameId: GameId) {
-    const existingState = await this.ctx.redis.json.get(REDIS_KEYS.GAME_STATE(gameId));
-    if (existingState) return { cancelled: false };
-
-    const initialState = await this.buildInitialState(gameId);
-    if (!initialState) {
-      console.log('No initial state, cancelling game', gameId);
-      await this.cancelGame(gameId);
-      return { cancelled: true };
-    }
-
-    await this.ctx.redis
-      .pipeline()
-      .json.set(REDIS_KEYS.GAME_STATE(gameId), '$', initialState, { nx: true })
-      .expire(REDIS_KEYS.GAME_STATE(gameId), REDIS_TTL_SECONDS)
-      .exec();
-
-    return { cancelled: false };
-  }
-
-  // returns false if the game had to be cancelled
-  private async createRoom(game: GameDto) {
-    if (this.ctx.roomManager.hasRoom(game.id)) {
-      console.log('Room already exists for game', game.id);
-      return { cancelled: false };
-    }
-
-    const gameOptions = await this.buildGameOptions(game.id);
-    if (!gameOptions) {
-      console.log('No game options, cancelling game', game.id);
-      await this.cancelGame(game.id);
-      return { cancelled: true };
-    }
+  private async ensureRoom(game: LiveGame) {
+    const existingRoom = this.ctx.roomManager.getRoom(game.id);
+    if (existingRoom) return existingRoom;
 
     const gameInfos = await this.ctx.convexHttpClient.query(api.games.infosById, {
       gameId: game.id
     });
 
-    await this.ctx.roomManager.createRoom(game.id, {
-      initialState: gameOptions!,
+    return this.ctx.roomManager.createRoom(game.id, {
+      initialState: await this.ensureInitialState(gameInfos),
       game: {
         id: game.id,
         status: game.status,
-        players: game.players.map(p => ({ userId: p.userId })),
+        players: gameInfos.players.map(p => ({ userId: p.user.id })),
         options: gameInfos.options
       }
     });
-    return { cancelled: false };
   }
 
-  private async buildGameOptions(gameId: GameId) {
-    let state: Nullable<GameOptions> = await this.ctx.redis.json.get<GameOptions>(
-      REDIS_KEYS.GAME_STATE(gameId)
-    );
-    if (!state) {
-      state = await this.buildInitialState(gameId);
-    }
+  private async ensureInitialState(gameInfos: GameInfos) {
+    const key = REDIS_KEYS.GAME_STATE(gameInfos.id);
+    const existingState = await this.ctx.redis.json.get<GameOptions>(key);
+    if (existingState) return existingState;
 
-    return state;
+    const initialState = this.buildInitialState(gameInfos);
+    await this.ctx.redis
+      .pipeline()
+      .json.set(key, '$', initialState, { nx: true })
+      .expire(key, REDIS_TTL_SECONDS)
+      .exec();
+
+    return initialState;
   }
 
-  private async buildInitialState(id: GameId): Promise<GameOptions | null> {
-    const gameInfos = await this.ctx.convexHttpClient.query(api.games.infosById, {
-      gameId: id
-    });
-    if (!gameInfos) return null;
-
-    const initialState: GameOptions = {
-      id,
+  private buildInitialState(gameInfos: GameInfos): GameOptions {
+    return {
+      id: gameInfos.id,
       enableSnapshots: true,
       rngSeed: gameInfos.seed,
       overrides: {},
@@ -242,23 +182,5 @@ export class GamesManager {
         }
       ]
     };
-    return initialState;
-  }
-
-  private async cancelGame(gameId: GameId) {
-    console.log('cancellign game', gameId);
-    await this.ctx.convexHttpClient.mutation(api.games.cancel, {
-      gameId,
-      apiKey: process.env.CONVEX_API_KEY!
-    });
-    await this.ctx.roomManager.destroyRoom(gameId);
-    await this.cleanupRedisState(gameId);
-  }
-
-  updateRoomStatusIfExists(gameId: GameId, status: GameStatus) {
-    const room = this.ctx.roomManager.getRoom(gameId);
-    if (room) {
-      room.updateStatus(status);
-    }
   }
 }

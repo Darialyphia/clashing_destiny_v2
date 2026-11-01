@@ -6,7 +6,8 @@ export const gamestatusValidator = v.union(
   v.literal(GAME_STATUS.CANCELLED),
   v.literal(GAME_STATUS.FINISHED),
   v.literal(GAME_STATUS.ONGOING),
-  v.literal(GAME_STATUS.WAITING_FOR_PLAYERS)
+  v.literal(GAME_STATUS.WAITING_FOR_PLAYERS),
+  v.literal(GAME_STATUS.INITIALIZING)
 ) as Validator<GameStatus>;
 
 export const gameSchemas = {

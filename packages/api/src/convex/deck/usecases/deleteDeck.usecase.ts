@@ -6,7 +6,7 @@ import type { DeckId } from '../entities/deck.entity';
 import type { DeckRepository } from '../repositories/deck.repository';
 import type { MatchmakingUserRepository } from '../../matchmaking/repositories/matchmakingUser.repository';
 import type { GameRepository } from '../../game/repositories/game.repository';
-import { GAME_STATUS, type GameStatus } from '../../game/game.constants';
+import { LIVE_GAME_STATUSES, type GameStatus } from '../../game/game.constants';
 import type { UserId } from '../../users/entities/user.entity';
 
 export interface DeleteDeckInput {
@@ -57,19 +57,15 @@ export class DeleteDeckUseCase implements UseCase<DeleteDeckInput, DeleteDeckOut
       throw new DomainError('Cannot delete a deck while queued in matchmaking with it');
     }
 
-    const isInWaitingGame = await this.checkUserInGameWithDeck(
-      session.userId,
-      input.deckId,
-      GAME_STATUS.WAITING_FOR_PLAYERS
-    );
-    const isInOngoingGame = await this.checkUserInGameWithDeck(
-      session.userId,
-      input.deckId,
-      GAME_STATUS.ONGOING
-    );
-
-    if (isInWaitingGame || isInOngoingGame) {
-      throw new DomainError('Cannot delete a deck while in an active game with it');
+    for (const status of LIVE_GAME_STATUSES) {
+      const isInGame = await this.checkUserInGameWithDeck(
+        session.userId,
+        input.deckId,
+        status
+      );
+      if (isInGame) {
+        throw new DomainError('Cannot delete a deck while in an active game with it');
+      }
     }
 
     await this.ctx.deckRepo.delete(deck);
