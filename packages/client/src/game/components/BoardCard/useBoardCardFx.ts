@@ -10,11 +10,16 @@ export const useBoardCardFxEvents = (
   card: CardViewModel,
   unitEl: Ref<HTMLElement | null>,
   {
+    onPlay,
     onAttack,
     onDestroy,
     onHit,
     onSequenceEnd
   }: {
+    onPlay: (
+      el: HTMLElement,
+      options: { onComplete: () => void }
+    ) => Promise<void> | undefined;
     onAttack: () => void;
     onDestroy: () => void;
     onHit: () => void;
@@ -22,13 +27,17 @@ export const useBoardCardFxEvents = (
   }
 ) => {
   const isBeingPlayed = ref(false);
-  const DROP_DURATION = 300;
 
   useFxEvent(FX_EVENTS.CARD_AFTER_PLAY, async event => {
     if (event.card.id !== card.id) return;
+    if (!unitEl.value) return;
+
     isBeingPlayed.value = true;
-    await waitFor(DROP_DURATION);
-    isBeingPlayed.value = false;
+    await onPlay(unitEl.value, {
+      onComplete: () => {
+        isBeingPlayed.value = false;
+      }
+    });
   });
 
   const isAttacking = ref(false);
@@ -155,7 +164,6 @@ export const useBoardCardFxEvents = (
 
   return {
     isBeingPlayed,
-    DROP_DURATION,
     isAttacking,
     isTakingDamage,
     isGettingHealed,

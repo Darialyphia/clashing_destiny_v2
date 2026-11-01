@@ -14,6 +14,7 @@ import { useBoardCardAnimationSequence } from './useBoardCardAnimationSequence';
 import { useBoardCardFxEvents } from './useBoardCardFx';
 import { useBoardCardInteraction } from './useBoardCardInteraction';
 import BoardCardSpriteFX from './BoardCardSpriteFX.vue';
+import BoardCardPlayFX from './BoardCardPlayFX.vue';
 
 const {
   card,
@@ -64,16 +65,17 @@ onMounted(() => {
 });
 
 const unitEl = useTemplateRef('unit');
+const playFx = useTemplateRef('playFx');
 
 const {
   isBeingPlayed,
-  DROP_DURATION,
   isAttacking,
   isTakingDamage,
   isGettingHealed,
   latestDamageAmount,
   latestHealAmount
 } = useBoardCardFxEvents(card, unitEl, {
+  onPlay: (el, options) => playFx.value?.play(el, options),
   onAttack: playAttackAnimationSequence,
   onDestroy: playDeathAnimationSequence,
   onHit: playHitSequence,
@@ -114,9 +116,6 @@ const isFaceDown = computed(
         'is-attackable': canAttack
       }
     ]"
-    :style="{
-      '--drop-duration': `${DROP_DURATION}ms`
-    }"
     @mouseup="onMouseup"
     @mouseenter="
       () => {
@@ -146,6 +145,8 @@ const isFaceDown = computed(
         @art-sequence-end="onAnimationSequenceEnd"
       />
     </InspectableCard>
+
+    <BoardCardPlayFX ref="playFx" />
 
     <Transition>
       <AbilityMenu
@@ -200,12 +201,6 @@ const isFaceDown = computed(
     &:deep(.art) {
       filter: grayscale(85%) brightness(50%);
     }
-  }
-
-  &.is-being-played {
-    filter: brightness(140%);
-    animation: drop var(--drop-duration) cubic-bezier(0.18, 0.88, 0.32, 1.08)
-      forwards;
   }
 
   &.is-targetable {
@@ -345,14 +340,6 @@ const isFaceDown = computed(
     transform: translateZ(2px);
     opacity: 1;
     translate: 0 0;
-  }
-}
-
-@keyframes drop {
-  0% {
-    scale: 2;
-    translate: 0 -180px;
-    opacity: 0;
   }
 }
 

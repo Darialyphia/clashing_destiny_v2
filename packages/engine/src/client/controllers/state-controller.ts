@@ -176,6 +176,10 @@ export class ClientStateController {
     if (event.eventName === GAME_EVENTS.INTERACTION_AFTER_CHANGE_STATE) {
       return this.onInteractionAfterChangeState(event);
     }
+
+    if (event.eventName === GAME_EVENTS.PLAYER_AFTER_ADD_SUPPLY) {
+      return this.onPlayerAfterAddSupply(event);
+    }
   }
 
   private async onInteractionAfterChangeState(event: {
@@ -213,5 +217,12 @@ export class ClientStateController {
       return entity as CardViewModel;
     }
     return null;
+  }
+
+  private async onPlayerAfterAddSupply(event: {
+    event: SerializedEvent<'PLAYER_AFTER_ADD_SUPPLY'>;
+  }) {
+    const card = this.buildViewModel(event.event.card) as CardViewModel;
+    this.state.entities[card.id] = card;
   }
 }
