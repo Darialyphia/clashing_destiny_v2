@@ -16,6 +16,8 @@ import {
 } from '@vueuse/core';
 import type { ShallowRef } from 'vue';
 import HandCard from './HandCard.vue';
+import SupplyToHandGhost from './SupplyToHandGhost.vue';
+import { useSupplyToHandFx } from '../composables/useSupplyToHandFx';
 
 const { playerId, isRevealed } = defineProps<{
   playerId: string;
@@ -30,6 +32,10 @@ const myPlayer = useMyPlayer();
 
 const isMyHand = computed(() => {
   return playerId === myPlayer.value?.id;
+});
+
+const { incomingCardIds } = useSupplyToHandFx(() => playerId, {
+  isFaceDownInHand: card => !isRevealed && !card.isRevealed
 });
 
 useFxEvent(FX_EVENTS.CARD_ADD_TO_HAND, async () => {
@@ -173,6 +179,8 @@ const { height } = useWindowSize();
         :key="card.card.id"
         :is-interactive="isMyHand"
         :card="isRevealed || card.card.isRevealed ? card.card : undefined"
+        :data-hand-card="card.card.id"
+        :class="{ incoming: incomingCardIds.includes(card.card.id) }"
         :style="{
           '--x': `${card.x}px`,
           '--y': `${card.y}px`,
@@ -183,6 +191,13 @@ const { height } = useWindowSize();
       />
     </section>
   </OnClickOutside>
+  <Teleport to="#card-portal">
+    <SupplyToHandGhost
+      v-for="cardId in incomingCardIds"
+      :key="cardId"
+      :card-id="cardId"
+    />
+  </Teleport>
 </template>
 
 <style scoped lang="postcss">
@@ -205,5 +220,11 @@ const { height } = useWindowSize();
   z-index: 1;
   width: 100%;
   transition: transform 0.15s var(--ease-elastic-2);
+}
+
+/* hidden until its ghost lands on it, without transition so its slot can be measured while cards keep coming in */
+.incoming {
+  visibility: hidden;
+  transition: none;
 }
 </style>

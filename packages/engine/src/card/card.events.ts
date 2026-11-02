@@ -277,6 +277,17 @@ export class CardRevealEvent extends TypedSerializableEvent<
   }
 }
 
+export class CardHideEvent extends TypedSerializableEvent<
+  { card: AnyCard },
+  { card: string }
+> {
+  serialize() {
+    return {
+      card: this.data.card.id
+    };
+  }
+}
+
 export class CardBeforeMoveEvent extends TypedSerializableEvent<
   { card: AnyCard; to: BoardSpace },
   { card: string; to: SerializedBoardSpace }
@@ -362,6 +373,8 @@ export type CardEventMap = {
   [CARD_EVENTS.CARD_AFTER_TAKE_DAMAGE]: CardAfterTakeDamageEvent;
   [CARD_EVENTS.CARD_BEFORE_REVEAL]: CardRevealEvent;
   [CARD_EVENTS.CARD_AFTER_REVEAL]: CardRevealEvent;
+  [CARD_EVENTS.CARD_BEFORE_HIDE]: CardHideEvent;
+  [CARD_EVENTS.CARD_AFTER_HIDE]: CardHideEvent;
   [CARD_EVENTS.CARD_BEFORE_MOVE]: CardBeforeMoveEvent;
   [CARD_EVENTS.CARD_AFTER_MOVE]: CardAfterMoveEvent;
   [CARD_EVENTS.BEFORE_SCORE]: CardScoreEvent;

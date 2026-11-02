@@ -20,6 +20,7 @@ import {
 } from '../../game/game.events';
 import { AbilityViewModel } from '../view-models/ability.model';
 import { BoardSpaceViewModel } from '../view-models/board-space.model';
+import { CARD_LOCATIONS } from '../../card/card.enums';
 
 export type GameClientState = Override<
   SerializedOmniscientState | SerializedPlayerState,
@@ -180,6 +181,14 @@ export class ClientStateController {
     if (event.eventName === GAME_EVENTS.PLAYER_AFTER_ADD_SUPPLY) {
       return this.onPlayerAfterAddSupply(event);
     }
+
+    if (event.eventName === GAME_EVENTS.CARD_AFTER_CHANGE_LOCATION) {
+      return this.onCardAfterChangeLocation(event);
+    }
+
+    if (event.eventName === GAME_EVENTS.CARD_AFTER_HIDE) {
+      return this.onCardAfterHide(event);
+    }
   }
 
   private async onInteractionAfterChangeState(event: {
@@ -224,5 +233,40 @@ export class ClientStateController {
   }) {
     const card = this.buildViewModel(event.event.card) as CardViewModel;
     this.state.entities[card.id] = card;
+  }
+
+  // cards going from the supply zone to the hand are animated before the snapshot is done processing,
+  // so they need to already be in the hand for the animation to know where they land
+  private async onCardAfterChangeLocation(event: {
+    event: SerializedEvent<'CARD_AFTER_CHANGE_LOCATION'>;
+  }) {
+    const { card: cardId, from, to } = event.event;
+    if (from !== CARD_LOCATIONS.SUPPLY || to !== CARD_LOCATIONS.HAND) return;
+
+    const card = this.getCard(cardId);
+    if (!card) return;
+
+    for (const playerId of this.state.players) {
+      const player = this.state.entities[playerId] as PlayerViewModel;
+      if (player.boardSide.supply.includes(cardId)) {
+        this.state.entities[playerId] = player.removeFromSupplyZone(cardId).clone();
+      }
+    }
+
+    const owner = card.player;
+    this.state.entities[owner.id] = owner.addToHand(card).clone();
+    this.state = { ...this.state };
+  }
+
+  private async onCardAfterHide(event: { event: SerializedEvent<'CARD_AFTER_HIDE'> }) {
+    const card = this.getCard(event.event.card);
+    if (!card) return;
+
+    this.state.entities[card.id] = card.update({ isRevealed: false }).clone();
+    const owner = card.player;
+    this.state.entities[owner.id] = owner
+      .updateCardInHand(card.id, { isRevealed: false })
+      .clone();
+    this.state = { ...this.state };
   }
 }

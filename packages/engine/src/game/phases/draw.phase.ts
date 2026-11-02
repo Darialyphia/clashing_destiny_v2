@@ -2,6 +2,8 @@ import type { EmptyObject, Serializable } from '@game/shared';
 import type { Game } from '../game';
 import type { GamePhaseController } from './game-phase';
 import { GAME_PHASE_TRANSITIONS } from '../game.enums';
+import { TypedSerializableEvent } from '../../utils/typed-emitter';
+import type { AnyCard } from '../../card/entities/card.entity';
 
 export class DrawPhase implements GamePhaseController, Serializable<EmptyObject> {
   constructor(private game: Game) {}
@@ -51,9 +53,21 @@ export class DrawPhase implements GamePhaseController, Serializable<EmptyObject>
   }
 
   private async recollectSupply() {
+    // both players recollect at the same time, this lets the client animate all the cards together
+    const cards = this.game.playerSystem.players.flatMap(player => [
+      ...player.cardManager.supply
+    ]);
+    await this.game.emit(
+      DRAW_PHASE_EVENTS.BEFORE_RECOLLECT_SUPPLY,
+      new DrawPhaseRecollectSupplyEvent({ cards })
+    );
     for (const player of this.game.playerSystem.players) {
       await player.recollectSupply();
     }
+    await this.game.emit(
+      DRAW_PHASE_EVENTS.AFTER_RECOLLECT_SUPPLY,
+      new DrawPhaseRecollectSupplyEvent({ cards })
+    );
   }
 
   private async rotateDestinyCards() {
@@ -134,3 +148,24 @@ export class DrawPhase implements GamePhaseController, Serializable<EmptyObject>
     return {};
   }
 }
+
+export const DRAW_PHASE_EVENTS = {
+  BEFORE_RECOLLECT_SUPPLY: 'draw_phase_before_recollect_supply',
+  AFTER_RECOLLECT_SUPPLY: 'draw_phase_after_recollect_supply'
+} as const;
+
+export class DrawPhaseRecollectSupplyEvent extends TypedSerializableEvent<
+  { cards: AnyCard[] },
+  { cards: string[] }
+> {
+  serialize() {
+    return {
+      cards: this.data.cards.map(card => card.id)
+    };
+  }
+}
+
+export type DrawPhaseEventMap = {
+  [DRAW_PHASE_EVENTS.BEFORE_RECOLLECT_SUPPLY]: DrawPhaseRecollectSupplyEvent;
+  [DRAW_PHASE_EVENTS.AFTER_RECOLLECT_SUPPLY]: DrawPhaseRecollectSupplyEvent;
+};

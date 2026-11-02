@@ -25,6 +25,7 @@ import {
   CardDiscardEvent,
   CardDisposedEvent,
   CardExhaustEvent,
+  CardHideEvent,
   CardRevealEvent,
   CardWakeUpEvent
 } from '../card.events';
@@ -200,7 +201,9 @@ export abstract class Card<
 
   async hide() {
     if (!this.isRevealed) return;
+    await this.game.emit(CARD_EVENTS.CARD_BEFORE_HIDE, new CardHideEvent({ card: this }));
     this._isRevealed = false;
+    await this.game.emit(CARD_EVENTS.CARD_AFTER_HIDE, new CardHideEvent({ card: this }));
   }
 
   get isExhausted() {

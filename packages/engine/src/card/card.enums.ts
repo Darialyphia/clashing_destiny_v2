@@ -22,6 +22,8 @@ export const CARD_EVENTS = {
   CARD_AFTER_TAKE_DAMAGE: 'card.after_take_damage',
   CARD_BEFORE_REVEAL: 'card.before_reveal',
   CARD_AFTER_REVEAL: 'card.after_reveal',
+  CARD_BEFORE_HIDE: 'card.before_hide',
+  CARD_AFTER_HIDE: 'card.after_hide',
   CARD_BEFORE_MOVE: 'card.before_move',
   CARD_AFTER_MOVE: 'card.after_move',
   BEFORE_SCORE: 'card.before_score',

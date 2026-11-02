@@ -13,7 +13,12 @@ import { OnClickOutside } from '@vueuse/components';
 import { useElementBounding, useResizeObserver } from '@vueuse/core';
 import type { ShallowRef } from 'vue';
 import HandCard from './HandCard.vue';
-import { GAME_PHASES } from '@game/engine/src/game/game.enums';
+import SupplyToHandGhost from './SupplyToHandGhost.vue';
+import { useSupplyToHandFx } from '../composables/useSupplyToHandFx';
+import {
+  GAME_PHASES,
+  INTERACTION_STATES
+} from '@game/engine/src/game/game.enums';
 
 const { playerId } = defineProps<{ playerId: string }>();
 
@@ -26,6 +31,17 @@ const myPlayer = useMyPlayer();
 
 const isMyHand = computed(() => {
   return playerId === myPlayer.value?.id;
+});
+
+// the mulligan modal already displays the hand
+const isMulliganing = computed(
+  () =>
+    state.value.phase.state === GAME_PHASES.DRAW &&
+    state.value.interaction.state === INTERACTION_STATES.CHOOSING_CARDS
+);
+
+const { incomingCardIds } = useSupplyToHandFx(() => playerId, {
+  isFaceDownInHand: () => false
 });
 
 useFxEvent(FX_EVENTS.CARD_ADD_TO_HAND, async () => {
@@ -139,7 +155,7 @@ watch(width, v => {
 
 <template>
   <OnClickOutside
-    v-if="state.phase.state !== GAME_PHASES.DRAW"
+    v-if="!isMulliganing"
     class="hand-wrapper"
     :options="{ ignore: [`${ui.DOMSelectors.globalActionButtons.selector} *`] }"
   >
@@ -164,6 +180,8 @@ watch(width, v => {
         :card="card.card"
         :is-interactive="isMyHand"
         :hover-y-offset="-190"
+        :data-hand-card="card.card.id"
+        :class="{ incoming: incomingCardIds.includes(card.card.id) }"
         :style="{
           '--x': `${card.x}px`,
           '--y': `${card.y}px`,
@@ -173,6 +191,13 @@ watch(width, v => {
       />
     </section>
   </OnClickOutside>
+  <Teleport to="#card-portal">
+    <SupplyToHandGhost
+      v-for="cardId in incomingCardIds"
+      :key="cardId"
+      :card-id="cardId"
+    />
+  </Teleport>
 </template>
 
 <style scoped lang="postcss">
@@ -195,5 +220,11 @@ watch(width, v => {
     position: absolute;
     right: 0;
   }
+}
+
+/* hidden until its ghost lands on it, without transition so its slot can be measured while cards keep coming in */
+.incoming {
+  visibility: hidden;
+  transition: none;
 }
 </style>

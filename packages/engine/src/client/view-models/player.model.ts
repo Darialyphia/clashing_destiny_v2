@@ -103,6 +103,33 @@ export class PlayerViewModel {
     });
   }
 
+  removeFromSupplyZone(cardId: string) {
+    return this.update({
+      boardSide: {
+        ...this.data.boardSide,
+        supply: this.data.boardSide.supply.filter(id => id !== cardId)
+      }
+    });
+  }
+
+  addToHand(card: CardViewModel) {
+    return this.update({
+      hand: [
+        ...this.data.hand,
+        { cardId: card.id, isLocked: false, isRevealed: card.isRevealed }
+      ],
+      handSize: this.data.handSize + 1
+    });
+  }
+
+  updateCardInHand(cardId: string, data: { isRevealed: boolean }) {
+    return this.update({
+      hand: this.data.hand.map(card =>
+        card.cardId === cardId ? { ...card, ...data } : card
+      )
+    });
+  }
+
   get affinities() {
     return this.data.affinities;
   }

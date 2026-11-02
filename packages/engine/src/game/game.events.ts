@@ -33,6 +33,7 @@ import {
 } from '../card/events/artifact.events';
 import { EFFECT_CHAIN_EVENTS, type EffectChainEventMap } from './effect-chain';
 import { END_PHASE_EVENTS, type EndPhaseEventMap } from './phases/end.phase';
+import { DRAW_PHASE_EVENTS, type DrawPhaseEventMap } from './phases/draw.phase';
 import { BATTLEFIELD_EVENTS, type BattlefieldEventMap } from '../board/battlefield';
 
 export class GameInputEvent extends TypedSerializableEvent<
@@ -165,6 +166,7 @@ export type GameEventMap = Prettify<
     InteractionEventMap &
     ArtifactCardEventMap &
     EndPhaseEventMap &
+    DrawPhaseEventMap &
     BattlefieldEventMap
 >;
 
@@ -197,6 +199,7 @@ export const GAME_EVENTS = {
   ...INTERACTION_EVENTS,
   ...ARTIFACT_EVENTS,
   ...END_PHASE_EVENTS,
+  ...DRAW_PHASE_EVENTS,
   ...BATTLEFIELD_EVENTS
 } as const satisfies Record<string, GameEventName>;
 
