@@ -23,6 +23,12 @@ export type SoundEffectOptions = {
   rateVariance?: number;
   /** minimum delay in ms between two plays of the same sound id */
   throttle?: number;
+  /** multiplier applied on top of the volume computed from the user settings */
+  volume?: number;
+  /** if true, play() loops the sound until stop() is called (or the calling scope is disposed) */
+  loop?: boolean;
+  /** duration in ms of a fade in from silence when the sound starts. With loop, only the first iteration fades in */
+  fadeIn?: number;
 };
 
 export const useSoundEffect = (
@@ -34,14 +40,23 @@ export const useSoundEffect = (
 
   const howl = ref() as Ref<Howl | undefined>;
 
-  const setVolume = (volume: number) => {
-    howl.value?.volume(volume * SCALE_FACTOR);
-  };
+  const getVolume = () =>
+    Math.min(
+      1,
+      (userSettings.value.sound.sfxVolume[0] / 100) *
+        SCALE_FACTOR *
+        (options.volume ?? 1)
+    );
+
+  let activeLoop: { howl: Howl; playbackId: number } | null = null;
 
   const play = () => {
     const id = unref(sound);
     const instance = howl.value;
     if (!isDefined(id) || !instance) return;
+
+    // a loop only ends on stop(), so playing again would stack a second loop on top of the first
+    if (activeLoop) return activeLoop.playbackId;
 
     if (options.throttle) {
       const now = performance.now();
@@ -51,30 +66,66 @@ export const useSoundEffect = (
     }
 
     const playbackId = instance.play();
+
+    // the Howl instance is shared, so volume and rate must be set for this playback id only.
+    // Calling them without an id would also change the sounds that are currently playing
+    if (options.fadeIn) {
+      // fade() sets the start volume itself. A looping playback repeats inside the same playback id,
+      // so the fade only runs when the sound starts, not on every loop
+      instance.fade(0, getVolume(), options.fadeIn, playbackId);
+    } else {
+      instance.volume(getVolume(), playbackId);
+    }
+
     if (options.rateVariance) {
-      // the Howl instance is shared, so the rate must be set for this playback id only.
-      // Calling rate() without an id would also change the sounds that are currently playing
       const rate = 1 + (Math.random() * 2 - 1) * options.rateVariance;
       instance.rate(rate, playbackId);
+    }
+
+    if (options.loop) {
+      instance.loop(true, playbackId);
+      activeLoop = { howl: instance, playbackId };
+      instance.once(
+        'stop',
+        () => {
+          activeLoop = null;
+        },
+        playbackId
+      );
     }
 
     return playbackId;
   };
 
-  const soundEffect = computed(() =>
-    howl.value ? { play, stop: () => howl.value?.stop() } : undefined
-  );
+  const soundEffect = computed(() => {
+    if (!howl.value) return;
+    return {
+      play,
+      stop: () => howl.value?.stop(),
+      onDone: (callback: () => void) => {
+        if (!howl.value) return;
+        howl.value.once('end', callback);
+      }
+    };
+  });
 
   watchEffect(() => {
     const id = unref(sound);
     if (!isDefined(id)) return;
     howl.value = getShoundInstance(id);
-    setVolume(userSettings.value.sound.sfxVolume[0] / 100);
   });
 
+  // keep a running loop in sync with the volume setting
   watchEffect(() => {
-    setVolume(userSettings.value.sound.sfxVolume[0] / 100);
+    const volume = getVolume();
+    activeLoop?.howl.volume(volume, activeLoop.playbackId);
   });
+
+  if (options.loop) {
+    onScopeDispose(() => {
+      activeLoop?.howl.stop(activeLoop.playbackId);
+    });
+  }
 
   return soundEffect;
 };

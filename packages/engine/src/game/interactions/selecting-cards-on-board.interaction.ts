@@ -4,12 +4,13 @@ import { IllegalTargetError } from '../../input/input-errors';
 import type { Player } from '../../player/player.entity';
 import type { Game } from '../game';
 
-import { INTERACTION_STATE_TRANSITIONS } from '../game.enums';
+import { INTERACTION_STATE_TRANSITIONS, INTERACTION_STATES } from '../game.enums';
 import {
   InvalidPlayerError,
   UnableToCancelError,
   UnableToCommitError
 } from '../game-error';
+import { GAME_EVENTS, GameCancelInteractionEvent } from '../game.events';
 
 export type SelectingCardOnBoardContextOptions = {
   player: Player;
@@ -112,6 +113,12 @@ export class SelectingCardOnBoardContext {
   async cancel(player: Player) {
     assert(player.equals(this._player), new InvalidPlayerError());
     assert(this.options.canCancel, new UnableToCancelError());
+    await this.game.emit(
+      GAME_EVENTS.CANCEL_INTERACTION,
+      new GameCancelInteractionEvent({
+        interaction: INTERACTION_STATES.SELECTING_CARDS_ON_BOARD
+      })
+    );
     await this.game.interaction.sendTransition(
       INTERACTION_STATE_TRANSITIONS.CANCEL_SELECTING_CARDS_ON_BOARD,
       {}

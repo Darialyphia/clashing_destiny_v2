@@ -3,6 +3,7 @@ import { until } from '@vueuse/core';
 import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
 import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
 import { useFxEvent } from '../../composables/useGameClient';
+import { useSoundEffect } from '@/shared/composables/useSoundEffect';
 
 type SequenceEndCallback = (ctx: { animationSequence: string[] }) => void;
 
@@ -41,6 +42,8 @@ export const useBoardCardFxEvents = (
   });
 
   const isAttacking = ref(false);
+  const dealDamageSound = useSoundEffect('attack');
+  const attackSwingSound = useSoundEffect('attack-swing');
   useFxEvent(FX_EVENTS.CARD_BEFORE_DEAL_COMBAT_DAMAGE, event => {
     if (event.card !== card.id) return;
 
@@ -52,6 +55,10 @@ export const useBoardCardFxEvents = (
 
       const stop = onSequenceEnd(() => {
         isAttacking.value = true;
+        attackSwingSound.value?.play();
+        attackSwingSound.value?.onDone(() => {
+          dealDamageSound.value?.play();
+        });
 
         _unitEl.addEventListener(
           'animationend',
@@ -73,6 +80,8 @@ export const useBoardCardFxEvents = (
 
   const isTakingDamage = ref(false);
   const latestDamageAmount = ref<number | null>(null);
+  const hitsSound = useSoundEffect('hit');
+  const hitSound2 = useSoundEffect('hit-2');
   useFxEvent(FX_EVENTS.CARD_BEFORE_TAKE_DAMAGE, async event => {
     if (event.card !== card.id) return;
 
@@ -82,6 +91,8 @@ export const useBoardCardFxEvents = (
     }, 1000);
 
     if (!unitEl.value) return;
+    hitsSound.value?.play();
+    hitSound2.value?.play();
     isTakingDamage.value = true;
     unitEl.value.addEventListener(
       'animationend',

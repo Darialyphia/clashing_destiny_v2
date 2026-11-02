@@ -4,7 +4,12 @@ import { InputError } from '../input/input-errors';
 import type { SerializedInput } from '../input/input-system';
 import { StarEvent, TypedSerializableEvent } from '../utils/typed-emitter';
 import type { SerializedGame } from './game';
-import { GAME_PHASE_EVENTS, INTERACTION_EVENTS, TURN_EVENTS } from './game.enums';
+import {
+  GAME_PHASE_EVENTS,
+  INTERACTION_EVENTS,
+  TURN_EVENTS,
+  type InteractionState
+} from './game.enums';
 import type { GamePhaseEventMap } from './systems/game-phase.system';
 import {
   MODIFIER_EVENTS,
@@ -115,6 +120,17 @@ export class GameModifierEvent extends TypedSerializableEvent<
   }
 }
 
+export class GameCancelInteractionEvent extends TypedSerializableEvent<
+  { interaction: InteractionState },
+  { interaction: InteractionState }
+> {
+  serialize() {
+    return {
+      interaction: this.data.interaction
+    };
+  }
+}
+
 export type SerializedStarEvent = Values<{
   [Name in Exclude<GameEventName, '*'>]: {
     eventName: Name;
@@ -132,6 +148,7 @@ type GameEventsBase = {
   'game.ready': GameReadyEvent;
   'game.modifier-event': GameModifierEvent;
   'game.new-snapshot': GameNewSnapshotEvent;
+  'game.cancel-interaction': GameCancelInteractionEvent;
 };
 
 export type GameEventMap = Prettify<
@@ -167,6 +184,7 @@ export const GAME_EVENTS = {
   NEW_SNAPSHOT: 'game.new-snapshot',
   GAME_OVER: 'game.over',
   MODIFIER_EVENT: 'game.modifier-event',
+  CANCEL_INTERACTION: 'game.cancel-interaction',
   ...GAME_PHASE_EVENTS,
   ...EFFECT_CHAIN_EVENTS,
   ...MODIFIER_EVENTS,

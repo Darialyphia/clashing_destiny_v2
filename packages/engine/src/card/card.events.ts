@@ -329,6 +329,17 @@ export class CardAfterScoreEvent extends TypedSerializableEvent<
   }
 }
 
+export class CardCancelPlayEvent extends TypedSerializableEvent<
+  { card: AnyCard },
+  { card: string }
+> {
+  serialize() {
+    return {
+      card: this.data.card.id
+    };
+  }
+}
+
 export type CardEventMap = {
   [CARD_EVENTS.CARD_EXHAUST]: CardExhaustEvent;
   [CARD_EVENTS.CARD_WAKE_UP]: CardWakeUpEvent;
@@ -355,4 +366,5 @@ export type CardEventMap = {
   [CARD_EVENTS.CARD_AFTER_MOVE]: CardAfterMoveEvent;
   [CARD_EVENTS.BEFORE_SCORE]: CardScoreEvent;
   [CARD_EVENTS.AFTER_SCORE]: CardAfterScoreEvent;
+  [CARD_EVENTS.CANCEL_PLAY]: CardCancelPlayEvent;
 };

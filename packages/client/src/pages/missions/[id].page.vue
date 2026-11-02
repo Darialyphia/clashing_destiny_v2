@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import Tutorial from '@/tutorial/components/Tutorial.vue';
 import { missions } from './index.js';
+import { provideAuth } from '@/auth/composables/useAuth.js';
 
 definePage({
   name: 'TutorialMission'
@@ -11,6 +12,8 @@ const route = useRoute<'TutorialMission'>();
 const mission = computed(() =>
   missions.find(mission => mission.id === route.params.id)
 );
+
+provideAuth();
 </script>
 
 <template>

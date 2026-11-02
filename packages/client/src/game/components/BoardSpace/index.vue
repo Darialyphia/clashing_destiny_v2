@@ -48,11 +48,12 @@ const { floatingStyles } = useFloating(rootEl, errorMessageEl, {
 });
 
 const hoverSound = useSoundEffect('valid-drop', {
-  rateVariance: 0.025,
-  throttle: 150
+  rateVariance: 0.015,
+  throttle: 150,
+  volume: 0.75
 });
 const onMouseEnter = () => {
-  if (isTargetable && ui.value.draggedCard) hoverSound.value?.play();
+  if (isTargetable.value && ui.value.selectedCard) hoverSound.value?.play();
 };
 </script>
 
