@@ -26,7 +26,7 @@ export const tutorialSunstoneTemplar: MinionBlueprint = {
   manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
-  atk: 2,
+  atk: 1,
   maxHp: 3,
   commandment: 2,
   affinities: [AFFINITIES.LIGHT],

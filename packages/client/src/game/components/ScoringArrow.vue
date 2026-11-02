@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import {
-  useFxEvent,
   useGameClient,
   useGameState,
   useGameUi
@@ -8,7 +7,6 @@ import {
 import Arrow from './Arrow.vue';
 import { throttle } from 'lodash-es';
 import { useEventListener } from '@vueuse/core';
-import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
 
 const { playerId } = useGameClient();
 const ui = useGameUi();
@@ -18,13 +16,6 @@ const scoringPath = ref('');
 
 const VERTICAL_ALIGN_THRESHOLD = 50;
 
-useFxEvent(FX_EVENTS.PRE_AFTER_SCORE, async event => {
-  if (!state.value.config.SHOULD_CREATE_CHAIN_ON_SCORE) {
-    state.value.scoring.scoringCard = event.card;
-    state.value.scoring.scoredDestiny = event.destinyCard;
-    buildScoringArrowPath();
-  }
-});
 const buildArrowBetweenTwoCards = (
   card1: string,
   card2: string,

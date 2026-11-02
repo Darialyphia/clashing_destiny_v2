@@ -6,6 +6,8 @@ import type { AnyCard } from '../../card/entities/card.entity';
 import type { GamePhaseController } from './game-phase';
 import { GAME_PHASE_TRANSITIONS } from '../game.enums';
 import { CARD_LOCATIONS } from '../../card/card.enums';
+import { GAME_EVENTS } from '../game.events';
+import { CardCancelPlayEvent } from '../../card/card.events';
 
 export class PlayCardPhase
   implements GamePhaseController, Serializable<{ card: string; player: string }>
@@ -111,6 +113,11 @@ export class PlayCardPhase
       await this.card.addToHand(this.indexInHand);
     }
     assert(player.equals(this._player), new InvalidPlayerError());
+
+    await this.game.emit(
+      GAME_EVENTS.CANCEL_PLAY,
+      new CardCancelPlayEvent({ card: this._card })
+    );
     await this.game.gamePhaseSystem.sendTransition(
       GAME_PHASE_TRANSITIONS.CANCEL_PLAYING_CARD
     );

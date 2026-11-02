@@ -267,7 +267,6 @@ export class Player
   async recollectSupply() {
     const supply = Array.from(this.cardManager.supply);
     for (const card of supply) {
-      await card.removeFromCurrentLocation();
       await card.addToHand();
       await card.hide();
     }

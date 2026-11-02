@@ -24,14 +24,16 @@ export class OnEnterModifier extends Modifier<MinionCard> {
         new OnEnterModifierMixin(game, {
           onlyWhenPlayedFromHand: options.onlyWhenPlayedFromHand,
           handler: async event => {
-            await game.emit(
-              CARD_EVENTS.CARD_EFFECT_TRIGGERED,
-              new CardEffectTriggeredEvent({
-                card: this.target,
-                message: `${this.target.blueprint.name} triggered its On Enter effect.`
-              })
-            );
-            await options.handler(event);
+            await this.game.inputSystem.schedule(async () => {
+              await game.emit(
+                CARD_EVENTS.CARD_EFFECT_TRIGGERED,
+                new CardEffectTriggeredEvent({
+                  card: this.target,
+                  message: `${this.target.blueprint.name} triggered its On Enter effect.`
+                })
+              );
+              await options.handler(event);
+            });
           }
         }),
         new KeywordModifierMixin(game, KEYWORDS.ON_ENTER),

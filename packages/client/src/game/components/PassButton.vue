@@ -10,6 +10,11 @@ const passAction = computed(() => {
   return ui.value.globalActions.find(action => action.id === 'pass');
 });
 
+const onClick = () => {
+  if (!passAction.value) return;
+  passAction.value?.onClick();
+};
+
 const attrs = useAttrs();
 </script>
 
@@ -22,7 +27,7 @@ const attrs = useAttrs();
       class="pass-button"
       aria-label="Pass"
       :id="ui.DOMSelectors.passButton.id"
-      @click="passAction.onClick()"
+      @click="onClick"
     />
     <div v-else v-bind="attrs" class="enemy-turn-indicator" />
   </template>

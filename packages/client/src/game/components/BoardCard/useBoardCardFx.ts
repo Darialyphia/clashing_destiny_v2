@@ -3,6 +3,7 @@ import { until } from '@vueuse/core';
 import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
 import type { CardViewModel } from '@game/engine/src/client/view-models/card.model';
 import { useFxEvent } from '../../composables/useGameClient';
+import { useSoundEffect } from '@/shared/composables/useSoundEffect';
 
 type SequenceEndCallback = (ctx: { animationSequence: string[] }) => void;
 
@@ -10,11 +11,16 @@ export const useBoardCardFxEvents = (
   card: CardViewModel,
   unitEl: Ref<HTMLElement | null>,
   {
+    onPlay,
     onAttack,
     onDestroy,
     onHit,
     onSequenceEnd
   }: {
+    onPlay: (
+      el: HTMLElement,
+      options: { onComplete: () => void }
+    ) => Promise<void> | undefined;
     onAttack: () => void;
     onDestroy: () => void;
     onHit: () => void;
@@ -22,16 +28,22 @@ export const useBoardCardFxEvents = (
   }
 ) => {
   const isBeingPlayed = ref(false);
-  const DROP_DURATION = 300;
 
   useFxEvent(FX_EVENTS.CARD_AFTER_PLAY, async event => {
     if (event.card.id !== card.id) return;
+    if (!unitEl.value) return;
+
     isBeingPlayed.value = true;
-    await waitFor(DROP_DURATION);
-    isBeingPlayed.value = false;
+    await onPlay(unitEl.value, {
+      onComplete: () => {
+        isBeingPlayed.value = false;
+      }
+    });
   });
 
   const isAttacking = ref(false);
+  const dealDamageSound = useSoundEffect('attack');
+  const attackSwingSound = useSoundEffect('attack-swing');
   useFxEvent(FX_EVENTS.CARD_BEFORE_DEAL_COMBAT_DAMAGE, event => {
     if (event.card !== card.id) return;
 
@@ -43,6 +55,10 @@ export const useBoardCardFxEvents = (
 
       const stop = onSequenceEnd(() => {
         isAttacking.value = true;
+        attackSwingSound.value?.play();
+        attackSwingSound.value?.onDone(() => {
+          dealDamageSound.value?.play();
+        });
 
         _unitEl.addEventListener(
           'animationend',
@@ -64,6 +80,8 @@ export const useBoardCardFxEvents = (
 
   const isTakingDamage = ref(false);
   const latestDamageAmount = ref<number | null>(null);
+  const hitsSound = useSoundEffect('hit');
+  const hitSound2 = useSoundEffect('hit-2');
   useFxEvent(FX_EVENTS.CARD_BEFORE_TAKE_DAMAGE, async event => {
     if (event.card !== card.id) return;
 
@@ -73,6 +91,8 @@ export const useBoardCardFxEvents = (
     }, 1000);
 
     if (!unitEl.value) return;
+    hitsSound.value?.play();
+    hitSound2.value?.play();
     isTakingDamage.value = true;
     unitEl.value.addEventListener(
       'animationend',
@@ -122,8 +142,22 @@ export const useBoardCardFxEvents = (
     });
   });
 
+  // a scoring minion is exhausted right before scoring, but only shows it once its influence
+  // has been transferred, which the battlefield plays on PRE_AFTER_SCORE
+  const isScoring = ref(false);
+  useFxEvent(FX_EVENTS.PRE_BEFORE_SCORE, async event => {
+    if (event.card !== card.id) return;
+    isScoring.value = true;
+  });
+  useFxEvent(FX_EVENTS.AFTER_SCORE, async event => {
+    if (event.card !== card.id) return;
+    isScoring.value = false;
+  });
+
   useFxEvent(FX_EVENTS.CARD_WAKE_UP, async event => {
     if (event.card !== card.id) return;
+    // in case the scoring never resolved
+    isScoring.value = false;
     card.update({ isExhausted: false });
   });
 
@@ -155,7 +189,7 @@ export const useBoardCardFxEvents = (
 
   return {
     isBeingPlayed,
-    DROP_DURATION,
+    isScoring,
     isAttacking,
     isTakingDamage,
     isGettingHealed,

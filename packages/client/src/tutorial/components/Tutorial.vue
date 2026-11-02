@@ -8,6 +8,7 @@ import TutorialGesture from './TutorialGesture.vue';
 import TutorialRetryButton from './TutorialRetryButton.vue';
 import SingleBattlefield from '@/game/components/MinionZone/SingleBattlefield.vue';
 import DoubleBattlefield from '@/game/components/MinionZone/DoubleBattlefield.vue';
+import { provideUserSettings } from '@/shared/composables/useUserSettings';
 
 const { options, nextMission } = defineProps<{
   options: Parameters<typeof provideTutorial>[0];
@@ -16,6 +17,7 @@ const { options, nextMission } = defineProps<{
 
 const { client, currentStepError, start, retry, gameKey } =
   provideTutorial(options);
+provideUserSettings();
 onMounted(start);
 
 const isRetrying = ref(false);
@@ -51,7 +53,9 @@ const onRetry = async () => {
     </template>
 
     <template #game-over="{ hasWon }">
-      <p class="game-over-title">{{ hasWon ? 'Mission complete!' : 'Mission failed.' }}</p>
+      <p class="game-over-title">
+        {{ hasWon ? 'Mission complete!' : 'Mission failed.' }}
+      </p>
       <div class="game-over-actions">
         <FancyButton
           v-if="hasWon && nextMission"

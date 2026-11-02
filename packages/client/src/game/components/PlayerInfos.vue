@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import gsap from 'gsap';
 import { useFxEvent, useGameClient } from '../composables/useGameClient';
-import { preloadAsset } from '@/assets';
+import { preloadImage } from '@/assets';
 import DiscardPileModal from './DiscardPileModal.vue';
 import type { PlayerViewModel } from '@game/engine/src/client/view-models/player.model';
 import { GAME_EVENTS } from '@game/engine/src/game/game.events';

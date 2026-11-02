@@ -65,7 +65,7 @@ const categories = [
 
 const searchTerms: Record<string, string> = {
   overview:
-    'clash of destinies alternating action two-player digital card game fighting over battlefields victory points vp earn win committing units fight move score 6 points',
+    'duelyst dominion alternating action two-player digital card game fighting over battlefields victory points vp earn win committing units fight move score 6 points',
   'how-to-win':
     'win victory points highest influence board reset end turn tie tied',
   decks:
@@ -197,7 +197,7 @@ onUnmounted(() => {
 
   <!-- Mobile Floating Chapter Selector -->
   <div
-    class="block md:hidden sticky top-0 z-40 bg-[#070b19]/95 border border-[#d7ad42]/30 p-3 mx-4 mb-6 rounded-lg shadow-[0_4px_12px_rgba(0,0,0,0.5)] backdrop-blur-md"
+    class="surface block md:hidden sticky top-0 z-40 p-3 mx-4 mb-6 rounded-lg shadow-[0_4px_12px_rgba(0,0,0,0.5)] backdrop-blur-md"
   >
     <div class="flex items-center justify-between">
       <div class="flex items-center gap-2">
@@ -257,7 +257,7 @@ onUnmounted(() => {
   >
     <!-- Desktop Sidebar Sidebar Index -->
     <aside
-      class="hidden md:block w-64 pr-2 shrink-0 sticky top-4 max-h-[70vh] overflow-y-auto fancy-scrollbar"
+      class="surface hidden md:block w-70 shrink-0 sticky top-4 max-h-[70vh] overflow-y-auto fancy-scrollbar"
     >
       <div class="space-y-6 pr-2">
         <div
@@ -343,8 +343,8 @@ onUnmounted(() => {
           class="space-y-4 text-slate-300 text-sm md:text-md leading-relaxed"
         >
           <p class="text-[15px] md:text-lg text-slate-200">
-            Clash of Destinies is an alternating action two-player digital card
-            game about fighting over battlefields to earn
+            Duelyst Dominion is a two-player card game about fighting over
+            battlefields to earn
             <span class="game-term vp">Victory Points</span>
             . The first player to reach
             <span class="game-term vp">7 Victory Points</span>
@@ -380,13 +380,14 @@ onUnmounted(() => {
         <div class="space-y-4 text-slate-300 text-sm leading-relaxed">
           <p class="text-md font-medium text-slate-200">
             The first player to reach
-            <span class="game-term vp">6 Victory Points</span>
+            <span class="game-term vp">7 Victory Points</span>
             wins the game.
           </p>
           <p>
             Victory Points are mainly earned by having more
             <span class="game-term influence">Influence</span>
-            on a battlefield at the end of a turn. The player with the highest
+            on one of the two battlefields at the end of a turn. The player with
+            the highest
             <span class="game-term influence">Influence</span>
             gains
             <span class="game-term vp">1 Victory Point</span>
@@ -416,7 +417,9 @@ onUnmounted(() => {
           Decks
         </h2>
         <div class="space-y-4 text-slate-300 text-sm leading-relaxed">
-          <p>Each player uses a Main Deck and a Destiny Deck.</p>
+          <p>
+            Each player uses a Main Deck, an Affinity Deck and a Location Deck.
+          </p>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
             <!-- Main Deck Box -->
@@ -438,13 +441,7 @@ onUnmounted(() => {
                   <span
                     class="i-mdi-arrow-right text-[#d7ad42] mt-0.5 shrink-0"
                   />
-                  Up to 3 copies of any card.
-                </li>
-                <li class="flex items-start gap-2">
-                  <span
-                    class="i-mdi-arrow-right text-[#d7ad42] mt-0.5 shrink-0"
-                  />
-                  Must contain one, and only one Hero card.
+                  Up to 2 copies of any card.
                 </li>
                 <li class="flex items-start gap-2">
                   <span
@@ -455,117 +452,67 @@ onUnmounted(() => {
               </ul>
             </div>
 
-            <!-- Destiny Deck Box -->
+            <!-- Affinity Deck Box -->
             <div class="border border-slate-800 bg-slate-950/50 p-4 rounded-lg">
               <h3
                 class="text-2 font-bold text-[#efef9f] mb-3 flex items-center gap-1.5 border-b border-slate-800 pb-1.5"
               >
-                <span class="i-mdi-star-four-points text-[#d7ad42]" />
-                Destiny Deck
+                <span class="i-mdi-star text-[#d7ad42]" />
+                Affinity Deck
               </h3>
               <ul class="space-y-2 text-1 text-slate-300">
                 <li class="flex items-start gap-2">
                   <span
                     class="i-mdi-arrow-right text-[#d7ad42] mt-0.5 shrink-0"
                   />
-                  Contains 4 different Destiny cards.
+                  Contains 10 cards tied to one of the game's 6 factions.
+                </li>
+                <li class="flex items-start gap-2">
+                  <span
+                    class="i-mdi-arrow-right text-[#d7ad42] mt-0.5 shrink-0"
+                  />
+                  you play one affinity at the start of each turn
+                </li>
+                <li class="flex items-start gap-2">
+                  <span
+                    class="i-mdi-arrow-right text-[#d7ad42] mt-0.5 shrink-0"
+                  />
+                  Cards from your main deck require some affinities on the board
+                  to be played.
+                </li>
+              </ul>
+            </div>
+            <!-- Destiny Deck Box -->
+            <div class="border border-slate-800 bg-slate-950/50 p-4 rounded-lg">
+              <h3
+                class="text-2 font-bold text-[#efef9f] mb-3 flex items-center gap-1.5 border-b border-slate-800 pb-1.5"
+              >
+                <span class="i-mdi-star-four-points text-[#d7ad42]" />
+                Location Deck
+              </h3>
+              <ul class="space-y-2 text-1 text-slate-300">
+                <li class="flex items-start gap-2">
+                  <span
+                    class="i-mdi-arrow-right text-[#d7ad42] mt-0.5 shrink-0"
+                  />
+                  Contains 4 different Location cards.
+                </li>
+                <li class="flex items-start gap-2">
+                  <span
+                    class="i-mdi-arrow-right text-[#d7ad42] mt-0.5 shrink-0"
+                  />
+                  Provide symmetrical effects that influence the battlefield.
+                </li>
+                <li class="flex items-start gap-2">
+                  <span
+                    class="i-mdi-arrow-right text-[#d7ad42] mt-0.5 shrink-0"
+                  />
+                  At the start of every turn, Locations rotate in and out of the
+                  game.
                 </li>
               </ul>
             </div>
           </div>
-
-          <blockquote style="--color: #d7ad42">
-            For both decks, cards must either share a
-            <strong class="text-slate-200">Class</strong>
-            or an
-            <strong class="text-slate-200">Affinity</strong>
-            with your Hero.
-
-            <div class="flex justify-around flex-wrap gap-2 my-3">
-              <span
-                class="affinity bg-blue-950/40 border border-blue-500/30 text-blue-400"
-              >
-                <img :src="assets[`ui/card/v2/job-flag-warrior`].path" />
-                Warrior
-              </span>
-              <span
-                class="affinity bg-purple-950/40 border border-purple-500/30 text-purple-400"
-              >
-                <img :src="assets[`ui/card/v2/job-flag-mage`].path" />
-                Mage
-              </span>
-              <span
-                class="affinity bg-red-950/40 border border-red-500/30 text-red-400"
-              >
-                <img :src="assets[`ui/card/v2/job-flag-rogue`].path" />
-                Rogue
-              </span>
-              <span
-                class="affinity bg-yellow-950/40 border border-yellow-500/30 text-yellow-400"
-              >
-                <img :src="assets[`ui/card/v2/job-flag-acolyte`].path" />
-                Acolyte
-              </span>
-              <span
-                class="affinity bg-green-950/40 border border-green-500/30 text-green-400"
-              >
-                <img :src="assets[`ui/card/v2/job-flag-ranger`].path" />
-                Ranger
-              </span>
-            </div>
-
-            <p class="text-center mb-5">
-              Classes define which Units and Artifacts you can put in your deck
-            </p>
-            <div class="flex justify-around flex-wrap gap-2 mb-3">
-              <span
-                class="affinity bg-red-950/40 border border-red-500/30 text-red-400"
-              >
-                <img :src="assets[`ui/card/v2/affinity-flag-fire`].path" />
-                Fire
-              </span>
-              <span
-                class="affinity bg-blue-950/40 border border-blue-500/30 text-blue-400"
-              >
-                <img :src="assets[`ui/card/v2/affinity-flag-water`].path" />
-                Water
-              </span>
-              <span
-                class="affinity bg-teal-950/40 border border-teal-500/30 text-teal-400"
-              >
-                <img :src="assets[`ui/card/v2/affinity-flag-air`].path" />
-                Air
-              </span>
-              <span
-                class="affinity bg-lime-950/40 border border-lime-500/30 text-lime-500"
-              >
-                <img :src="assets[`ui/card/v2/affinity-flag-earth`].path" />
-                Earth
-              </span>
-              <span
-                class="affinity bg-yellow-950/40 border border-yellow-200/30 text-yellow-200"
-              >
-                <img :src="assets[`ui/card/v2/affinity-flag-light`].path" />
-                Light
-              </span>
-              <span
-                class="affinity bg-slate-950/40 border border-slate-500/30 text-slate-400"
-              >
-                <img :src="assets[`ui/card/v2/affinity-flag-dark`].path" />
-                Dark
-              </span>
-              <span
-                class="affinity bg-purple-950/40 border border-purple-500/30 text-purple-400"
-              >
-                <img :src="assets[`ui/card/v2/affinity-flag-arcane`].path" />
-                Arcane
-              </span>
-            </div>
-
-            <p class="text-center">
-              Classes define which Spells you can put in your deck
-            </p>
-          </blockquote>
         </div>
       </section>
 
@@ -641,7 +588,7 @@ onUnmounted(() => {
                   </tr>
                   <tr>
                     <td class="px-4 py-2.5 font-bold">
-                      <span class="stat-term commandment">Commandment</span>
+                      <span class="stat-term commandment">Influence</span>
                     </td>
                     <td class="px-4 py-2.5 text-slate-300">
                       How much influence the unit adds when it scores.
@@ -699,7 +646,7 @@ onUnmounted(() => {
             class="text-md font-bold font-serif text-[#efef9f] mb-2 flex items-center gap-2"
           >
             <span class="i-mdi-fountain-pen-tip text-indigo-400" />
-            Destinies
+            Locations
           </h3>
 
           <div class="mb-4 flex justify-center">
@@ -711,14 +658,14 @@ onUnmounted(() => {
           </div>
 
           <p class="text-sm text-slate-300 leading-relaxed">
-            Destiny cards possess symmetrical effects that modify the rules and
+            Location cards possess symmetrical effects that modify the rules and
             behavior of battlefields. They cycle across the board each turn,
-            ensuring that there's always one Destiny card from each player in
-            play.
+            from the left battlefield to the right battlefield, then go back to
+            the bottom of their owner's Location deck.
           </p>
 
           <blockquote style="--color: #d7ad42">
-            There is always one Destiny card from each player in play.
+            There is always one Location card from each player in play.
           </blockquote>
         </div>
       </section>
@@ -745,10 +692,10 @@ onUnmounted(() => {
         </h2>
         <div class="space-y-4 text-slate-300 text-sm leading-relaxed">
           <p>
-            The game relies on two resources to govern plays:
+            The game relies on
             <span class="game-term mana">Mana</span>
             and
-            <span class="game-term rune">Hero Stats</span>
+            <span class="game-term rune">Affinities</span>
             .
           </p>
 
@@ -761,12 +708,17 @@ onUnmounted(() => {
                 Mana
               </h4>
               <p class="text-sm">
-                At the start of each turn, every card in your hand will give you
-                mana equal to its
-                <strong>Mana Supply</strong>
-                . To play a card, you must have enough mana to pay for its
+                To play a card, you must have enough mana to pay for its
                 <strong>Mana Cost</strong>
-                .
+                . You gain mana by putting a card into your
+                <span class="game-term mana">Supply Zone</span>
+                . It gives you mana equal to its
+                <strong>Mana Supply</strong>
+                for this turn. .
+              </p>
+              <p class="text-sm text-slate-400">
+                At the start of the next turn, you recollect cards in your
+                Supply to your hand.
               </p>
             </div>
 
@@ -780,16 +732,14 @@ onUnmounted(() => {
                 Runes
               </h4>
               <p class="text-sm mb-2">
-                Your hero will start with predetermined stats for Might, Focus
-                and Wisdom. You will be able to increase these stats once per
-                turn via your
-                <strong>Resource Action</strong>
+                Affinities allow you to play stronger cards, but are not spent
+                when you do so: they strictly act as a threshold requirement.
               </p>
 
               <p class="text-sm mt-2">
-                To play a card from your hand, you will need to meet its stats
-                requirements. For example, a card may require you to have at
-                least 2 Might and 1 Focus to be played.
+                At the start of each turn, both players look at the top two
+                cards of their Affinity deck and choose one to put in play; the
+                other one goes back to the bottom of the Affinity deck.
               </p>
             </div>
           </div>

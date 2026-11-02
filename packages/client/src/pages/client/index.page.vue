@@ -7,6 +7,7 @@ import MainMenu from './MainMenu.vue';
 import { useGifts } from '@/player/composables/useGifts.js';
 import { useLogout } from '@/auth/composables/useLogout.js';
 import PlayerCurrencies from '@/player/components/PlayerCurrencies.vue';
+
 definePage({
   name: 'ClientHome',
   meta: {

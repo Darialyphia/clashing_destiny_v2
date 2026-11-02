@@ -6,10 +6,7 @@ import { CARD_LOCATIONS } from '@game/engine/src/card/card.enums';
 import { GAME_EVENTS } from '@game/engine/src/game/game.events';
 import { GAME_PHASES } from '@game/engine/src/game/game.enums';
 import { match } from 'ts-pattern';
-import {
-  isFreePlayFailed,
-  startFreePlay
-} from '../../tutorial/tutorial-utils';
+import { isFreePlayFailed, startFreePlay } from '../../tutorial/tutorial-utils';
 
 export const basicsTutorial: TutorialMission = {
   id: 'basics',

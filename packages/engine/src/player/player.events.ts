@@ -3,7 +3,7 @@ import type { Affinity, CardLocation } from '../card/card.enums';
 import { TypedSerializableEvent } from '../utils/typed-emitter';
 import type { Player } from './player.entity';
 import type { PLAYER_EVENTS, Rune } from './player.enums';
-import type { AnyCard } from '../card/entities/card.entity';
+import type { AnyCard, SerializedCard } from '../card/entities/card.entity';
 
 export class PlayerDrawEvent extends TypedSerializableEvent<
   { player: Player; amount: number },
@@ -57,12 +57,12 @@ export class PlayerGainVictoryPointEvent extends TypedSerializableEvent<
 
 export class PlayerAddSupplyEvent extends TypedSerializableEvent<
   { player: Player; card: AnyCard },
-  { player: string; card: string }
+  { player: string; card: SerializedCard }
 > {
   serialize() {
     return {
       player: this.data.player.id,
-      card: this.data.card.id
+      card: this.data.card.serialize()
     };
   }
 }

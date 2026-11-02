@@ -166,7 +166,10 @@ const _animationSequence = computed(() => {
           :baseCost="card.baseManaCost ?? card.manaCost"
           :mana-supply="card.manaSupply"
         />
-        <AffinityFlags :affinities="card.affinities" />
+        <AffinityFlags
+          :affinities="card.affinities"
+          v-if="card.kind !== CARD_KINDS.DESTINY"
+        />
         <CardArtComponent
           v-if="sprite"
           class="card-art"
