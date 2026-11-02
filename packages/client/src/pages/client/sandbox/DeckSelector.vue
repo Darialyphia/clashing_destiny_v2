@@ -2,6 +2,7 @@
 import FancyButton from '@/ui/components/FancyButton.vue';
 import PlayerDeckCard from '@/player/components/PlayerDeckCard.vue';
 import { useDecks, type UserDeck } from '@/card/composables/useDecks';
+import SelectableSounds from '@/shared/components/SelectableSounds.vue';
 
 const emit = defineEmits<{
   start: [];
@@ -39,16 +40,18 @@ const selectDeck = (deck: UserDeck) => {
           'selected-p2': p2Deck?.id === deck.id
         }"
       >
-        <PlayerDeckCard
-          :deck="deck"
-          @click="
-            () => {
-              if (deck.isValid.result === 'success') {
-                selectDeck(deck);
+        <SelectableSounds>
+          <PlayerDeckCard
+            :deck="deck"
+            @click="
+              () => {
+                if (deck.isValid.result === 'success') {
+                  selectDeck(deck);
+                }
               }
-            }
-          "
-        />
+            "
+          />
+        </SelectableSounds>
         <div class="p1-indicator">P1</div>
         <div class="p2-indicator">P2</div>
       </li>
@@ -76,6 +79,10 @@ li {
   @starting-style {
     opacity: 0;
     scale: 1.5;
+  }
+
+  &:hover {
+    transform: scale(1.05);
   }
 }
 .p1-indicator,

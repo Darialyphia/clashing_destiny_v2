@@ -17,6 +17,7 @@ import { CARD_LOCATIONS } from '@game/engine/src/card/card.enums';
 import { formatAbilityText } from '@/utils/formatters';
 import { provideRichTextContext } from '../composables/useRichText';
 import { sprites } from '@/assets';
+import { useSoundEffect } from '@/shared/composables/useSoundEffect';
 const {
   cardId,
   actionsOffset = -50,
@@ -33,7 +34,8 @@ const {
   pixelScale = 1,
   animationSequence,
   spriteScale = 1,
-  repeatAnimation = true
+  repeatAnimation = true,
+  disableHoverSound = false
 } = defineProps<{
   cardId: string;
   actionsOffset?: number;
@@ -54,6 +56,7 @@ const {
   animationSequence?: AnimationName[];
   spriteScale?: number;
   repeatAnimation?: boolean;
+  disableHoverSound?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -99,6 +102,25 @@ provideRichTextContext({
 const sprite = computed(() => {
   return sprites[card.value.art.sprite];
 });
+
+const isHovered = ref(false);
+const hoverSound = useSoundEffect('card-hover', {
+  volume: 0.35
+});
+
+const onMouseEnter = () => {
+  isHovered.value = true;
+  if (disableHoverSound) return;
+
+  setTimeout(() => {
+    if (isHovered.value) {
+      hoverSound.value?.play();
+    }
+  }, 75);
+};
+const onMouseLeave = () => {
+  isHovered.value = false;
+};
 </script>
 
 <template>
@@ -157,6 +179,8 @@ const sprite = computed(() => {
         :max-tilt-angle="0"
         :sprite="sprite"
         :animation-sequence="animationSequence"
+        @mouseenter="onMouseEnter"
+        @mouseleave="onMouseLeave"
       />
       <SmallCard
         v-else-if="variant === 'small'"

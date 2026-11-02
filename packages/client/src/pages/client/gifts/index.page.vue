@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import FancyButton from '@/ui/components/FancyButton.vue';
+import BackButton from '@/shared/components/BackButton.vue';
 import PageTitle from '@/shared/components/PageTitle.vue';
 import GiftsList from './GiftsList.vue';
 import { provideGiftsPage } from './useGiftsPage';
@@ -16,12 +17,7 @@ const { claimableGifts, isClaiming, claimAll } = provideGiftsPage();
 
 <template>
   <div class="gifts-page">
-    <FancyButton
-      class="back-button"
-      text="Back"
-      size="md"
-      :to="{ name: 'ClientHome' }"
-    />
+    <BackButton class="back-button" />
 
     <div class="gifts-header">
       <PageTitle title="Gifts" />

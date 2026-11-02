@@ -28,7 +28,6 @@ import ScoringArrow from './ScoringArrow.vue';
 import InteractionArrows from './InteractionArrows.vue';
 import type { PlayerClockState } from '../composables/useGameSocket';
 import Deck from './Deck.vue';
-import GamePhaseIndicator from './GamePhaseIndicator.vue';
 import Debug from './Debug.vue';
 import BattleLog from './BattleLog.vue';
 import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
@@ -170,7 +169,6 @@ const hasWon = computed(() => winners.value.includes(myPlayer.value.id));
     </template>
   </GameMenu>
   <TurnIndicator />
-  <GamePhaseIndicator />
   <HighlightedCard />
 
   <slot name="board-additional" />

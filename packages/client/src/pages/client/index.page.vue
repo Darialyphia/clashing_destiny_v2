@@ -7,6 +7,7 @@ import MainMenu from './MainMenu.vue';
 import { useGifts } from '@/player/composables/useGifts.js';
 import { useLogout } from '@/auth/composables/useLogout.js';
 import PlayerCurrencies from '@/player/components/PlayerCurrencies.vue';
+import SelectableSounds from '@/shared/components/SelectableSounds.vue';
 
 definePage({
   name: 'ClientHome',
@@ -40,26 +41,25 @@ const { mutate: logout } = useLogout();
     <MainMenu />
 
     <Transition name="boosters">
-      <RouterLink
-        v-if="unopenedPacks?.packs.length > 0"
-        class="boosters"
-        :to="{ name: 'Boosters' }"
-        aria-label="boosters"
-      >
-        <span
-          class="dual-text"
-          :data-text="boosterPackButtonLabel"
-          :style="{
-            '--dual-text-stroke': '6px',
-            '--dual-text-stroke-offset-y': '-4px',
-            '--top-color': 'var(--orange-3)',
-            '--bottom-color': 'var(--blue-3)',
-            '--gradient-threshold': '60%'
-          }"
-        >
-          {{ boosterPackButtonLabel }}
-        </span>
-      </RouterLink>
+      <div v-if="unopenedPacks?.packs.length > 0" class="boosters">
+        <SelectableSounds>
+          <RouterLink :to="{ name: 'Boosters' }" aria-label="boosters">
+            <span
+              class="dual-text"
+              :data-text="boosterPackButtonLabel"
+              :style="{
+                '--dual-text-stroke': '6px',
+                '--dual-text-stroke-offset-y': '-4px',
+                '--top-color': 'var(--orange-3)',
+                '--bottom-color': 'var(--blue-3)',
+                '--gradient-threshold': '60%'
+              }"
+            >
+              {{ boosterPackButtonLabel }}
+            </span>
+          </RouterLink>
+        </SelectableSounds>
+      </div>
     </Transition>
 
     <PlayerBadge

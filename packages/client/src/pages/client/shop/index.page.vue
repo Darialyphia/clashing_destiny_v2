@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useMe } from '@/auth/composables/useMe';
-import FancyButton from '@/ui/components/FancyButton.vue';
+import BackButton from '@/shared/components/BackButton.vue';
 import { SHOP_CATEGORIES, type ShopCategory } from '@game/api';
 import ShopOffer from './ShopOffer.vue';
 import { useCatalogByCategory } from './useShop';
@@ -26,7 +26,7 @@ const { data: catalog, isLoading } = useCatalogByCategory(selectedCategory);
 <template>
   <div v-if="me" class="shop-page">
     <div class="shop-topbar">
-      <FancyButton text="Back" :to="{ name: 'ClientHome' }" />
+      <BackButton />
       <PlayerCurrencies />
     </div>
 

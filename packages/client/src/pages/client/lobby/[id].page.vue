@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useAuthedQuery } from '@/auth/composables/useAuth';
-import { useMe } from '@/auth/composables/useMe';
-import FancyButton from '@/ui/components/FancyButton.vue';
+import BackButton from '@/shared/components/BackButton.vue';
 import {
   api,
   LOBBY_STATUS,
@@ -22,6 +21,7 @@ import {
   useJoinLobby,
   useUpdateLobbyOptions
 } from '@/lobby/composables/useLobby';
+import { useMe } from '@/auth/composables/useMe.js';
 
 definePage({
   name: 'Lobby',
@@ -118,12 +118,7 @@ watchEffect(() => {
 
 <template>
   <div class="page" style="--container-size: var(--size-xl)">
-    <FancyButton
-      class="absolute top-10 left-8"
-      text="Back"
-      size="md"
-      :to="{ name: 'SelectMode' }"
-    />
+    <BackButton class="absolute top-10 left-8" :to="{ name: 'SelectMode' }" />
 
     <div v-if="isLoading" class="loader">Loading lobby...</div>
 

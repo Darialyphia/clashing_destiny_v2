@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import FancyButton from '@/ui/components/FancyButton.vue';
+import BackButton from '@/shared/components/BackButton.vue';
 import { assets } from '@/assets';
 import PageTitle from '@/shared/components/PageTitle.vue';
+import SelectableSounds from '@/shared/components/SelectableSounds.vue';
 
 definePage({
   name: 'SelectMode',
@@ -13,10 +14,8 @@ definePage({
 
 <template>
   <div class="page">
-    <FancyButton
+    <BackButton
       class="absolute top-10 left-8 lt-lg:top-3 lt-lg:left-0"
-      text="Back"
-      size="md"
       :to="{ name: 'ClientHome' }"
     />
 
@@ -24,38 +23,45 @@ definePage({
       <PageTitle title="Choose Your Game Mode" />
 
       <div class="mode-options">
-        <RouterLink
-          :to="{ name: 'Matchmaking' }"
-          class="mode-card surface-transparent"
-          :style="{ '--bg': assets['backgrounds/ranked'].css }"
-        >
-          <h2 class="mode-title">Matchmaking</h2>
-          <p class="mode-description">
-            Join a queue and get matched with players of similar skill level.
-          </p>
-        </RouterLink>
+        <SelectableSounds>
+          <RouterLink
+            :to="{ name: 'Matchmaking' }"
+            class="mode-card surface-transparent"
+            :style="{ '--bg': assets['backgrounds/ranked'].css }"
+          >
+            <h2 class="mode-title">Matchmaking</h2>
+            <p class="mode-description">
+              Join a queue and get matched with players of similar skill level.
+            </p>
+          </RouterLink>
+        </SelectableSounds>
 
-        <RouterLink
-          :to="{ name: 'Lobbies' }"
-          class="mode-card surface-transparent"
-          :style="{ '--bg': assets['backgrounds/lobbies'].css }"
-        >
-          <h2 class="mode-title">Lobbies</h2>
-          <p class="mode-description">
-            Create or join custom lobbies to practice and spectate with friends.
-          </p>
-        </RouterLink>
+        <SelectableSounds>
+          <RouterLink
+            :to="{ name: 'Lobbies' }"
+            class="mode-card surface-transparent"
+            :style="{ '--bg': assets['backgrounds/lobbies'].css }"
+          >
+            <h2 class="mode-title">Lobbies</h2>
+            <p class="mode-description">
+              Create or join custom lobbies to practice and spectate with
+              friends.
+            </p>
+          </RouterLink>
+        </SelectableSounds>
 
-        <RouterLink
-          :to="{ name: 'Sandbox' }"
-          class="mode-card surface-transparent"
-          :style="{ '--bg': assets['backgrounds/sandbox'].css }"
-        >
-          <h2 class="mode-title">Sandbox</h2>
-          <p class="mode-description">
-            Play a game where you control both players to practice strategies.
-          </p>
-        </RouterLink>
+        <SelectableSounds>
+          <RouterLink
+            :to="{ name: 'Sandbox' }"
+            class="mode-card surface-transparent"
+            :style="{ '--bg': assets['backgrounds/sandbox'].css }"
+          >
+            <h2 class="mode-title">Sandbox</h2>
+            <p class="mode-description">
+              Play a game where you control both players to practice strategies.
+            </p>
+          </RouterLink>
+        </SelectableSounds>
       </div>
     </div>
   </div>
@@ -108,7 +114,8 @@ definePage({
   position: relative;
   transition:
     scale 0.2s ease,
-    opacity 0.2s ease;
+    opacity 0.2s ease,
+    filter 0.2s ease;
   background: linear-gradient(to bottom, black, transparent, black), var(--bg);
   transition-delay: calc(0.05s * sibling-index());
 

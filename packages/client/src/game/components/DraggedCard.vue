@@ -119,6 +119,7 @@ watch(draggedCard, draggedCard => {
       v-if="draggedCard"
       :card-id="draggedCard.id"
       :is-interactive="false"
+      disable-hover-sound
     />
   </div>
 </template>

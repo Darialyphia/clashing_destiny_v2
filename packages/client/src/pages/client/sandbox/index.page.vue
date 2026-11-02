@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Sandbox from '@/game/components/Sandbox.vue';
-import FancyButton from '@/ui/components/FancyButton.vue';
+import BackButton from '@/shared/components/BackButton.vue';
 import PageTitle from '@/shared/components/PageTitle.vue';
 import { type UserDeck } from '@/card/composables/useDecks';
 import DeckSelector from './DeckSelector.vue';
@@ -47,10 +47,8 @@ const playersConfig = computed(() => {
 
 <template>
   <div v-if="!isStarted" class="page">
-    <FancyButton
+    <BackButton
       class="absolute top-10 left-8 lt-lg:top-3 lt-lg:left-0"
-      text="Back"
-      size="md"
       :to="{ name: 'SelectMode' }"
     />
 

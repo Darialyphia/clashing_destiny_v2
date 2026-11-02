@@ -11,6 +11,7 @@ import type { DeckId } from '@game/api';
 import MatchmakingTimer from '@/matchmaking/components/MatchmakingTimer.vue';
 import PlayerDeckCard from '@/player/components/PlayerDeckCard.vue';
 import PageTitle from '@/shared/components/PageTitle.vue';
+import BackButton from '@/shared/components/BackButton.vue';
 
 definePage({
   name: 'Matchmaking',
@@ -67,12 +68,7 @@ const getDisplayedDeck = (deck: UserDeck) => ({
 
 <template>
   <div class="page">
-    <FancyButton
-      class="absolute top-10 left-8"
-      text="Back"
-      size="md"
-      :to="{ name: 'SelectMode' }"
-    />
+    <BackButton class="absolute top-10 left-8" :to="{ name: 'SelectMode' }" />
 
     <main class="container">
       <PageTitle title="Matchmaking" />
@@ -227,68 +223,4 @@ footer {
   color: #a8a8a8;
   font-size: var(--font-size-2);
 }
-/*
-.matchmaking-card {
-  position: relative;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  border: 1px solid transparent;
-  padding: var(--size-2) var(--size-4);
-
-  &:hover:not(.disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px hsl(240 100% 5% / 0.3);
-    border-color: #efef9f;
-  }
-
-  &.selected {
-    border-color: #d7ad42;
-    background: rgba(239, 239, 159, 0.1);
-  }
-
-  .selected-indicator {
-    position: absolute;
-    top: var(--size-2);
-    right: var(--size-2);
-  }
-
-  > header {
-    margin-bottom: var(--size-2);
-
-    > h3 {
-      font-size: var(--font-size-4);
-      font-weight: var(--font-weight-6);
-      color: #efef9f;
-      display: inline;
-      margin-right: var(--size-4);
-    }
-  }
-}
-
-.disabled-badge {
-  color: var(--red-5);
-  font-size: var(--font-size-0);
-  font-weight: var(--font-weight-6);
-  border-radius: var(--radius-2);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.matchmaking-description {
-  color: #a8a8a8;
-  margin: 0;
-}
-
-@media (max-width: 768px) {
-  .matchmaking-content {
-    grid-template-columns: 1fr;
-    gap: var(--size-4);
-  }
-
-  .matchmaking-card {
-    flex-direction: column;
-    gap: var(--size-4);
-    text-align: center;
-  }
-} */
 </style>

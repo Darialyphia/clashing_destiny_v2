@@ -5,7 +5,7 @@ import { useMe } from '@/auth/composables/useMe';
 import { api } from '@game/api';
 import { Icon } from '@iconify/vue';
 import UiButton from '@/ui/components/UiButton.vue';
-import FancyButton from '@/ui/components/FancyButton.vue';
+import BackButton from '@/shared/components/BackButton.vue';
 
 definePage({
   name: 'Lobbies',
@@ -20,12 +20,7 @@ const { data: me } = useMe();
 
 <template>
   <div class="page" v-if="me">
-    <FancyButton
-      class="absolute top-10 left-8"
-      text="Back"
-      size="md"
-      :to="{ name: 'SelectMode' }"
-    />
+    <BackButton class="absolute top-10 left-8" :to="{ name: 'SelectMode' }" />
 
     <div class="grid container">
       <section class="surface">

@@ -1,38 +1,48 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import SelectableSounds from '@/shared/components/SelectableSounds.vue';
+</script>
 
 <template>
   <ul class="main-menu">
     <li>
-      <RouterLink
-        :to="{ name: 'SelectMode' }"
-        class="dual-text"
-        data-text="Play"
-      >
-        <span>Play</span>
-      </RouterLink>
+      <SelectableSounds>
+        <RouterLink
+          :to="{ name: 'SelectMode' }"
+          class="dual-text"
+          data-text="Play"
+        >
+          <span>Play</span>
+        </RouterLink>
+      </SelectableSounds>
     </li>
     <li>
-      <RouterLink
-        :to="{ name: 'Collection' }"
-        class="dual-text"
-        data-text="Collection"
-      >
-        Collection
-      </RouterLink>
+      <SelectableSounds>
+        <RouterLink
+          :to="{ name: 'Collection' }"
+          class="dual-text"
+          data-text="Collection"
+        >
+          Collection
+        </RouterLink>
+      </SelectableSounds>
     </li>
     <li class="hot">
-      <RouterLink :to="{ name: 'Shop' }" class="dual-text" data-text="Shop">
-        Shop
-      </RouterLink>
+      <SelectableSounds>
+        <RouterLink :to="{ name: 'Shop' }" class="dual-text" data-text="Shop">
+          Shop
+        </RouterLink>
+      </SelectableSounds>
     </li>
     <li>
-      <RouterLink
-        :to="{ name: 'TutorialHome' }"
-        class="dual-text"
-        data-text="Learn to Play"
-      >
-        Learn to Play
-      </RouterLink>
+      <SelectableSounds>
+        <RouterLink
+          :to="{ name: 'TutorialHome' }"
+          class="dual-text"
+          data-text="Learn to Play"
+        >
+          Learn to Play
+        </RouterLink>
+      </SelectableSounds>
     </li>
   </ul>
 </template>

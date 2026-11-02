@@ -33,11 +33,11 @@ const play = (
       }
     });
 
-    // the card falls down a beam of light while a ring closes in on its space
     playSound.value?.play();
     setTimeout(() => {
       playSound2.value?.play();
-    }, 500);
+    }, 400);
+    // the card falls down a beam of light while a ring closes in on its space
     tl.fromTo(
       card,
       {
