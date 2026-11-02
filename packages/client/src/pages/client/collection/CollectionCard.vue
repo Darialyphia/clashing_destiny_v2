@@ -5,7 +5,6 @@ import BlueprintCard from '@/card/components/BlueprintCard.vue';
 import type { CardBlueprint } from '@game/engine/src/card/card-blueprint';
 import type { CardId } from '@game/api';
 import { useDoubleTap } from '@/shared/composables/useDoubleTap';
-import Sound from '@/shared/components/Sound.vue';
 
 const { card } = defineProps<{
   card: {

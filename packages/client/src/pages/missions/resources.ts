@@ -776,14 +776,13 @@ export const resourcesTutorial: TutorialMission = {
         textBoxes: [
           {
             text: 'These two cards come from your <b>Affinity deck</b>. Each turn, you pick one to add to your Affinity Zone.',
-            left: '10%',
+            left: '15%',
             bottom: '35%',
-            canManuallyAdvance: false,
-            advanceCondition: () => false
+            canManuallyAdvance: true
           },
           {
             text: 'In this mission your deck only has Lyonar affinities, so either choice works. With different affinities in your deck, you could play cards from several factions!',
-            left: '10%',
+            left: '15%',
             bottom: '35%',
             canManuallyAdvance: false,
             advanceCondition: () => false
@@ -1132,10 +1131,11 @@ export const resourcesTutorial: TutorialMission = {
         textBoxes: [
           {
             text: 'The enemy summoned a <b>Bloodbound Shaman</b>, with 4 influence! If it scores, your opponent will have 6 influence.',
-            left: '50%',
-            top: '25%',
+            left: '35%',
+            top: '35%',
             canManuallyAdvance: true,
-            onEnter(ctx) {
+            async onEnter(ctx) {
+              await waitFor(500);
               ctx.client.ui.highlightedElement =
                 ctx.client.ui.DOMSelectors.cardCommandment(
                   (ctx.meta.shaman as MinionCard).id
