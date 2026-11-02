@@ -416,7 +416,7 @@ export const locationsTutorial: TutorialMission = {
         },
         textBoxes: [
           {
-            text: 'The Executor moved to the right battlefield, and the Arena gives it +1 attack too. Move your Guardian there before it attacks!',
+            text: 'Move your Ironcliffe Guardian before the enemy attacks to protect your Sunbreaker.',
             right: '22%',
             bottom: '45%',
             canManuallyAdvance: false,
