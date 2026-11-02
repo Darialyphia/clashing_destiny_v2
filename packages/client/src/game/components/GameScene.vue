@@ -239,14 +239,13 @@ const hasWon = computed(() => winners.value.includes(myPlayer.value.id));
 }
 
 .my-deck {
-  --pixel-scale: 1.25;
+  --pixel-scale: 1;
   perspective: 1500px;
   perspective-origin: -2000px 2000px;
   position: absolute;
-  right: var(--size-10);
-  bottom: -20px;
+  right: var(--size-11);
+  bottom: 30px;
   transform-style: preserve-3d;
-  rotate: -30deg;
 
   @screen lt-lg {
     scale: 0.5;
@@ -260,14 +259,13 @@ const hasWon = computed(() => winners.value.includes(myPlayer.value.id));
   }
 }
 .opponent-deck {
-  --pixel-scale: 1.25;
+  --pixel-scale: 1;
   perspective: 1500px;
   perspective-origin: 3000px 2000px;
   position: absolute;
   right: var(--size-10);
-  top: -20px;
+  top: 30px;
   transform-style: preserve-3d;
-  rotate: 30deg;
 
   @screen lt-lg {
     scale: 0.5;

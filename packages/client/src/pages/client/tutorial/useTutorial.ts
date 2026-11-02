@@ -122,6 +122,8 @@ export const provideTutorial = (options: UseTutorialOptions) => {
   });
   tutorial.value.onValidation(result => {
     if (!result.isValid) {
+      // the choice modal waits for the game once a choice is sent, let the player choose again
+      client.value.optimisticStateManager.clearChooseCardSelection();
       currentStepError.value = result.reason || 'Invalid input';
       setTimeout(() => {
         currentStepError.value = null;

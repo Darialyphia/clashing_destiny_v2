@@ -86,6 +86,22 @@ const startMission = async (missionId: string) => {
           game().interaction.getState() === INTERACTION_STATES.IDLE &&
           game().gamePhaseSystem.getState() === GAME_PHASES.MAIN
       ),
+    // player 1's turn, or a choice like a mulligan waiting for player 1
+    waitForP1Action: () =>
+      waitUntil('player 1 to be able to act', () => {
+        const interaction = game().interaction;
+        if (interaction.getState() === INTERACTION_STATES.CHOOSING_CARDS) {
+          return interaction
+            .getContext<'choosing_cards'>()
+            .ctx.serialize()
+            .players.includes(p1().id);
+        }
+        return (
+          game().turnSystem.initiativePlayer.equals(p1()) &&
+          interaction.getState() === INTERACTION_STATES.IDLE &&
+          game().gamePhaseSystem.getState() === GAME_PHASES.MAIN
+        );
+      }),
     findInHand: (blueprintId: string) =>
       p1().cardManager.hand.find(c => c.blueprintId === blueprintId)!
   };
@@ -96,7 +112,7 @@ describe('tutorial missions', () => {
     '%s starts on step 0 without errors',
     async id => {
       const m = await startMission(id);
-      await m.waitForP1Turn();
+      await m.waitForP1Action();
       expect(m.step()).toBe(0);
       expect(m.errors).toEqual([]);
     }

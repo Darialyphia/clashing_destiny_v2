@@ -10,7 +10,6 @@ import {
   getCardViewModel,
   getDestinyCard,
   getEmptyBaseSpaces,
-  makeOpponentChooseAffinity,
   startOpponentAI,
   supplyZoneElement,
   validateMovingMinion,
@@ -19,7 +18,8 @@ import {
   validateSupplyCard,
   startFreePlay,
   isFreePlayFailed,
-  type BattlefieldZone
+  type BattlefieldZone,
+  findPlayerMinion
 } from '../../tutorial/tutorial-utils';
 import { CARD_LOCATIONS } from '@game/engine/src/card/card.enums';
 import type { MinionCard } from '@game/engine/src/card/entities/minion.entity';
@@ -30,7 +30,13 @@ import type {
 } from '@game/engine/src/tutorial/v2/tutorial';
 import type { SerializedInput } from '@game/engine/src/input/input-system';
 import { GAME_EVENTS } from '@game/engine/src/game/game.events';
-import { GAME_PHASES } from '@game/engine/src/game/game.enums';
+import {
+  GAME_PHASE_EVENTS,
+  GAME_PHASES,
+  INTERACTION_EVENTS,
+  INTERACTION_STATES
+} from '@game/engine/src/game/game.enums';
+import type { Player } from '@game/engine/src/player/player.entity';
 
 const validateAttacking = (
   attacker: MinionCard,
@@ -75,6 +81,56 @@ const getLocationElement = (ctx: TutorialContext, zone: BattlefieldZone) => {
   return cardOnBoardElement(ctx, location);
 };
 
+const isWaitingForChoice = (ctx: TutorialContext, player: Player) => {
+  if (ctx.game.interaction.getState() !== INTERACTION_STATES.CHOOSING_CARDS) {
+    return false;
+  }
+  return ctx.game.interaction
+    .getContext<'choosing_cards'>()
+    .ctx.serialize()
+    .players.includes(player.id);
+};
+
+// the mulligan happens in the draw phase, the affinity choice in the supply phase
+const isMulligan = (ctx: TutorialContext) =>
+  ctx.game.gamePhaseSystem.getState() === GAME_PHASES.DRAW;
+
+// whenever the opponent has to choose cards, it keeps its whole hand or picks its first affinity
+const makeOpponentAnswerChoices = (ctx: TutorialContext) => {
+  const p2 = ctx.game.playerSystem.player2;
+  return ctx.game.on(
+    INTERACTION_EVENTS.INTERACTION_AFTER_CHANGE_STATE,
+    event => {
+      if (event.data.to.state !== INTERACTION_STATES.CHOOSING_CARDS) return;
+      // the game only waits for the choice once this event is over
+      setTimeout(() => {
+        if (!isWaitingForChoice(ctx, p2)) return;
+        void ctx.game.dispatch({
+          type: 'chooseCards',
+          payload: { playerId: p2.id, indices: isMulligan(ctx) ? [] : [0] }
+        });
+      });
+    }
+  );
+};
+
+// for choices that resolve after the input that answered them, when no input will end at the right time
+const goToNextStepOn = (
+  ctx: TutorialContext,
+  subscribe: (callback: () => void) => () => void
+) => {
+  let isDone = false;
+  const unsub = subscribe(() => {
+    if (isDone) return;
+    isDone = true;
+    // lets the game finish what it was doing first
+    setTimeout(() => {
+      unsub();
+      void ctx.next();
+    });
+  });
+};
+
 export const locationsTutorial: TutorialMission = {
   id: 'locations',
   name: 'Mission 4: Locations & Tactics',
@@ -86,13 +142,15 @@ export const locationsTutorial: TutorialMission = {
           name: 'You',
           deck: {
             cards: makeTutorialDeck([
-              // turn 1 hand
+              // starting hand, the mulligan replaces the Decimates
               ['tutorial-windblade-adept', 1],
-              ['tutorial-ironcliffe-guardian', 1],
-              ['tutorial-silverguard-knight', 1],
+              ['decimate', 2],
               // already on the right battlefield when the mission starts
               ['tutorial-sunbreaker', 1],
               ['tutorial-azurite-lion', 1],
+              // drawn by the mulligan
+              ['tutorial-ironcliffe-guardian', 1],
+              ['tutorial-silverguard-knight', 1],
               // turn 2 draws
               ['tutorial-windblade-adept', 10],
               // left Location on turn 1, then on turn 3
@@ -130,11 +188,11 @@ export const locationsTutorial: TutorialMission = {
           SHOULD_ROTATE_DESTINIES: true,
           SHUFFLE_DECK_ON_GAME_START: false,
           CARDS_DRAWN_PER_TURN: 4,
-          CARDS_MULLIGANED_PER_TURN: 0,
+          CARDS_MULLIGANED_PER_TURN: 2,
           INITIAL_HAND_SIZE: 0,
           PLAYER_1_CARDS_DRAWN_ON_FIRST_TURN: 3,
           PLAYER_2_CARDS_DRAWN_ON_FIRST_TURN: 5,
-          START_OF_GAME_MULLIGANED_CARDS: 0,
+          START_OF_GAME_MULLIGANED_CARDS: 2,
           // the right battlefield on turn 1, then both battlefields on turn 2
           VICTORY_POINTS_TO_WIN: 3
         }
@@ -174,18 +232,100 @@ export const locationsTutorial: TutorialMission = {
           ctx.meta.sunbreaker = sunbreaker;
           ctx.meta.lion = lion;
           ctx.meta.shaman = shaman;
-          const [adept, guardian, knight] = p1.cardManager.hand;
-          ctx.meta.adept = adept;
-          ctx.meta.guardian = guardian;
-          ctx.meta.knight = knight;
+          ctx.meta.adept = p1.cardManager.hand.find(
+            card => card.blueprintId === 'tutorial-windblade-adept'
+          );
 
-          // auto select affinity for both players
-          const interactionCtx =
-            ctx.game.interaction.getContext<'choosing_cards'>();
-          interactionCtx.ctx.commit(p1, [0]);
-          interactionCtx.ctx.commit(p2, [0]);
+          // the mulligan started before this step, the opponent keeps its hand
+          await ctx.game.interaction
+            .getContext<'choosing_cards'>()
+            .ctx.commit(p2, []);
+          ctx.meta.stopOpponentChoices = makeOpponentAnswerChoices(ctx);
 
           await ctx.game.snapshotSystem.takeSnapshot();
+        },
+        teardown() {},
+        solveCondition(ctx) {
+          return !(
+            isMulligan(ctx) &&
+            isWaitingForChoice(ctx, ctx.game.playerSystem.player1)
+          );
+        },
+        validateInput(input, ctx) {
+          const reason = 'Select both Decimates, then confirm.';
+          if (input.type !== 'chooseCards' || !isMulligan(ctx)) {
+            return { isValid: false, reason };
+          }
+          const choices = ctx.game.interaction
+            .getContext<'choosing_cards'>()
+            .ctx.getChoices(ctx.game.playerSystem.player1);
+          const picked = input.payload.indices.map(index => choices[index]);
+          const isValid =
+            picked.length === 2 &&
+            picked.every(choice => choice?.card.blueprintId === 'decimate');
+          return isValid ? { isValid: true } : { isValid: false, reason };
+        },
+        textBoxes: [
+          {
+            text: 'The Bloodbound clan is back for another assault! (again...)',
+            right: '22%',
+            bottom: '45%',
+            canManuallyAdvance: true
+          },
+          {
+            text: 'Before the battle starts, you can replace up to 2 cards of your starting hand: this is a <b>mulligan</b>. The cards you pick go to the bottom of your deck, and you draw as many new ones.',
+            right: '22%',
+            bottom: '45%',
+            canManuallyAdvance: true
+          },
+          {
+            text: 'Your two <b>Decimates</b> cost 7 mana each, far more than you will have in this battle. Select both of them, then confirm.',
+            right: '22%',
+            bottom: '45%',
+            canManuallyAdvance: false,
+            advanceCondition: () => false
+          }
+        ]
+      },
+      {
+        id: 1,
+        canRetry: () => false,
+        failedCondition: () => false,
+        meta: {},
+        setup(ctx) {
+          // the start of game choices resolve after the inputs that answered them, so wait for the main phase itself
+          goToNextStepOn(ctx, callback =>
+            ctx.game.on(GAME_PHASE_EVENTS.AFTER_CHANGE_PHASE, event => {
+              if (event.data.to.state === GAME_PHASES.MAIN) callback();
+            })
+          );
+        },
+        teardown() {},
+        solveCondition: () => false,
+        validateInput(input) {
+          if (input.type === 'chooseCards') return { isValid: true };
+          return { isValid: false, reason: 'Choose your affinity.' };
+        },
+        textBoxes: [
+          {
+            text: 'You drew an <b>Ironcliffe Guardian</b> and a <b>Silverguard Knight</b> instead, much better! Now choose your affinity for this turn.',
+            right: '22%',
+            bottom: '45%',
+            canManuallyAdvance: false,
+            advanceCondition: () => false
+          }
+        ]
+      },
+      {
+        id: 2,
+        canRetry: () => false,
+        failedCondition: () => false,
+        meta: {},
+        setup(ctx) {
+          ctx.meta.guardian =
+            ctx.game.playerSystem.player1.cardManager.hand.find(
+              card => card.blueprintId === 'tutorial-ironcliffe-guardian'
+            );
         },
         teardown() {},
         solveCondition(ctx) {
@@ -195,12 +335,6 @@ export const locationsTutorial: TutorialMission = {
           return validateAttacking(ctx.meta.sunbreaker, ctx.meta.shaman, input);
         },
         textBoxes: [
-          {
-            text: 'The Bloodbound clan is back for another assault! (again...)',
-            right: '22%',
-            bottom: '45%',
-            canManuallyAdvance: true
-          },
           {
             text: "Each battlefield has a <b>Location</b>. A Location changes the rules for every minion fighting there, yours and your enemy's.",
             right: '22%',
@@ -267,7 +401,7 @@ export const locationsTutorial: TutorialMission = {
         ]
       },
       {
-        id: 1,
+        id: 3,
         canRetry: () => false,
         failedCondition: () => false,
         meta: {},
@@ -336,7 +470,7 @@ export const locationsTutorial: TutorialMission = {
             }
           },
           {
-            text: "But the Shaman struck back, and the enemy summoned a <b>Bloodbound Executor</b>. Your Sunbreaker is wounded and exhausted: it can't strike back anymore.",
+            text: 'The enemy summoned a <b>Bloodbound Executor</b>.',
             right: '22%',
             bottom: '45%',
             canManuallyAdvance: true,
@@ -346,6 +480,23 @@ export const locationsTutorial: TutorialMission = {
               ctx.client.ui.highlightedElement = cardOnBoardElement(
                 ctx,
                 executor
+              );
+            }
+          },
+          {
+            text: 'Your Sunbreaker is wounded and exhausted, we need to defend him.',
+            right: '22%',
+            bottom: '45%',
+            canManuallyAdvance: true,
+            onEnter(ctx) {
+              const ironcliffe = findPlayerMinion(
+                ctx,
+                'tutorial-ironcliffe-guardian'
+              );
+              if (!ironcliffe) return;
+              ctx.client.ui.highlightedElement = cardOnBoardElement(
+                ctx,
+                ironcliffe
               );
             }
           },
@@ -391,7 +542,7 @@ export const locationsTutorial: TutorialMission = {
         ]
       },
       {
-        id: 2,
+        id: 4,
         canRetry: () => false,
         failedCondition: () => false,
         meta: {},
@@ -416,7 +567,7 @@ export const locationsTutorial: TutorialMission = {
         },
         textBoxes: [
           {
-            text: 'The Executor moved to the right battlefield, and the Arena gives it +1 attack too. Move your Guardian there before it attacks!',
+            text: 'Move your Ironcliffe Guardian before the enemy attacks to protect your Sunbreaker.',
             right: '22%',
             bottom: '45%',
             canManuallyAdvance: false,
@@ -452,7 +603,7 @@ export const locationsTutorial: TutorialMission = {
         ]
       },
       {
-        id: 3,
+        id: 5,
         canRetry: () => false,
         failedCondition: () => false,
         meta: {},
@@ -482,20 +633,26 @@ export const locationsTutorial: TutorialMission = {
               })
             ]
           ]);
-          makeOpponentChooseAffinity(ctx);
-        },
-        teardown() {},
-        solveCondition(ctx) {
-          return (
-            ctx.game.turnSystem.elapsedTurns === 1 &&
-            ctx.game.gamePhaseSystem.getState() === GAME_PHASES.MAIN
+          // the turn ends inside the last pass, which is still resolving during the next turn's mulligan
+          goToNextStepOn(ctx, callback =>
+            ctx.game.on(
+              INTERACTION_EVENTS.INTERACTION_AFTER_CHANGE_STATE,
+              event => {
+                if (
+                  event.data.to.state === INTERACTION_STATES.CHOOSING_CARDS &&
+                  isMulligan(ctx)
+                ) {
+                  callback();
+                }
+              }
+            )
           );
         },
+        teardown() {},
+        solveCondition: () => false,
         validateInput(input, ctx) {
           const guardian = ctx.meta.guardian as MinionCard;
           const lion = ctx.meta.lion as MinionCard;
-          // needed to pick an affinity when the next turn starts
-          if (input.type === 'chooseCards') return { isValid: true };
 
           const scoringResult = validateScoring(input, [guardian, lion]);
           if (scoringResult) return scoringResult;
@@ -516,7 +673,7 @@ export const locationsTutorial: TutorialMission = {
         },
         textBoxes: [
           {
-            text: 'With a Protector in the way, the Executor could only attack your Guardian. It survived the blow, and its counterattack destroyed the Executor!',
+            text: 'With a Protector in the way, the Executor could only attack your Guardian.',
             right: '22%',
             bottom: '45%',
             canManuallyAdvance: true,
@@ -534,6 +691,12 @@ export const locationsTutorial: TutorialMission = {
                 })
               ]);
             }
+          },
+          {
+            text: 'Thanks to the attack bonus from the Location, it was able to destroy it with its counterattack!',
+            right: '22%',
+            bottom: '45%',
+            canManuallyAdvance: true
           },
           {
             text: 'Score with your Guardian and your Azurite Lion to secure the right battlefield, then pass to end the turn.',
@@ -569,7 +732,58 @@ export const locationsTutorial: TutorialMission = {
         ]
       },
       {
-        id: 4,
+        id: 6,
+        canRetry: () => false,
+        failedCondition: () => false,
+        meta: {},
+        setup() {},
+        teardown() {},
+        solveCondition(ctx) {
+          return (
+            ctx.game.turnSystem.elapsedTurns === 1 &&
+            ctx.game.gamePhaseSystem.getState() === GAME_PHASES.MAIN
+          );
+        },
+        validateInput(input, ctx) {
+          if (!isMulligan(ctx)) {
+            if (input.type === 'chooseCards') return { isValid: true };
+            return { isValid: false, reason: 'Choose your affinity.' };
+          }
+          if (
+            input.type === 'chooseCards' &&
+            input.payload.indices.length === 0
+          ) {
+            return { isValid: true };
+          }
+          return {
+            isValid: false,
+            reason: 'Keep both your cards: confirm without selecting any.'
+          };
+        },
+        textBoxes: [
+          {
+            text: 'At the start of every turn, you can mulligan 2 other cards.',
+            right: '22%',
+            bottom: '45%',
+            canManuallyAdvance: true
+          },
+          {
+            text: "This time you don't draw new cards right away. But you always draw back up to 4 cards after the mulligan, so every card you put away makes room for a new one.",
+            right: '22%',
+            bottom: '45%',
+            canManuallyAdvance: true
+          },
+          {
+            text: 'You need your Silverguard Knight and your Windblade Adept this turn: confirm without selecting any card, then choose your affinity.',
+            right: '22%',
+            bottom: '45%',
+            canManuallyAdvance: false,
+            advanceCondition: () => false
+          }
+        ]
+      },
+      {
+        id: 7,
         canRetry: () => false,
         failedCondition: () => false,
         meta: {},
@@ -594,12 +808,46 @@ export const locationsTutorial: TutorialMission = {
         },
         textBoxes: [
           {
-            text: 'A new turn begins, and the Locations have moved! The one on the right left the board, the one on the left slid to the right, and a new one arrived on the left.',
+            text: 'Every turn, the Locations on the battlefield change.',
+            right: '22%',
+            bottom: '45%',
+            canManuallyAdvance: true
+          },
+          {
+            text: 'The one on the right leaves the board, the one on the left slides to the right, and a new one arrived on the left.',
             right: '22%',
             bottom: '45%',
             canManuallyAdvance: true,
-            hideDuringOpponentInitiative: true,
+            hideDuringOpponentInitiative: true
+          },
+          {
+            text: "Locations come from players' Location decks. There will always be one location from each player in play.",
+            right: '22%',
+            bottom: '45%',
+            canManuallyAdvance: true
+          },
+          {
+            text: 'Your opponent brought the <b>Mistveil Marsh</b>: minions on the left battlefield have +2 influence.',
+            right: '22%',
+            bottom: '45%',
+            canManuallyAdvance: true,
             onEnter(ctx) {
+              ctx.client.ui.highlightedElement = getLocationElement(
+                ctx,
+                CARD_LOCATIONS.LEFT_BATTLEFIELD
+              );
+            }
+          },
+          {
+            text: 'Your Moonlit Pass is now on the right battlefield: minions here have +1 influence.',
+            right: '22%',
+            bottom: '45%',
+            canManuallyAdvance: true,
+            onEnter(ctx) {
+              ctx.client.ui.highlightedElement = getLocationElement(
+                ctx,
+                CARD_LOCATIONS.RIGHT_BATTLEFIELD
+              );
               const p2 = ctx.game.playerSystem.player2;
               dispatchSequence(
                 ctx,
@@ -620,30 +868,6 @@ export const locationsTutorial: TutorialMission = {
             }
           },
           {
-            text: 'Players take turns bringing the new Location from their own <b>Location deck</b>. Your opponent brought the <b>Mistveil Marsh</b>: minions on the left battlefield have +2 influence.',
-            right: '22%',
-            bottom: '45%',
-            canManuallyAdvance: true,
-            onEnter(ctx) {
-              ctx.client.ui.highlightedElement = getLocationElement(
-                ctx,
-                CARD_LOCATIONS.LEFT_BATTLEFIELD
-              );
-            }
-          },
-          {
-            text: 'Your Moonlit Pass is now on the right battlefield, where your minions are: they all have +1 influence.',
-            right: '22%',
-            bottom: '45%',
-            canManuallyAdvance: true,
-            onEnter(ctx) {
-              ctx.client.ui.highlightedElement = getLocationElement(
-                ctx,
-                CARD_LOCATIONS.RIGHT_BATTLEFIELD
-              );
-            }
-          },
-          {
             text: 'Meanwhile, a Bloodbound Shaman moved to the left battlefield. Thanks to the Marsh, it would score 6 influence!',
             right: '22%',
             bottom: '45%',
@@ -656,7 +880,16 @@ export const locationsTutorial: TutorialMission = {
             }
           },
           {
-            text: "Minions can't go from one battlefield to the other: they have to move back to the base first. But your Azurite Lion has <b>Flanking</b>: it can move straight to the other battlefield.",
+            text: "Minions can't move between battlefields: they have to move back to the base first.",
+            right: '22%',
+            bottom: '45%',
+            canManuallyAdvance: true,
+            onEnter(ctx) {
+              ctx.client.ui.highlightedElement = null;
+            }
+          },
+          {
+            text: 'But your Azurite Lion has <b>Flanking</b>: it can move straight to the other battlefield.',
             right: '22%',
             bottom: '45%',
             canManuallyAdvance: true,
@@ -693,7 +926,7 @@ export const locationsTutorial: TutorialMission = {
         ]
       },
       {
-        id: 5,
+        id: 8,
         canRetry: () => false,
         failedCondition: () => false,
         meta: {},
@@ -751,11 +984,13 @@ export const locationsTutorial: TutorialMission = {
         ]
       },
       {
-        id: 6,
+        id: 9,
         canRetry: () => false,
         failedCondition: isFreePlayFailed,
         meta: {},
         async setup(ctx) {
+          // the AI answers its own choices from now on
+          ctx.meta.stopOpponentChoices();
           startFreePlay(ctx);
           startOpponentAI(ctx);
         },
@@ -768,7 +1003,7 @@ export const locationsTutorial: TutorialMission = {
         },
         textBoxes: [
           {
-            text: 'The Shaman is gone! With Flanking, a minion can answer threats on either battlefield.',
+            text: 'Nice! With Flanking, a minion can answer threats on either battlefield.',
             right: '22%',
             bottom: '45%',
             canManuallyAdvance: true,
