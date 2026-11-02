@@ -112,13 +112,23 @@ export class PlayerViewModel {
     });
   }
 
-  addToHand(card: CardViewModel) {
+  addToHand(cardId: string, isRevealed: boolean) {
     return this.update({
-      hand: [
-        ...this.data.hand,
-        { cardId: card.id, isLocked: false, isRevealed: card.isRevealed }
-      ],
+      hand: [...this.data.hand, { cardId, isLocked: false, isRevealed }],
       handSize: this.data.handSize + 1
+    });
+  }
+
+  removeFromHand(cardId: string) {
+    return this.update({
+      hand: this.data.hand.filter(card => card.cardId !== cardId),
+      handSize: this.data.handSize - 1
+    });
+  }
+
+  updateMainDeckSize(delta: number) {
+    return this.update({
+      remainingCardsInMainDeck: this.data.remainingCardsInMainDeck + delta
     });
   }
 

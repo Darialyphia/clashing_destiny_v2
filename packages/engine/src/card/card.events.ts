@@ -203,11 +203,13 @@ export class CardAfterDealCombatDamageEvent extends TypedSerializableEvent<
 
 export class CardChangeLocationEvent extends TypedSerializableEvent<
   { card: AnyCard; from: CardLocation | null; to: CardLocation },
-  { card: string; from: CardLocation | null; to: CardLocation }
+  { card: string; player: string; from: CardLocation | null; to: CardLocation }
 > {
   serialize() {
     return {
       card: this.data.card.id,
+      // the card entity is not sent to the opponent when it moves between hidden zones
+      player: this.data.card.player.id,
       from: this.data.from,
       to: this.data.to
     };

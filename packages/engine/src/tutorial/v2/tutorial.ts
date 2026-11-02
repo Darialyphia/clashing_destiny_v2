@@ -210,16 +210,18 @@ export class TutorialV2<T extends AnyObject = AnyObject> implements Tutorial<T> 
   }
 
   private watchStepConditions() {
-    this.game.on(GAME_EVENTS.INPUT_END, () => {
-      const successful = this.currentStep.solveCondition(this.ctx);
-      if (successful) {
-        return this.next();
-      }
-      const unsuccessful = this.currentStep.failedCondition?.(this.ctx);
-      if (unsuccessful) {
-        this._retryCount++;
-        this._status = TUTORIAL_STATUSES.FAILED;
-      }
+    this.game.on(GAME_EVENTS.INPUT_END, async () => {
+      await this.game.inputSystem.schedule(async () => {
+        const successful = this.currentStep.solveCondition(this.ctx);
+        if (successful) {
+          return this.next();
+        }
+        const unsuccessful = this.currentStep.failedCondition?.(this.ctx);
+        if (unsuccessful) {
+          this._retryCount++;
+          this._status = TUTORIAL_STATUSES.FAILED;
+        }
+      });
     });
   }
 

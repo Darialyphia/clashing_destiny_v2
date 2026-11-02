@@ -158,9 +158,7 @@ const onMouseleave = () => {
     transform 0.2s var(--ease-2),
     filter 1s var(--ease-2);
   pointer-events: auto;
-  @starting-style {
-    filter: brightness(3.5) saturate(2) !important;
-  }
+
   &.hoverable:hover {
     --hover-offset: calc(var(--hover-y-offset) * 1px);
     z-index: var(--hand-size);

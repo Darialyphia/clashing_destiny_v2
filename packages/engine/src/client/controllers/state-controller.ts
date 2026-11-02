@@ -235,26 +235,45 @@ export class ClientStateController {
     this.state.entities[card.id] = card;
   }
 
-  // cards going from the supply zone to the hand are animated before the snapshot is done processing,
+  // cards going from the supply zone or the main deck to the hand are animated before the snapshot is done processing,
   // so they need to already be in the hand for the animation to know where they land
   private async onCardAfterChangeLocation(event: {
     event: SerializedEvent<'CARD_AFTER_CHANGE_LOCATION'>;
   }) {
-    const { card: cardId, from, to } = event.event;
-    if (from !== CARD_LOCATIONS.SUPPLY || to !== CARD_LOCATIONS.HAND) return;
+    const { card: cardId, player: playerId, from, to } = event.event;
 
-    const card = this.getCard(cardId);
-    if (!card) return;
-
-    for (const playerId of this.state.players) {
-      const player = this.state.entities[playerId] as PlayerViewModel;
-      if (player.boardSide.supply.includes(cardId)) {
-        this.state.entities[playerId] = player.removeFromSupplyZone(cardId).clone();
+    if (to === CARD_LOCATIONS.HAND && from === CARD_LOCATIONS.SUPPLY) {
+      for (const id of this.state.players) {
+        const player = this.state.entities[id] as PlayerViewModel;
+        if (player.boardSide.supply.includes(cardId)) {
+          this.state.entities[id] = player.removeFromSupplyZone(cardId).clone();
+        }
       }
+      this.addToHand(playerId, cardId);
     }
 
-    const owner = card.player;
-    this.state.entities[owner.id] = owner.addToHand(card).clone();
+    if (to === CARD_LOCATIONS.HAND && from === CARD_LOCATIONS.MAIN_DECK) {
+      const player = this.state.entities[playerId] as PlayerViewModel;
+      this.state.entities[playerId] = player.updateMainDeckSize(-1).clone();
+      this.addToHand(playerId, cardId);
+    }
+
+    // a mulligan puts cards back in the deck right before drawing new ones
+    if (from === CARD_LOCATIONS.HAND && to === CARD_LOCATIONS.MAIN_DECK) {
+      const player = this.state.entities[playerId] as PlayerViewModel;
+      this.state.entities[playerId] = player
+        .removeFromHand(cardId)
+        .updateMainDeckSize(1)
+        .clone();
+      this.state = { ...this.state };
+    }
+  }
+
+  private addToHand(playerId: string, cardId: string) {
+    const player = this.state.entities[playerId] as PlayerViewModel;
+    // the opponent's drawn cards are not sent to the client
+    const isRevealed = this.getCard(cardId)?.isRevealed ?? false;
+    this.state.entities[playerId] = player.addToHand(cardId, isRevealed).clone();
     this.state = { ...this.state };
   }
 

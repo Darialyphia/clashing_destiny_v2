@@ -13,8 +13,8 @@ import { OnClickOutside } from '@vueuse/components';
 import { useElementBounding, useResizeObserver } from '@vueuse/core';
 import type { ShallowRef } from 'vue';
 import HandCard from './HandCard.vue';
-import SupplyToHandGhost from './SupplyToHandGhost.vue';
-import { useSupplyToHandFx } from '../composables/useSupplyToHandFx';
+import CardToHandGhost from './CardToHandGhost.vue';
+import { useCardToHandFx } from '../composables/useCardToHandFx';
 import {
   GAME_PHASES,
   INTERACTION_STATES
@@ -40,7 +40,7 @@ const isMulliganing = computed(
     state.value.interaction.state === INTERACTION_STATES.CHOOSING_CARDS
 );
 
-const { incomingCardIds } = useSupplyToHandFx(() => playerId, {
+const { incomingCards, incomingCardIds } = useCardToHandFx(() => playerId, {
   isFaceDownInHand: () => false
 });
 
@@ -192,10 +192,10 @@ watch(width, v => {
     </section>
   </OnClickOutside>
   <Teleport to="#card-portal">
-    <SupplyToHandGhost
-      v-for="cardId in incomingCardIds"
-      :key="cardId"
-      :card-id="cardId"
+    <CardToHandGhost
+      v-for="card in incomingCards"
+      :key="card.cardId"
+      :card="card"
     />
   </Teleport>
 </template>

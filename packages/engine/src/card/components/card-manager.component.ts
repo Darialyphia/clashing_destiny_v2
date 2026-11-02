@@ -175,8 +175,8 @@ export class CardManagerComponent {
     const candidates = this.mainDeck.cards.filter(filter);
     const cards = candidates.slice(0, amountToDraw);
 
+    // addToHand takes the card out of the deck itself, so that its location change is from the main deck
     for (const card of cards) {
-      this.mainDeck.pluck(card);
       await card.addToHand();
     }
 
@@ -208,7 +208,8 @@ export class CardManagerComponent {
         amount: amountToDraw
       })
     );
-    const cards = this.mainDeck.draw(amountToDraw);
+    // addToHand takes the card out of the deck itself, so that its location change is from the main deck
+    const cards = this.mainDeck.peek(amountToDraw);
 
     for (const card of cards) {
       await card.addToHand();

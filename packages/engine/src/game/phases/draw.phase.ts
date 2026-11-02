@@ -9,9 +9,18 @@ export class DrawPhase implements GamePhaseController, Serializable<EmptyObject>
   constructor(private game: Game) {}
 
   private async drawForTurn() {
+    // both players draw at the same time, this lets the client animate all the cards together
+    await this.game.emit(
+      DRAW_PHASE_EVENTS.BEFORE_DRAW_FOR_TURN,
+      new DrawPhaseDrawForTurnEvent({})
+    );
     for (const player of this.game.playerSystem.players) {
       await player.cardManager.draw(player.cardsDrawnForTurn);
     }
+    await this.game.emit(
+      DRAW_PHASE_EVENTS.AFTER_DRAW_FOR_TURN,
+      new DrawPhaseDrawForTurnEvent({})
+    );
   }
 
   private async refillMana() {
@@ -151,8 +160,19 @@ export class DrawPhase implements GamePhaseController, Serializable<EmptyObject>
 
 export const DRAW_PHASE_EVENTS = {
   BEFORE_RECOLLECT_SUPPLY: 'draw_phase_before_recollect_supply',
-  AFTER_RECOLLECT_SUPPLY: 'draw_phase_after_recollect_supply'
+  AFTER_RECOLLECT_SUPPLY: 'draw_phase_after_recollect_supply',
+  BEFORE_DRAW_FOR_TURN: 'draw_phase_before_draw_for_turn',
+  AFTER_DRAW_FOR_TURN: 'draw_phase_after_draw_for_turn'
 } as const;
+
+export class DrawPhaseDrawForTurnEvent extends TypedSerializableEvent<
+  EmptyObject,
+  EmptyObject
+> {
+  serialize() {
+    return {};
+  }
+}
 
 export class DrawPhaseRecollectSupplyEvent extends TypedSerializableEvent<
   { cards: AnyCard[] },
@@ -168,4 +188,6 @@ export class DrawPhaseRecollectSupplyEvent extends TypedSerializableEvent<
 export type DrawPhaseEventMap = {
   [DRAW_PHASE_EVENTS.BEFORE_RECOLLECT_SUPPLY]: DrawPhaseRecollectSupplyEvent;
   [DRAW_PHASE_EVENTS.AFTER_RECOLLECT_SUPPLY]: DrawPhaseRecollectSupplyEvent;
+  [DRAW_PHASE_EVENTS.BEFORE_DRAW_FOR_TURN]: DrawPhaseDrawForTurnEvent;
+  [DRAW_PHASE_EVENTS.AFTER_DRAW_FOR_TURN]: DrawPhaseDrawForTurnEvent;
 };

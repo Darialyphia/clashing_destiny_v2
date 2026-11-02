@@ -1,19 +1,25 @@
 <script setup lang="ts">
 import CardBack from '@/card/components/CardBack.vue';
 import GameCard from './GameCard.vue';
+import type { IncomingCard } from '../composables/useCardToHandFx';
 
-const { cardId } = defineProps<{ cardId: string }>();
+const { card } = defineProps<{ card: IncomingCard }>();
 </script>
 
 <template>
-  <div class="supply-to-hand-ghost" :data-supply-to-hand-ghost="cardId">
-    <div class="ghost-small">
-      <GameCard :card-id="cardId" variant="small" :is-interactive="false" />
+  <div class="card-to-hand-ghost" :data-card-to-hand-ghost="card.cardId">
+    <div v-if="card.source === 'supply'" class="ghost-small">
+      <GameCard
+        :card-id="card.cardId"
+        variant="small"
+        :is-interactive="false"
+      />
     </div>
     <div class="ghost-big">
       <div class="ghost-faces">
         <GameCard
-          :card-id="cardId"
+          v-if="card.hasFront"
+          :card-id="card.cardId"
           :is-interactive="false"
           class="ghost-front"
         />
@@ -24,7 +30,7 @@ const { cardId } = defineProps<{ cardId: string }>();
 </template>
 
 <style scoped lang="postcss">
-.supply-to-hand-ghost {
+.card-to-hand-ghost {
   pointer-events: none;
 }
 
@@ -48,9 +54,13 @@ const { cardId } = defineProps<{ cardId: string }>();
   backface-visibility: hidden;
 }
 
-.ghost-back {
+/* the back gives the ghost its size, since the front is missing for the opponent's drawn cards */
+.ghost-front {
   position: absolute;
   inset: 0;
+}
+
+.ghost-back {
   transform: rotateY(180deg);
 }
 

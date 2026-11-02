@@ -16,8 +16,8 @@ import {
 } from '@vueuse/core';
 import type { ShallowRef } from 'vue';
 import HandCard from './HandCard.vue';
-import SupplyToHandGhost from './SupplyToHandGhost.vue';
-import { useSupplyToHandFx } from '../composables/useSupplyToHandFx';
+import CardToHandGhost from './CardToHandGhost.vue';
+import { useCardToHandFx } from '../composables/useCardToHandFx';
 
 const { playerId, isRevealed } = defineProps<{
   playerId: string;
@@ -34,7 +34,7 @@ const isMyHand = computed(() => {
   return playerId === myPlayer.value?.id;
 });
 
-const { incomingCardIds } = useSupplyToHandFx(() => playerId, {
+const { incomingCards, incomingCardIds } = useCardToHandFx(() => playerId, {
   isFaceDownInHand: card => !isRevealed && !card.isRevealed
 });
 
@@ -192,10 +192,10 @@ const { height } = useWindowSize();
     </section>
   </OnClickOutside>
   <Teleport to="#card-portal">
-    <SupplyToHandGhost
-      v-for="cardId in incomingCardIds"
-      :key="cardId"
-      :card-id="cardId"
+    <CardToHandGhost
+      v-for="card in incomingCards"
+      :key="card.cardId"
+      :card="card"
     />
   </Teleport>
 </template>

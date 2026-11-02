@@ -118,13 +118,13 @@ const hasWon = computed(() => winners.value.includes(myPlayer.value.id));
       </GameBoard>
     </Camera>
 
-    <div class="my-deck">
+    <div class="my-deck" :id="ui.DOMSelectors.mainDeck(myPlayer.id).id">
       <Deck
         :size="myPlayer.remainingCardsInMainDeck"
         :offset="{ x: -0.25, y: -0.5, z: 0.5 }"
       />
     </div>
-    <div class="opponent-deck">
+    <div class="opponent-deck" :id="ui.DOMSelectors.mainDeck(opponent.id).id">
       <Deck
         :size="opponent.remainingCardsInMainDeck"
         :offset="{ x: -0.25, y: -0.5, z: 0.25 }"

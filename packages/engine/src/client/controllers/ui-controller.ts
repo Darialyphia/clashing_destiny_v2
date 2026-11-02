@@ -120,6 +120,7 @@ export class UiController {
     highlightedCardAffinities: () =>
       new DOMSelector('.affinity-flags', this.DOMSelectors.highlightedCard.selector),
     supplyZone: (playerId: string) => new DOMSelector(`supply-zone-${playerId}`),
+    mainDeck: (playerId: string) => new DOMSelector(`main-deck-${playerId}`),
     currentMana: (playerId: string) => new DOMSelector(`current-mana-${playerId}`),
     runeZone: (playerId: string) => new DOMSelector(`rune-zone-${playerId}`)
   };
