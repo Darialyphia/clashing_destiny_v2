@@ -2,10 +2,12 @@
 import { FX_EVENTS } from '@game/engine/src/client/controllers/fx-controller';
 import { useFxEvent } from '../composables/useGameClient';
 import { waitFor } from '@game/shared';
+import { useSoundEffect } from '@/shared/composables/useSoundEffect';
 
 const phase = ref<string | null>(null);
-
+const turnStartSound = useSoundEffect('turn-start');
 useFxEvent(FX_EVENTS.TURN_START, async event => {
+  turnStartSound.value?.play();
   phase.value = `Turn ${event.turnCount + 1}`;
   await waitFor(1250);
   phase.value = null;

@@ -35,7 +35,7 @@ export const useSoundEffect = (
   sound: MaybeRef<string | undefined>,
   options: SoundEffectOptions = {}
 ) => {
-  const SCALE_FACTOR = 0.8;
+  const SCALE_FACTOR = 0.35;
   const { settings: userSettings } = useUserSettings();
 
   const howl = ref() as Ref<Howl | undefined>;

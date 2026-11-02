@@ -30,7 +30,7 @@ const { card } = defineProps<{
   };
 }>();
 
-const { deckBuilder } = useCollectionPage();
+const { removeCardFromDeck } = useCollectionPage();
 
 const root = useTemplateRef('root');
 const { pointerStyle, onMousemove, onMouseleave, onMouseEnter } = useCardTilt(
@@ -76,7 +76,7 @@ const { activeFrameRect, bgPosition, imageBg } = useSprite({
         ref="root"
         :class="card.blueprint.kind.toLocaleLowerCase()"
         class="deck-item"
-        @click="deckBuilder.removeCard(card.meta!.cardId)"
+        @click="removeCardFromDeck(card.meta!.cardId)"
         @mousemove="onMousemove"
         @mouseenter="onMouseEnter"
         @mouseleave="onMouseleave"

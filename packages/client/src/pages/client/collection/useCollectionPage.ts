@@ -2,7 +2,10 @@ import {
   provideCardList,
   type CardListContext
 } from '@/card/composables/useCardList';
-import { DeckBuilderViewModel } from '@/card/deck-builder.model';
+import {
+  DeckBuilderViewModel,
+  type DeckBuilderCardMeta
+} from '@/card/deck-builder.model';
 import { StandardDeckValidator } from '@game/engine/src/card/validators/standard.validator';
 import type { Ref, InjectionKey } from 'vue';
 import { keyBy } from 'lodash-es';
@@ -19,11 +22,18 @@ import type { DeckId } from '@game/api';
 import type { CardBlueprint } from '@game/engine/src/card/card-blueprint';
 import { useResponsive } from '@/shared/composables/useResponsive';
 import { useRouteQuery } from '@vueuse/router';
+import { useSoundEffect } from '@/shared/composables/useSoundEffect';
 
 export type CollectionContext = CardListContext & {
   viewMode: Ref<'expanded' | 'compact'>;
   isEditingDeck: Ref<boolean>;
   deckBuilder: Ref<DeckBuilderViewModel>;
+  addCardToDeck: (card: {
+    blueprintId: string;
+    meta: DeckBuilderCardMeta;
+  }) => void;
+  removeCardFromDeck: (cardId: string) => void;
+  playCardAddDeniedSound: () => void;
   decks: Ref<UserDeck[]>;
   createDeck: () => void;
   editDeck: (id: DeckId) => void;
@@ -110,6 +120,28 @@ export const provideCollectionPage = () => {
     },
     { immediate: true }
   );
+
+  // sounds live here rather than in each CollectionCard so they're only instantiated once for the page
+  const addCardSound = useSoundEffect('whoosh3', { rateVariance: 0.05 });
+  const removeCardSound = useSoundEffect('whoosh2', {
+    rateVariance: 0.05
+  });
+  const cardAddDeniedSound = useSoundEffect('cancel-interaction-low', {
+    throttle: 150
+  });
+  const deckValidSound = useSoundEffect('valid-deck');
+
+  const isDeckValid = () => deckBuilder.value.getErrors().result === 'success';
+
+  // the deck valid sound is driven by the player's own changes rather than a watcher,
+  // otherwise it would also play when loading an existing valid deck
+  const changeDeck = (change: () => void) => {
+    const wasValid = isDeckValid();
+    change();
+    if (!wasValid && isDeckValid()) {
+      deckValidSound.value?.play();
+    }
+  };
 
   const isEditingDeck = computed(() => isDefined(selectedDeckId.value));
   const { mutate: createDeck } = useCreateDeck(({ deckId }) => {
@@ -198,6 +230,17 @@ export const provideCollectionPage = () => {
     isSaving: isSavingDeck,
     isDeleting: isDeletingDeck,
     deckBuilder,
+    addCardToDeck: card => {
+      changeDeck(() => deckBuilder.value.addCard(card));
+      addCardSound.value?.play();
+    },
+    removeCardFromDeck: cardId => {
+      changeDeck(() => deckBuilder.value.removeCard(cardId));
+      removeCardSound.value?.play();
+    },
+    playCardAddDeniedSound: () => {
+      cardAddDeniedSound.value?.play();
+    },
     decks,
     cardScale: ref([isSmallViewport ? 1 : 2]),
     createDeck: () => createDeck({}),

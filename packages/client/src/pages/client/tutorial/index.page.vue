@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router';
 import { missions } from '../../missions';
-import FancyButton from '@/ui/components/FancyButton.vue';
+import BackButton from '@/shared/components/BackButton.vue';
 import PageTitle from '@/shared/components/PageTitle.vue';
 
 definePage({
@@ -13,12 +13,7 @@ definePage({
 </script>
 <template>
   <div class="page">
-    <FancyButton
-      class="absolute top-10 left-8 lt-lg:top-3 lt-lg:left-0"
-      text="Back"
-      size="md"
-      :to="{ name: 'ClientHome' }"
-    />
+    <BackButton class="absolute top-10 left-8 lt-lg:top-3 lt-lg:left-0" />
     <PageTitle title="Learn to Play" />
     <section class="surface">
       <h2 class="dual-text" data-text="Rule book">Rule book</h2>

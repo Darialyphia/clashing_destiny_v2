@@ -5,6 +5,7 @@ import BlueprintCard from '@/card/components/BlueprintCard.vue';
 import type { CardBlueprint } from '@game/engine/src/card/card-blueprint';
 import type { CardId } from '@game/api';
 import { useDoubleTap } from '@/shared/composables/useDoubleTap';
+import Sound from '@/shared/components/Sound.vue';
 
 const { card } = defineProps<{
   card: {
@@ -15,8 +16,14 @@ const { card } = defineProps<{
   };
 }>();
 
-const { deckBuilder, isEditingDeck, selectCard, selectedCard } =
-  useCollectionPage();
+const {
+  deckBuilder,
+  isEditingDeck,
+  selectCard,
+  selectedCard,
+  addCardToDeck,
+  playCardAddDeniedSound
+} = useCollectionPage();
 
 const canAddCard = computed(() => {
   if (!isEditingDeck.value) return false;
@@ -38,6 +45,22 @@ const canAddCard = computed(() => {
     }
   );
 });
+
+const onClick = () => {
+  if (!isEditingDeck.value) return;
+  if (!canAddCard.value) {
+    playCardAddDeniedSound();
+    return;
+  }
+
+  addCardToDeck({
+    blueprintId: card.card.id,
+    meta: {
+      cardId: card.id as CardId,
+      isFoil: card.isFoil
+    }
+  });
+};
 
 const isInvisible = ref(false);
 watch(selectedCard, () => {
@@ -76,20 +99,7 @@ useDoubleTap(root, () => {
         invisible: isInvisible
       }"
       :data-flip-id="`collection-card-${card.id}`"
-      @click="
-        () => {
-          if (!isEditingDeck) return;
-          if (!canAddCard) return;
-
-          deckBuilder.addCard({
-            blueprintId: card.card.id,
-            meta: {
-              cardId: card.id as CardId,
-              isFoil: card.isFoil
-            }
-          });
-        }
-      "
+      @click="onClick"
       @contextmenu.prevent="onRightClick"
     />
 

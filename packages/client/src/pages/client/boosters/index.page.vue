@@ -8,6 +8,7 @@ import {
   useUnopenedBoosterPacks
 } from './composables/useBoosterPack';
 import { assets } from '@/assets';
+import BackButton from '@/shared/components/BackButton.vue';
 
 definePage({
   name: 'Boosters',
@@ -43,11 +44,8 @@ const latestPackOpened = ref<
     >
       <template #done>
         <div class="flex flex-col gap-8">
-          <FancyButton
-            class="primary-button"
-            text="Back"
-            :to="{ name: 'ClientHome' }"
-          />
+          <BackButton />
+
           <div
             v-if="unopenedPacks.packs.length"
             class="unopened-packs"

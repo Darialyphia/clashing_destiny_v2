@@ -9,8 +9,16 @@ import CardDetailsModalFooter from './CardDetailsModalFooter.vue';
 import { useCollectionPage } from '../useCollectionPage';
 import UiIconButton from '@/ui/components/UiIconButton.vue';
 import { useDoubleTap } from '@/shared/composables/useDoubleTap';
+import { useSoundEffect } from '@/shared/composables/useSoundEffect';
 
 const { selectedCard, selectCard, unselectCard, cards } = useCollectionPage();
+
+const openSound = useSoundEffect('whoosh');
+const closeSound = useSoundEffect('whoosh', { volume: 0.6 });
+const navigateSound = useSoundEffect('move-card-2', {
+  rateVariance: 0.05,
+  throttle: 80
+});
 
 const isOpened = computed({
   get() {
@@ -39,11 +47,13 @@ const hasNextCard = computed(
 
 const selectPreviousCard = () => {
   if (!hasPreviousCard.value) return;
+  navigateSound.value?.play();
   selectCard(cards.value[selectedCardIndex.value - 1].id);
 };
 
 const selectNextCard = () => {
   if (!hasNextCard.value) return;
+  navigateSound.value?.play();
   selectCard(cards.value[selectedCardIndex.value + 1].id);
 };
 
@@ -94,6 +104,7 @@ const snapElementToRect = (
 };
 
 const animateCardIn = async () => {
+  openSound.value?.play();
   shouldDisplayCard.value = true;
   await nextTick();
 
@@ -135,6 +146,7 @@ const animateCardIn = async () => {
 };
 
 const animateCardOut = async () => {
+  closeSound.value?.play();
   shouldDisplayCard.value = false;
   const elements = getCardAnimationElements();
 

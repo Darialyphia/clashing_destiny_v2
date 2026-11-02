@@ -22,6 +22,7 @@ import UiSwitch from '@/ui/components/UiSwitch.vue';
 import { SliderRange, SliderRoot, SliderThumb, SliderTrack } from 'reka-ui';
 import { Icon } from '@iconify/vue';
 import UiTextInput from '@/ui/components/UiTextInput.vue';
+import BackButton from '@/shared/components/BackButton.vue';
 
 const {
   textFilter,
@@ -102,8 +103,6 @@ const rarities: Array<{ id: Rarity; img: string; label: string }> =
       };
     });
 
-const router = useRouter();
-
 const toggleManaFilter = (cost: number) => {
   if (manaCostFilter.value?.min === cost) {
     manaCostFilter.value = null;
@@ -119,18 +118,11 @@ const toggleMinManaCostFilter = (cost: number) => {
     manaCostFilter.value = { min: cost, max: Infinity };
   }
 };
-
-const route = useRoute();
 </script>
 
 <template>
   <header class="filters-header surface">
-    <FancyButton
-      v-if="router.currentRoute.value.name !== 'ClientHome'"
-      text="Back"
-      size="md"
-      @click="router.push({ name: (route.query.from as any) ?? 'ClientHome' })"
-    />
+    <BackButton />
 
     <Icon icon="material-symbols:zoom-in" width="2rem" />
     <SliderRoot
