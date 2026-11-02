@@ -249,6 +249,10 @@ export const findOpponentMinion = (ctx: TutorialContext, blueprintId: string) =>
     minion => minion.blueprintId === blueprintId
   );
 
+export const findPlayerMinion = (ctx: TutorialContext, blueprintId: string) =>
+  ctx.game.playerSystem.player1.minions.find(
+    minion => minion.blueprintId === blueprintId
+  );
 export const findOpponentCardInHand = (
   ctx: TutorialContext,
   blueprintId: string

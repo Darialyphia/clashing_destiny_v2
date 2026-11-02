@@ -9,6 +9,7 @@ const ui = useGameUi();
   <div class="highlighted-card">
     <Transition>
       <GameCard
+        class="highlighted-card-inner"
         v-if="ui.highlightedCard"
         :id="ui.DOMSelectors.highlightedCard.id"
         :card-id="ui.highlightedCard.id"
@@ -28,6 +29,10 @@ const ui = useGameUi();
   display: grid;
   place-items: center;
   pointer-events: none;
+}
+
+.highlighted-card-inner {
+  box-shadow: 0 0 35px rgba(0, 0, 0, 0.5);
 }
 
 .v-enter-active,
