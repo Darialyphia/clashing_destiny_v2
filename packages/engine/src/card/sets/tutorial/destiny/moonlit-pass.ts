@@ -24,7 +24,7 @@ export const tutorialMoonlitPass: LocationBlueprint = {
   `,
   setId: CARD_SETS.TUTORIAL,
   rarity: RARITIES.TOKEN,
-  art: defaultCardArt('destinies/amber-pass'),
+  art: defaultCardArt('locations/amber-pass'),
   speed: CARD_SPEED.SLOW,
   affinities: [AFFINITIES.NEUTRAL],
   tags: [],

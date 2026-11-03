@@ -185,7 +185,7 @@ export const locationsTutorial: TutorialMission = {
       overrides: {
         config: {
           // the mission is about how Locations change from one turn to the next
-          SHOULD_ROTATE_DESTINIES: true,
+          SHOULD_ROTATE_LOCATIONS: true,
           SHUFFLE_DECK_ON_GAME_START: false,
           CARDS_DRAWN_PER_TURN: 4,
           CARDS_MULLIGANED_PER_TURN: 2,

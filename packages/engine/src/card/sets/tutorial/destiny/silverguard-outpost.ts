@@ -12,13 +12,13 @@ import {
 export const tutorialSilverguardOutpost: LocationBlueprint = {
   id: 'tutorial-silverguard-outpost',
   kind: CARD_KINDS.LOCATION,
-  collectable: true,
+  collectable: false,
   name: 'Silverguard Outpost',
   description: dedent /*html*/ `
   `,
   setId: CARD_SETS.CORE,
   rarity: RARITIES.RARE,
-  art: defaultCardArt('destinies/silverguard-outpost'),
+  art: defaultCardArt('locations/silverguard-outpost'),
   speed: CARD_SPEED.SLOW,
   affinities: [AFFINITIES.NEUTRAL],
   tags: [],

@@ -1,12 +1,12 @@
 import type { CardSet } from '.';
 import { CARD_SETS } from '../card.enums';
-import { xenkaiArena } from './core/destinies/xenkai-arena';
-import { dayOfConquest } from './core/destinies/day-of-conquest';
-import { dayOfFortitude } from './core/destinies/day-of-fortitude';
-import { restrainTheBeast } from './core/destinies/restrain-the-beast';
-import { ashesOfPain } from './core/destinies/ashes-of-pain';
-import { alcuinLibrary } from './core/destinies/alcuin-library';
-import { igniteTheSky } from './core/destinies/ignite-the-sky';
+import { xenkaiArena } from './core/locations/xenkai-arena';
+import { dayOfConquest } from './core/locations/day-of-conquest';
+import { dayOfFortitude } from './core/locations/day-of-fortitude';
+import { restrainTheBeast } from './core/locations/restrain-the-beast';
+import { ashesOfPain } from './core/locations/ashes-of-pain';
+import { alcuinLibrary } from './core/locations/alcuin-library';
+import { igniteTheSky } from './core/locations/ignite-the-sky';
 import { lightAffinity } from './core/runes/light-affinity';
 import { fireAffinity } from './core/runes/fire-affinity';
 import { kaleosXaan } from './core/minions/kaleos-xaan';
@@ -27,10 +27,10 @@ import { assassinationProtocol } from './core/spells/assassination-protocol';
 import { eightGates } from './core/spells/eight-gates';
 import { firestormMantra } from './core/spells/firestorm-mantra';
 import { syvrelTheExile } from './core/minions/syvrel-the-exile';
-import { forgottenMarsh } from './core/destinies/forgotten-marsh';
+import { forgottenMarsh } from './core/locations/forgotten-marsh';
 import { counterstrike } from './core/secrets/counterstrike';
 import { daggerKiri } from './core/minions/dagger-kiri';
-import { theAmberPass } from './core/destinies/the-amber-pass';
+import { theAmberPass } from './core/locations/the-amber-pass';
 import { obscuringBlow } from './core/secrets/obscuring-blow';
 import { cycloneMask } from './core/artifacts/cyclone-mask';
 import { bloodrageMask } from './core/artifacts/bloodrage-mask';
@@ -94,6 +94,12 @@ import { paddo } from './core/minions/paddo';
 import { saphireSeer } from './core/minions/saphire-seer';
 import { portalGuardian } from './core/minions/portal-guardian';
 import { wither } from './core/spells/wither';
+import { agenorsPass } from './core/locations/agenors-pass';
+import { whistlingWoods } from './core/locations/whistling-woods';
+import { windcliffeStronghold } from './core/locations/windcliffe-stronghold';
+import { xaanUndercity } from './core/locations/xaan-undercity';
+import { rashasTomb } from './core/locations/rashas-tomb';
+import { theOstracon } from './core/locations/the-ostracon';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -192,6 +198,12 @@ export const coreSet: CardSet = {
     paddo,
     saphireSeer,
     portalGuardian,
-    wither
+    wither,
+    agenorsPass,
+    whistlingWoods,
+    windcliffeStronghold,
+    xaanUndercity,
+    rashasTomb,
+    theOstracon
   ]
 };

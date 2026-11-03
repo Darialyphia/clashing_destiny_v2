@@ -23,8 +23,8 @@ export const theAmberPass: LocationBlueprint = {
   When a secret is revealed at this battlefield, its owner gains 1 influence here.
   `,
   setId: CARD_SETS.CORE,
-  rarity: RARITIES.RARE,
-  art: defaultCardArt('destinies/amber-pass'),
+  rarity: RARITIES.COMMON,
+  art: defaultCardArt('locations/amber-pass'),
   speed: CARD_SPEED.SLOW,
   affinities: [AFFINITIES.NEUTRAL],
   tags: [],

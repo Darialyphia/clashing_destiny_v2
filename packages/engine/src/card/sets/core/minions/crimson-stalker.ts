@@ -44,14 +44,16 @@ export const crimsonStalker: MinionBlueprint = {
   abilities: [],
   async onInit(game, card) {
     await card.modifiers.add(new StealthModifier(game, card));
+    // only count towards "once per turn" when the player accepts to move
+    let lastMovedAtTurn: number | null = null;
     await card.modifiers.add(
       new WhileOnBoardModifier<MinionCard>('crimson-stalker', game, card, {
         mixins: [
           new GameEventModifierMixin(game, {
             eventName: GAME_EVENTS.CARD_AFTER_MOVE,
-            frequencyPerGameTurn: 1,
             filter(event) {
               return (
+                lastMovedAtTurn !== game.turnSystem.elapsedTurns &&
                 isMinion(event.data.card) &&
                 event.data.card.isEnemy(card) &&
                 !!event.data.card.position?.inFront?.isEmpty &&
@@ -76,7 +78,7 @@ export const crimsonStalker: MinionBlueprint = {
               });
 
               if (!shouldMove) return;
-              if (!shouldMove) return;
+              lastMovedAtTurn = game.turnSystem.elapsedTurns;
               await card.player.spendMana(2);
               await card.moveToSpace(event.data.card.position!.inFront!);
               await card.wakeUp();
