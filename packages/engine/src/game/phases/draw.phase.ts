@@ -80,7 +80,7 @@ export class DrawPhase implements GamePhaseController, Serializable<EmptyObject>
   }
 
   private async rotateLocationCards() {
-    if (!this.game.config.SHOULD_ROTATE_DESTINIES) return;
+    if (!this.game.config.SHOULD_ROTATE_LOCATIONS) return;
     // 1- remove card on right battlefield
     const rightCard =
       this.game.playerSystem.player1.boardSide.rightBattlefield.locationCard ??

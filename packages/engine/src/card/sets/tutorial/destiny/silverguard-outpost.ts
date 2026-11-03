@@ -18,7 +18,7 @@ export const tutorialSilverguardOutpost: LocationBlueprint = {
   `,
   setId: CARD_SETS.CORE,
   rarity: RARITIES.RARE,
-  art: defaultCardArt('destinies/silverguard-outpost'),
+  art: defaultCardArt('locations/silverguard-outpost'),
   speed: CARD_SPEED.SLOW,
   affinities: [AFFINITIES.NEUTRAL],
   tags: [],

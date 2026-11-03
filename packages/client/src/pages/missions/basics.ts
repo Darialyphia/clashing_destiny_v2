@@ -40,7 +40,7 @@ export const basicsTutorial: TutorialMission = {
       history: [],
       overrides: {
         config: {
-          SHOULD_ROTATE_DESTINIES: false,
+          SHOULD_ROTATE_LOCATIONS: false,
           SHUFFLE_DECK_ON_GAME_START: false,
           CARDS_DRAWN_PER_TURN: 1,
           CARDS_MULLIGANED_PER_TURN: 0,

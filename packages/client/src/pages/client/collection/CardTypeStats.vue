@@ -45,7 +45,7 @@ const mainDeckCount = computed(() => {
       </div>
       <div>
         <span>{{ getCountByKind(CARD_KINDS.LOCATION) }}</span>
-        Destinies
+        Locations
       </div>
       <div>
         <span>{{ getCountByKind(CARD_KINDS.RUNE) }}</span>

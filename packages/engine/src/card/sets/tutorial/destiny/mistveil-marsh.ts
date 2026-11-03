@@ -24,7 +24,7 @@ export const tutorialMistveilMarsh: LocationBlueprint = {
   `,
   setId: CARD_SETS.TUTORIAL,
   rarity: RARITIES.TOKEN,
-  art: defaultCardArt('destinies/forgotten-marsh'),
+  art: defaultCardArt('locations/forgotten-marsh'),
   speed: CARD_SPEED.SLOW,
   affinities: [AFFINITIES.NEUTRAL],
   tags: [],
