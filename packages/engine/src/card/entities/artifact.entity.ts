@@ -168,7 +168,7 @@ export class ArtifactCard extends Card<
       new ArtifactDurabilityChangeEvent({ card: this, amount })
     );
 
-    this.lostDurability += Math.min(this.maxDurability, this.lostDurability + amount);
+    this.lostDurability = Math.min(this.maxDurability, this.lostDurability + amount);
     await this.checkDurability();
 
     await this.game.emit(

@@ -61,20 +61,17 @@ export class RemoveOnLeaveBoardModifierMixin extends ModifierMixin<
     const target = this.target ?? this.modifier.target;
     if (!event.data.card.equals(target)) return;
     const { to } = event.data;
-    const locations: CardLocation[] = [
-      CARD_LOCATIONS.BANISH_PILE,
-      CARD_LOCATIONS.DISCARD_PILE,
-      CARD_LOCATIONS.HAND,
-      CARD_LOCATIONS.RESERVE,
-      CARD_LOCATIONS.MAIN_DECK,
-      CARD_LOCATIONS.SUPPLY
+    const boardLocations: CardLocation[] = [
+      CARD_LOCATIONS.BASE,
+      CARD_LOCATIONS.LEFT_BATTLEFIELD,
+      CARD_LOCATIONS.RIGHT_BATTLEFIELD
     ];
 
-    if (locations.includes(to)) {
-      await this.modifier.target.modifiers.remove(this.modifier as any);
-    }
+    // moving around the board (ex: base <-> battlefield) should not remove the modifier
+    if (boardLocations.includes(to)) return;
 
     this.game.off(GAME_EVENTS.CARD_AFTER_CHANGE_LOCATION, this.onLocationChange);
+    await this.modifier.target.modifiers.remove(this.modifier as any);
   }
 
   onApplied(
