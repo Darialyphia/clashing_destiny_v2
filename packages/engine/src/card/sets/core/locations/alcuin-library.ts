@@ -26,7 +26,7 @@ export const alcuinLibrary: LocationBlueprint = {
     Minions at this battlefield have <rt-trigger>On Score</rt-trigger>  Discard a card, then draw a card.
   `,
   setId: CARD_SETS.CORE,
-  rarity: RARITIES.RARE,
+  rarity: RARITIES.COMMON,
   art: defaultCardArt('destinies/alcuin-library'),
   speed: CARD_SPEED.SLOW,
   affinities: [AFFINITIES.NEUTRAL],

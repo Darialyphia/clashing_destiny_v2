@@ -26,7 +26,7 @@ export const ashesOfPain: LocationBlueprint = {
     Minions at this battlefield have <rt-trigger>On Score</rt-trigger> this takes 1 damage.
   `,
   setId: CARD_SETS.CORE,
-  rarity: RARITIES.RARE,
+  rarity: RARITIES.COMMON,
   art: defaultCardArt('placeholder'),
   speed: CARD_SPEED.SLOW,
   affinities: [AFFINITIES.NEUTRAL],

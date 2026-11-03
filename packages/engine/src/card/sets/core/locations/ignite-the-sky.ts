@@ -24,7 +24,7 @@ export const igniteTheSky: LocationBlueprint = {
     When a minion moves to this battlefield, add a <rt-card>Phoenix Fire</rt-card> to its owner's hand and give it <rt-keyword>Fleeting</rt-keyword>.
   `,
   setId: CARD_SETS.CORE,
-  rarity: RARITIES.RARE,
+  rarity: RARITIES.COMMON,
   art: defaultCardArt('placeholder'),
   speed: CARD_SPEED.SLOW,
   affinities: [AFFINITIES.NEUTRAL],

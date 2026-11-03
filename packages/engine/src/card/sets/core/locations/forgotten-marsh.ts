@@ -23,7 +23,7 @@ export const forgottenMarsh: LocationBlueprint = {
     Minions at this battlefield have -2/+0/+0.
   `,
   setId: CARD_SETS.CORE,
-  rarity: RARITIES.EPIC,
+  rarity: RARITIES.COMMON,
   art: defaultCardArt('destinies/forgotten-marsh'),
   speed: CARD_SPEED.SLOW,
   affinities: [AFFINITIES.NEUTRAL],

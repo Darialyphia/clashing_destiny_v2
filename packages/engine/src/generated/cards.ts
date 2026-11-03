@@ -247,19 +247,19 @@ export const cardsBySet: Record<string, CardSet> = {
   {
     "id": "ashes-of-pain",
     "collectable": true,
-    "rarity": "rare",
+    "rarity": "common",
     "kind": "LOCATION"
   },
   {
     "id": "fleeting-thought",
     "collectable": true,
-    "rarity": "rare",
+    "rarity": "common",
     "kind": "LOCATION"
   },
   {
     "id": "ignite-the-sky",
     "collectable": true,
-    "rarity": "rare",
+    "rarity": "common",
     "kind": "LOCATION"
   },
   {
@@ -385,7 +385,7 @@ export const cardsBySet: Record<string, CardSet> = {
   {
     "id": "austerity",
     "collectable": true,
-    "rarity": "epic",
+    "rarity": "common",
     "kind": "LOCATION"
   },
   {
@@ -403,7 +403,7 @@ export const cardsBySet: Record<string, CardSet> = {
   {
     "id": "the-amber-pass",
     "collectable": true,
-    "rarity": "rare",
+    "rarity": "common",
     "kind": "LOCATION"
   },
   {
@@ -1125,4 +1125,4 @@ export const cardIdByShortId: Record<number, string> = {
 "113": "tutorial-bloodsun-arena",
 "114": "tutorial-mistveil-marsh",
 "115": "tutorial-moonlit-pass"
-} as const;
+} as cons
