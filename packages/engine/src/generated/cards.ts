@@ -1125,4 +1125,4 @@ export const cardIdByShortId: Record<number, string> = {
 "113": "tutorial-bloodsun-arena",
 "114": "tutorial-mistveil-marsh",
 "115": "tutorial-moonlit-pass"
-} as cons
+} as const;
