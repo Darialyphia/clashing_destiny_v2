@@ -104,7 +104,7 @@ const label = computed(() => {
 <template>
   <UiModal
     v-model:is-opened="isOpened"
-    title="Destiny Phase"
+    title="Rearrange cards"
     description="Rearrange your cards"
     :closable="false"
     :style="{

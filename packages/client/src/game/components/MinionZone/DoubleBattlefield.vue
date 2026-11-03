@@ -39,10 +39,10 @@ const opponentHasInitiative = computed(() => {
 
 <template>
   <div class="minions-zone" :id="ui.DOMSelectors.boardInner.id">
-    <div class="left-destiny">
+    <div class="left-location">
       <Battlefield :battlefield="myPlayer.leftBattlefield" />
     </div>
-    <div class="right-destiny">
+    <div class="right-location">
       <Battlefield :battlefield="myPlayer.rightBattlefield" />
     </div>
 
@@ -219,13 +219,13 @@ const opponentHasInitiative = computed(() => {
   }
 }
 
-.left-destiny {
+.left-location {
   position: absolute;
   top: 228px;
   left: 325px;
 }
 
-.right-destiny {
+.right-location {
   position: absolute;
   top: 228px;
   right: 320px;

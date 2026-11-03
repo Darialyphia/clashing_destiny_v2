@@ -150,9 +150,9 @@ const updateFoilOption = (key: string, value: boolean | undefined) => {
         </div>
 
         <!-- Desktop Controls Section -->
-        <div class="controls-section">
+        <div class="controls-section surface">
           <h2>Foil Effects</h2>
-          <div class="foil-controls">
+          <div class="foil-controls fancy-scrollbar">
             <label class="control-item">
               <UiSwitch v-model="foilOptions.sheen" />
               <span>Sheen</span>
@@ -223,6 +223,7 @@ const updateFoilOption = (key: string, value: boolean | undefined) => {
   display: flex;
   background: var(--surface-1);
   color: var(--text-1);
+  overflow: hidden;
 }
 
 .sidebar {
@@ -358,9 +359,12 @@ const updateFoilOption = (key: string, value: boolean | undefined) => {
 
 .controls-section {
   width: 300px;
-  padding: var(--size-4);
+  padding-right: 0;
   background: var(--surface-2);
   border-radius: var(--radius-3);
+  overflow-y: hidden;
+  display: grid;
+  grid-template-rows: auto 1fr;
 }
 
 .controls-section h2 {
@@ -372,6 +376,7 @@ const updateFoilOption = (key: string, value: boolean | undefined) => {
   display: flex;
   flex-direction: column;
   gap: var(--size-3);
+  overflow-y: auto;
 }
 
 .control-item {

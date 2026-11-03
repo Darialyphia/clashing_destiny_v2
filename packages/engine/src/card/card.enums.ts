@@ -36,7 +36,7 @@ export const CARD_KINDS = {
   MINION: 'MINION',
   SPELL: 'SPELL',
   ARTIFACT: 'ARTIFACT',
-  DESTINY: 'DESTINY',
+  LOCATION: 'LOCATION',
   RUNE: 'RUNE',
   SECRET: 'SECRET'
 } as const;
@@ -95,7 +95,7 @@ export type CardTint = {
 export const CARD_LOCATIONS = {
   HAND: 'hand',
   MAIN_DECK: 'mainDeck',
-  DESTINY_DECK: 'destinyDeck',
+  LOCATION_DECK: 'locationDeck',
   RUNE_DECK: 'runeDeck',
   RUNE_ZONE: 'runeZone',
   DISCARD_PILE: 'discardPile',

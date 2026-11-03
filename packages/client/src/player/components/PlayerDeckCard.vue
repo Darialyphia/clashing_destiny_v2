@@ -68,9 +68,9 @@ const affinities = computed(() => {
 
 const mostExpensiveCard = computed(() =>
   mainDeck.value.reduce((acc, current) => {
-    if (current.blueprint.kind === CARD_KINDS.DESTINY) return acc;
+    if (current.blueprint.kind === CARD_KINDS.LOCATION) return acc;
     if (current.blueprint.kind === CARD_KINDS.RUNE) return acc;
-    if (acc.blueprint.kind === CARD_KINDS.DESTINY) return current;
+    if (acc.blueprint.kind === CARD_KINDS.LOCATION) return current;
     if (acc.blueprint.kind === CARD_KINDS.RUNE) return current;
     if (current.blueprint.manaCost > acc.blueprint.manaCost) return current;
     return acc;
@@ -367,7 +367,7 @@ const route = useRoute();
     translate: 0 calc(var(--pixel-scale) * -15px);
   }
 
-  &.destiny {
+  &.location {
     translate: 0 calc(var(--pixel-scale) * 3px);
   }
 }
@@ -460,7 +460,7 @@ const route = useRoute();
   &.minion {
     translate: 25% -20px;
   }
-  &.destiny {
+  &.location {
     translate: 25px 0px;
   }
 }

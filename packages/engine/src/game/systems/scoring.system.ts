@@ -23,7 +23,7 @@ export type AttackTarget = MinionCard;
 export type SerializedScoringState = {
   step: ScoringStep;
   scoringCard: string | null;
-  scoredDestiny: string | null;
+  scoredLocation: string | null;
 };
 
 export class ScoringStateMachine extends StateMachine<
@@ -91,9 +91,9 @@ export class ScoringSystem
       new CardScoreEvent({
         card: this._scoringCard,
         battlefield: this._scoringCard!.battlefield!,
-        destinyCard:
-          this._scoringCard!.battlefield!.destinyCard ??
-          this._scoringCard!.battlefield!.opponentBattlefield.destinyCard!
+        locationCard:
+          this._scoringCard!.battlefield!.locationCard ??
+          this._scoringCard!.battlefield!.opponentBattlefield.locationCard!
       })
     );
 
@@ -123,8 +123,8 @@ export class ScoringSystem
           card: this._scoringCard!,
           battlefield,
           newScore,
-          destinyCard:
-            battlefield!.destinyCard ?? battlefield!.opponentBattlefield.destinyCard!
+          locationCard:
+            battlefield!.locationCard ?? battlefield!.opponentBattlefield.locationCard!
         })
       );
     }
@@ -141,9 +141,9 @@ export class ScoringSystem
     return {
       step: this.stateMachine.getState(),
       scoringCard: this._scoringCard?.id ?? null,
-      scoredDestiny:
-        this._scoringCard?.battlefield?.destinyCard?.id ??
-        this._scoringCard?.battlefield?.opponentBattlefield.destinyCard?.id ??
+      scoredLocation:
+        this._scoringCard?.battlefield?.locationCard?.id ??
+        this._scoringCard?.battlefield?.opponentBattlefield.locationCard?.id ??
         null
     };
   }

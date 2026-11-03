@@ -170,7 +170,7 @@ const artMainImage = computed(() => {
           :wisdom="card.wisdom ?? null"
         />
         <Speed
-          v-if="isDefined(card.speed) && card.kind !== CARD_KINDS.DESTINY"
+          v-if="isDefined(card.speed) && card.kind !== CARD_KINDS.LOCATION"
           :speed="card.speed"
         />
         <CardGlare />

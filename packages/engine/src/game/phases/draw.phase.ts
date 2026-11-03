@@ -79,48 +79,48 @@ export class DrawPhase implements GamePhaseController, Serializable<EmptyObject>
     );
   }
 
-  private async rotateDestinyCards() {
+  private async rotateLocationCards() {
     if (!this.game.config.SHOULD_ROTATE_DESTINIES) return;
     // 1- remove card on right battlefield
     const rightCard =
-      this.game.playerSystem.player1.boardSide.rightBattlefield.destinyCard ??
-      this.game.playerSystem.player2.boardSide.rightBattlefield.destinyCard!;
+      this.game.playerSystem.player1.boardSide.rightBattlefield.locationCard ??
+      this.game.playerSystem.player2.boardSide.rightBattlefield.locationCard!;
     await rightCard!.removeFromCurrentLocation();
-    await rightCard.player.cardManager.destinyDeck.addToBottom(rightCard);
+    await rightCard.player.cardManager.locationDeck.addToBottom(rightCard);
 
     // 2- move card on the left battlefield ro the right
-    const leftCard = rightCard.player.opponent.boardSide.leftBattlefield.destinyCard!;
+    const leftCard = rightCard.player.opponent.boardSide.leftBattlefield.locationCard!;
     await leftCard.removeFromCurrentLocation();
-    leftCard.player.boardSide.rightBattlefield.destinyCard = leftCard;
+    leftCard.player.boardSide.rightBattlefield.locationCard = leftCard;
     await leftCard.play();
 
     // 3- add a card to the left battlefield for the player who removed the right
-    const newLeftCard = rightCard.player.cardManager.destinyDeck.draw(1)[0];
-    newLeftCard.player.boardSide.leftBattlefield.destinyCard = newLeftCard;
+    const newLeftCard = rightCard.player.cardManager.locationDeck.draw(1)[0];
+    newLeftCard.player.boardSide.leftBattlefield.locationCard = newLeftCard;
     await newLeftCard.play();
   }
 
-  private async setupDestinyCards() {
+  private async setupLocationCards() {
     const initiativePlayer = this.game.turnSystem.initiativePlayer;
     const opponent = initiativePlayer.opponent;
 
-    const leftDestiny = initiativePlayer.cardManager.destinyDeck.peek(1)[0];
-    const rightDestiny = opponent.cardManager.destinyDeck.peek(1)[0];
+    const leftLocation = initiativePlayer.cardManager.locationDeck.peek(1)[0];
+    const rightLocation = opponent.cardManager.locationDeck.peek(1)[0];
 
-    await leftDestiny.removeFromCurrentLocation();
-    initiativePlayer.boardSide.leftBattlefield.destinyCard = leftDestiny;
-    await leftDestiny.play();
+    await leftLocation.removeFromCurrentLocation();
+    initiativePlayer.boardSide.leftBattlefield.locationCard = leftLocation;
+    await leftLocation.play();
 
-    await rightDestiny.removeFromCurrentLocation();
-    opponent.boardSide.rightBattlefield.destinyCard = rightDestiny;
-    await rightDestiny.play();
+    await rightLocation.removeFromCurrentLocation();
+    opponent.boardSide.rightBattlefield.locationCard = rightLocation;
+    await rightLocation.play();
   }
 
   async onEnter() {
     await this.game.turnSystem.startTurn();
 
     if (this.game.turnSystem.isFirstTurn) {
-      await this.setupDestinyCards();
+      await this.setupLocationCards();
       await this.drawForTurn();
 
       // this is in a setTimeout to not let the mulligan async interaction block game.initialize()
@@ -139,7 +139,7 @@ export class DrawPhase implements GamePhaseController, Serializable<EmptyObject>
         }
       });
     } else {
-      await this.rotateDestinyCards();
+      await this.rotateLocationCards();
       await this.recollectSupply();
       if (this.game.config.CARDS_MULLIGANED_PER_TURN > 0) {
         await this.mulligan(this.game.config.CARDS_MULLIGANED_PER_TURN, false);

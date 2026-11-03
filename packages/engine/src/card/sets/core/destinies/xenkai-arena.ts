@@ -1,5 +1,5 @@
 import dedent from 'dedent';
-import type { DestinyBlueprint } from '../../../card-blueprint';
+import type { LocationBlueprint } from '../../../card-blueprint';
 import { defaultCardArt, isMinion } from '../../../card-utils';
 import {
   CARD_SETS,
@@ -9,14 +9,14 @@ import {
   CARD_SPEED
 } from '../../../card.enums';
 import { CardAuraModifierMixin } from '../../../../modifier/mixins/aura.mixin';
-import type { DestinyCard } from '../../../entities/destiny.entity';
+import type { LocationCard } from '../../../entities/location.entity';
 import { WhileOnBattlefieldModifier } from '../../../../modifier/modifiers/while-on-board.modifier';
 import { isDefined } from '@game/shared';
 import { SimpleCommandmentBuffModifier } from '../../../../modifier/modifiers/simple-commandment-modifier';
 
-export const xenkaiArena: DestinyBlueprint = {
+export const xenkaiArena: LocationBlueprint = {
   id: 'crowds-favor',
-  kind: CARD_KINDS.DESTINY,
+  kind: CARD_KINDS.LOCATION,
   collectable: true,
   name: 'Xenkai Arena',
   description: dedent /*html*/ `
@@ -30,7 +30,7 @@ export const xenkaiArena: DestinyBlueprint = {
   tags: [],
   async onInit(game, card) {
     await card.modifiers.add(
-      new WhileOnBattlefieldModifier<DestinyCard>('crowds-favor', game, card, {
+      new WhileOnBattlefieldModifier<LocationCard>('crowds-favor', game, card, {
         mixins: [
           new CardAuraModifierMixin(game, card, {
             isElligible(candidate) {

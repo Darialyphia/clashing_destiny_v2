@@ -102,7 +102,9 @@ useFxEvent(FX_EVENTS.PRE_AFTER_SCORE, async event => {
   const displayedScore = isMine ? myScore : opponentScore;
 
   const minion = ui.value.DOMSelectors.cardOnBoard(event.card).element;
-  const location = ui.value.DOMSelectors.cardOnBoard(event.destinyCard).element;
+  const location = ui.value.DOMSelectors.cardOnBoard(
+    event.locationCard
+  ).element;
   const scorerCounter = isMine ? myScoreEl.value : opponentScoreEl.value;
   const otherCounter = isMine ? opponentScoreEl.value : myScoreEl.value;
   if (minion && location && scorerCounter && otherCounter && scoringFx.value) {
@@ -156,7 +158,10 @@ useFxEvent(FX_EVENTS.PRE_AFTER_SCORE, async event => {
     }"
     @mouseup="onMouseup"
   >
-    <BoardCard v-if="battlefield.destinyCard" :card="battlefield.destinyCard" />
+    <BoardCard
+      v-if="battlefield.locationCard"
+      :card="battlefield.locationCard"
+    />
 
     <BattlefieldScoringFX ref="scoringFx" />
 
@@ -165,7 +170,7 @@ useFxEvent(FX_EVENTS.PRE_AFTER_SCORE, async event => {
         :id="
           ui.DOMSelectors.influence(
             myPlayer.id,
-            battlefield.destinyCard.location!
+            battlefield.locationCard.location!
           ).id
         "
         class="dual-text"
@@ -185,7 +190,7 @@ useFxEvent(FX_EVENTS.PRE_AFTER_SCORE, async event => {
         :id="
           ui.DOMSelectors.influence(
             opponent.id,
-            battlefield.destinyCard.location!
+            battlefield.locationCard.location!
           ).id
         "
         style="

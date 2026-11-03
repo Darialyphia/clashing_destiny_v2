@@ -1,6 +1,6 @@
 import dedent from 'dedent';
 import { isDefined } from '@game/shared';
-import type { DestinyBlueprint } from '../../../card-blueprint';
+import type { LocationBlueprint } from '../../../card-blueprint';
 import { defaultCardArt } from '../../../card-utils';
 import {
   CARD_SETS,
@@ -10,13 +10,13 @@ import {
   CARD_SPEED
 } from '../../../card.enums';
 import { CardAuraModifierMixin } from '../../../../modifier/mixins/aura.mixin';
-import type { DestinyCard } from '../../../entities/destiny.entity';
+import type { LocationCard } from '../../../entities/location.entity';
 import { WhileOnBattlefieldModifier } from '../../../../modifier/modifiers/while-on-board.modifier';
 import { SimpleAttackBuffModifier } from '../../../../modifier/modifiers/simple-attack-buff.modifier';
 
-export const tutorialBloodsunArena: DestinyBlueprint = {
+export const tutorialBloodsunArena: LocationBlueprint = {
   id: 'tutorial-bloodsun-arena',
-  kind: CARD_KINDS.DESTINY,
+  kind: CARD_KINDS.LOCATION,
   collectable: false,
   name: 'Bloodsun Arena',
   description: dedent /*html*/ `
@@ -30,25 +30,35 @@ export const tutorialBloodsunArena: DestinyBlueprint = {
   tags: [],
   async onInit(game, card) {
     await card.modifiers.add(
-      new WhileOnBattlefieldModifier<DestinyCard>('tutorial-bloodsun-arena', game, card, {
-        mixins: [
-          new CardAuraModifierMixin(game, card, {
-            isElligible(candidate) {
-              return card
-                .battlefield!.allSpaces.map(space => space.card)
-                .filter(isDefined)
-                .some(c => c.equals(candidate));
-            },
-            getModifiers() {
-              return [
-                new SimpleAttackBuffModifier('tutorial-bloodsun-arena-aura', game, card, {
-                  amount: 1
-                })
-              ];
-            }
-          })
-        ]
-      })
+      new WhileOnBattlefieldModifier<LocationCard>(
+        'tutorial-bloodsun-arena',
+        game,
+        card,
+        {
+          mixins: [
+            new CardAuraModifierMixin(game, card, {
+              isElligible(candidate) {
+                return card
+                  .battlefield!.allSpaces.map(space => space.card)
+                  .filter(isDefined)
+                  .some(c => c.equals(candidate));
+              },
+              getModifiers() {
+                return [
+                  new SimpleAttackBuffModifier(
+                    'tutorial-bloodsun-arena-aura',
+                    game,
+                    card,
+                    {
+                      amount: 1
+                    }
+                  )
+                ];
+              }
+            })
+          ]
+        }
+      )
     );
   },
   async onPlay() {}

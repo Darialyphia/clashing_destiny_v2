@@ -3,7 +3,7 @@ import { CARD_LOCATIONS, type CardLocation } from '../card/card.enums';
 import type { Game } from '../game/game';
 import type { Player } from '../player/player.entity';
 import { BoardSpace } from './board-space.entity';
-import type { DestinyCard } from '../card/entities/destiny.entity';
+import type { LocationCard } from '../card/entities/location.entity';
 import type { MinionCard } from '../card/entities/minion.entity';
 import { Entity } from '../entity';
 import { GAME_EVENTS } from '../game/game.events';
@@ -14,7 +14,7 @@ import { TypedSerializableEvent } from '../utils/typed-emitter';
 export type SerializedBattlefield = {
   id: string;
   spaces: string[];
-  destinyCard: string;
+  locationCard: string;
   secretCard: string | null;
   commandmentScore: number;
   opponentCommandmentScore: number;
@@ -27,7 +27,7 @@ export class Battlefield
 {
   readonly spaces: BoardSpace[];
 
-  destinyCard: DestinyCard | null = null;
+  locationCard: LocationCard | null = null;
 
   secretCard: SecretCard | null = null;
 
@@ -134,7 +134,7 @@ export class Battlefield
     return {
       id: this.id,
       spaces: this.spaces.map(space => space.id),
-      destinyCard: (this.destinyCard?.id ?? this.opponentBattlefield.destinyCard?.id)!,
+      locationCard: (this.locationCard?.id ?? this.opponentBattlefield.locationCard?.id)!,
       secretCard: this.secretCard?.id ?? null,
       commandmentScore: this.commandmentScore,
       opponentCommandmentScore: this.opponentCommandmentScore,

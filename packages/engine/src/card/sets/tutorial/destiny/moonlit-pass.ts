@@ -1,6 +1,6 @@
 import dedent from 'dedent';
 import { isDefined } from '@game/shared';
-import type { DestinyBlueprint } from '../../../card-blueprint';
+import type { LocationBlueprint } from '../../../card-blueprint';
 import { defaultCardArt } from '../../../card-utils';
 import {
   CARD_SETS,
@@ -10,13 +10,13 @@ import {
   CARD_SPEED
 } from '../../../card.enums';
 import { CardAuraModifierMixin } from '../../../../modifier/mixins/aura.mixin';
-import type { DestinyCard } from '../../../entities/destiny.entity';
+import type { LocationCard } from '../../../entities/location.entity';
 import { WhileOnBattlefieldModifier } from '../../../../modifier/modifiers/while-on-board.modifier';
 import { SimpleCommandmentBuffModifier } from '../../../../modifier/modifiers/simple-commandment-modifier';
 
-export const tutorialMoonlitPass: DestinyBlueprint = {
+export const tutorialMoonlitPass: LocationBlueprint = {
   id: 'tutorial-moonlit-pass',
-  kind: CARD_KINDS.DESTINY,
+  kind: CARD_KINDS.LOCATION,
   collectable: false,
   name: 'Moonlit Pass',
   description: dedent /*html*/ `
@@ -30,7 +30,7 @@ export const tutorialMoonlitPass: DestinyBlueprint = {
   tags: [],
   async onInit(game, card) {
     await card.modifiers.add(
-      new WhileOnBattlefieldModifier<DestinyCard>('tutorial-moonlit-pass', game, card, {
+      new WhileOnBattlefieldModifier<LocationCard>('tutorial-moonlit-pass', game, card, {
         mixins: [
           new CardAuraModifierMixin(game, card, {
             isElligible(candidate) {

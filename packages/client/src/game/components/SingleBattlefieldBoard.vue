@@ -1,16 +1,13 @@
 <script setup lang="ts">
 import {
-  useGameClient,
   useGameState,
   useGameUi,
   useMyPlayer,
   useOpponentPlayer
 } from '../composables/useGameClient';
 import BoardSpace from './BoardSpace/index.vue';
-import BoardCard from './BoardCard/index.vue';
 import { useWindowSize } from '@vueuse/core';
 import { config } from '@/utils/config';
-import PassButton from './PassButton.vue';
 import type { PlayerClockState } from '../composables/useGameSocket';
 import Battlefield from './Battlefield.vue';
 import RuneZone from './RuneZone.vue';
@@ -21,7 +18,6 @@ const { clocks } = defineProps<{
 
 const ui = useGameUi();
 const state = useGameState();
-const { client } = useGameClient();
 const myPlayer = useMyPlayer();
 const opponent = useOpponentPlayer();
 const { height } = useWindowSize();
@@ -46,19 +42,12 @@ const pointsToWin = computed(() => state.value.config.VICTORY_POINTS_TO_WIN);
 const pointsPerColumn = computed(() =>
   pointsToWin.value > 7 ? pointsToWin.value / 2 : 1
 );
-const hasInitiative = computed(() => {
-  return client.value.getActivePlayerIds().includes(myPlayer.value.id);
-});
-
-const opponentHasInitiative = computed(() => {
-  return client.value.getActivePlayerIds().includes(opponent.value.id);
-});
 </script>
 
 <template>
   <div class="board" :id="ui.DOMSelectors.board.id">
     <div class="minions-zone" :id="ui.DOMSelectors.boardInner.id">
-      <div class="left-destiny">
+      <div class="left-location">
         <Battlefield :battlefield="myPlayer.leftBattlefield" />
       </div>
 
@@ -210,7 +199,7 @@ const opponentHasInitiative = computed(() => {
   }
 }
 
-.left-destiny {
+.left-location {
   position: absolute;
   top: 228px;
   left: 300px;

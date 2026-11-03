@@ -1,5 +1,5 @@
 import dedent from 'dedent';
-import type { DestinyBlueprint } from '../../../card-blueprint';
+import type { LocationBlueprint } from '../../../card-blueprint';
 import { defaultCardArt, isMinion } from '../../../card-utils';
 import {
   CARD_SETS,
@@ -8,14 +8,14 @@ import {
   AFFINITIES,
   CARD_SPEED
 } from '../../../card.enums';
-import type { DestinyCard } from '../../../entities/destiny.entity';
+import type { LocationCard } from '../../../entities/location.entity';
 import { WhileOnBattlefieldModifier } from '../../../../modifier/modifiers/while-on-board.modifier';
 import { GAME_EVENTS } from '../../../../game/game.events';
 import { GameEventModifierMixin } from '../../../../modifier/mixins/game-event.mixin';
 
-export const restrainTheBeast: DestinyBlueprint = {
+export const restrainTheBeast: LocationBlueprint = {
   id: 'restrain-the-beast',
-  kind: CARD_KINDS.DESTINY,
+  kind: CARD_KINDS.LOCATION,
   collectable: true,
   name: 'Restrain the Beast',
   description: dedent /*html*/ `
@@ -29,7 +29,7 @@ export const restrainTheBeast: DestinyBlueprint = {
   tags: [],
   async onInit(game, card) {
     await card.modifiers.add(
-      new WhileOnBattlefieldModifier<DestinyCard>('restrain-the-beast', game, card, {
+      new WhileOnBattlefieldModifier<LocationCard>('restrain-the-beast', game, card, {
         mixins: [
           new GameEventModifierMixin(game, {
             eventName: GAME_EVENTS.CARD_AFTER_MOVE,

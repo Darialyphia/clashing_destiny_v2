@@ -1,5 +1,5 @@
 import dedent from 'dedent';
-import type { DestinyBlueprint } from '../../../card-blueprint';
+import type { LocationBlueprint } from '../../../card-blueprint';
 import { defaultCardArt } from '../../../card-utils';
 import {
   CARD_SETS,
@@ -9,7 +9,7 @@ import {
   CARD_SPEED
 } from '../../../card.enums';
 import { CardAuraModifierMixin } from '../../../../modifier/mixins/aura.mixin';
-import type { DestinyCard } from '../../../entities/destiny.entity';
+import type { LocationCard } from '../../../entities/location.entity';
 import { WhileOnBattlefieldModifier } from '../../../../modifier/modifiers/while-on-board.modifier';
 import { OnScoreModifier } from '../../../../modifier/modifiers/on-score.modifier';
 import type { MinionCard } from '../../../entities/minion.entity';
@@ -17,9 +17,9 @@ import { AbilityDamage } from '../../../../utils/damage';
 import { CardEffectTriggeredEvent } from '../../../card.events';
 import { GAME_EVENTS } from '../../../../game/game.events';
 
-export const ashesOfPain: DestinyBlueprint = {
+export const ashesOfPain: LocationBlueprint = {
   id: 'ashes-of-pain',
-  kind: CARD_KINDS.DESTINY,
+  kind: CARD_KINDS.LOCATION,
   collectable: true,
   name: 'Ashes of Pain',
   description: dedent /*html*/ `
@@ -33,7 +33,7 @@ export const ashesOfPain: DestinyBlueprint = {
   tags: [],
   async onInit(game, card) {
     await card.modifiers.add(
-      new WhileOnBattlefieldModifier<DestinyCard>('ashes-of-pain', game, card, {
+      new WhileOnBattlefieldModifier<LocationCard>('ashes-of-pain', game, card, {
         mixins: [
           new CardAuraModifierMixin<MinionCard>(game, card, {
             isElligible(candidate) {

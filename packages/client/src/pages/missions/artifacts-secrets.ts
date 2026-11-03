@@ -10,7 +10,7 @@ import {
   findOpponentCardInHand,
   findOpponentMinion,
   getCardViewModel,
-  getDestinyCard,
+  getLocationCard,
   getEmptyBaseSpaces,
   makeOpponentChooseAffinity,
   startOpponentAI,
@@ -301,7 +301,7 @@ export const artifactsSecretsTutorial: TutorialMission = {
         failedCondition: () => false,
         meta: {},
         async setup(ctx) {
-          ctx.meta.leftDestiny = getDestinyCard(
+          ctx.meta.leftLocation = getLocationCard(
             ctx,
             CARD_LOCATIONS.LEFT_BATTLEFIELD
           );
@@ -318,7 +318,7 @@ export const artifactsSecretsTutorial: TutorialMission = {
             return validateSupplyCard(secondAdept, input, ctx);
           }
           return validatePlayingSpell(ctx.meta.holyImmolation, input, ctx, [
-            ctx.meta.leftDestiny
+            ctx.meta.leftLocation
           ]);
         },
         textBoxes: [
@@ -422,7 +422,7 @@ export const artifactsSecretsTutorial: TutorialMission = {
                 if (secondAdept.location === CARD_LOCATIONS.HAND) {
                   return supplyZoneElement(ctx);
                 }
-                return cardOnBoardElement(ctx, ctx.meta.leftDestiny);
+                return cardOnBoardElement(ctx, ctx.meta.leftLocation);
               }
             }
           }
@@ -600,7 +600,7 @@ export const artifactsSecretsTutorial: TutorialMission = {
                 if (!minion?.isOnBattlefield) return null;
                 return cardOnBoardElement(
                   ctx,
-                  getDestinyCard(ctx, minion.location as BattlefieldZone)
+                  getLocationCard(ctx, minion.location as BattlefieldZone)
                 );
               }
             }

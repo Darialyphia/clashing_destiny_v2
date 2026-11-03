@@ -8,9 +8,9 @@ import {
   CARD_SPEED,
   RARITIES
 } from '../../../card.enums';
-import type { DestinyCard } from '../../../entities/destiny.entity';
+import type { LocationCard } from '../../../entities/location.entity';
 
-export const firestormMantra: SpellBlueprint<DestinyCard> = {
+export const firestormMantra: SpellBlueprint<LocationCard> = {
   id: 'firestormMantra',
   name: 'Firestorm Mantra',
   description: dedent /*html*/ `

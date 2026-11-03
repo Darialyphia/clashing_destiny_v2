@@ -84,7 +84,7 @@ const {
 });
 
 const shouldScaleSprite = computed(() => {
-  return card.kind !== CARD_KINDS.DESTINY;
+  return card.kind !== CARD_KINDS.LOCATION;
 });
 
 const isHovered = computed(() => ui.value.hoveredCard?.equals(card));

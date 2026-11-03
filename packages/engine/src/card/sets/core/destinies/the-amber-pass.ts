@@ -1,5 +1,5 @@
 import dedent from 'dedent';
-import type { DestinyBlueprint } from '../../../card-blueprint';
+import type { LocationBlueprint } from '../../../card-blueprint';
 import type { SecretCard } from '../../../entities/secret.entity';
 import { defaultCardArt, isSecret } from '../../../card-utils';
 import {
@@ -12,11 +12,11 @@ import {
 import { WhileOnBoardModifier } from '../../../../modifier/modifiers/while-on-board.modifier';
 import { GameEventModifierMixin } from '../../../../modifier/mixins/game-event.mixin';
 import { GAME_EVENTS } from '../../../../game/game.events';
-import type { DestinyCard } from '../../../entities/destiny.entity';
+import type { LocationCard } from '../../../entities/location.entity';
 
-export const theAmberPass: DestinyBlueprint = {
+export const theAmberPass: LocationBlueprint = {
   id: 'the-amber-pass',
-  kind: CARD_KINDS.DESTINY,
+  kind: CARD_KINDS.LOCATION,
   collectable: true,
   name: 'The Amber Pass',
   description: dedent /*html*/ `
@@ -30,7 +30,7 @@ export const theAmberPass: DestinyBlueprint = {
   tags: [],
   async onInit(game, card) {
     await card.modifiers.add(
-      new WhileOnBoardModifier<DestinyCard>('the-amber-pass', game, card, {
+      new WhileOnBoardModifier<LocationCard>('the-amber-pass', game, card, {
         mixins: [
           new GameEventModifierMixin(game, {
             eventName: GAME_EVENTS.CARD_EFFECT_TRIGGERED,

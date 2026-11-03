@@ -19,12 +19,6 @@ export class SpaceNotFoundError extends GameError {
   }
 }
 
-export class NotEnoughCardsInDestinyZoneError extends InputError {
-  constructor() {
-    super('Not enough cards in destiny zone.');
-  }
-}
-
 export class NotEnoughCardsInHandError extends InputError {
   constructor() {
     super('Not enough cards in hand.');

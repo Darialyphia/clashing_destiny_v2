@@ -63,7 +63,7 @@ export const provideCardList = () => {
     [CARD_KINDS.MINION]: 0,
     [CARD_KINDS.SPELL]: 0,
     [CARD_KINDS.ARTIFACT]: 0,
-    [CARD_KINDS.DESTINY]: 1,
+    [CARD_KINDS.LOCATION]: 1,
     [CARD_KINDS.RUNE]: 2,
     [CARD_KINDS.SECRET]: 0
   };

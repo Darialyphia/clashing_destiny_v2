@@ -53,7 +53,7 @@ export class CardTrackerComponent {
       const turnCards = this.cardsPlayedByGameTurn.get(turn);
       const lastCard = turnCards?.at(-1);
       if (
-        lastCard?.card.kind !== CARD_KINDS.DESTINY &&
+        lastCard?.card.kind !== CARD_KINDS.LOCATION &&
         lastCard?.card.kind !== CARD_KINDS.RUNE
       ) {
         if (lastCard) return lastCard;

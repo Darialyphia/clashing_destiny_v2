@@ -1,5 +1,5 @@
 import dedent from 'dedent';
-import type { DestinyBlueprint } from '../../../card-blueprint';
+import type { LocationBlueprint } from '../../../card-blueprint';
 import { defaultCardArt } from '../../../card-utils';
 import {
   CARD_SETS,
@@ -9,14 +9,14 @@ import {
   CARD_SPEED
 } from '../../../card.enums';
 import { CardAuraModifierMixin } from '../../../../modifier/mixins/aura.mixin';
-import type { DestinyCard } from '../../../entities/destiny.entity';
+import type { LocationCard } from '../../../entities/location.entity';
 import { WhileOnBattlefieldModifier } from '../../../../modifier/modifiers/while-on-board.modifier';
 import { isDefined } from '@game/shared';
 import { SimpleCommandmentBuffModifier } from '../../../../modifier/modifiers/simple-commandment-modifier';
 
-export const forgottenMarsh: DestinyBlueprint = {
+export const forgottenMarsh: LocationBlueprint = {
   id: 'austerity',
-  kind: CARD_KINDS.DESTINY,
+  kind: CARD_KINDS.LOCATION,
   collectable: true,
   name: 'Forgotten Marsh',
   description: dedent /*html*/ `
@@ -30,7 +30,7 @@ export const forgottenMarsh: DestinyBlueprint = {
   tags: [],
   async onInit(game, card) {
     await card.modifiers.add(
-      new WhileOnBattlefieldModifier<DestinyCard>('forgotten-marsh', game, card, {
+      new WhileOnBattlefieldModifier<LocationCard>('forgotten-marsh', game, card, {
         mixins: [
           new CardAuraModifierMixin(game, card, {
             isElligible(candidate) {

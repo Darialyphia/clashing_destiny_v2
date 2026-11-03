@@ -133,7 +133,9 @@ const _animationSequence = computed(() => {
     .with(CARD_KINDS.SPELL, CARD_KINDS.ARTIFACT, CARD_KINDS.SECRET, () =>
       isHovered.value ? [ANIMATIONS_NAMES.ACTIVE] : [ANIMATIONS_NAMES.DEFAULT]
     )
-    .with(CARD_KINDS.DESTINY, CARD_KINDS.RUNE, () => [ANIMATIONS_NAMES.DEFAULT])
+    .with(CARD_KINDS.LOCATION, CARD_KINDS.RUNE, () => [
+      ANIMATIONS_NAMES.DEFAULT
+    ])
     .exhaustive();
 });
 </script>
@@ -168,7 +170,7 @@ const _animationSequence = computed(() => {
         />
         <AffinityFlags
           :affinities="card.affinities"
-          v-if="card.kind !== CARD_KINDS.DESTINY"
+          v-if="card.kind !== CARD_KINDS.LOCATION"
         />
         <CardArtComponent
           v-if="sprite"
@@ -226,10 +228,7 @@ const _animationSequence = computed(() => {
           :focus="card.focus ?? null"
           :wisdom="card.wisdom ?? null"
         />
-        <!--<Speed
-          v-if="isDefined(card.speed) && card.kind !== CARD_KINDS.DESTINY"
-          :speed="card.speed"
-        /> -->
+
         <CardGlare />
       </div>
       <div class="card-back">

@@ -7,7 +7,7 @@ import type {
   MinionBlueprint,
   SpellBlueprint,
   ArtifactBlueprint,
-  DestinyBlueprint,
+  LocationBlueprint,
   RuneBlueprint,
   SecretBlueprint
 } from './card-blueprint';
@@ -17,7 +17,7 @@ import { match } from 'ts-pattern';
 import { CARD_KINDS, CARD_LOCATIONS, type CardKind } from './card.enums';
 import { GAME_EVENTS } from '../game/game.events';
 import { ArtifactCard } from './entities/artifact.entity';
-import { DestinyCard } from './entities/destiny.entity';
+import { LocationCard } from './entities/location.entity';
 import { RuneCard } from './entities/rune.entity';
 import { SecretCard } from './entities/secret.entity';
 
@@ -102,12 +102,12 @@ export class CardSystem extends System<CardSystemOptions> {
           } as CardOptions<ArtifactBlueprint>)
       )
       .with(
-        CARD_KINDS.DESTINY,
+        CARD_KINDS.LOCATION,
         () =>
-          new DestinyCard(this.game, player, {
+          new LocationCard(this.game, player, {
             id,
             blueprint
-          } as CardOptions<DestinyBlueprint>)
+          } as CardOptions<LocationBlueprint>)
       )
       .with(
         CARD_KINDS.RUNE,

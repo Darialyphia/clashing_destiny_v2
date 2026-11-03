@@ -165,8 +165,8 @@ export class PlayerViewModel {
         return this.getEntities()[spaceId] as BoardSpaceViewModel;
       }),
       zone: this.data.boardSide.leftBattlefield.zone,
-      destinyCard: this.getEntities()[
-        this.data.boardSide.leftBattlefield.destinyCard
+      locationCard: this.getEntities()[
+        this.data.boardSide.leftBattlefield.locationCard
       ] as CardViewModel,
       secretCard: this.data.boardSide.leftBattlefield.secretCard
         ? (this.getEntities()[
@@ -187,8 +187,8 @@ export class PlayerViewModel {
         return this.getEntities()[spaceId] as BoardSpaceViewModel;
       }),
       zone: this.data.boardSide.rightBattlefield.zone,
-      destinyCard: this.getEntities()[
-        this.data.boardSide.rightBattlefield.destinyCard
+      locationCard: this.getEntities()[
+        this.data.boardSide.rightBattlefield.locationCard
       ] as CardViewModel,
       secretCard: this.data.boardSide.rightBattlefield.secretCard
         ? (this.getEntities()[

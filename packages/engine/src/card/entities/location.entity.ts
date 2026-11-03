@@ -1,7 +1,7 @@
 import { isDefined } from '@game/shared';
 import type { Game } from '../../game/game';
 import type { Player } from '../../player/player.entity';
-import { type DestinyBlueprint } from '../card-blueprint';
+import { type LocationBlueprint } from '../card-blueprint';
 import { CARD_LOCATIONS } from '../card.enums';
 import {
   Card,
@@ -12,15 +12,15 @@ import {
 } from './card.entity';
 import type { MinionCard } from './minion.entity';
 
-export type SerializedDestinyCard = SerializedCard;
-export type DestinyCardInterceptors = CardInterceptors;
+export type SerializedLocationCard = SerializedCard;
+export type LocationCardInterceptors = CardInterceptors;
 
-export class DestinyCard extends Card<
-  SerializedDestinyCard,
-  DestinyCardInterceptors,
-  DestinyBlueprint
+export class LocationCard extends Card<
+  SerializedLocationCard,
+  LocationCardInterceptors,
+  LocationBlueprint
 > {
-  constructor(game: Game, player: Player, options: CardOptions<DestinyBlueprint>) {
+  constructor(game: Game, player: Player, options: CardOptions<LocationBlueprint>) {
     super(game, player, makeCardInterceptors(), options);
   }
 
@@ -59,7 +59,7 @@ export class DestinyCard extends Card<
       .some(c => c.equals(card));
   }
 
-  serialize(): SerializedDestinyCard {
+  serialize(): SerializedLocationCard {
     return {
       ...this.serializeBase()
     };

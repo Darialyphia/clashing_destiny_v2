@@ -23,7 +23,7 @@ export const useBoardCardInteraction = (card: ComputedRef<CardViewModel>) => {
 
   const isTargetable = computed(() => {
     if (state.value.interaction.state === INTERACTION_STATES.IDLE) {
-      if (card.value.kind !== CARD_KINDS.DESTINY) return false;
+      if (card.value.kind !== CARD_KINDS.LOCATION) return false;
       if (!ui.value.selectedCard) return false;
       if (ui.value.selectedCard.kind !== CARD_KINDS.MINION) return false;
       if (

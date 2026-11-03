@@ -8,9 +8,9 @@ import {
   CARD_SPEED,
   RARITIES
 } from '../../../card.enums';
-import type { DestinyCard } from '../../../entities/destiny.entity';
+import type { LocationCard } from '../../../entities/location.entity';
 
-export const augury: SpellBlueprint<DestinyCard> = {
+export const augury: SpellBlueprint<LocationCard> = {
   id: 'augury',
   name: 'Augury',
   description: dedent /*html*/ `

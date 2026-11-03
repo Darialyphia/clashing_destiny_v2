@@ -81,7 +81,7 @@ const { activeFrameRect, bgPosition, imageBg } = useSprite({
     translate: 0 calc(var(--pixel-scale) * -15px);
   }
 
-  &.destiny {
+  &.location {
     translate: 0 calc(var(--pixel-scale) * 3px);
   }
 

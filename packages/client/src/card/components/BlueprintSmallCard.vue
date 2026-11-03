@@ -26,8 +26,7 @@ const sprite = computed(() => {
       commandment: (blueprint as any).commandment,
       hp: (blueprint as any).maxHp,
       durability: (blueprint as any).durability,
-      manaCost: (blueprint as any).manaCost,
-      destinyCost: (blueprint as any).destinyCost
+      manaCost: (blueprint as any).manaCost
     }"
     :sprite
   />
