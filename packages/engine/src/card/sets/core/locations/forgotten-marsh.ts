@@ -24,7 +24,7 @@ export const forgottenMarsh: LocationBlueprint = {
   `,
   setId: CARD_SETS.CORE,
   rarity: RARITIES.COMMON,
-  art: defaultCardArt('destinies/forgotten-marsh'),
+  art: defaultCardArt('locations/forgotten-marsh'),
   speed: CARD_SPEED.SLOW,
   affinities: [AFFINITIES.NEUTRAL],
   tags: [],

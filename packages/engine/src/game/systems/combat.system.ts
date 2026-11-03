@@ -335,14 +335,6 @@ export class CombatSystem
       await attacker.checkHp(defender);
       await defender.checkHp(attacker);
     }
-
-    await this.game.emit(
-      COMBAT_EVENTS.AFTER_RESOLVE_COMBAT,
-      new AfterResolveCombatEvent({
-        attacker: attacker,
-        target: defender
-      })
-    );
   }
 
   serialize() {

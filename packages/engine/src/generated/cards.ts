@@ -100,6 +100,12 @@ export const cards = {
 "sapphire-seer": "sapphire-seer",
 "portal-guardian": "portal-guardian",
 "wither": "wither",
+"agenors-pass": "agenors-pass",
+"whistling-woods": "whistling-woods",
+"windcliffe-stronghold": "windcliffe-stronghold",
+"xaan-undercity": "xaan-undercity",
+"rashas-tomb": "rashas-tomb",
+"the-ostracon": "the-ostracon",
 "bloodbound-invader": "bloodbound-invader",
 "tutorial-windblade-adept": "tutorial-windblade-adept",
 "tutorial-silverguard-outpost": "tutorial-silverguard-outpost",
@@ -214,7 +220,12 @@ export const collectableCards = {
 "sapphire-seer": "sapphire-seer",
 "portal-guardian": "portal-guardian",
 "wither": "wither",
-"tutorial-silverguard-outpost": "tutorial-silverguard-outpost"
+"agenors-pass": "agenors-pass",
+"whistling-woods": "whistling-woods",
+"windcliffe-stronghold": "windcliffe-stronghold",
+"xaan-undercity": "xaan-undercity",
+"rashas-tomb": "rashas-tomb",
+"the-ostracon": "the-ostracon"
 } as const;
 
 type CardSet = Array<{id: string; collectable: boolean; rarity: Rarity, kind: CardKind}>;
@@ -783,6 +794,42 @@ export const cardsBySet: Record<string, CardSet> = {
     "collectable": true,
     "rarity": "common",
     "kind": "SPELL"
+  },
+  {
+    "id": "agenors-pass",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "LOCATION"
+  },
+  {
+    "id": "whistling-woods",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "LOCATION"
+  },
+  {
+    "id": "windcliffe-stronghold",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "LOCATION"
+  },
+  {
+    "id": "xaan-undercity",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "LOCATION"
+  },
+  {
+    "id": "rashas-tomb",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "LOCATION"
+  },
+  {
+    "id": "the-ostracon",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "LOCATION"
   }
 ],
 "TUTORIAL": [
@@ -800,7 +847,7 @@ export const cardsBySet: Record<string, CardSet> = {
   },
   {
     "id": "tutorial-silverguard-outpost",
-    "collectable": true,
+    "collectable": false,
     "rarity": "rare",
     "kind": "LOCATION"
   },
@@ -992,6 +1039,12 @@ export const cardShortIds: Record<string, number> = {
 "sapphire-seer": 102,
 "portal-guardian": 103,
 "wither": 104,
+"agenors-pass": 116,
+"whistling-woods": 117,
+"windcliffe-stronghold": 118,
+"xaan-undercity": 119,
+"rashas-tomb": 120,
+"the-ostracon": 121,
 "bloodbound-invader": 92,
 "tutorial-windblade-adept": 93,
 "tutorial-silverguard-outpost": 94,
@@ -1124,5 +1177,11 @@ export const cardIdByShortId: Record<number, string> = {
 "112": "tutorial-sunbreaker",
 "113": "tutorial-bloodsun-arena",
 "114": "tutorial-mistveil-marsh",
-"115": "tutorial-moonlit-pass"
+"115": "tutorial-moonlit-pass",
+"116": "agenors-pass",
+"117": "whistling-woods",
+"118": "windcliffe-stronghold",
+"119": "xaan-undercity",
+"120": "rashas-tomb",
+"121": "the-ostracon"
 } as const;

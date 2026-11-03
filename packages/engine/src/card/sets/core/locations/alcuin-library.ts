@@ -27,7 +27,7 @@ export const alcuinLibrary: LocationBlueprint = {
   `,
   setId: CARD_SETS.CORE,
   rarity: RARITIES.COMMON,
-  art: defaultCardArt('destinies/alcuin-library'),
+  art: defaultCardArt('locations/alcuin-library'),
   speed: CARD_SPEED.SLOW,
   affinities: [AFFINITIES.NEUTRAL],
   tags: [],

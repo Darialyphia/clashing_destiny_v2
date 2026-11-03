@@ -24,7 +24,7 @@ export const theAmberPass: LocationBlueprint = {
   `,
   setId: CARD_SETS.CORE,
   rarity: RARITIES.COMMON,
-  art: defaultCardArt('destinies/amber-pass'),
+  art: defaultCardArt('locations/amber-pass'),
   speed: CARD_SPEED.SLOW,
   affinities: [AFFINITIES.NEUTRAL],
   tags: [],

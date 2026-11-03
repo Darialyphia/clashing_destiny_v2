@@ -15,6 +15,7 @@ import {
 } from '../modifier/mixins/remove-on-destroyed';
 import { EquippedModifier } from '../modifier/modifiers/equip.modifier';
 import type { Modifier } from '../modifier/modifier.entity';
+import type { Player } from '../player/player.entity';
 
 export const scry = async (game: Game, card: AnyCard, amount: number) => {
   const cards = card.player.cardManager.mainDeck.peek(amount);
@@ -175,6 +176,7 @@ export const discardFromHand = async (
 export const askMandatoryYesNoQuestion = async ({
   game,
   card,
+  player = card.player,
   questionId,
   label,
   timeoutFallback = 'no',
@@ -182,13 +184,15 @@ export const askMandatoryYesNoQuestion = async ({
 }: {
   game: Game;
   card: AnyCard;
+  // defaults to the card's owner
+  player?: Player;
   questionId: string;
   label: string;
   timeoutFallback?: 'yes' | 'no';
   aiChoice: 'yes' | 'no';
 }) => {
   const answer = await game.interaction.askQuestion({
-    player: card.player,
+    player,
     canCancel: false,
     label,
     questionId,

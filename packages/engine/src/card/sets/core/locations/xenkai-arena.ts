@@ -24,7 +24,7 @@ export const xenkaiArena: LocationBlueprint = {
   `,
   setId: CARD_SETS.CORE,
   rarity: RARITIES.COMMON,
-  art: defaultCardArt('destinies/xenkai-arena'),
+  art: defaultCardArt('locations/xenkai-arena'),
   speed: CARD_SPEED.SLOW,
   affinities: [AFFINITIES.NEUTRAL],
   tags: [],

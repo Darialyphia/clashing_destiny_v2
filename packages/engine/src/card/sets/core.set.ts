@@ -94,6 +94,12 @@ import { paddo } from './core/minions/paddo';
 import { saphireSeer } from './core/minions/saphire-seer';
 import { portalGuardian } from './core/minions/portal-guardian';
 import { wither } from './core/spells/wither';
+import { agenorsPass } from './core/locations/agenors-pass';
+import { whistlingWoods } from './core/locations/whistling-woods';
+import { windcliffeStronghold } from './core/locations/windcliffe-stronghold';
+import { xaanUndercity } from './core/locations/xaan-undercity';
+import { rashasTomb } from './core/locations/rashas-tomb';
+import { theOstracon } from './core/locations/the-ostracon';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -192,6 +198,12 @@ export const coreSet: CardSet = {
     paddo,
     saphireSeer,
     portalGuardian,
-    wither
+    wither,
+    agenorsPass,
+    whistlingWoods,
+    windcliffeStronghold,
+    xaanUndercity,
+    rashasTomb,
+    theOstracon
   ]
 };
