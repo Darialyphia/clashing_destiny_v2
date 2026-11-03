@@ -15,7 +15,7 @@ import type { Ability, AbilityOwner } from './entities/ability.entity';
 import type { InteractionResult } from '../game/systems/game-interaction.system';
 import type { ArtifactCard } from './entities/artifact.entity';
 import type { BoardSpace } from '../board/board-space.entity';
-import type { DestinyCard } from './entities/destiny.entity';
+import type { LocationCard } from './entities/location.entity';
 import type { Effect } from '../game/effect-chain';
 import type { Nullable } from '@game/shared';
 import type { RuneCard } from './entities/rune.entity';
@@ -178,10 +178,10 @@ export type ArtifactBlueprint = CardBlueprintBase & {
   };
 };
 
-export type DestinyBlueprint = CardBlueprintBase & {
-  kind: Extract<CardKind, typeof CARD_KINDS.DESTINY>;
-  onInit: (game: Game, card: DestinyCard) => Promise<void>;
-  onPlay: (game: Game, card: DestinyCard) => Promise<void>;
+export type LocationBlueprint = CardBlueprintBase & {
+  kind: Extract<CardKind, typeof CARD_KINDS.LOCATION>;
+  onInit: (game: Game, card: LocationCard) => Promise<void>;
+  onPlay: (game: Game, card: LocationCard) => Promise<void>;
 };
 
 export type RuneBlueprint = CardBlueprintBase & {
@@ -229,6 +229,6 @@ export type CardBlueprint =
   | SpellBlueprint<any>
   | MinionBlueprint
   | ArtifactBlueprint
-  | DestinyBlueprint
+  | LocationBlueprint
   | RuneBlueprint
   | SecretBlueprint<any, any>;

@@ -6,9 +6,9 @@ import { Modifier } from '../modifier.entity';
 import type { ModifierMixin } from '../modifier-mixin';
 import { TogglableModifierMixin } from '../mixins/togglable.mixin';
 import { CARD_LOCATIONS } from '../../card/card.enums';
-import type { DestinyCard } from '../../card/entities/destiny.entity';
+import type { LocationCard } from '../../card/entities/location.entity';
 
-type WhileOnBoardOptions<T extends MinionCard | ArtifactCard | DestinyCard> = {
+type WhileOnBoardOptions<T extends MinionCard | ArtifactCard | LocationCard> = {
   isUnique?: boolean;
   mixins: Array<ModifierMixin<T>>;
   name?: string | (() => string);
@@ -16,7 +16,7 @@ type WhileOnBoardOptions<T extends MinionCard | ArtifactCard | DestinyCard> = {
   icon?: string | (() => string);
 };
 export class WhileOnBoardModifier<
-  T extends MinionCard | ArtifactCard | DestinyCard
+  T extends MinionCard | ArtifactCard | LocationCard
 > extends Modifier<T> {
   constructor(
     modifierType: string,
@@ -65,7 +65,7 @@ export class WhileOnBaseModifier<
 }
 
 export class WhileOnBattlefieldModifier<
-  T extends MinionCard | DestinyCard
+  T extends MinionCard | LocationCard
 > extends Modifier<T> {
   constructor(
     modifierType: string,

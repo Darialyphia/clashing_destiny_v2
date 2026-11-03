@@ -224,43 +224,43 @@ export const cardsBySet: Record<string, CardSet> = {
     "id": "crowds-favor",
     "collectable": true,
     "rarity": "common",
-    "kind": "DESTINY"
+    "kind": "LOCATION"
   },
   {
     "id": "day-of-conquest",
     "collectable": true,
     "rarity": "common",
-    "kind": "DESTINY"
+    "kind": "LOCATION"
   },
   {
     "id": "day-of-fortitude",
     "collectable": true,
     "rarity": "common",
-    "kind": "DESTINY"
+    "kind": "LOCATION"
   },
   {
     "id": "restrain-the-beast",
     "collectable": true,
     "rarity": "common",
-    "kind": "DESTINY"
+    "kind": "LOCATION"
   },
   {
     "id": "ashes-of-pain",
     "collectable": true,
     "rarity": "rare",
-    "kind": "DESTINY"
+    "kind": "LOCATION"
   },
   {
     "id": "fleeting-thought",
     "collectable": true,
     "rarity": "rare",
-    "kind": "DESTINY"
+    "kind": "LOCATION"
   },
   {
     "id": "ignite-the-sky",
     "collectable": true,
     "rarity": "rare",
-    "kind": "DESTINY"
+    "kind": "LOCATION"
   },
   {
     "id": "light-affinity",
@@ -386,7 +386,7 @@ export const cardsBySet: Record<string, CardSet> = {
     "id": "austerity",
     "collectable": true,
     "rarity": "epic",
-    "kind": "DESTINY"
+    "kind": "LOCATION"
   },
   {
     "id": "counterstrike",
@@ -404,7 +404,7 @@ export const cardsBySet: Record<string, CardSet> = {
     "id": "the-amber-pass",
     "collectable": true,
     "rarity": "rare",
-    "kind": "DESTINY"
+    "kind": "LOCATION"
   },
   {
     "id": "obscuring-blow",
@@ -802,7 +802,7 @@ export const cardsBySet: Record<string, CardSet> = {
     "id": "tutorial-silverguard-outpost",
     "collectable": true,
     "rarity": "rare",
-    "kind": "DESTINY"
+    "kind": "LOCATION"
   },
   {
     "id": "tutorial-silverguard-knight",
@@ -880,19 +880,19 @@ export const cardsBySet: Record<string, CardSet> = {
     "id": "tutorial-bloodsun-arena",
     "collectable": false,
     "rarity": "token",
-    "kind": "DESTINY"
+    "kind": "LOCATION"
   },
   {
     "id": "tutorial-mistveil-marsh",
     "collectable": false,
     "rarity": "token",
-    "kind": "DESTINY"
+    "kind": "LOCATION"
   },
   {
     "id": "tutorial-moonlit-pass",
     "collectable": false,
     "rarity": "token",
-    "kind": "DESTINY"
+    "kind": "LOCATION"
   }
 ]
 };

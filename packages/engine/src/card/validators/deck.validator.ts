@@ -92,7 +92,7 @@ export type DeckValidatorOptions<TMeta> = {
   config: Pick<
     Config,
     | 'MAX_MAIN_DECK_SIZE'
-    | 'MAX_DESTINY_CARDS'
+    | 'MAX_LOCATION_CARDS'
     | 'MAX_RUNE_CARDS'
     | 'MAX_MAIN_DECK_CARD_COPIES'
   >;
@@ -119,15 +119,15 @@ export class DeckValidator<TMeta> implements DeckValidator<TMeta> {
   }
 
   get size(): number {
-    return this.mainDeckMaxSize + this.destinyDeckMaxSize + this.runeDeckMaxSize;
+    return this.mainDeckMaxSize + this.locationDeckMaxSize + this.runeDeckMaxSize;
   }
 
   get mainDeckMaxSize(): number {
     return this.config.MAX_MAIN_DECK_SIZE;
   }
 
-  get destinyDeckMaxSize(): number {
-    return this.config.MAX_DESTINY_CARDS;
+  get locationDeckMaxSize(): number {
+    return this.config.MAX_LOCATION_CARDS;
   }
 
   get runeDeckMaxSize(): number {

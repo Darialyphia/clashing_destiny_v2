@@ -12,7 +12,7 @@ import {
   CARD_SPEED,
   RARITIES
 } from '../../../card.enums';
-import type { DestinyCard } from '../../../entities/destiny.entity';
+import type { LocationCard } from '../../../entities/location.entity';
 import { CardAuraModifierMixin } from '../../../../modifier/mixins/aura.mixin';
 import { SimpleStatsBuffModifier } from '../../../../modifier/modifiers/simple-stats-modifier';
 import { ZealModifier } from '../../../../modifier/modifiers/zeal.modifier';
@@ -55,7 +55,7 @@ export const dynastyStandard: ArtifactBlueprint = {
           aiHints: { shouldPick: () => 1 }
         }),
       async onResolve(game, card, targets) {
-        const target = targets.cards[0] as DestinyCard;
+        const target = targets.cards[0] as LocationCard;
         if (!target) return;
 
         await card.player.modifiers.add(

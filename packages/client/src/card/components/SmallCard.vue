@@ -40,7 +40,6 @@ const {
     baseCommandment?: number | null;
     durability?: number | null;
     manaCost?: number | null;
-    destinyCost?: number | null;
   };
   isFoil?: boolean;
   showStats?: boolean;
@@ -67,7 +66,7 @@ const _animationSequence = computed(() => {
     .with(
       CARD_KINDS.SPELL,
       CARD_KINDS.ARTIFACT,
-      CARD_KINDS.DESTINY,
+      CARD_KINDS.LOCATION,
       CARD_KINDS.RUNE,
       CARD_KINDS.SECRET,
       () => [ANIMATIONS_NAMES.DEFAULT]
@@ -217,7 +216,7 @@ on('sequenceEnd', onSequenceEnd);
     grid-row: 1;
   }
 
-  &.destiny {
+  &.location {
     overflow: hidden;
   }
 }

@@ -48,7 +48,7 @@ const animationSequence = computed(() => {
       CARD_KINDS.SPELL,
       CARD_KINDS.ARTIFACT,
       CARD_KINDS.SECRET,
-      CARD_KINDS.DESTINY,
+      CARD_KINDS.LOCATION,
       CARD_KINDS.RUNE,
       () => [ANIMATIONS_NAMES.DEFAULT]
     )
@@ -222,7 +222,7 @@ const { activeFrameRect, bgPosition, imageBg } = useSprite({
   .minion & {
     translate: 25% -20px;
   }
-  .destiny & {
+  .location & {
     translate: 25px 0px;
   }
 

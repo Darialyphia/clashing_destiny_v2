@@ -6,7 +6,7 @@ import { Player } from '../../player/player.entity';
 import { CARD_KINDS, CARD_LOCATIONS, type CardLocation } from '../card.enums';
 import { GAME_EVENTS } from '../../game/game.events';
 import { PlayerDrawEvent } from '../../player/player.events';
-import type { DestinyCard } from '../entities/destiny.entity';
+import type { LocationCard } from '../entities/location.entity';
 import type { RuneCard } from '../entities/rune.entity';
 import { GAME_PHASES } from '../../game/game.enums';
 
@@ -21,7 +21,7 @@ export class CardManagerComponent {
 
   readonly mainDeck: Deck<AnyCard>;
 
-  readonly destinyDeck: Deck<DestinyCard>;
+  readonly locationDeck: Deck<LocationCard>;
 
   readonly runeDeck: Deck<RuneCard>;
 
@@ -44,7 +44,7 @@ export class CardManagerComponent {
   ) {
     this.game = game;
     this.mainDeck = new Deck(this.game, player);
-    this.destinyDeck = new Deck(this.game, player);
+    this.locationDeck = new Deck(this.game, player);
     this.runeDeck = new Deck(this.game, player);
   }
 
@@ -63,16 +63,16 @@ export class CardManagerComponent {
   async init() {
     const cards = await this.buildCards<AnyCard>(this.options.deck);
     this.mainDeck.populate(
-      cards.filter(c => c.kind !== CARD_KINDS.DESTINY && c.kind !== CARD_KINDS.RUNE)
+      cards.filter(c => c.kind !== CARD_KINDS.LOCATION && c.kind !== CARD_KINDS.RUNE)
     );
-    this.destinyDeck.populate(
-      cards.filter(c => c.kind === CARD_KINDS.DESTINY) as DestinyCard[]
+    this.locationDeck.populate(
+      cards.filter(c => c.kind === CARD_KINDS.LOCATION) as LocationCard[]
     );
     this.runeDeck.populate(cards.filter(c => c.kind === CARD_KINDS.RUNE) as RuneCard[]);
 
     if (this.options.shouldShuffleDeck) {
       this.mainDeck.shuffle();
-      this.destinyDeck.shuffle();
+      this.locationDeck.shuffle();
       this.runeDeck.shuffle();
     }
 
@@ -128,9 +128,9 @@ export class CardManagerComponent {
     if (rightBattlefieldCard)
       return { card: rightBattlefieldCard, location: CARD_LOCATIONS.RIGHT_BATTLEFIELD };
 
-    const destinyDeckCard = this.destinyDeck.cards.find(card => card.id === id);
-    if (destinyDeckCard)
-      return { card: destinyDeckCard, location: CARD_LOCATIONS.DESTINY_DECK };
+    const locationDeckCard = this.locationDeck.cards.find(card => card.id === id);
+    if (locationDeckCard)
+      return { card: locationDeckCard, location: CARD_LOCATIONS.LOCATION_DECK };
 
     const runeDeckCard = this.runeDeck.cards.find(card => card.id === id);
     if (runeDeckCard) return { card: runeDeckCard, location: CARD_LOCATIONS.RUNE_DECK };

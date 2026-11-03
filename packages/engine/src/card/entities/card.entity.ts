@@ -310,7 +310,7 @@ export abstract class Card<
           await this.sendToDiscardPile();
         }
       )
-      .with(CARD_KINDS.DESTINY, async () => {
+      .with(CARD_KINDS.LOCATION, async () => {
         await this.sendToBanishPile();
       })
       .with(CARD_KINDS.RUNE, async () => {
@@ -408,8 +408,8 @@ export abstract class Card<
       .with(CARD_LOCATIONS.MAIN_DECK, () => {
         this.player.cardManager.mainDeck.pluck(this);
       })
-      .with(CARD_LOCATIONS.DESTINY_DECK, () => {
-        this.player.cardManager.destinyDeck.pluck(this as any);
+      .with(CARD_LOCATIONS.LOCATION_DECK, () => {
+        this.player.cardManager.locationDeck.pluck(this as any);
       })
       .with(
         CARD_LOCATIONS.BASE,

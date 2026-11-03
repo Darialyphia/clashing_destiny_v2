@@ -12,7 +12,7 @@ import type { BoardSpace } from '../board/board-space.entity';
 import { PointAOEShape } from '../aoe/point.aoe-shape';
 import { AOE_TARGETING_TYPE } from '../aoe/aoe-shape';
 import { isFunction } from '@game/shared';
-import type { DestinyCard } from './entities/destiny.entity';
+import type { LocationCard } from './entities/location.entity';
 import type { Effect } from '../game/effect-chain';
 
 export const isMinion = (card: AnyCard): card is MinionCard => {
@@ -27,8 +27,8 @@ export const isArtifact = (card: AnyCard): card is ArtifactCard => {
   return card.kind === CARD_KINDS.ARTIFACT;
 };
 
-export const isDestiny = (card: AnyCard): card is DestinyCard => {
-  return card.kind === CARD_KINDS.DESTINY;
+export const isLocation = (card: AnyCard): card is LocationCard => {
+  return card.kind === CARD_KINDS.LOCATION;
 };
 
 export const isRune = (card: AnyCard): card is RuneCard => {
@@ -314,13 +314,13 @@ export const battlefieldTargetingRules = {
     card: AnyCard;
     label?: string;
     timeoutFallback: AnyCard[];
-    predicate?: (c: DestinyCard) => boolean;
+    predicate?: (c: LocationCard) => boolean;
     aiHints: {
       shouldPick: (game: Game, player: Player, selectedCards: AnyCard[]) => number;
     };
     canCancel?: boolean;
-  }): Promise<InteractionResult<Targets<DestinyCard>>> => {
-    const result = await game.interaction.selectCardsOnBoard<DestinyCard>({
+  }): Promise<InteractionResult<Targets<LocationCard>>> => {
+    const result = await game.interaction.selectCardsOnBoard<LocationCard>({
       player: card.player,
       label,
       source: card,
@@ -329,7 +329,7 @@ export const battlefieldTargetingRules = {
       aiHints,
       isElligible(candidate) {
         game.logger.log(candidate.blueprintId);
-        if (!isDestiny(candidate)) {
+        if (!isLocation(candidate)) {
           return false;
         }
 
@@ -348,7 +348,7 @@ export const battlefieldTargetingRules = {
     return {
       cancelled: false as const,
       result: {
-        cards: result.result as DestinyCard[],
+        cards: result.result as LocationCard[],
         spaces: [],
         effect: null
       }
@@ -933,14 +933,14 @@ export const singleBattlefield = {
     game: Game;
     card: AnyCard;
     timeoutFallback: AnyCard[];
-    predicate: (c: DestinyCard) => boolean;
+    predicate: (c: LocationCard) => boolean;
     label: string;
     canCancel?: boolean;
     aiHints: {
       shouldPick: (game: Game, player: Player, selectedCards: AnyCard[]) => number;
     };
-  }): Promise<InteractionResult<Targets<DestinyCard>>> => {
-    const result = await game.interaction.selectCardsOnBoard<DestinyCard>({
+  }): Promise<InteractionResult<Targets<LocationCard>>> => {
+    const result = await game.interaction.selectCardsOnBoard<LocationCard>({
       player: card.player,
       label,
       source: card,
@@ -948,7 +948,7 @@ export const singleBattlefield = {
       canCancel,
       aiHints,
       isElligible(candidate) {
-        if (!isDestiny(candidate)) {
+        if (!isLocation(candidate)) {
           return false;
         }
 
@@ -967,7 +967,7 @@ export const singleBattlefield = {
     return {
       cancelled: false as const,
       result: {
-        cards: result.result as DestinyCard[],
+        cards: result.result as LocationCard[],
         spaces: [],
         effect: null
       }

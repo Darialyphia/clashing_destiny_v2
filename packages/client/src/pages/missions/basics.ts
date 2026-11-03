@@ -192,7 +192,7 @@ export const basicsTutorial: TutorialMission = {
               to: ctx =>
                 ctx.client.ui.DOMSelectors.cardOnBoard(
                   ctx.game.playerSystem.player1.boardSide.leftBattlefield
-                    .destinyCard!.id
+                    .locationCard!.id
                 ).element!
             }
           }
@@ -380,7 +380,7 @@ export const basicsTutorial: TutorialMission = {
               ctx.client.ui.highlightedElement =
                 ctx.client.ui.DOMSelectors.cardOnBoard(
                   ctx.game.playerSystem.player1.boardSide.leftBattlefield
-                    .destinyCard!.id
+                    .locationCard!.id
                 ).element!;
               ctx.game.dispatch({
                 type: 'pass',

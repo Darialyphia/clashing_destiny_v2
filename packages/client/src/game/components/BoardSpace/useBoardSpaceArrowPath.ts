@@ -35,7 +35,7 @@ export const useBoardSpaceArrowPath = (cell: Ref<BoardSpaceViewModel>) => {
 
   const pathColor = computed(() => {
     if (ui.value.hoveredCard) {
-      if (ui.value.hoveredCard.kind === CARD_KINDS.DESTINY) {
+      if (ui.value.hoveredCard.kind === CARD_KINDS.LOCATION) {
         return 'lime';
       }
 

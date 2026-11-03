@@ -829,7 +829,7 @@ const tint = computed(() => {
   --dual-text-offset-x: calc(6px * var(--pixel-scale));
 
   .hero &,
-  .destiny & {
+  .location & {
     display: none;
   }
 }

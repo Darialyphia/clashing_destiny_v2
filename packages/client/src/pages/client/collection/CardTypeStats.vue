@@ -44,7 +44,7 @@ const mainDeckCount = computed(() => {
         Artifacts
       </div>
       <div>
-        <span>{{ getCountByKind(CARD_KINDS.DESTINY) }}</span>
+        <span>{{ getCountByKind(CARD_KINDS.LOCATION) }}</span>
         Destinies
       </div>
       <div>

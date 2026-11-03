@@ -1,5 +1,5 @@
 import dedent from 'dedent';
-import type { DestinyBlueprint } from '../../../card-blueprint';
+import type { LocationBlueprint } from '../../../card-blueprint';
 import { defaultCardArt, isMinion } from '../../../card-utils';
 import {
   CARD_SETS,
@@ -8,16 +8,16 @@ import {
   AFFINITIES,
   CARD_SPEED
 } from '../../../card.enums';
-import type { DestinyCard } from '../../../entities/destiny.entity';
+import type { LocationCard } from '../../../entities/location.entity';
 import { WhileOnBattlefieldModifier } from '../../../../modifier/modifiers/while-on-board.modifier';
 import { GAME_EVENTS } from '../../../../game/game.events';
 import { GameEventModifierMixin } from '../../../../modifier/mixins/game-event.mixin';
 import { FleetingModifier } from '../../../../modifier/modifiers/fleeting.modifier';
 import { phoenixFire } from '../spells/phoenix-fire';
 
-export const igniteTheSky: DestinyBlueprint = {
+export const igniteTheSky: LocationBlueprint = {
   id: 'ignite-the-sky',
-  kind: CARD_KINDS.DESTINY,
+  kind: CARD_KINDS.LOCATION,
   collectable: true,
   name: 'Ignite the Sky',
   description: dedent /*html*/ `
@@ -31,7 +31,7 @@ export const igniteTheSky: DestinyBlueprint = {
   tags: [],
   async onInit(game, card) {
     await card.modifiers.add(
-      new WhileOnBattlefieldModifier<DestinyCard>('ignite-the-sky', game, card, {
+      new WhileOnBattlefieldModifier<LocationCard>('ignite-the-sky', game, card, {
         mixins: [
           new GameEventModifierMixin(game, {
             eventName: GAME_EVENTS.CARD_AFTER_MOVE,

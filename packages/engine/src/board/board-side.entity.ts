@@ -188,12 +188,12 @@ export class BoardSide
         this._leftBattlefield.remove(card);
         this._rightBattlefield.remove(card);
       })
-      .with(CARD_KINDS.DESTINY, () => {
-        if (this.leftBattlefield.destinyCard?.equals(card)) {
-          this.leftBattlefield.destinyCard = null;
+      .with(CARD_KINDS.LOCATION, () => {
+        if (this.leftBattlefield.locationCard?.equals(card)) {
+          this.leftBattlefield.locationCard = null;
         }
-        if (this.rightBattlefield.destinyCard?.equals(card)) {
-          this.rightBattlefield.destinyCard = null;
+        if (this.rightBattlefield.locationCard?.equals(card)) {
+          this.rightBattlefield.locationCard = null;
         }
       })
       .exhaustive();
@@ -204,8 +204,8 @@ export class BoardSide
   }
 
   getCardInLeftBattlefield(cardId: string) {
-    if (this.leftBattlefield.destinyCard?.id === cardId) {
-      return this.leftBattlefield.destinyCard;
+    if (this.leftBattlefield.locationCard?.id === cardId) {
+      return this.leftBattlefield.locationCard;
     }
 
     if (this.leftBattlefield.secretCard?.id === cardId) {
@@ -219,8 +219,8 @@ export class BoardSide
   }
 
   getCardInRightBattlefield(cardId: string) {
-    if (this.rightBattlefield.destinyCard?.id === cardId) {
-      return this.rightBattlefield.destinyCard;
+    if (this.rightBattlefield.locationCard?.id === cardId) {
+      return this.rightBattlefield.locationCard;
     }
 
     if (this.rightBattlefield.secretCard?.id === cardId) {

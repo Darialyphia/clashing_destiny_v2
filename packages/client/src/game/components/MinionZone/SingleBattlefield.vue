@@ -41,7 +41,7 @@ const opponentHasInitiative = computed(() => {
     :id="ui.DOMSelectors.boardInner.id"
     :class="{ 'has-supply': hasSupply }"
   >
-    <div class="left-destiny">
+    <div class="left-location">
       <Battlefield :battlefield="myPlayer.leftBattlefield" />
     </div>
 
@@ -178,7 +178,7 @@ const opponentHasInitiative = computed(() => {
   }
 }
 
-.left-destiny {
+.left-location {
   position: absolute;
   top: 228px;
   left: 655px;

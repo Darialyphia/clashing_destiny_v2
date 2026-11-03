@@ -1,5 +1,5 @@
 import dedent from 'dedent';
-import type { DestinyBlueprint } from '../../../card-blueprint';
+import type { LocationBlueprint } from '../../../card-blueprint';
 import { defaultCardArt } from '../../../card-utils';
 import {
   CARD_SETS,
@@ -9,9 +9,9 @@ import {
   CARD_SPEED
 } from '../../../card.enums';
 
-export const tutorialSilverguardOutpost: DestinyBlueprint = {
+export const tutorialSilverguardOutpost: LocationBlueprint = {
   id: 'tutorial-silverguard-outpost',
-  kind: CARD_KINDS.DESTINY,
+  kind: CARD_KINDS.LOCATION,
   collectable: true,
   name: 'Silverguard Outpost',
   description: dedent /*html*/ `

@@ -61,14 +61,14 @@ const buildArrowBetweenTwoCards = (
 const buildScoringArrowPath = async () => {
   await nextTick();
 
-  if (!state.value.scoring.scoringCard || !state.value.scoring.scoredDestiny) {
+  if (!state.value.scoring.scoringCard || !state.value.scoring.scoredLocation) {
     scoringPath.value = '';
     return;
   }
 
   const path = buildArrowBetweenTwoCards(
     state.value.scoring.scoringCard,
-    state.value.scoring.scoredDestiny,
+    state.value.scoring.scoredLocation,
     40,
     -80
   );

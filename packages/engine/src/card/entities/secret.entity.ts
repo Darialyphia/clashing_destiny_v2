@@ -17,7 +17,7 @@ import {
   type CardOptions,
   type SerializedCard
 } from './card.entity';
-import type { DestinyCard } from './destiny.entity';
+import type { LocationCard } from './location.entity';
 import { type GameEventMap } from '../../game/game.events';
 
 export type SerializedSecretCard = SerializedCard;
@@ -80,18 +80,18 @@ export class SecretCard extends Card<
   }
 
   private async selectPosition() {
-    const result = await this.game.interaction.selectCardsOnBoard<DestinyCard>({
+    const result = await this.game.interaction.selectCardsOnBoard<LocationCard>({
       source: this,
       player: this.player,
       label: 'Select position to play',
       canCancel: true,
       isElligible: card => {
-        if (card.kind !== CARD_KINDS.DESTINY) return false;
-        const destinyCard = card as DestinyCard;
-        if (destinyCard.isAlly(this)) {
-          return !isDefined(destinyCard.battlefield!.secretCard);
+        if (card.kind !== CARD_KINDS.LOCATION) return false;
+        const locationCard = card as LocationCard;
+        if (locationCard.isAlly(this)) {
+          return !isDefined(locationCard.battlefield!.secretCard);
         } else
-          return !isDefined(destinyCard.battlefield!.opponentBattlefield!.secretCard);
+          return !isDefined(locationCard.battlefield!.opponentBattlefield!.secretCard);
       },
       canCommit(selectedSpaces) {
         return selectedSpaces.length === 1;
@@ -161,7 +161,7 @@ export class SecretCard extends Card<
     this.game.off(CARD_EVENTS.CARD_AFTER_CHANGE_LOCATION, this.onLeaveBoard);
   }
 
-  async playWithTargets(position: DestinyCard, targets: Targets) {
+  async playWithTargets(position: LocationCard, targets: Targets) {
     this.targets = targets;
     await this.resolve(async () => {
       await this.removeFromCurrentLocation();

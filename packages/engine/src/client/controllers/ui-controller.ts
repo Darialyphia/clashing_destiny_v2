@@ -85,7 +85,7 @@ export class UiController {
       new DOMSelector(cardId, this.DOMSelectors.interactionZone.selector),
     discardPile: (playerId: string) => new DOMSelector(`discard-pile-${playerId}`),
     banishPile: (playerId: string) => new DOMSelector(`banish-pile-${playerId}`),
-    destinyDeck: (playerId: string) => new DOMSelector(`destiny-deck-${playerId}`),
+    locationDeck: (playerId: string) => new DOMSelector(`location-deck-${playerId}`),
     boardSpace: (spaceId: string) => new DOMSelector(`board-space-${spaceId}`),
     cardOnBoard: (cardId: string) =>
       new DOMSelector(cardId, this.DOMSelectors.board.selector),
@@ -350,24 +350,8 @@ export class UiController {
     this._selectedCard = null;
   }
 
-  getPlayedCardZoneDOMSelector() {
-    return `#played-card`;
-  }
-
-  getDestinyZoneDOMSelector(playerId: string) {
-    return `#destiny-zone-${playerId}`;
-  }
-
   getCardDOMSelector(cardId: string) {
     return `#${cardId}`;
-  }
-
-  getCardDOMSelectorInPLayedCardZone(cardId: string) {
-    return `${this.getPlayedCardZoneDOMSelector()} ${this.getCardDOMSelector(cardId)}`;
-  }
-
-  getCardDOMSelectorInDestinyZone(cardId: string, playerId: string) {
-    return `${this.getDestinyZoneDOMSelector(playerId)} ${this.getCardDOMSelector(cardId)}`;
   }
 
   get explainerMessage() {

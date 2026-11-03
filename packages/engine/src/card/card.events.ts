@@ -5,7 +5,7 @@ import type { CombatDamage, Damage, DamageType } from '../utils/damage';
 import { TypedSerializableEvent } from '../utils/typed-emitter';
 import type { CARD_EVENTS, CardLocation } from './card.enums';
 import type { AnyCard, SerializedCard } from './entities/card.entity';
-import type { DestinyCard } from './entities/destiny.entity';
+import type { LocationCard } from './entities/location.entity';
 import type { MinionCard, SerializedMinionCard } from './entities/minion.entity';
 
 export class CardExhaustEvent extends TypedSerializableEvent<
@@ -316,27 +316,32 @@ export class CardAfterMoveEvent extends TypedSerializableEvent<
 }
 
 export class CardScoreEvent extends TypedSerializableEvent<
-  { card: AnyCard; battlefield: Battlefield; destinyCard: DestinyCard },
-  { card: string; battlefield: string; destinyCard: string }
+  { card: AnyCard; battlefield: Battlefield; locationCard: LocationCard },
+  { card: string; battlefield: string; locationCard: string }
 > {
   serialize() {
     return {
       card: this.data.card.id,
       battlefield: this.data.battlefield.id,
-      destinyCard: this.data.destinyCard.id
+      locationCard: this.data.locationCard.id
     };
   }
 }
 
 export class CardAfterScoreEvent extends TypedSerializableEvent<
-  { card: AnyCard; battlefield: Battlefield; destinyCard: DestinyCard; newScore: number },
-  { card: string; battlefield: string; destinyCard: string; newScore: number }
+  {
+    card: AnyCard;
+    battlefield: Battlefield;
+    locationCard: LocationCard;
+    newScore: number;
+  },
+  { card: string; battlefield: string; locationCard: string; newScore: number }
 > {
   serialize() {
     return {
       card: this.data.card.id,
       battlefield: this.data.battlefield.id,
-      destinyCard: this.data.destinyCard.id,
+      locationCard: this.data.locationCard.id,
       newScore: this.data.newScore
     };
   }

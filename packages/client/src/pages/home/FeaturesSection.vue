@@ -12,14 +12,6 @@
           </p>
         </div>
         <div class="feature-card">
-          <div class="feature-icon">🃏</div>
-          <h3>Destiny Decks</h3>
-          <p>
-            Build powerful decks with unique 12-card Destiny collections that
-            unlock hidden strategies.
-          </p>
-        </div>
-        <div class="feature-card">
           <div class="feature-icon">🧙‍♂️</div>
           <h3>Legendary Heroes</h3>
           <p>

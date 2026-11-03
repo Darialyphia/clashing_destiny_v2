@@ -8,7 +8,7 @@ import {
   findOpponentCardInHand,
   findOpponentMinion,
   getCardViewModel,
-  getDestinyCard,
+  getLocationCard,
   getEmptyBaseSpaces,
   startOpponentAI,
   supplyZoneElement,
@@ -76,7 +76,7 @@ const makeOpponentFollowScript = (
 
 const getLocationElement = (ctx: TutorialContext, zone: BattlefieldZone) => {
   // while the Locations rotate at the start of a turn, a battlefield briefly has none
-  const location = getDestinyCard(ctx, zone) as AnyCard | null;
+  const location = getLocationCard(ctx, zone) as AnyCard | null;
   if (!location) return null;
   return cardOnBoardElement(ctx, location);
 };

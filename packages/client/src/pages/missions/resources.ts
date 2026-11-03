@@ -673,11 +673,11 @@ export const resourcesTutorial: TutorialMission = {
                 return ctx.client.ui.DOMSelectors.boardSpace(space.id).element;
               },
               to(ctx) {
-                const destinyCard =
+                const locationCard =
                   ctx.game.playerSystem.player1.boardSide.leftBattlefield
-                    .destinyCard;
-                if (!destinyCard) return null;
-                return ctx.client.ui.DOMSelectors.cardOnBoard(destinyCard.id)
+                    .locationCard;
+                if (!locationCard) return null;
+                return ctx.client.ui.DOMSelectors.cardOnBoard(locationCard.id)
                   .element;
               }
             }

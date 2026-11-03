@@ -1,6 +1,6 @@
 export type Config = {
   MAX_MAIN_DECK_SIZE: number;
-  MAX_DESTINY_CARDS: number;
+  MAX_LOCATION_CARDS: number;
   MAX_RUNE_CARDS: number;
   MAX_MAIN_DECK_CARD_COPIES: number;
 
@@ -48,7 +48,7 @@ export type Config = {
 
 export const defaultConfig: Config = {
   MAX_MAIN_DECK_SIZE: 40,
-  MAX_DESTINY_CARDS: 4,
+  MAX_LOCATION_CARDS: 4,
   MAX_MAIN_DECK_CARD_COPIES: 2,
   MAX_RUNE_CARDS: 10,
 

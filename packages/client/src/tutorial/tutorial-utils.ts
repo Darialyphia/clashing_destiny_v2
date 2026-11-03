@@ -234,14 +234,17 @@ export type BattlefieldZone =
   | typeof CARD_LOCATIONS.LEFT_BATTLEFIELD
   | typeof CARD_LOCATIONS.RIGHT_BATTLEFIELD;
 
-// each battlefield has a single destiny card, owned by one of the two players
-export const getDestinyCard = (ctx: TutorialContext, zone: BattlefieldZone) => {
+// each battlefield has a single location card, owned by one of the two players
+export const getLocationCard = (
+  ctx: TutorialContext,
+  zone: BattlefieldZone
+) => {
   const key =
     zone === CARD_LOCATIONS.LEFT_BATTLEFIELD
       ? 'leftBattlefield'
       : 'rightBattlefield';
-  return (ctx.game.playerSystem.player1.boardSide[key].destinyCard ??
-    ctx.game.playerSystem.player2.boardSide[key].destinyCard)!;
+  return (ctx.game.playerSystem.player1.boardSide[key].locationCard ??
+    ctx.game.playerSystem.player2.boardSide[key].locationCard)!;
 };
 
 export const findOpponentMinion = (ctx: TutorialContext, blueprintId: string) =>
