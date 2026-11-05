@@ -15,6 +15,7 @@ export class OnEnterModifier extends Modifier<MinionCard> {
     source: AnyCard,
     options: {
       handler: OnEnterHandler;
+      beforeSchedule?: () => Promise<void>;
       mixins?: ModifierMixin<MinionCard>[];
       onlyWhenPlayedFromHand?: boolean;
     }
@@ -25,6 +26,9 @@ export class OnEnterModifier extends Modifier<MinionCard> {
           onlyWhenPlayedFromHand: options.onlyWhenPlayedFromHand,
           handler: async event => {
             await this.game.inputSystem.schedule(async () => {
+              if (options.beforeSchedule) {
+                await options.beforeSchedule();
+              }
               await game.emit(
                 CARD_EVENTS.CARD_EFFECT_TRIGGERED,
                 new CardEffectTriggeredEvent({

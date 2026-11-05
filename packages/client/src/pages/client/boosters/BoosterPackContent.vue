@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { RARITIES } from '@game/engine/src/card/card.enums';
 import BlueprintCard from '@/card/components/BlueprintCard.vue';
 import {
@@ -9,7 +9,26 @@ import {
 
 const props = defineProps<{
   cards: BoosterPackCardEntry[];
+  isDraggingPack?: boolean;
+  isPackOverDropZone?: boolean;
+  pendingPackBg?: string | null;
 }>();
+
+const isAwaitingPack = computed(
+  () => props.isDraggingPack || !!props.pendingPackBg
+);
+const isDropZoneVisible = computed(
+  () => !props.cards.length || isAwaitingPack.value
+);
+
+const dropZoneRef = ref<HTMLElement | null>(null);
+const isOverDropZone = (x: number, y: number) => {
+  if (!dropZoneRef.value) return false;
+  const rect = dropZoneRef.value.getBoundingClientRect();
+  return x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
+};
+
+defineExpose({ isOverDropZone });
 
 const {
   isRevealed,
@@ -59,7 +78,10 @@ const cardsWithParticles = computed(() => {
     <div class="overflow-hidden">
       <div
         class="booster-pack-content"
-        :class="[dealingStatus, { 'is-shaking': isShaking }]"
+        :class="[
+          dealingStatus,
+          { 'is-shaking': isShaking, 'is-awaiting-pack': isAwaitingPack }
+        ]"
         ref="containerRef"
         @mouseup="endSweep"
         @mouseleave="endSweep"
@@ -108,9 +130,31 @@ const cardsWithParticles = computed(() => {
             />
           </div>
         </div>
-        <div v-if="!cardsWithParticles.length" class="instructions">
-          Click on a pack on the left to open it !
-        </div>
+        <Transition name="drop-zone">
+          <div
+            v-if="isDropZoneVisible"
+            ref="dropZoneRef"
+            class="drop-zone surface-transparent"
+            :class="{
+              'is-dragging': isDraggingPack,
+              'is-hovered': isPackOverDropZone,
+              'is-pending': !!pendingPackBg
+            }"
+          >
+            <div
+              v-if="pendingPackBg"
+              class="pending-pack"
+              :style="{ '--bg': pendingPackBg }"
+            />
+            <p
+              v-else
+              class="instructions dual-text"
+              data-text="Drag a pack here to open it"
+            >
+              Drag a pack here to open it
+            </p>
+          </div>
+        </Transition>
         <Transition name="fade">
           <div v-if="dealingStatus === 'waiting'" class="stack-glow"></div>
         </Transition>
@@ -474,13 +518,85 @@ const cardsWithParticles = computed(() => {
   transform: translateY(20px);
 }
 
+.is-awaiting-pack .card-slot {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+
+.drop-zone {
+  position: absolute;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  width: 480px;
+  aspect-ratio: 1;
+  /* border: dashed 4px hsl(0 0% 100% / 0.5); */
+  border-radius: var(--radius-4);
+  background-color: hsl(0 0% 0% / 0.35);
+  transition:
+    border-color 0.2s,
+    background-color 0.2s,
+    box-shadow 0.2s,
+    scale 0.3s var(--ease-bounce-2);
+
+  &.is-dragging {
+    border-color: hsl(0 0% 100% / 0.8);
+    box-shadow: 0 0 30px hsl(50 100% 60% / 0.3);
+  }
+
+  &.is-hovered {
+    border-color: yellow;
+    background-color: hsl(50 100% 50% / 0.15);
+    box-shadow: 0 0 40px hsl(50 100% 60% / 0.6);
+    scale: 1.05;
+  }
+
+  &.is-pending {
+    border-color: transparent;
+    background-color: transparent;
+    box-shadow: none;
+  }
+}
+
+.pending-pack {
+  width: calc(95px * 2);
+  height: calc(98px * 2);
+  background: var(--bg);
+  background-size: cover;
+  animation: booster-pending-pack 1s var(--ease-in-out-2) infinite;
+}
+
+@keyframes booster-pending-pack {
+  from,
+  to {
+    filter: drop-shadow(0 0 10px yellow);
+    scale: 1;
+  }
+  50% {
+    filter: drop-shadow(0 0 25px yellow);
+    scale: 1.05;
+  }
+}
+
+.drop-zone-enter-active,
+.drop-zone-leave-active {
+  transition:
+    opacity 0.3s,
+    scale 0.3s;
+}
+
+.drop-zone-enter-from,
+.drop-zone-leave-to {
+  opacity: 0;
+  scale: 0.9;
+}
+
 .instructions {
-  color: white;
-  padding: 10px 20px;
-  border-radius: 5px;
-  font-size: var(--font-size-6);
-  z-index: 100;
-  -webkit-text-stroke: 4px black;
-  paint-order: stroke fill;
+  color: transparent;
+  text-align: center;
+  font-size: var(--font-size-5);
+  pointer-events: none;
+  font-weight: var(--font-weight-7);
 }
 </style>
