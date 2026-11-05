@@ -28,7 +28,7 @@ export const corpseCombustion: SpellBlueprint<MinionCard> = {
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.RARE,
   affinities: [AFFINITIES.AIR, AFFINITIES.AIR],
-  manaCost: 5,
+  manaCost: 4,
   manaSupply: 3,
   speed: CARD_SPEED.FAST,
   tags: [],

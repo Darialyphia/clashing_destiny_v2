@@ -18,7 +18,7 @@ export const pyromancer: MinionBlueprint = {
   id: 'pyromancer',
   name: 'Pyromancer',
   description: dedent /*html*/ `
-  <rt-location locations="base"></rt-location> <rt-keyword>Channel</rt-keyword>: <rt-keyword>Empower</rt-keyword> me. If I was already <rt-keyword>Empowered</rt-keyword>, Inflict <rt-keyword>Burn 1</rt-keyword> to an enemy minion instead.
+  <rt-location locations="base"></rt-location> <rt-keyword>Channel</rt-keyword> Inflict <rt-keyword>Burn 1</rt-keyword> to an enemy minion, then lose this effect.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -38,12 +38,7 @@ export const pyromancer: MinionBlueprint = {
   async onInit(game, card) {
     await card.modifiers.add(
       new ChannelModifier('pyromancer-burn', game, card, {
-        async handler() {
-          if (!card.modifiers.has(EmpoweredModifier)) {
-            await card.modifiers.add(new EmpoweredModifier(game, card));
-            return;
-          }
-
+        async handler(modifier) {
           const hasTarget = singleEnemyMinionTargetRules.canPlay(game, card);
           if (!hasTarget) return;
 
@@ -65,6 +60,7 @@ export const pyromancer: MinionBlueprint = {
           const target = targetResult.result.cards[0];
           if (!target) return;
           await target.modifiers.add(new BurnModifier(game, card, { stacks: 1 }));
+          await card.modifiers.remove(modifier);
         },
         mixins: [
           new TogglableModifierMixin(game, () => card.location === CARD_LOCATIONS.BASE)

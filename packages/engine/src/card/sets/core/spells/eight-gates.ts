@@ -12,7 +12,6 @@ import type { MinionCard } from '../../../entities/minion.entity';
 import { SimpleAttackBuffModifier } from '../../../../modifier/modifiers/simple-attack-buff.modifier';
 import { RemoveOnLeaveBoardModifierMixin } from '../../../../modifier/mixins/remove-on-destroyed';
 import { OverwhelmModifier } from '../../../../modifier/modifiers/overwhelm.modifier';
-import { SpellDamage } from '../../../../utils/damage';
 
 export const eightGates: SpellBlueprint<MinionCard> = {
   id: 'eightGates',
@@ -25,8 +24,8 @@ export const eightGates: SpellBlueprint<MinionCard> = {
   art: defaultCardArt('spells/eight-gates'),
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.EPIC,
-  affinities: [AFFINITIES.FIRE, AFFINITIES.FIRE],
-  manaCost: 4,
+  affinities: [AFFINITIES.FIRE, AFFINITIES.FIRE, AFFINITIES.FIRE],
+  manaCost: 3,
   manaSupply: 3,
   speed: CARD_SPEED.FAST,
   tags: [],

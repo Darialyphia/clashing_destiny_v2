@@ -151,7 +151,7 @@ export class ClientStateController {
     }
 
     for (const [id, entity] of Object.entries(addedEntities)) {
-      this.state.entities[id] = this.buildViewModel(entity as any);
+      this.state.entities[id] = this.buildViewModel(entity);
     }
 
     removedEntities.forEach(id => {
@@ -168,6 +168,10 @@ export class ClientStateController {
   async onEvent(event: SerializedStarEvent) {
     if (event.eventName === GAME_EVENTS.MINION_SUMMONED) {
       return this.onMinionSummoned(event);
+    }
+
+    if (event.eventName === GAME_EVENTS.ARTIFACT_EQUIPED) {
+      return this.onArtifactEquiped(event);
     }
 
     if (event.eventName === GAME_EVENTS.AFTER_CHANGE_PHASE) {
@@ -199,11 +203,20 @@ export class ClientStateController {
   }
 
   private async onMinionSummoned(event: { event: SerializedEvent<'MINION_SUMMONED'> }) {
-    const card = this.buildViewModel(event.event.card) as CardViewModel;
+    this.placeOnBoard(event.event.card, event.event.position.id);
+  }
+
+  // like minions, artifacts need to be on the board before CARD_AFTER_PLAY so their play FX can run
+  private async onArtifactEquiped(event: { event: SerializedEvent<'ARTIFACT_EQUIPED'> }) {
+    this.placeOnBoard(event.event.card as any, event.event.position.id);
+  }
+
+  private placeOnBoard(serializedCard: SerializedEntity, boardSpaceId: string) {
+    const card = this.buildViewModel(serializedCard) as CardViewModel;
     this.state.entities[card.id] = card;
 
     const boardSpace = Object.values(this.state.entities).find(
-      e => e.id === event.event.position.id
+      e => e.id === boardSpaceId
     )! as BoardSpaceViewModel;
 
     this.state.entities[boardSpace.id] = boardSpace

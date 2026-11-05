@@ -100,6 +100,10 @@ import { windcliffeStronghold } from './core/locations/windcliffe-stronghold';
 import { xaanUndercity } from './core/locations/xaan-undercity';
 import { rashasTomb } from './core/locations/rashas-tomb';
 import { theOstracon } from './core/locations/the-ostracon';
+import { theLostRuins } from './core/locations/the-lost-ruins';
+import { crystalCaverns } from './core/locations/crystal-caverns';
+import { obsidianWoods } from './core/locations/obsidian-woods';
+import { celandineEmbassy } from './core/locations/celandine-embassy';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -204,6 +208,10 @@ export const coreSet: CardSet = {
     windcliffeStronghold,
     xaanUndercity,
     rashasTomb,
-    theOstracon
+    theOstracon,
+    theLostRuins,
+    crystalCaverns,
+    obsidianWoods,
+    celandineEmbassy
   ]
 };

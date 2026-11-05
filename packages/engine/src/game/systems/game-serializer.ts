@@ -26,10 +26,18 @@ import type { SerializedCombatState } from './combat.system';
 import type { AbilityManagerComponent } from '../../card/components/abilities-manager.component';
 import type { SerializedEffectChain } from '../effect-chain';
 import type { SerializedScoringState } from './scoring.system';
+import type { SerializedArtifactCard } from '../../card/entities/artifact.entity';
+import type { SerializedSecretCard } from '../../card/entities/secret.entity';
+import type { SerializedRuneCard } from '../../card/entities/rune.entity';
+import type { SerializedLocationCard } from '../../card/entities/location.entity';
 
 export type SerializedEntity =
   | SerializedMinionCard
   | SerializedSpellCard
+  | SerializedArtifactCard
+  | SerializedLocationCard
+  | SerializedSecretCard
+  | SerializedRuneCard
   | SerializedPlayer
   | SerializedModifier
   | SerializedAbility

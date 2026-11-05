@@ -106,6 +106,10 @@ export const cards = {
 "xaan-undercity": "xaan-undercity",
 "rashas-tomb": "rashas-tomb",
 "the-ostracon": "the-ostracon",
+"the-lost-ruins": "the-lost-ruins",
+"crystal-caverns": "crystal-caverns",
+"obsidian-woods": "obsidian-woods",
+"celandine-embassy": "celandine-embassy",
 "bloodbound-invader": "bloodbound-invader",
 "tutorial-windblade-adept": "tutorial-windblade-adept",
 "tutorial-silverguard-outpost": "tutorial-silverguard-outpost",
@@ -225,7 +229,11 @@ export const collectableCards = {
 "windcliffe-stronghold": "windcliffe-stronghold",
 "xaan-undercity": "xaan-undercity",
 "rashas-tomb": "rashas-tomb",
-"the-ostracon": "the-ostracon"
+"the-ostracon": "the-ostracon",
+"the-lost-ruins": "the-lost-ruins",
+"crystal-caverns": "crystal-caverns",
+"obsidian-woods": "obsidian-woods",
+"celandine-embassy": "celandine-embassy"
 } as const;
 
 type CardSet = Array<{id: string; collectable: boolean; rarity: Rarity, kind: CardKind}>;
@@ -830,6 +838,30 @@ export const cardsBySet: Record<string, CardSet> = {
     "collectable": true,
     "rarity": "common",
     "kind": "LOCATION"
+  },
+  {
+    "id": "the-lost-ruins",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "LOCATION"
+  },
+  {
+    "id": "crystal-caverns",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "LOCATION"
+  },
+  {
+    "id": "obsidian-woods",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "LOCATION"
+  },
+  {
+    "id": "celandine-embassy",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "LOCATION"
   }
 ],
 "TUTORIAL": [
@@ -1045,6 +1077,10 @@ export const cardShortIds: Record<string, number> = {
 "xaan-undercity": 119,
 "rashas-tomb": 120,
 "the-ostracon": 121,
+"the-lost-ruins": 122,
+"crystal-caverns": 123,
+"obsidian-woods": 124,
+"celandine-embassy": 125,
 "bloodbound-invader": 92,
 "tutorial-windblade-adept": 93,
 "tutorial-silverguard-outpost": 94,
@@ -1183,5 +1219,9 @@ export const cardIdByShortId: Record<number, string> = {
 "118": "windcliffe-stronghold",
 "119": "xaan-undercity",
 "120": "rashas-tomb",
-"121": "the-ostracon"
+"121": "the-ostracon",
+"122": "the-lost-ruins",
+"123": "crystal-caverns",
+"124": "obsidian-woods",
+"125": "celandine-embassy"
 } as const;

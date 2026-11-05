@@ -31,7 +31,7 @@ export const solarius: MinionBlueprint = {
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.EPIC,
   affinities: [AFFINITIES.LIGHT, AFFINITIES.LIGHT, AFFINITIES.NEUTRAL],
-  manaCost: 4,
+  manaCost: 3,
   manaSupply: 3,
   speed: CARD_SPEED.SLOW,
   tags: [],

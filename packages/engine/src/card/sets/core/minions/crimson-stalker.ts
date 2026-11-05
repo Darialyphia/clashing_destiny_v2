@@ -25,7 +25,7 @@ export const crimsonStalker: MinionBlueprint = {
   name: 'Crimson Stalker',
   description: dedent /*html*/ `
   <rt-keyword>Stealth</rt-keyword>.
-  <rt-timing>Once per turn</rt-timing> When an enemy minion moves to a battlefield, you may pay <rt-mana>2</rt-mana> to move me in front of it and ready me.
+  <rt-timing>Once per turn</rt-timing> When an enemy minion moves to a battlefield, you may pay <rt-mana>1</rt-mana> to move me in front of it and ready me.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -38,7 +38,7 @@ export const crimsonStalker: MinionBlueprint = {
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 3,
-  maxHp: 3,
+  maxHp: 2,
   commandment: 1,
   canPlay: () => true,
   abilities: [],
@@ -57,7 +57,7 @@ export const crimsonStalker: MinionBlueprint = {
                 isMinion(event.data.card) &&
                 event.data.card.isEnemy(card) &&
                 !!event.data.card.position?.inFront?.isEmpty &&
-                card.player.canSpendMana(2)
+                card.player.canSpendMana(1)
               );
             },
             async handler(event) {
@@ -79,7 +79,7 @@ export const crimsonStalker: MinionBlueprint = {
 
               if (!shouldMove) return;
               lastMovedAtTurn = game.turnSystem.elapsedTurns;
-              await card.player.spendMana(2);
+              await card.player.spendMana(1);
               await card.moveToSpace(event.data.card.position!.inFront!);
               await card.wakeUp();
             }
