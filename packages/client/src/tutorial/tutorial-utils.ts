@@ -123,28 +123,21 @@ export const validateSupplyCard = (
 export const validateMovingMinion = (
   minionToMove: AnyCard,
   input: SerializedInput,
-  designatedSpace: BoardSpace
+  ctx: TutorialContext,
+  // any empty space of this battlefield is accepted: the position inside a battlefield doesn't matter in the missions
+  zone: BattlefieldZone
 ): TutorialStepValidationResult => {
-  if (input.type !== 'move') {
-    return {
-      isValid: false,
-      reason: 'Move your minion to the specified space'
-    };
+  const reason = `Move your ${minionToMove.blueprint.name} to the ${BATTLEFIELD_NAMES[zone]}.`;
+  if (input.type !== 'move' || input.payload.cardId !== minionToMove.id) {
+    return { isValid: false, reason };
   }
-  if (input.payload.cardId !== minionToMove.id) {
-    return {
-      isValid: false,
-      reason: `Move your ${minionToMove.blueprint.name}`
-    };
-  }
-  if (
-    input.payload.zone !== designatedSpace.position.zone ||
-    input.payload.index !== designatedSpace.index
-  ) {
-    return {
-      isValid: false,
-      reason: 'Move your minion to the designated space'
-    };
+  const isEmptySpaceOfZone = getEmptyBattlefieldSpaces(ctx, zone).some(
+    space =>
+      space.position.zone === input.payload.zone &&
+      space.index === input.payload.index
+  );
+  if (!isEmptySpaceOfZone) {
+    return { isValid: false, reason };
   }
   return {
     isValid: true
@@ -233,6 +226,69 @@ export const makeOpponentChooseAffinity = (ctx: TutorialContext) => {
 export type BattlefieldZone =
   | typeof CARD_LOCATIONS.LEFT_BATTLEFIELD
   | typeof CARD_LOCATIONS.RIGHT_BATTLEFIELD;
+
+/**
+ * Goes to the next step when the subscribed event first happens. Use it with `solveCondition: () => false`.
+ * Step conditions are only checked when an input ends, which is too late for choices:
+ * a choice made at the end of a turn starts inside the input that ended the turn, and that input only ends once the choice is made.
+ */
+export const goToNextStepOn = (
+  ctx: TutorialContext,
+  subscribe: (callback: () => void) => () => void
+) => {
+  let isDone = false;
+  const unsub = subscribe(() => {
+    if (isDone) return;
+    isDone = true;
+    // lets the game finish what it was doing first
+    setTimeout(() => {
+      unsub();
+      void ctx.next();
+    });
+  });
+};
+
+const BATTLEFIELD_NAMES: Record<BattlefieldZone, string> = {
+  [CARD_LOCATIONS.LEFT_BATTLEFIELD]: 'left battlefield',
+  [CARD_LOCATIONS.RIGHT_BATTLEFIELD]: 'right battlefield'
+};
+
+export const getEmptyBattlefieldSpaces = (
+  ctx: TutorialContext,
+  zone: BattlefieldZone
+) => {
+  const boardSide = ctx.game.playerSystem.player1.boardSide;
+  const battlefield =
+    zone === CARD_LOCATIONS.LEFT_BATTLEFIELD
+      ? boardSide.leftBattlefield
+      : boardSide.rightBattlefield;
+  return battlefield.spaces.filter(space => space.isEmpty);
+};
+
+/**
+ * The space a move gesture points to. Players can move to any empty space of the battlefield,
+ * so this is only a suggestion: the preferred space when it is free, otherwise the first free one.
+ */
+export const suggestedBattlefieldSpaceElement = (
+  ctx: TutorialContext,
+  zone: BattlefieldZone,
+  preferredIndex = 0
+) => {
+  const emptySpaces = getEmptyBattlefieldSpaces(ctx, zone);
+  const space =
+    emptySpaces.find(space => space.index === preferredIndex) ?? emptySpaces[0];
+  if (!space) return null;
+  return ctx.client.ui.DOMSelectors.boardSpace(space.id).element;
+};
+
+// the space the minion is on, where drag gestures start for moving, attacking or scoring
+export const minionSpaceElement = (
+  ctx: TutorialContext,
+  minion: MinionCard
+) => {
+  if (!minion.position) return null;
+  return ctx.client.ui.DOMSelectors.boardSpace(minion.position.id).element;
+};
 
 // each battlefield has a single location card, owned by one of the two players
 export const getLocationCard = (

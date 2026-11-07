@@ -6,7 +6,15 @@ import { CARD_LOCATIONS } from '@game/engine/src/card/card.enums';
 import { GAME_EVENTS } from '@game/engine/src/game/game.events';
 import { GAME_PHASES } from '@game/engine/src/game/game.enums';
 import { match } from 'ts-pattern';
-import { isFreePlayFailed, startFreePlay } from '../../tutorial/tutorial-utils';
+import {
+  emptyBaseSpaceElement,
+  getEmptyBaseSpaces,
+  isFreePlayFailed,
+  minionSpaceElement,
+  startFreePlay,
+  suggestedBattlefieldSpaceElement,
+  validateMovingMinion
+} from '../../tutorial/tutorial-utils';
 
 export const basicsTutorial: TutorialMission = {
   id: 'basics',
@@ -83,34 +91,21 @@ export const basicsTutorial: TutorialMission = {
             ctx.game.playerSystem.player2.boardSide.base[2],
             { shouldExhaust: false }
           );
+          // the player can move it to any space of the battlefield, so later steps find it here rather than by position
+          ctx.meta.firstMinion = allyUnit;
           await ctx.game.snapshotSystem.takeSnapshot();
         },
         teardown() {},
         solveCondition(ctx) {
-          return isDefined(
-            ctx.game.playerSystem.player1.boardSide.leftBattlefield.spaces[1]
-              .card
-          );
+          return (ctx.meta.firstMinion as MinionCard).isOnBattlefield;
         },
-        validateInput(input) {
-          if (input.type !== 'move') {
-            return {
-              isValid: false,
-              reason: 'Move your minion to the specified space'
-            };
-          }
-          if (
-            input.payload.zone !== CARD_LOCATIONS.LEFT_BATTLEFIELD ||
-            input.payload.index !== 1
-          ) {
-            return {
-              isValid: false,
-              reason: 'Move your minion to the designated space'
-            };
-          }
-          return {
-            isValid: true
-          };
+        validateInput(input, ctx) {
+          return validateMovingMinion(
+            ctx.meta.firstMinion,
+            input,
+            ctx,
+            CARD_LOCATIONS.LEFT_BATTLEFIELD
+          );
         },
         textBoxes: [
           {
@@ -120,7 +115,7 @@ export const basicsTutorial: TutorialMission = {
             canManuallyAdvance: true
           },
           {
-            text: 'Use your minions to defend our position!',
+            text: 'Drag your minion to the battlefield to defend it!',
             right: '22%',
             bottom: '45%',
             canManuallyAdvance: false,
@@ -128,11 +123,14 @@ export const basicsTutorial: TutorialMission = {
               return false;
             },
             gesture: {
-              from: ctx =>
-                ctx.client.ui.DOMSelectors.boardSpace('p1-base-2').element!,
+              from: ctx => minionSpaceElement(ctx, ctx.meta.firstMinion),
+              // the space facing the enemy's
               to: ctx =>
-                ctx.client.ui.DOMSelectors.boardSpace('p1-left_battlefield-1')
-                  .element!
+                suggestedBattlefieldSpaceElement(
+                  ctx,
+                  CARD_LOCATIONS.LEFT_BATTLEFIELD,
+                  1
+                )
             }
           }
         ]
@@ -163,10 +161,15 @@ export const basicsTutorial: TutorialMission = {
         },
         textBoxes: [
           {
-            text: 'The opponent is making his move!',
+            text: 'Your opponent moved in too! <b>SCORE</b> to strengthen your position: drag your minion onto the outpost.',
             right: '22%',
             bottom: '45%',
-            canManuallyAdvance: true,
+            canManuallyAdvance: false,
+            advanceCondition() {
+              return false;
+            },
+            // shows once the opponent has moved, which gives the initiative back
+            hideDuringOpponentInitiative: true,
             async onEnter(ctx) {
               await waitFor(1500);
               const enemyMinion = ctx.game.playerSystem.player2.boardSide
@@ -175,20 +178,9 @@ export const basicsTutorial: TutorialMission = {
                 CARD_LOCATIONS.LEFT_BATTLEFIELD,
                 1
               );
-            }
-          },
-          {
-            text: 'You need to <b>SCORE</b> to strengthen your position!',
-            right: '22%',
-            bottom: '45%',
-            canManuallyAdvance: false,
-            advanceCondition() {
-              return false;
             },
             gesture: {
-              from: ctx =>
-                ctx.client.ui.DOMSelectors.boardSpace('p1-left_battlefield-1')
-                  .element!,
+              from: ctx => minionSpaceElement(ctx, ctx.meta.firstMinion),
               to: ctx =>
                 ctx.client.ui.DOMSelectors.cardOnBoard(
                   ctx.game.playerSystem.player1.boardSide.leftBattlefield
@@ -214,7 +206,7 @@ export const basicsTutorial: TutorialMission = {
           if (input.type !== 'pass') {
             return {
               isValid: false,
-              reason: 'Pass your turn'
+              reason: 'Pass to end the turn.'
             };
           }
           return {
@@ -223,7 +215,7 @@ export const basicsTutorial: TutorialMission = {
         },
         textBoxes: [
           {
-            text: 'When you <b>SCORE</b>, you gain <b>INFLUENCE</b> on the battlefield.',
+            text: 'Scoring gave you <b>INFLUENCE</b> on the battlefield...',
             right: '22%',
             bottom: '45%',
             canManuallyAdvance: true,
@@ -237,29 +229,18 @@ export const basicsTutorial: TutorialMission = {
             }
           },
           {
-            text: "The amount of influence gained is equal to the minion's influence.",
+            text: "...equal to your minion's influence. Scoring also <b>EXHAUSTS</b> the minion: it can't act again this turn.",
             right: '22%',
             bottom: '45%',
             canManuallyAdvance: true,
             onEnter(ctx) {
-              const card =
-                ctx.game.playerSystem.player1.boardSide.leftBattlefield
-                  .spaces[1].card!;
+              const card = ctx.meta.firstMinion as MinionCard;
               ctx.client.ui.highlightedElement =
                 ctx.client.ui.DOMSelectors.cardCommandment(card.id).element;
             }
           },
           {
-            text: 'At the end of the turn, the player with the most Influence gains 1 <b>VICTORY POINT</b>',
-            right: '22%',
-            bottom: '45%',
-            canManuallyAdvance: true,
-            onEnter(ctx) {
-              ctx.client.ui.highlightedElement = null;
-            }
-          },
-          {
-            text: 'Fill up your Victory Points gauge to win the game!',
+            text: 'At the end of the turn, the player with the most influence gains a <b>VICTORY POINT</b>. Fill up your gauge to win!',
             left: '-5%',
             bottom: '25%',
             canManuallyAdvance: true,
@@ -276,9 +257,9 @@ export const basicsTutorial: TutorialMission = {
             }
           },
           {
-            text: 'The enemy scored as well! You are now tied in influence.',
-            left: '50%',
-            top: '25%',
+            text: 'Your opponent scored too: you are tied. Players take turns, one action at a time: each action gives the <b>INITIATIVE</b> to the other player.',
+            right: '22%',
+            bottom: '45%',
             hideDuringOpponentInitiative: true,
             canManuallyAdvance: true,
             async onEnter(ctx) {
@@ -296,13 +277,7 @@ export const basicsTutorial: TutorialMission = {
             }
           },
           {
-            text: 'After Scoring, a minion is <b>EXHAUSTED</b> and cannot act anymore this turn.',
-            left: '50%',
-            top: '25%',
-            canManuallyAdvance: true
-          },
-          {
-            text: "We have nothing else to do this turn. Let's pass.",
+            text: "You have nothing else to do, so let's <b>PASS</b>. When both players pass in a row, the turn ends.",
             left: '0%',
             bottom: '35%',
             canManuallyAdvance: false,
@@ -324,9 +299,7 @@ export const basicsTutorial: TutorialMission = {
         async setup() {},
         teardown() {},
         solveCondition(ctx) {
-          return isDefined(
-            ctx.game.playerSystem.player1.boardSide.base[2].card
-          );
+          return ctx.game.playerSystem.player1.minionsInBase.length > 0;
         },
         validateInput(input, ctx) {
           const gamePhaseState = ctx.game.gamePhaseSystem.getState();
@@ -338,26 +311,20 @@ export const basicsTutorial: TutorialMission = {
               };
             }
           } else {
+            const isEmptyBaseSpace =
+              input.type === 'selectSpaceOnBoard' &&
+              getEmptyBaseSpaces(ctx).some(
+                space => space.id === input.payload.id
+              );
             if (
-              input.type !== 'selectSpaceOnBoard' &&
+              !isEmptyBaseSpace &&
               input.type !== 'cancelInteraction' &&
               input.type !== 'cancelPlayingCard'
             ) {
               return {
                 isValid: false,
-                reason: 'Drag your minion on the highlighted space.'
+                reason: 'Drag your minion onto your base.'
               };
-            }
-            if (input.type === 'selectSpaceOnBoard') {
-              if (
-                input.payload.id !==
-                ctx.game.playerSystem.player1.boardSide.base[2].id
-              ) {
-                return {
-                  isValid: false,
-                  reason: 'Drag your minion on the highlighted space.'
-                };
-              }
             }
           }
           return {
@@ -366,13 +333,7 @@ export const basicsTutorial: TutorialMission = {
         },
         textBoxes: [
           {
-            text: 'If the enemy passes as well, the turn will end.',
-            right: '22%',
-            bottom: '45%',
-            canManuallyAdvance: true
-          },
-          {
-            text: 'At the start of each turn, influence on the battlefield resets.',
+            text: 'Your opponent passed too, so the turn is over. You were tied, so no one gained a Victory Point. Influence resets every turn.',
             right: '22%',
             bottom: '45%',
             canManuallyAdvance: true,
@@ -391,29 +352,7 @@ export const basicsTutorial: TutorialMission = {
             }
           },
           {
-            text: "We managed to hold our ground and prevent the opponent from gaining a Victory Point, but now it's time to go on the offensive.",
-            right: '22%',
-            bottom: '45%',
-            canManuallyAdvance: true,
-            onEnter(ctx) {
-              ctx.client.ui.highlightedElement = null;
-            }
-          },
-
-          {
-            text: "You got some reinforcements! Let's use them to turn the tides of battle!",
-            right: '22%',
-            bottom: '45%',
-            canManuallyAdvance: true,
-            onEnter(ctx) {
-              ctx.client.ui.highlightedElement =
-                ctx.client.ui.DOMSelectors.hand(
-                  ctx.game.playerSystem.player1.id
-                ).element!;
-            }
-          },
-          {
-            text: 'Drag your new minion onto the board to play it.',
+            text: 'You drew a new minion! Drag it onto your <b>Base</b> to play it: minions always enter play there.',
             right: '22%',
             bottom: '45%',
             canManuallyAdvance: false,
@@ -435,11 +374,7 @@ export const basicsTutorial: TutorialMission = {
                   ctx.game.playerSystem.player1.id
                 ).element!;
               },
-              to(ctx) {
-                return ctx.client.ui.DOMSelectors.boardSpace(
-                  ctx.game.playerSystem.player1.boardSide.base[2].id
-                ).element!;
-              }
+              to: emptyBaseSpaceElement
             }
           }
         ]
@@ -449,48 +384,31 @@ export const basicsTutorial: TutorialMission = {
         canRetry: () => false,
         failedCondition: () => false,
         meta: {},
-        async setup() {},
+        async setup(ctx) {
+          ctx.meta.secondMinion =
+            ctx.game.playerSystem.player1.minionsInBase[0];
+        },
         teardown() {},
         solveCondition(ctx) {
-          return isDefined(
-            ctx.game.playerSystem.player1.boardSide.leftBattlefield.spaces[0]
-              .card
-          );
+          return (ctx.meta.secondMinion as MinionCard).isOnBattlefield;
         },
         validateInput(input, ctx) {
-          if (input.type !== 'move') {
-            return {
-              isValid: false,
-              reason: 'Move your minion to the specified space'
-            };
-          }
-          if (
-            input.payload.zone !== CARD_LOCATIONS.LEFT_BATTLEFIELD ||
-            input.payload.index !== 0 ||
-            input.payload.cardId !==
-              ctx.game.playerSystem.player1.boardSide.base[2].card!.id
-          ) {
-            return {
-              isValid: false,
-              reason: 'Move your minion to the designated space'
-            };
-          }
-          return {
-            isValid: true
-          };
+          return validateMovingMinion(
+            ctx.meta.secondMinion,
+            input,
+            ctx,
+            CARD_LOCATIONS.LEFT_BATTLEFIELD
+          );
         },
         textBoxes: [
           {
-            text: 'Minions are played in your <b>Base</b>.',
+            text: 'Your opponent played a minion of their own. Move yours to the battlefield to prepare for the assault.',
             right: '22%',
             bottom: '45%',
-            canManuallyAdvance: true
-          },
-          {
-            text: 'Your opponent played a minion of their own.',
-            right: '22%',
-            bottom: '45%',
-            canManuallyAdvance: true,
+            canManuallyAdvance: false,
+            advanceCondition() {
+              return false;
+            },
             hideDuringOpponentInitiative: true,
             async onEnter(ctx) {
               await waitFor(500);
@@ -509,22 +427,14 @@ export const basicsTutorial: TutorialMission = {
                   id: ctx.game.playerSystem.player2.boardSide.base[2].id
                 }
               });
-            }
-          },
-          {
-            text: 'Move your new minion to prepare for the assault.',
-            right: '22%',
-            bottom: '45%',
-            canManuallyAdvance: false,
-            advanceCondition() {
-              return false;
             },
             gesture: {
-              from: ctx =>
-                ctx.client.ui.DOMSelectors.boardSpace('p1-base-2').element!,
+              from: ctx => minionSpaceElement(ctx, ctx.meta.secondMinion),
               to: ctx =>
-                ctx.client.ui.DOMSelectors.boardSpace('p1-left_battlefield-0')
-                  .element!
+                suggestedBattlefieldSpaceElement(
+                  ctx,
+                  CARD_LOCATIONS.LEFT_BATTLEFIELD
+                )
             }
           }
         ]
@@ -537,24 +447,19 @@ export const basicsTutorial: TutorialMission = {
         async setup() {},
         teardown() {},
         solveCondition(ctx) {
-          return !!ctx.game.playerSystem.player1.boardSide.leftBattlefield
-            .spaces[1].card?.isExhausted;
+          return (ctx.meta.firstMinion as MinionCard).isExhausted;
         },
         validateInput(input, ctx) {
           if (input.type !== 'declareAttack') {
             return {
               isValid: false,
-              reason: 'Declare an attack on the enemy Bloodbound Invader.'
+              reason: 'Attack the enemy Bloodbound Invader.'
             };
           }
-          if (
-            input.payload.attackerId !==
-            ctx.game.playerSystem.player1.boardSide.leftBattlefield.spaces[1]
-              .card!.id
-          ) {
+          if (input.payload.attackerId !== ctx.meta.firstMinion.id) {
             return {
               isValid: false,
-              reason: 'You must declare an attack with the correct minion.'
+              reason: 'Attack with the minion the pointer starts from.'
             };
           }
           return {
@@ -563,16 +468,13 @@ export const basicsTutorial: TutorialMission = {
         },
         textBoxes: [
           {
-            text: 'Moving does not exhaust your minion. However, a minion can only move once per turn.',
+            text: 'Your opponent scored again, so its minion is now exhausted. Drag your first minion onto it to <b>ATTACK</b>!',
             right: '22%',
             bottom: '45%',
-            canManuallyAdvance: true
-          },
-          {
-            text: 'Your opponent chose to score again. Time to take advantage of this!',
-            right: '22%',
-            bottom: '45%',
-            canManuallyAdvance: true,
+            canManuallyAdvance: false,
+            advanceCondition() {
+              return false;
+            },
             hideDuringOpponentInitiative: true,
             async onEnter(ctx) {
               await waitFor(1000);
@@ -585,20 +487,9 @@ export const basicsTutorial: TutorialMission = {
                       .spaces[1].card!.id
                 }
               });
-            }
-          },
-          {
-            text: 'You can attack enemy minions with your own minions on the battlefield.',
-            right: '22%',
-            bottom: '45%',
-            canManuallyAdvance: false,
-            advanceCondition() {
-              return false;
             },
             gesture: {
-              from: ctx =>
-                ctx.client.ui.DOMSelectors.boardSpace('p1-left_battlefield-1')
-                  .element!,
+              from: ctx => minionSpaceElement(ctx, ctx.meta.firstMinion),
               to: ctx =>
                 ctx.client.ui.DOMSelectors.boardSpace('p2-left_battlefield-1')
                   .element!
@@ -623,17 +514,13 @@ export const basicsTutorial: TutorialMission = {
           if (input.type !== 'declareAttack') {
             return {
               isValid: false,
-              reason: 'Declare an attack on the enemy Bloodbound Invader.'
+              reason: 'Attack the enemy Bloodbound Invader.'
             };
           }
-          if (
-            input.payload.attackerId !==
-            ctx.game.playerSystem.player1.boardSide.leftBattlefield.spaces[0]
-              .card!.id
-          ) {
+          if (input.payload.attackerId !== ctx.meta.secondMinion.id) {
             return {
               isValid: false,
-              reason: 'You must declare an attack with the correct minion.'
+              reason: 'Attack with the minion the pointer starts from.'
             };
           }
           return {
@@ -642,50 +529,40 @@ export const basicsTutorial: TutorialMission = {
         },
         textBoxes: [
           {
-            text: 'When a minion attacks, it deals damage to the enemy equal to its attack.',
+            text: "Attacking deals damage equal to your minion's <b>ATTACK</b>...",
             right: '22%',
             bottom: '45%',
             canManuallyAdvance: true,
             async onEnter(ctx) {
               await waitFor(2000);
-              const card =
-                ctx.game.playerSystem.player1.boardSide.leftBattlefield
-                  .spaces[1].card!;
+              const card = ctx.meta.firstMinion as MinionCard;
               ctx.client.ui.highlightedElement =
                 ctx.client.ui.DOMSelectors.cardAttack(card.id).element;
             }
           },
           {
-            text: 'When a minion has taken more damage than its health, it is destroyed.',
+            text: '...and a minion is destroyed once its damage reaches its <b>HEALTH</b>.',
             right: '22%',
             bottom: '45%',
             canManuallyAdvance: true,
             onEnter(ctx) {
-              const card =
-                ctx.game.playerSystem.player1.boardSide.leftBattlefield
-                  .spaces[1].card!;
+              const card = ctx.meta.firstMinion as MinionCard;
               ctx.client.ui.highlightedElement =
                 ctx.client.ui.DOMSelectors.cardHp(card.id).element;
             }
           },
           {
-            text: 'Note that attacking, like scoring, exhausts the attacker.',
-            right: '22%',
-            bottom: '45%',
-            canManuallyAdvance: true,
-            onEnter(ctx) {
-              ctx.client.ui.highlightedElement = null;
-            }
-          },
-          {
-            text: "The opponent moved another minion on the battlefield. Let's attack it with our second minion.",
+            text: "Attacking exhausts a minion, but moving doesn't. Your opponent sent another minion: attack it with your other one!",
             right: '22%',
             bottom: '45%',
             canManuallyAdvance: false,
             advanceCondition() {
               return false;
             },
+            // shows once the opponent has moved, which gives the initiative back
+            hideDuringOpponentInitiative: true,
             async onEnter(ctx) {
+              ctx.client.ui.highlightedElement = null;
               await waitFor(500);
               const enemyMinion = ctx.game.playerSystem.player2.boardSide
                 .base[2].card as MinionCard;
@@ -696,9 +573,7 @@ export const basicsTutorial: TutorialMission = {
               await ctx.game.snapshotSystem.takeSnapshot();
             },
             gesture: {
-              from: ctx =>
-                ctx.client.ui.DOMSelectors.boardSpace('p1-left_battlefield-0')
-                  .element!,
+              from: ctx => minionSpaceElement(ctx, ctx.meta.secondMinion),
               to: ctx =>
                 ctx.client.ui.DOMSelectors.boardSpace('p2-left_battlefield-1')
                   .element!
@@ -742,40 +617,28 @@ export const basicsTutorial: TutorialMission = {
         },
         textBoxes: [
           {
-            text: 'Your minion took some damage this time.',
+            text: 'Ouch, your minion took damage this time! The enemy was <b>READY</b> (not exhausted), so it struck back. Keep that in mind!',
             right: '22%',
             bottom: '45%',
             canManuallyAdvance: true,
             async onEnter(ctx) {
               await waitFor(2000);
-              const card =
-                ctx.game.playerSystem.player1.boardSide.leftBattlefield
-                  .spaces[0].card!;
+              // only its id is used: after a retry, this is the card of the game before the retry
+              const card = ctx.meta.secondMinion as MinionCard;
               ctx.client.ui.highlightedElement =
                 ctx.client.ui.DOMSelectors.cardHp(card.id).element;
             }
           },
           {
-            text: 'This is because the enemy was <b>READY</b>. Ready minions strike back, keep that in mind!',
+            text: 'Your opponent is still ahead in influence, but here comes a <b>Silverguard Knight</b> with 3 influence! Play it, move it to the battlefield and score with it.',
             right: '22%',
             bottom: '45%',
-            canManuallyAdvance: true
-          },
-          {
-            text: 'You managed to deal with the enemy forces, but your opponent is ahead in influence.',
-            right: '22%',
-            bottom: '45%',
-            canManuallyAdvance: true,
-            onEnter(ctx) {
-              ctx.client.ui.highlightedElement = null;
-            }
-          },
-          {
-            text: 'Here is another card in your hand. Thankfully it has an influence of 3!',
-            right: '22%',
-            bottom: '45%',
-            canManuallyAdvance: true,
+            canManuallyAdvance: false,
+            advanceCondition() {
+              return false;
+            },
             async onEnter(ctx) {
+              ctx.client.ui.highlightedElement = null;
               const card = await ctx.game.playerSystem.player1.generateCard(
                 'tutorial-silverguard-knight',
                 false
@@ -804,15 +667,6 @@ export const basicsTutorial: TutorialMission = {
               );
               ctx.game.once(GAME_EVENTS.TURN_START, unsub);
             }
-          },
-          {
-            text: 'Play it, move it to the battlefield and score with it to  get ahead in influence.',
-            right: '22%',
-            bottom: '45%',
-            canManuallyAdvance: false,
-            advanceCondition() {
-              return false;
-            }
           }
         ]
       },
@@ -835,7 +689,7 @@ export const basicsTutorial: TutorialMission = {
           if (input.type !== 'pass') {
             return {
               isValid: false,
-              reason: 'Pass your turn'
+              reason: 'Pass to end the turn.'
             };
           }
           return {
@@ -844,18 +698,16 @@ export const basicsTutorial: TutorialMission = {
         },
         textBoxes: [
           {
-            text: 'Good job! You now have more influence than your opponent, the turn is secured.',
-            left: '0%',
-            bottom: '35%',
-            canManuallyAdvance: true
-          },
-          {
-            text: 'You can pass priority to end the turn and gain a Victory Point now.',
+            text: 'Good job, you have more influence! <b>PASS</b> to end the turn and gain a Victory Point.',
             left: '0%',
             bottom: '35%',
             canManuallyAdvance: false,
             advanceCondition() {
               return false;
+            },
+            onEnter(ctx) {
+              ctx.client.ui.highlightedElement =
+                ctx.client.ui.DOMSelectors.passButton.element!;
             }
           }
         ]
@@ -879,24 +731,15 @@ export const basicsTutorial: TutorialMission = {
         },
         textBoxes: [
           {
-            text: 'You are only one point away from victory!',
+            text: 'One more Victory Point and you win! But the enemy called for reinforcements...',
             left: '0%',
             bottom: '35%',
             canManuallyAdvance: true,
-            onEnter(ctx) {
+            async onEnter(ctx) {
               ctx.client.ui.highlightedElement =
                 ctx.client.ui.DOMSelectors.victoryPoints(
                   ctx.game.playerSystem.player1.id
                 ).element!;
-            }
-          },
-          {
-            text: "Let's try to win this turn.",
-            right: '22%',
-            bottom: '45%',
-            canManuallyAdvance: true,
-            async onEnter(ctx) {
-              ctx.client.ui.highlightedElement = null;
               const p1 = ctx.game.playerSystem.player1;
               // setup opponent hand
               const p2 = ctx.game.playerSystem.player2;
@@ -1096,18 +939,16 @@ export const basicsTutorial: TutorialMission = {
             }
           },
           {
-            text: 'You need one more Victory Point. Gain more influence than the enemy, then end the turn. Choose which minions will fight and which will score.',
-            right: '22%',
-            bottom: '45%',
-            canManuallyAdvance: true
-          },
-          {
-            text: "You're on your own now! Repel the Bloodbound invaders!",
+            // shown right away after a retry, so it holds the hint
+            text: "You're on your own now! Have more influence than the enemy when the turn ends. Choose wisely which minions attack and which score.",
             right: '22%',
             bottom: '45%',
             canManuallyAdvance: false,
             advanceCondition() {
               return false;
+            },
+            onEnter(ctx) {
+              ctx.client.ui.highlightedElement = null;
             }
           }
         ]

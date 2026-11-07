@@ -14,7 +14,11 @@ import {
 } from '@game/engine/src/tutorial/v2/tutorial';
 import { GAME_PHASES } from '@game/engine/src/game/game.enums';
 import { useFxAdapter } from '@/game/composables/useFxAdapter';
-import { provideGameClient } from '@/game/composables/useGameClient';
+import {
+  provideGameClient,
+  useGameState,
+  useMyPlayer
+} from '@/game/composables/useGameClient';
 import type { Nullable, Override } from '@game/shared';
 import { useSafeInject } from '@/shared/composables/useSafeInject';
 
@@ -115,9 +119,28 @@ export const provideTutorial = (options: UseTutorialOptions) => {
     meta: {}
   });
 
+  // On a retry the player has already read the step's explanations: skip to its first box that asks for an action.
+  // The skipped boxes' onEnter still runs, in order, since it can set up the board or script the opponent.
+  const getFirstTextBoxIndex = (step: TutorialStep, isRetry: boolean) => {
+    if (!isRetry) return 0;
+    const firstActionIndex = step.textBoxes.findIndex(
+      box => !box.canManuallyAdvance
+    );
+    return Math.max(firstActionIndex, 0);
+  };
+
   tutorial.value.onEnterStep(async ctx => {
     currentStep.value = ctx.currentStep;
-    currentStepTextboxIndex.value = 0;
+    const firstIndex = getFirstTextBoxIndex(
+      ctx.currentStep,
+      ctx.retryCount > 0
+    );
+    // no box is displayed while the skipped ones run
+    currentStepTextboxIndex.value = -1;
+    for (const box of ctx.currentStep.textBoxes.slice(0, firstIndex)) {
+      await box.onEnter?.(tutorial.value.ctx);
+    }
+    currentStepTextboxIndex.value = firstIndex;
     await currentStepTextBox.value?.onEnter?.(tutorial.value.ctx);
   });
   tutorial.value.onValidation(result => {
@@ -197,3 +220,25 @@ export const provideTutorial = (options: UseTutorialOptions) => {
 };
 
 export const useTutorial = () => useSafeInject(TUTORIAL_INJECTION_KEY);
+
+/**
+ * Whether the current text box, and its gesture, should be hidden right now.
+ */
+export const useIsCurrentTextBoxHidden = () => {
+  const { currentStepTextBox, tutorial } = useTutorial();
+  const state = useGameState();
+  const myPlayer = useMyPlayer();
+
+  return computed(() => {
+    if (!currentStepTextBox.value) return true;
+    if (!currentStepTextBox.value.hideDuringOpponentInitiative) return false;
+    // the client state lags behind the game while it plays animations, so check both:
+    // the box stays hidden from the moment the opponent gets the initiative until its actions are done animating
+    const engineInitiativePlayer =
+      tutorial.value.ctx.game.turnSystem.initiativePlayer.id;
+    return (
+      state.value.turn.initiativePlayer !== myPlayer.value.id ||
+      engineInitiativePlayer !== myPlayer.value.id
+    );
+  });
+};

@@ -12,7 +12,6 @@ import {
 import { ChannelModifier } from '../../../../modifier/modifiers/channel.modifier';
 import { BurnModifier } from '../../../../modifier/modifiers/burn.modifier';
 import { TogglableModifierMixin } from '../../../../modifier/mixins/togglable.mixin';
-import { EmpoweredModifier } from '../../../../modifier/modifiers/empowered.modifier';
 
 export const pyromancer: MinionBlueprint = {
   id: 'pyromancer',
