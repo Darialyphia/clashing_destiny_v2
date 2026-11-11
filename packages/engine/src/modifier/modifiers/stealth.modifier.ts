@@ -27,6 +27,13 @@ export class StealthModifier extends Modifier<MinionCard> {
             return this.target.isExhausted && this.target.isOnBoard;
           }
         }),
+        new MinionInterceptorModifierMixin(game, {
+          key: 'canBeTargeted',
+          interceptor: value => {
+            if (!value) return value;
+            return this.target.isExhausted && this.target.isOnBoard;
+          }
+        }),
         ...(options?.mixins || [])
       ]
     });

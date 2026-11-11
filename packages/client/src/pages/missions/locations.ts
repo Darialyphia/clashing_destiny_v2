@@ -10,7 +10,10 @@ import {
   getCardViewModel,
   getLocationCard,
   getEmptyBaseSpaces,
+  goToNextStepOn,
+  minionSpaceElement,
   startOpponentAI,
+  suggestedBattlefieldSpaceElement,
   supplyZoneElement,
   validateMovingMinion,
   validatePlayingCard,
@@ -18,8 +21,7 @@ import {
   validateSupplyCard,
   startFreePlay,
   isFreePlayFailed,
-  type BattlefieldZone,
-  findPlayerMinion
+  type BattlefieldZone
 } from '../../tutorial/tutorial-utils';
 import { CARD_LOCATIONS } from '@game/engine/src/card/card.enums';
 import type { MinionCard } from '@game/engine/src/card/entities/minion.entity';
@@ -112,23 +114,6 @@ const makeOpponentAnswerChoices = (ctx: TutorialContext) => {
       });
     }
   );
-};
-
-// for choices that resolve after the input that answered them, when no input will end at the right time
-const goToNextStepOn = (
-  ctx: TutorialContext,
-  subscribe: (callback: () => void) => () => void
-) => {
-  let isDone = false;
-  const unsub = subscribe(() => {
-    if (isDone) return;
-    isDone = true;
-    // lets the game finish what it was doing first
-    setTimeout(() => {
-      unsub();
-      void ctx.next();
-    });
-  });
 };
 
 export const locationsTutorial: TutorialMission = {
@@ -267,13 +252,7 @@ export const locationsTutorial: TutorialMission = {
         },
         textBoxes: [
           {
-            text: 'The Bloodbound clan is back for another assault! (again...)',
-            right: '22%',
-            bottom: '45%',
-            canManuallyAdvance: true
-          },
-          {
-            text: 'Before the battle starts, you can replace up to 2 cards of your starting hand: this is a <b>mulligan</b>. The cards you pick go to the bottom of your deck, and you draw as many new ones.',
+            text: 'The Bloodbound clan is back! Before the battle starts, you can put back up to 2 cards of your starting hand and draw new ones: this is a <b>mulligan</b>.',
             right: '22%',
             bottom: '45%',
             canManuallyAdvance: true
@@ -336,13 +315,7 @@ export const locationsTutorial: TutorialMission = {
         },
         textBoxes: [
           {
-            text: "Each battlefield has a <b>Location</b>. A Location changes the rules for every minion fighting there, yours and your enemy's.",
-            right: '22%',
-            bottom: '45%',
-            canManuallyAdvance: true
-          },
-          {
-            text: 'On the left battlefield, the <b>Moonlit Pass</b> gives +1 influence to every minion.',
+            text: "Each battlefield has a <b>Location</b> that changes the rules for every minion fighting there, yours and your enemy's. On the left, the <b>Moonlit Pass</b> gives +1 influence to every minion.",
             right: '22%',
             bottom: '45%',
             canManuallyAdvance: true,
@@ -470,7 +443,7 @@ export const locationsTutorial: TutorialMission = {
             }
           },
           {
-            text: 'The enemy summoned a <b>Bloodbound Executor</b>.',
+            text: 'The enemy summoned a <b>Bloodbound Executor</b>, and your Sunbreaker is wounded and exhausted. We need to protect it!',
             right: '22%',
             bottom: '45%',
             canManuallyAdvance: true,
@@ -484,24 +457,7 @@ export const locationsTutorial: TutorialMission = {
             }
           },
           {
-            text: 'Your Sunbreaker is wounded and exhausted, we need to defend him.',
-            right: '22%',
-            bottom: '45%',
-            canManuallyAdvance: true,
-            onEnter(ctx) {
-              const ironcliffe = findPlayerMinion(
-                ctx,
-                'tutorial-ironcliffe-guardian'
-              );
-              if (!ironcliffe) return;
-              ctx.client.ui.highlightedElement = cardOnBoardElement(
-                ctx,
-                ironcliffe
-              );
-            }
-          },
-          {
-            text: 'Your Ironcliffe Guardian has <b>Protector</b>: enemies at its battlefield can only attack it.',
+            text: 'Your Ironcliffe Guardian has <b>Protector</b>: enemies on its battlefield can only attack it.',
             right: '22%',
             bottom: '45%',
             canManuallyAdvance: true,
@@ -548,8 +504,6 @@ export const locationsTutorial: TutorialMission = {
         meta: {},
         async setup(ctx) {
           ctx.meta.executor = findOpponentMinion(ctx, 'bloodbound-executor');
-          ctx.meta.guardianDestination =
-            ctx.game.playerSystem.player1.boardSide.rightBattlefield.spaces[2];
         },
         teardown() {},
         solveCondition(ctx) {
@@ -562,7 +516,8 @@ export const locationsTutorial: TutorialMission = {
           return validateMovingMinion(
             ctx.meta.guardian,
             input,
-            ctx.meta.guardianDestination
+            ctx,
+            CARD_LOCATIONS.RIGHT_BATTLEFIELD
           );
         },
         textBoxes: [
@@ -588,16 +543,13 @@ export const locationsTutorial: TutorialMission = {
               ]);
             },
             gesture: {
-              from(ctx) {
-                const space = (ctx.meta.guardian as MinionCard).position;
-                if (!space) return null;
-                return ctx.client.ui.DOMSelectors.boardSpace(space.id).element;
-              },
-              to(ctx) {
-                return ctx.client.ui.DOMSelectors.boardSpace(
-                  ctx.meta.guardianDestination.id
-                ).element;
-              }
+              from: ctx => minionSpaceElement(ctx, ctx.meta.guardian),
+              to: ctx =>
+                suggestedBattlefieldSpaceElement(
+                  ctx,
+                  CARD_LOCATIONS.RIGHT_BATTLEFIELD,
+                  2
+                )
             }
           }
         ]
@@ -673,7 +625,7 @@ export const locationsTutorial: TutorialMission = {
         },
         textBoxes: [
           {
-            text: 'With a Protector in the way, the Executor could only attack your Guardian.',
+            text: "With a Protector in the way, the Executor had to attack your Guardian. Thanks to the Arena's +1 attack, your Guardian struck back hard enough to destroy the Executor!",
             right: '22%',
             bottom: '45%',
             canManuallyAdvance: true,
@@ -691,12 +643,6 @@ export const locationsTutorial: TutorialMission = {
                 })
               ]);
             }
-          },
-          {
-            text: 'Thanks to the attack bonus from the Location, it was able to destroy it with its counterattack!',
-            right: '22%',
-            bottom: '45%',
-            canManuallyAdvance: true
           },
           {
             text: 'Score with your Guardian and your Azurite Lion to secure the right battlefield, then pass to end the turn.',
@@ -762,19 +708,7 @@ export const locationsTutorial: TutorialMission = {
         },
         textBoxes: [
           {
-            text: 'At the start of every turn, you can mulligan 2 other cards.',
-            right: '22%',
-            bottom: '45%',
-            canManuallyAdvance: true
-          },
-          {
-            text: "This time you don't draw new cards right away. But you always draw back up to 4 cards after the mulligan, so every card you put away makes room for a new one.",
-            right: '22%',
-            bottom: '45%',
-            canManuallyAdvance: true
-          },
-          {
-            text: 'You need your Silverguard Knight and your Windblade Adept this turn: confirm without selecting any card, then choose your affinity.',
+            text: "Every turn starts with a mulligan: put back up to 2 cards, and you'll draw back up to 4. You need both of your cards this turn, so confirm without selecting any, then choose your affinity.",
             right: '22%',
             bottom: '45%',
             canManuallyAdvance: false,
@@ -789,8 +723,6 @@ export const locationsTutorial: TutorialMission = {
         meta: {},
         async setup(ctx) {
           ctx.meta.secondShaman = findOpponentMinion(ctx, 'bloodbound-shaman');
-          ctx.meta.lionDestination =
-            ctx.game.playerSystem.player1.boardSide.leftBattlefield.spaces[1];
         },
         teardown() {},
         solveCondition(ctx) {
@@ -803,51 +735,19 @@ export const locationsTutorial: TutorialMission = {
           return validateMovingMinion(
             ctx.meta.lion,
             input,
-            ctx.meta.lionDestination
+            ctx,
+            CARD_LOCATIONS.LEFT_BATTLEFIELD
           );
         },
         textBoxes: [
           {
-            text: 'Every turn, the Locations on the battlefield change.',
-            right: '22%',
-            bottom: '45%',
-            canManuallyAdvance: true
-          },
-          {
-            text: 'The one on the right leaves the board, the one on the left slides to the right, and a new one arrived on the left.',
+            text: 'Every turn, the Locations shift: the one on the right leaves, the one on the left slides to the right, and a new one arrives on the left.',
             right: '22%',
             bottom: '45%',
             canManuallyAdvance: true,
-            hideDuringOpponentInitiative: true
-          },
-          {
-            text: "Locations come from players' Location decks. There will always be one location from each player in play.",
-            right: '22%',
-            bottom: '45%',
-            canManuallyAdvance: true
-          },
-          {
-            text: 'Your opponent brought the <b>Mistveil Marsh</b>: minions on the left battlefield have +2 influence.',
-            right: '22%',
-            bottom: '45%',
-            canManuallyAdvance: true,
+            // the opponent has the initiative on even turns: the box shows once its move gives it back
+            hideDuringOpponentInitiative: true,
             onEnter(ctx) {
-              ctx.client.ui.highlightedElement = getLocationElement(
-                ctx,
-                CARD_LOCATIONS.LEFT_BATTLEFIELD
-              );
-            }
-          },
-          {
-            text: 'Your Moonlit Pass is now on the right battlefield: minions here have +1 influence.',
-            right: '22%',
-            bottom: '45%',
-            canManuallyAdvance: true,
-            onEnter(ctx) {
-              ctx.client.ui.highlightedElement = getLocationElement(
-                ctx,
-                CARD_LOCATIONS.RIGHT_BATTLEFIELD
-              );
               const p2 = ctx.game.playerSystem.player2;
               dispatchSequence(
                 ctx,
@@ -868,6 +768,18 @@ export const locationsTutorial: TutorialMission = {
             }
           },
           {
+            text: "This one comes from your opponent's Location deck: the <b>Mistveil Marsh</b> gives minions on the left battlefield +2 influence.",
+            right: '22%',
+            bottom: '45%',
+            canManuallyAdvance: true,
+            onEnter(ctx) {
+              ctx.client.ui.highlightedElement = getLocationElement(
+                ctx,
+                CARD_LOCATIONS.LEFT_BATTLEFIELD
+              );
+            }
+          },
+          {
             text: 'Meanwhile, a Bloodbound Shaman moved to the left battlefield. Thanks to the Marsh, it would score 6 influence!',
             right: '22%',
             bottom: '45%',
@@ -880,16 +792,7 @@ export const locationsTutorial: TutorialMission = {
             }
           },
           {
-            text: "Minions can't move between battlefields: they have to move back to the base first.",
-            right: '22%',
-            bottom: '45%',
-            canManuallyAdvance: true,
-            onEnter(ctx) {
-              ctx.client.ui.highlightedElement = null;
-            }
-          },
-          {
-            text: 'But your Azurite Lion has <b>Flanking</b>: it can move straight to the other battlefield.',
+            text: 'Minions normally have to go back to the base to switch battlefields, but your Azurite Lion has <b>Flanking</b>: it can move straight to the other one.',
             right: '22%',
             bottom: '45%',
             canManuallyAdvance: true,
@@ -911,16 +814,13 @@ export const locationsTutorial: TutorialMission = {
               ctx.client.ui.highlightedCard = null;
             },
             gesture: {
-              from(ctx) {
-                const space = (ctx.meta.lion as MinionCard).position;
-                if (!space) return null;
-                return ctx.client.ui.DOMSelectors.boardSpace(space.id).element;
-              },
-              to(ctx) {
-                return ctx.client.ui.DOMSelectors.boardSpace(
-                  ctx.meta.lionDestination.id
-                ).element;
-              }
+              from: ctx => minionSpaceElement(ctx, ctx.meta.lion),
+              to: ctx =>
+                suggestedBattlefieldSpaceElement(
+                  ctx,
+                  CARD_LOCATIONS.LEFT_BATTLEFIELD,
+                  1
+                )
             }
           }
         ]
@@ -1003,18 +903,12 @@ export const locationsTutorial: TutorialMission = {
         },
         textBoxes: [
           {
-            text: 'Nice! With Flanking, a minion can answer threats on either battlefield.',
-            right: '22%',
-            bottom: '45%',
-            canManuallyAdvance: true,
-            hideDuringOpponentInitiative: true
-          },
-          {
-            text: "You're on your own now! Win both battlefields this turn to claim your last 2 Victory Points. Your Silverguard Knight could make the difference on the left.",
+            text: "Nice! You're on your own now: win both battlefields this turn to claim your last 2 Victory Points. Your Silverguard Knight could make the difference on the left.",
             right: '22%',
             bottom: '45%',
             canManuallyAdvance: false,
-            advanceCondition: () => false
+            advanceCondition: () => false,
+            hideDuringOpponentInitiative: true
           }
         ]
       }

@@ -20,7 +20,6 @@ export const portalGuardian: MinionBlueprint = {
   id: 'portal-guardian',
   name: 'Portal Guardian',
   description: dedent /*html*/ `
-  <rt-keyword>Vigilant</rt-keyword>.
   <rt-location locations="base"></rt-location> When you summon a minion give this +1/+1/+0.
   `,
   collectable: true,
@@ -28,7 +27,7 @@ export const portalGuardian: MinionBlueprint = {
   art: defaultCardArt('minions/portal-guardian'),
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.EPIC,
-  manaCost: 3,
+  manaCost: 4,
   manaSupply: 2,
   speed: CARD_SPEED.SLOW,
   tags: [],
@@ -39,7 +38,6 @@ export const portalGuardian: MinionBlueprint = {
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {
-    await card.modifiers.add(new VigilantModifier(game, card));
     await card.modifiers.add(
       new WhileOnBaseModifier<MinionCard>('portal-guardian-in-base-buff', game, card, {
         mixins: [

@@ -1,13 +1,19 @@
 import type { TutorialMission } from '.';
 import { makeTutorialDeck } from './utils';
-import { isDefined, waitFor } from '@game/shared';
+import { waitFor } from '@game/shared';
 import type { PlayerViewModel } from '@game/engine/src/client/view-models/player.model';
 import {
+  cardInHandElement,
   dispatchSequence,
+  emptyBaseSpaceElement,
   findCardInHand,
   getCardViewModel,
+  getEmptyBaseSpaces,
+  goToNextStepOn,
   makeOpponentChooseAffinity,
   makeOpponentPassUntilNextTurn,
+  minionSpaceElement,
+  suggestedBattlefieldSpaceElement,
   validateMovingMinion,
   validatePlayingCard,
   validatePlayingSpell,
@@ -22,6 +28,7 @@ import type { TutorialContext } from '@game/engine/src/tutorial/v2/tutorial';
 import { GAME_EVENTS } from '@game/engine/src/game/game.events';
 import {
   GAME_PHASES,
+  INTERACTION_EVENTS,
   INTERACTION_STATES
 } from '@game/engine/src/game/game.enums';
 
@@ -228,13 +235,14 @@ export const resourcesTutorial: TutorialMission = {
         },
         textBoxes: [
           {
+            // no onEnter: the first box of the mission is entered before the client has a state to highlight things from
             text: 'The Bloodbound clan is back! We must establish a strong defense.',
             right: '22%',
             bottom: '45%',
             canManuallyAdvance: true
           },
           {
-            text: 'Cards cost <b>Mana</b> to play.',
+            text: 'This time, your cards cost <b>Mana</b> to play.',
             right: '22%',
             bottom: '45%',
             canManuallyAdvance: true,
@@ -249,7 +257,7 @@ export const resourcesTutorial: TutorialMission = {
             }
           },
           {
-            text: 'But they can also <b>SUPPLY</b> mana.',
+            text: 'To get mana, you <b>SUPPLY</b> cards instead of playing them. This is how much mana a card gives.',
             right: '22%',
             bottom: '45%',
             canManuallyAdvance: true,
@@ -259,20 +267,7 @@ export const resourcesTutorial: TutorialMission = {
             }
           },
           {
-            text: 'For a card to supply mana, you need to put it in the <b>Supply Zone</b>.',
-            right: '22%',
-            bottom: '45%',
-            canManuallyAdvance: true,
-            onEnter(ctx) {
-              ctx.client.ui.highlightedCard = null;
-              ctx.client.ui.highlightedElement =
-                ctx.client.ui.DOMSelectors.supplyZone(
-                  ctx.game.playerSystem.player1.id
-                ).element;
-            }
-          },
-          {
-            text: 'Drag the leftmost card in your hand to the Supply Zone.',
+            text: "Drag your Windblade Adept to the <b>Supply Zone</b>. Don't worry, supplied cards come back to your hand next turn!",
             right: '22%',
             bottom: '45%',
             canManuallyAdvance: false,
@@ -280,6 +275,7 @@ export const resourcesTutorial: TutorialMission = {
               return false;
             },
             onEnter(ctx) {
+              ctx.client.ui.highlightedCard = null;
               ctx.client.ui.highlightedElement = null;
             },
             gesture: {
@@ -304,22 +300,31 @@ export const resourcesTutorial: TutorialMission = {
         canRetry: () => false,
         failedCondition: () => false,
         meta: {},
-        async setup() {},
+        async setup(ctx) {
+          // the player can play it on any base space, so later steps find it here rather than by position
+          ctx.meta.windbladeAdept = findCardInHand(
+            ctx,
+            'tutorial-windblade-adept'
+          );
+        },
         teardown() {},
         solveCondition(ctx) {
-          return isDefined(
-            ctx.game.playerSystem.player1.boardSide.base[2].card
+          return (
+            (ctx.meta.windbladeAdept as AnyCard).location ===
+            CARD_LOCATIONS.BASE
           );
         },
         validateInput(input, ctx) {
-          const card = ctx.game.playerSystem.player1.cardManager.hand[1];
-          return validatePlayingCard(card, input, ctx, [
-            ctx.game.playerSystem.player1.boardSide.base[2]
-          ]);
+          return validatePlayingCard(
+            ctx.meta.windbladeAdept,
+            input,
+            ctx,
+            getEmptyBaseSpaces(ctx)
+          );
         },
         textBoxes: [
           {
-            text: 'This shows how much mana you currently have.',
+            text: 'This is your mana: the Windblade Adept gave you 2.',
             left: '10%',
             bottom: '35%',
             canManuallyAdvance: true,
@@ -331,16 +336,7 @@ export const resourcesTutorial: TutorialMission = {
             }
           },
           {
-            text: 'Putting a card in Supply does not pass initiative, so now you can summon a minion right away.',
-            right: '22%',
-            bottom: '45%',
-            canManuallyAdvance: true,
-            onEnter(ctx) {
-              ctx.client.ui.highlightedElement = null;
-            }
-          },
-          {
-            text: 'Play your Windblade Adept.',
+            text: "Supplying doesn't pass the initiative, so you can play your other Windblade Adept right away.",
             right: '22%',
             bottom: '45%',
             canManuallyAdvance: false,
@@ -349,20 +345,8 @@ export const resourcesTutorial: TutorialMission = {
               ctx.client.ui.highlightedElement = null;
             },
             gesture: {
-              from(ctx) {
-                const cardInHand =
-                  ctx.game.playerSystem.player1.cardManager.hand[1];
-                if (!cardInHand) return null;
-                return ctx.client.ui.DOMSelectors.cardInHand(
-                  cardInHand.id,
-                  ctx.game.playerSystem.player1.id
-                ).element!;
-              },
-              to(ctx) {
-                return ctx.client.ui.DOMSelectors.boardSpace(
-                  ctx.game.playerSystem.player1.boardSide.base[2].id
-                ).element!;
-              }
+              from: ctx => cardInHandElement(ctx, ctx.meta.windbladeAdept),
+              to: emptyBaseSpaceElement
             }
           }
         ]
@@ -455,22 +439,7 @@ export const resourcesTutorial: TutorialMission = {
             }
           },
           {
-            text: 'The <b>Suntide Maiden</b> in your hand is powerful enough to deal with it, but you cannot play this card at the moment.',
-            right: '22%',
-            bottom: '45%',
-            canManuallyAdvance: true,
-            onEnter(ctx) {
-              const suntideMaiden =
-                ctx.game.playerSystem.player1.cardManager.hand[1];
-              ctx.client.ui.highlightedElement =
-                ctx.client.ui.DOMSelectors.cardInHand(
-                  suntideMaiden.id,
-                  ctx.game.playerSystem.player1.id
-                ).element;
-            }
-          },
-          {
-            text: 'She needs two Lyonar <b>Affinities</b> to be played.',
+            text: 'Your <b>Suntide Maiden</b> could deal with it, but she needs two Lyonar <b>Affinities</b> to be played.',
             right: '22%',
             bottom: '45%',
             canManuallyAdvance: true,
@@ -498,7 +467,7 @@ export const resourcesTutorial: TutorialMission = {
             }
           },
           {
-            text: "Since you cannot play her for now, let's put the Suntide Maiden in the Supply Zone and play the Silverguard Knight.",
+            text: 'Supply the Suntide Maiden for now, then play the Silverguard Knight.',
             right: '22%',
             bottom: '45%',
             canManuallyAdvance: false,
@@ -540,14 +509,7 @@ export const resourcesTutorial: TutorialMission = {
         id: 3,
         canRetry: () => false,
         meta: {},
-        async setup(ctx) {
-          ctx.meta.windbladeAdept = ctx.game.playerSystem.player1.boardSide.base
-            .map(space => space.card)
-            .find(card => card?.blueprintId === 'tutorial-windblade-adept');
-
-          ctx.meta.destination =
-            ctx.game.playerSystem.player1.boardSide.leftBattlefield.spaces[0];
-        },
+        async setup() {},
         teardown() {},
         failedCondition: () => false,
         solveCondition(ctx) {
@@ -557,15 +519,20 @@ export const resourcesTutorial: TutorialMission = {
           return validateMovingMinion(
             ctx.meta.windbladeAdept,
             input,
-            ctx.meta.destination
+            ctx,
+            CARD_LOCATIONS.LEFT_BATTLEFIELD
           );
         },
         textBoxes: [
           {
-            text: 'Seems like the enemy also had another minion to play.',
+            text: 'The enemy played another minion. Move your Windblade Adept to the battlefield.',
             right: '22%',
             bottom: '45%',
-            canManuallyAdvance: true,
+            canManuallyAdvance: false,
+            advanceCondition() {
+              return false;
+            },
+            hideDuringOpponentInitiative: true,
             async onEnter(ctx) {
               const p2 = ctx.game.playerSystem.player2;
 
@@ -585,26 +552,14 @@ export const resourcesTutorial: TutorialMission = {
                   }
                 })
               ]);
-            }
-          },
-          {
-            text: 'Move your Windblade Adept to the battlefield.',
-            right: '22%',
-            bottom: '45%',
-            canManuallyAdvance: false,
-            advanceCondition() {
-              return false;
             },
             gesture: {
-              from(ctx) {
-                const space = (ctx.meta.windbladeAdept as MinionCard).position!;
-                return ctx.client.ui.DOMSelectors.boardSpace(space.id).element;
-              },
-              to(ctx) {
-                return ctx.client.ui.DOMSelectors.boardSpace(
-                  ctx.meta.destination.id
-                ).element;
-              }
+              from: ctx => minionSpaceElement(ctx, ctx.meta.windbladeAdept),
+              to: ctx =>
+                suggestedBattlefieldSpaceElement(
+                  ctx,
+                  CARD_LOCATIONS.LEFT_BATTLEFIELD
+                )
             }
           }
         ]
@@ -640,10 +595,11 @@ export const resourcesTutorial: TutorialMission = {
         },
         textBoxes: [
           {
-            text: 'The Bloodbound Executor is joining the fight!',
+            text: 'The Bloodbound Executor is joining the fight! Score with your Windblade Adept: moving, attacking and scoring never cost mana.',
             right: '22%',
             bottom: '45%',
-            canManuallyAdvance: true,
+            canManuallyAdvance: false,
+            advanceCondition: () => false,
             hideDuringOpponentInitiative: true,
             onEnter(ctx) {
               const p2 = ctx.game.playerSystem.player2;
@@ -658,20 +614,9 @@ export const resourcesTutorial: TutorialMission = {
                   }
                 })
               ]);
-            }
-          },
-          {
-            text: 'Moving, attacking and scoring do not cost any mana. Score with your Windblade Adept to gain influence.',
-            right: '22%',
-            bottom: '45%',
-            canManuallyAdvance: false,
-            advanceCondition: () => false,
+            },
             gesture: {
-              from(ctx) {
-                const space = (ctx.meta.windbladeAdept as MinionCard).position;
-                if (!space) return null;
-                return ctx.client.ui.DOMSelectors.boardSpace(space.id).element;
-              },
+              from: ctx => minionSpaceElement(ctx, ctx.meta.windbladeAdept),
               to(ctx) {
                 const locationCard =
                   ctx.game.playerSystem.player1.boardSide.leftBattlefield
@@ -693,16 +638,20 @@ export const resourcesTutorial: TutorialMission = {
           // the opponent passes right after you, which ends the turn
           makeOpponentPassUntilNextTurn(ctx);
           makeOpponentChooseAffinity(ctx);
-        },
-        teardown() {},
-        solveCondition(ctx) {
           // the next step explains the affinity choice while it is on screen
-          return (
-            ctx.game.turnSystem.elapsedTurns === 1 &&
-            ctx.game.interaction.getState() ===
-              INTERACTION_STATES.CHOOSING_CARDS
+          goToNextStepOn(ctx, callback =>
+            ctx.game.on(
+              INTERACTION_EVENTS.INTERACTION_AFTER_CHANGE_STATE,
+              event => {
+                if (event.data.to.state === INTERACTION_STATES.CHOOSING_CARDS) {
+                  callback();
+                }
+              }
+            )
           );
         },
+        teardown() {},
+        solveCondition: () => false,
         validateInput(input) {
           // the player can pick an affinity before the opponent does, which skips straight to the next step
           if (input.type === 'pass' || input.type === 'chooseCards') {
@@ -715,7 +664,7 @@ export const resourcesTutorial: TutorialMission = {
         },
         textBoxes: [
           {
-            text: 'Ouch! The Executor destroyed your exhausted Windblade Adept. Luckily, its influence stays, so you are still ahead.',
+            text: 'Ouch! The Executor destroyed your exhausted Windblade Adept. But the influence a minion scores stays on the battlefield even if it is destroyed, so you are still ahead.',
             right: '22%',
             bottom: '45%',
             canManuallyAdvance: true,
@@ -735,7 +684,7 @@ export const resourcesTutorial: TutorialMission = {
             }
           },
           {
-            text: "You are out of mana, so let's pass to end the turn.",
+            text: "You are out of mana, so let's <b>PASS</b> to end the turn.",
             left: '0%',
             bottom: '35%',
             canManuallyAdvance: false,
@@ -775,13 +724,7 @@ export const resourcesTutorial: TutorialMission = {
         },
         textBoxes: [
           {
-            text: 'These two cards come from your <b>Affinity deck</b>. Each turn, you pick one to add to your Affinity Zone.',
-            left: '15%',
-            bottom: '35%',
-            canManuallyAdvance: true
-          },
-          {
-            text: 'In this mission your deck only has Lyonar affinities, so either choice works. With different affinities in your deck, you could play cards from several factions!',
+            text: 'Each turn, you pick a new <b>Affinity</b> to add to your Affinity Zone. Mixing affinities lets you play cards from several factions, but for now they are all Lyonar: pick either one.',
             left: '15%',
             bottom: '35%',
             canManuallyAdvance: false,
@@ -804,10 +747,6 @@ export const resourcesTutorial: TutorialMission = {
             'tutorial-silverguard-knight'
           );
           ctx.meta.trueStrike = findCardInHand(ctx, 'tutorial-true-strike');
-          ctx.meta.lionheartBlessing = findCardInHand(
-            ctx,
-            'tutorial-lionheart-blessing'
-          );
           ctx.meta.invader = ctx.game.playerSystem.player2.boardSide.base[4]
             .card as MinionCard;
         },
@@ -846,7 +785,7 @@ export const resourcesTutorial: TutorialMission = {
             }
           },
           {
-            text: 'Your supplied cards came back to your hand, but your mana was emptied. Mana never carries over to the next turn.',
+            text: "Your supplied cards came back to your hand, but mana doesn't carry over between turns.",
             left: '10%',
             bottom: '35%',
             canManuallyAdvance: true,
@@ -858,7 +797,7 @@ export const resourcesTutorial: TutorialMission = {
             }
           },
           {
-            text: 'You drew a <b>Spell</b>: True Strike! Spells have an immediate effect instead of being summoned. This one can destroy the Bloodbound Executor.',
+            text: 'You drew a <b>Spell</b>: True Strike! Spells have an immediate effect, and this one can destroy the Executor.',
             right: '22%',
             bottom: '45%',
             canManuallyAdvance: true,
@@ -871,7 +810,7 @@ export const resourcesTutorial: TutorialMission = {
             }
           },
           {
-            text: 'First, you need some mana. Put your Windblade Adept in the Supply Zone.',
+            text: 'Supply your Windblade Adept to get mana for it.',
             right: '22%',
             bottom: '45%',
             canManuallyAdvance: false,
@@ -997,19 +936,7 @@ export const resourcesTutorial: TutorialMission = {
             }
           },
           {
-            text: 'With two Lyonar affinities, you can now play the Suntide Maiden. She costs 3 mana, but you only have 1 left.',
-            left: '10%',
-            bottom: '35%',
-            canManuallyAdvance: true,
-            onEnter(ctx) {
-              ctx.client.ui.highlightedElement =
-                ctx.client.ui.DOMSelectors.currentMana(
-                  ctx.game.playerSystem.player1.id
-                ).element;
-            }
-          },
-          {
-            text: 'Your Silverguard Knight supplies 3 mana. Put it in the Supply Zone, then play the Suntide Maiden.',
+            text: 'You now have two Lyonar affinities, so you can play the Suntide Maiden! She costs 3 mana: supply your Silverguard Knight, then play her.',
             right: '22%',
             bottom: '45%',
             canManuallyAdvance: false,
@@ -1143,26 +1070,14 @@ export const resourcesTutorial: TutorialMission = {
             }
           },
           {
-            text: 'Luckily, you drew <b>Lionheart Blessing</b>. It gives an ally minion +2 influence, so cast it before scoring!',
-            right: '22%',
-            bottom: '45%',
-            canManuallyAdvance: true,
-            onEnter(ctx) {
-              ctx.client.ui.highlightedElement = null;
-              ctx.client.ui.highlightedCard = getCardViewModel(
-                ctx,
-                ctx.meta.lionheartBlessing
-              );
-            }
-          },
-          {
-            text: "You're on your own now! Win the battlefield to claim your second Victory Point.",
+            // shown right away after a retry, so it holds the hint
+            text: "You're on your own now! Win the battlefield to claim your second Victory Point. Your <b>Lionheart Blessing</b> gives a minion +2 influence: cast it before scoring!",
             right: '22%',
             bottom: '45%',
             canManuallyAdvance: false,
             advanceCondition: () => false,
             onEnter(ctx) {
-              ctx.client.ui.highlightedCard = null;
+              ctx.client.ui.highlightedElement = null;
             }
           }
         ]

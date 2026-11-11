@@ -33,7 +33,7 @@ export const aymaraHealer: MinionBlueprint = {
   tags: [],
   atk: 1,
   maxHp: 6,
-  commandment: 2,
+  commandment: 1,
   affinities: [AFFINITIES.AIR, AFFINITIES.NEUTRAL],
   canPlay: () => true,
   abilities: [],

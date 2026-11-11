@@ -9,6 +9,8 @@ import {
 } from './composables/useBoosterPack';
 import { assets } from '@/assets';
 import BackButton from '@/shared/components/BackButton.vue';
+import DraggedBoosterPack from './DraggedBoosterPack.vue';
+import { useEventListener } from '@vueuse/core';
 
 definePage({
   name: 'Boosters',
@@ -19,12 +21,15 @@ definePage({
 });
 
 const { data: unopenedPacks } = useUnopenedBoosterPacks();
+type UnopenedPack = NonNullable<typeof unopenedPacks.value>['packs'][number];
+
 const { mutate: openPack, isLoading: isOpeningPack } = useOpenBoosterPack(
   data => {
     latestPackOpened.value = data.cards.map(card => ({
       blueprint: CARDS_DICTIONARY[card.blueprintId],
       isFoil: card.isFoil
     }));
+    pendingPack.value = null;
   }
 );
 const latestPackOpened = ref<
@@ -33,13 +38,58 @@ const latestPackOpened = ref<
     isFoil: boolean;
   }>
 >([]);
+
+const packBg = (pack: UnopenedPack) => assets[`ui/packs/${pack.icon}`].css;
+
+const contentRef = useTemplateRef('content');
+const draggedPack = ref<UnopenedPack | null>(null);
+const pendingPack = ref<UnopenedPack | null>(null);
+const pointer = ref({ x: 0, y: 0 });
+const isPackOverDropZone = ref(false);
+
+const onPackPointerDown = (pack: UnopenedPack, e: PointerEvent) => {
+  if (isOpeningPack.value || pendingPack.value) return;
+  pointer.value = { x: e.clientX, y: e.clientY };
+  draggedPack.value = pack;
+};
+
+useEventListener(
+  'pointermove',
+  (e: PointerEvent) => {
+    if (!draggedPack.value) return;
+    pointer.value = { x: e.clientX, y: e.clientY };
+    isPackOverDropZone.value =
+      contentRef.value?.isOverDropZone(e.clientX, e.clientY) ?? false;
+  },
+  { passive: true }
+);
+
+useEventListener('pointerup', async (e: PointerEvent) => {
+  const pack = draggedPack.value;
+  if (!pack) return;
+  draggedPack.value = null;
+  isPackOverDropZone.value = false;
+
+  if (!contentRef.value?.isOverDropZone(e.clientX, e.clientY)) return;
+
+  pendingPack.value = pack;
+  try {
+    await openPack({ packId: pack.id });
+  } finally {
+    pendingPack.value = null;
+  }
+});
 </script>
 
 <template>
-  <div class="page">
+  <div class="page" :class="{ 'is-dragging-pack': !!draggedPack }">
     <BoosterPackContent
       v-if="unopenedPacks"
+      ref="content"
       :cards="latestPackOpened"
+      :is-dragging-pack="!!draggedPack"
+      :is-pack-over-drop-zone="isPackOverDropZone"
+      :pending-pack-bg="pendingPack ? packBg(pendingPack) : null"
       class="h-screen"
     >
       <template #done>
@@ -54,13 +104,17 @@ const latestPackOpened = ref<
             <button
               v-for="(pack, index) of unopenedPacks.packs"
               class="unopened-pack"
+              :class="{
+                'is-dragged':
+                  draggedPack?.id === pack.id || pendingPack?.id === pack.id
+              }"
               :style="{
-                '--bg': assets[`ui/packs/${pack.icon}`].css,
+                '--bg': packBg(pack),
                 zIndex: unopenedPacks.packs.length - index
               }"
               :key="pack.id"
               :disabled="isOpeningPack"
-              @click="openPack({ packId: pack.id })"
+              @pointerdown.prevent="onPackPointerDown(pack, $event)"
             />
           </div>
 
@@ -77,6 +131,13 @@ const latestPackOpened = ref<
         </div>
       </template>
     </BoosterPackContent>
+
+    <DraggedBoosterPack
+      v-if="draggedPack"
+      :bg="packBg(draggedPack)"
+      :x="pointer.x"
+      :y="pointer.y"
+    />
   </div>
 </template>
 
@@ -85,6 +146,11 @@ const latestPackOpened = ref<
   height: 100dvh;
   background-image: url('@/assets/backgrounds/main-menu-overlay.png');
   background-size: 100% 100%;
+
+  &.is-dragging-pack,
+  &.is-dragging-pack :deep(*) {
+    cursor: grabbing !important;
+  }
 }
 
 .unopened-pack {
@@ -96,11 +162,17 @@ const latestPackOpened = ref<
   left: calc(6px * (var(--child-index) - 1) - 30px);
   bottom: 0;
   transition: transform 0.3s var(--ease-bounce-2);
+  cursor: grab;
+  touch-action: none;
   &:disabled {
     filter: grayscale(100%);
   }
 
-  &:hover {
+  &.is-dragged {
+    visibility: hidden;
+  }
+
+  &:hover:not(.is-dragged) {
     filter: drop-shadow(0 0 10px yellow);
     transform: translateY(30px);
   }

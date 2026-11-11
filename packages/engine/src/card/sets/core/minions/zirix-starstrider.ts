@@ -12,7 +12,6 @@ import {
   CARD_SPEED,
   AFFINITIES
 } from '../../../card.enums';
-import { VigilantModifier } from '../../../../modifier/modifiers/vigilant.modifier';
 import { OnMoveModifier } from '../../../../modifier/modifiers/on-move.modifier';
 import { windDervish } from './wind-dervish';
 import type { MinionCard } from '../../../entities/minion.entity';
@@ -54,7 +53,6 @@ export const zirixStarstrider: MinionBlueprint = {
             game,
             space => space.isInBase
           );
-
           if (destination.length === 0) return;
 
           const dervish = await card.player.generateCard<MinionCard>(

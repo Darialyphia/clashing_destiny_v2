@@ -13,7 +13,9 @@ import {
   getLocationCard,
   getEmptyBaseSpaces,
   makeOpponentChooseAffinity,
+  minionSpaceElement,
   startOpponentAI,
+  suggestedBattlefieldSpaceElement,
   supplyZoneElement,
   validateMovingMinion,
   validatePlayingCard,
@@ -209,13 +211,7 @@ export const artifactsSecretsTutorial: TutorialMission = {
         },
         textBoxes: [
           {
-            text: 'The Bloodbound clan is attacking on two fronts!',
-            right: '22%',
-            bottom: '45%',
-            canManuallyAdvance: true
-          },
-          {
-            text: 'This time, the battle is fought on <b>two battlefields</b>. Each one has its own influence, and minions can only fight enemies at their own battlefield.',
+            text: 'The Bloodbound clan is attacking on <b>two battlefields</b>! Each one has its own influence, and minions can only fight enemies on their own battlefield.',
             right: '22%',
             bottom: '45%',
             canManuallyAdvance: true
@@ -233,7 +229,7 @@ export const artifactsSecretsTutorial: TutorialMission = {
             }
           },
           {
-            text: "The Bloodbound Shaman on the right battlefield has 4 influence. Let's deal with it before it scores.",
+            text: "The Bloodbound Shaman on the right battlefield has 4 influence. Let's get rid of it before it scores!",
             right: '22%',
             bottom: '45%',
             canManuallyAdvance: true,
@@ -245,7 +241,7 @@ export const artifactsSecretsTutorial: TutorialMission = {
             }
           },
           {
-            text: 'Your Sunstone Templar has an <b>On Enter</b> effect. It triggers when you play the Templar from your hand.',
+            text: 'Your Sunstone Templar has an <b>On Enter</b> effect: it triggers when you play it from your hand.',
             right: '22%',
             bottom: '45%',
             canManuallyAdvance: true,
@@ -389,17 +385,6 @@ export const artifactsSecretsTutorial: TutorialMission = {
             }
           },
           {
-            text: 'Playing a secret only costs 1 mana. The rest is paid when it triggers, so keep enough mana for it!',
-            right: '22%',
-            bottom: '45%',
-            canManuallyAdvance: true,
-            async onEnter(ctx) {
-              await waitFor(100);
-              ctx.client.ui.highlightedElement =
-                ctx.client.ui.DOMSelectors.highlightedCardMana().element;
-            }
-          },
-          {
             text: 'Supply your other Windblade Adept, then drag Holy Immolation onto the left battlefield.',
             right: '22%',
             bottom: '45%',
@@ -435,8 +420,6 @@ export const artifactsSecretsTutorial: TutorialMission = {
         meta: {},
         async setup(ctx) {
           ctx.meta.executor = findOpponentMinion(ctx, 'bloodbound-executor');
-          ctx.meta.templarDestination =
-            ctx.game.playerSystem.player1.boardSide.rightBattlefield.spaces[1];
         },
         teardown() {},
         solveCondition(ctx) {
@@ -449,17 +432,21 @@ export const artifactsSecretsTutorial: TutorialMission = {
           return validateMovingMinion(
             ctx.meta.templar,
             input,
-            ctx.meta.templarDestination
+            ctx,
+            CARD_LOCATIONS.RIGHT_BATTLEFIELD
           );
         },
         textBoxes: [
           {
-            text: 'The Executor moved to the left battlefield. It is about to attack your Knight!',
+            text: 'The Executor is about to attack your Knight, but your secret is waiting! Minions in your base can move to either battlefield: move your Templar to the right one, which is now empty.',
             right: '22%',
             bottom: '45%',
-            canManuallyAdvance: true,
+            canManuallyAdvance: false,
+            advanceCondition: () => false,
+            // shows once the Executor has moved
             hideDuringOpponentInitiative: true,
             onEnter(ctx) {
+              ctx.client.ui.highlightedElement = null;
               const p2 = ctx.game.playerSystem.player2;
               dispatchSequence(ctx, [
                 () => ({
@@ -472,28 +459,15 @@ export const artifactsSecretsTutorial: TutorialMission = {
                   }
                 })
               ]);
-            }
-          },
-          {
-            text: "Don't worry, your secret is waiting. Minions in your base can move to either battlefield: move your Sunstone Templar to the right one, which is now empty.",
-            right: '22%',
-            bottom: '45%',
-            canManuallyAdvance: false,
-            advanceCondition: () => false,
-            onEnter(ctx) {
-              ctx.client.ui.highlightedElement = null;
             },
             gesture: {
-              from(ctx) {
-                const space = (ctx.meta.templar as MinionCard).position;
-                if (!space) return null;
-                return ctx.client.ui.DOMSelectors.boardSpace(space.id).element;
-              },
-              to(ctx) {
-                return ctx.client.ui.DOMSelectors.boardSpace(
-                  ctx.meta.templarDestination.id
-                ).element;
-              }
+              from: ctx => minionSpaceElement(ctx, ctx.meta.templar),
+              to: ctx =>
+                suggestedBattlefieldSpaceElement(
+                  ctx,
+                  CARD_LOCATIONS.RIGHT_BATTLEFIELD,
+                  1
+                )
             }
           }
         ]
@@ -557,18 +531,6 @@ export const artifactsSecretsTutorial: TutorialMission = {
                   }
                 })
               ]);
-            }
-          },
-          {
-            text: "The rest of Holy Immolation's cost was paid when it triggered.",
-            left: '10%',
-            bottom: '35%',
-            canManuallyAdvance: true,
-            onEnter(ctx) {
-              ctx.client.ui.highlightedElement =
-                ctx.client.ui.DOMSelectors.currentMana(
-                  ctx.game.playerSystem.player1.id
-                ).element;
             }
           },
           {
@@ -778,33 +740,17 @@ export const artifactsSecretsTutorial: TutorialMission = {
             }
           },
           {
-            text: "The Regalia's <b>Equip</b> ability gives a minion +2 influence. Using an ability costs mana and passes the initiative, just like playing a card.",
-            right: '22%',
-            bottom: '45%',
-            canManuallyAdvance: true,
-            onEnter(ctx) {
-              ctx.client.ui.highlightedElement = cardOnBoardElement(
-                ctx,
-                ctx.meta.regalia
-              );
-            }
-          },
-          {
-            text: 'Hover your Arclyte Regalia and click the ability button below it, then select your Silverguard Knight.',
+            // no gesture: the ability is used with a click, not a drag
+            text: "Your Regalia's <b>Equip</b> ability gives a minion +2 influence. Hover the Regalia, click the ability button below it, then select your Silverguard Knight.",
             right: '22%',
             bottom: '45%',
             canManuallyAdvance: false,
             advanceCondition: () => false,
             onEnter(ctx) {
-              ctx.client.ui.highlightedElement = null;
-            },
-            gesture: {
-              from(ctx) {
-                return cardOnBoardElement(ctx, ctx.meta.regalia);
-              },
-              to(ctx) {
-                return cardOnBoardElement(ctx, ctx.meta.knight);
-              }
+              ctx.client.ui.highlightedElement = cardOnBoardElement(
+                ctx,
+                ctx.meta.regalia
+              );
             }
           }
         ]
@@ -837,18 +783,6 @@ export const artifactsSecretsTutorial: TutorialMission = {
                 ctx.client.ui.DOMSelectors.cardCommandment(
                   (ctx.meta.knight as MinionCard).id
                 ).element;
-            }
-          },
-          {
-            text: 'Each time the equipped minion takes damage, the Regalia loses 1 durability. When it reaches 0, the Regalia is destroyed.',
-            right: '22%',
-            bottom: '45%',
-            canManuallyAdvance: true,
-            onEnter(ctx) {
-              ctx.client.ui.highlightedElement = cardOnBoardElement(
-                ctx,
-                ctx.meta.regalia
-              );
             }
           },
           {

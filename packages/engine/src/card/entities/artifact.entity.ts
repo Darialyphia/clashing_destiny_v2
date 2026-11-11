@@ -206,7 +206,7 @@ export class ArtifactCard extends Card<
 
     await this.game.emit(
       ARTIFACT_EVENTS.ARTIFACT_EQUIPED,
-      new ArtifactEquippedEvent({ card: this })
+      new ArtifactEquippedEvent({ card: this, position })
     );
   }
 

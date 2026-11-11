@@ -1,7 +1,12 @@
 <script setup lang="ts">
-import { useTutorial } from '../../pages/client/tutorial/useTutorial';
+import {
+  useIsCurrentTextBoxHidden,
+  useTutorial
+} from '../../pages/client/tutorial/useTutorial';
 
 const { currentStepTextBox, tutorial } = useTutorial();
+// the gesture belongs to its text box, so it hides with it
+const isHidden = useIsCurrentTextBoxHidden();
 
 const coordinates = computed(() => {
   if (!currentStepTextBox.value?.gesture) return { x: 0, y: 0 };
@@ -29,7 +34,7 @@ const coordinates = computed(() => {
 <template>
   <div
     class="tutorial-gesture"
-    v-if="currentStepTextBox?.gesture"
+    v-if="currentStepTextBox?.gesture && !isHidden"
     :style="{
       '--from-x': coordinates.from?.x + 'px',
       '--from-y': coordinates.from?.y + 'px',

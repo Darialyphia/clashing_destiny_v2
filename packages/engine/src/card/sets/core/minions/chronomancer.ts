@@ -10,6 +10,7 @@ import {
 } from '../../../card.enums';
 import { OnEnterModifier } from '../../../../modifier/modifiers/on-enter.modifier';
 import { FleetingModifier } from '../../../../modifier/modifiers/fleeting.modifier';
+import type { AnyCard } from '../../../entities/card.entity';
 
 export const chronomancer: MinionBlueprint = {
   id: 'chronomancer',
@@ -33,13 +34,18 @@ export const chronomancer: MinionBlueprint = {
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {
+    let cardToCopy: AnyCard | undefined;
+
     await card.modifiers.add(
       new OnEnterModifier(game, card, {
+        beforeSchedule: async () => {
+          cardToCopy = card.player.cardTracker.lastPlayedCardThisTurn?.card;
+        },
         async handler() {
-          const lastPlayedCard = card.player.cardTracker.lastPlayedCardThisTurn;
-          if (!lastPlayedCard) return;
+          if (!cardToCopy) return;
+
           const copy = await card.player.generateCard(
-            lastPlayedCard.card.blueprintId,
+            cardToCopy.blueprintId,
             card.isFoil
           );
           await copy.addToHand();
