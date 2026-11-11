@@ -12,12 +12,15 @@ import {
 import { ChannelModifier } from '../../../../modifier/modifiers/channel.modifier';
 import { BurnModifier } from '../../../../modifier/modifiers/burn.modifier';
 import { TogglableModifierMixin } from '../../../../modifier/mixins/togglable.mixin';
+import { EmpoweredModifier } from '../../../../modifier/modifiers/empowered.modifier';
+import { OnMoveModifier } from '../../../../modifier/modifiers/on-move.modifier';
 
 export const pyromancer: MinionBlueprint = {
   id: 'pyromancer',
   name: 'Pyromancer',
   description: dedent /*html*/ `
-  <rt-location locations="base"></rt-location> <rt-keyword>Channel</rt-keyword> Inflict <rt-keyword>Burn 1</rt-keyword> to an enemy minion, then lose this effect.
+  <rt-location locations="base"></rt-location> <rt-keyword>Channel</rt-keyword> <rt-keyword>Empower me</rt-keyword>.
+  While empowered, I have <rt-trigger>On Engage</rt-trigger> Inflict <rt-keyword>Burn 2</rt-keyword> to an enemy minion.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -37,7 +40,20 @@ export const pyromancer: MinionBlueprint = {
   async onInit(game, card) {
     await card.modifiers.add(
       new ChannelModifier('pyromancer-burn', game, card, {
-        async handler(modifier) {
+        async handler() {
+          if (!card.modifiers.has(EmpoweredModifier)) return;
+          await card.modifiers.add(new EmpoweredModifier(game, card));
+        },
+        mixins: [
+          new TogglableModifierMixin(game, () => card.location === CARD_LOCATIONS.BASE)
+        ]
+      })
+    );
+
+    await card.modifiers.add(
+      new OnMoveModifier(game, card, {
+        location: 'battlefield',
+        async handler() {
           const hasTarget = singleEnemyMinionTargetRules.canPlay(game, card);
           if (!hasTarget) return;
 
@@ -58,12 +74,8 @@ export const pyromancer: MinionBlueprint = {
           if (targetResult.cancelled) return;
           const target = targetResult.result.cards[0];
           if (!target) return;
-          await target.modifiers.add(new BurnModifier(game, card, { stacks: 1 }));
-          await card.modifiers.remove(modifier);
-        },
-        mixins: [
-          new TogglableModifierMixin(game, () => card.location === CARD_LOCATIONS.BASE)
-        ]
+          await target.modifiers.add(new BurnModifier(game, card, { stacks: 2 }));
+        }
       })
     );
   },

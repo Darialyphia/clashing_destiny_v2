@@ -12,13 +12,14 @@ import { FlankingModifier } from '../../../../modifier/modifiers/flanking.modifi
 import { OnMoveModifier } from '../../../../modifier/modifiers/on-move.modifier';
 import { isDefined } from '@game/shared';
 import { BurnModifier } from '../../../../modifier/modifiers/burn.modifier';
+import { OnScoreModifier } from '../../../../modifier/modifiers/on-score.modifier';
 
 export const incinera: MinionBlueprint = {
   id: 'incinera',
   name: 'Incinera',
   description: dedent /*html*/ `
     <rt-keyword>Flanking</rt-keyword><br/>
-    <rt-trigger>On Move</rt-trigger>: Inflict <rt-keyword>Burn 1</rt-keyword> to all enemies here.
+    <rt-trigger>On Score</rt-trigger>: Inflict <rt-keyword>Burn 2</rt-keyword> to all enemies here.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -38,9 +39,10 @@ export const incinera: MinionBlueprint = {
   async onInit(game, card) {
     await card.modifiers.add(new FlankingModifier(game, card));
     await card.modifiers.add(
-      new OnMoveModifier(game, card, {
-        location: 'battlefield',
+      new OnScoreModifier(game, card, {
         async handler() {
+          if (!card.battlefield) return;
+
           const enemies = card
             .battlefield!.opponentSpaces.map(space => space.card)
             .filter(isDefined)
