@@ -10,3 +10,5 @@ export * from './utils/math';
 export * from './utils/vec2';
 export * from './utils/vec3';
 export * from './utils/state-machine';
+
+export * from './version';

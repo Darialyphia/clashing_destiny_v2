@@ -104,7 +104,14 @@ export default defineConfig(({ mode }) => {
         filename: 'sw.ts',
         strategies: 'injectManifest',
         injectManifest: {
-          maximumFileSizeToCacheInBytes: 4000000
+          maximumFileSizeToCacheInBytes: 4000000,
+          // Workbox drops each file's `size` from the manifest it injects:
+          // keep it as `bytes` for the update download progress (see sw.ts).
+          manifestTransforms: [
+            async entries => ({
+              manifest: entries.map(entry => ({ ...entry, bytes: entry.size }))
+            })
+          ]
         },
         devOptions: {
           enabled: env.VITE_DEV_PWA === 'true',

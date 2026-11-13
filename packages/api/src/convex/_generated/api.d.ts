@@ -24,6 +24,7 @@ import type * as init from "../init.js";
 import type * as lobbies from "../lobbies.js";
 import type * as lobby_usecases_setupLobbyGame from "../lobby/usecases/setupLobbyGame.js";
 import type * as matchmaking from "../matchmaking.js";
+import type * as meta from "../meta.js";
 import type * as migrations from "../migrations.js";
 import type * as ping from "../ping.js";
 import type * as shared_container from "../shared/container.js";
@@ -63,6 +64,7 @@ declare const fullApi: ApiFromModules<{
   lobbies: typeof lobbies;
   "lobby/usecases/setupLobbyGame": typeof lobby_usecases_setupLobbyGame;
   matchmaking: typeof matchmaking;
+  meta: typeof meta;
   migrations: typeof migrations;
   ping: typeof ping;
   "shared/container": typeof shared_container;

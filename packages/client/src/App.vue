@@ -4,7 +4,7 @@ import { provideAuth } from './auth/composables/useAuth';
 import SVGFilters from './game/components/SVGFilters.vue';
 import UiToaster from './ui/components/UiToaster.vue';
 import { provideToast } from './ui/composables/useToast';
-import ServiceWorkerPrompt from './ServiceWorkerPrompt.vue';
+import AppUpdateGate from './app-update/AppUpdateGate.vue';
 
 // const { loaded } = useAssets();
 provideAuth();
@@ -14,17 +14,18 @@ provideToast();
 <template>
   <!-- <div v-if="!loaded">Loading...</div> -->
   <div>
-    <SVGFilters />
-    <ToastProvider :duration="1200" swipe-direction="right">
-      <TooltipProvider :delay-duration="400">
-        <router-view />
-      </TooltipProvider>
-      <UiToaster />
-    </ToastProvider>
-    <div id="card-portal"></div>
-    <div id="card-actions-portal"></div>
-    <div id="tooltip-portal"></div>
-    <ServiceWorkerPrompt />
+    <AppUpdateGate>
+      <SVGFilters />
+      <ToastProvider :duration="1200" swipe-direction="right">
+        <TooltipProvider :delay-duration="400">
+          <router-view />
+        </TooltipProvider>
+        <UiToaster />
+      </ToastProvider>
+      <div id="card-portal"></div>
+      <div id="card-actions-portal"></div>
+      <div id="tooltip-portal"></div>
+    </AppUpdateGate>
   </div>
 </template>
 
