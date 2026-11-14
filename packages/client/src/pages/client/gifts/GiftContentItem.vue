@@ -63,7 +63,7 @@ const { bgPosition, activeFrameRect, imageBg } = useSprite({
 <template>
   <div class="gift-content-item">
     <HoverCardRoot
-      :open-delay="0"
+      :open-delay="500"
       :close-delay="0"
       :disabled="item.kind !== 'card' || !item.blueprint"
     >
