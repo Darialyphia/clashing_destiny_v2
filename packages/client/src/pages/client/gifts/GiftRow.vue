@@ -11,6 +11,20 @@ const { canClaim, claim, isClaimingGift, formatTimeAgo, getItems } =
   useGiftsPage();
 
 const items = computed(() => getItems(gift));
+
+const onContentsWheel = (e: WheelEvent) => {
+  const el = e.currentTarget as HTMLElement;
+  if (el.scrollWidth <= el.clientWidth) return;
+  if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
+
+  const maxScroll = el.scrollWidth - el.clientWidth;
+  const atStart = el.scrollLeft <= 0 && e.deltaY < 0;
+  const atEnd = el.scrollLeft >= maxScroll - 1 && e.deltaY > 0;
+  if (atStart || atEnd) return;
+
+  e.preventDefault();
+  el.scrollLeft += e.deltaY;
+};
 </script>
 
 <template>
@@ -31,7 +45,10 @@ const items = computed(() => getItems(gift));
       </div>
     </div>
 
-    <section class="gift-contents fancy-scrollbar">
+    <section
+      class="gift-contents fancy-scrollbar"
+      @wheel="onContentsWheel"
+    >
       <GiftContentItem v-for="item in items" :key="item.key" :item="item" />
     </section>
 
