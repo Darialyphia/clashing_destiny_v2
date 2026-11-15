@@ -18,6 +18,8 @@ export const tutorialHolyImmolation = defineSecretBlueprint({
   rarity: RARITIES.TOKEN,
   manaCost: 2,
   manaSupply: 2,
+  level: 1,
+  exp: 1,
   speed: CARD_SPEED.FAST,
   tags: [],
   shouldHideTargetArrows: true,

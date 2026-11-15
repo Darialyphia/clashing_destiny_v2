@@ -61,6 +61,42 @@ export class DrawPhase implements GamePhaseController, Serializable<EmptyObject>
     }
   }
 
+  // each player may banish one card from their supply to gain its experience
+  private async banishSupplyCardForExp() {
+    // still offered at max level: experience will have other uses later in the game
+    const players = this.game.playerSystem.players.filter(
+      player => player.cardManager.supply.size > 0
+    );
+    if (players.length === 0) return;
+
+    const result = await this.game.interaction.chooseCards({
+      canCancel: false,
+      players: Object.fromEntries(
+        players.map(player => [
+          player.id,
+          {
+            choices: [...player.cardManager.supply].map(card => ({
+              card,
+              aiHints: {
+                shouldPick: () => 1
+              }
+            })),
+            minChoiceCount: 0,
+            maxChoiceCount: 1,
+            label: 'Banish up to 1 card to gain EXP',
+            timeoutFallback: []
+          }
+        ])
+      )
+    });
+
+    for (const { player, cards } of Object.values(result.result)) {
+      for (const card of cards) {
+        await player.banishFromSupplyForExp(card);
+      }
+    }
+  }
+
   private async recollectSupply() {
     // both players recollect at the same time, this lets the client animate all the cards together
     const cards = this.game.playerSystem.players.flatMap(player => [
@@ -140,6 +176,7 @@ export class DrawPhase implements GamePhaseController, Serializable<EmptyObject>
       });
     } else {
       await this.rotateLocationCards();
+      await this.banishSupplyCardForExp();
       await this.recollectSupply();
       if (this.game.config.CARDS_MULLIGANED_PER_TURN > 0) {
         await this.mulligan(this.game.config.CARDS_MULLIGANED_PER_TURN, false);

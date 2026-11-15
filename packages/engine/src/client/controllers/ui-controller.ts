@@ -4,6 +4,7 @@ import type { CardViewModel } from '../view-models/card.model';
 import type { GameClientState } from './state-controller';
 import { CommitCardSelectionGlobalAction } from '../actions/commit-card-selection';
 import { PassGlobalAction } from '../actions/pass';
+import { LevelUpGlobalAction } from '../actions/level-up';
 import { GAME_EVENTS, type SerializedStarEvent } from '../../game/game.events';
 import type { BoardSpaceViewModel } from '../view-models/board-space.model';
 import { SelectSpaceOnBoardAction } from '../actions/select-space-on-board';
@@ -119,7 +120,8 @@ export class UiController {
       new DOMSelector('.supply', this.DOMSelectors.highlightedCard.selector),
     supplyZone: (playerId: string) => new DOMSelector(`supply-zone-${playerId}`),
     mainDeck: (playerId: string) => new DOMSelector(`main-deck-${playerId}`),
-    currentMana: (playerId: string) => new DOMSelector(`current-mana-${playerId}`)
+    currentMana: (playerId: string) => new DOMSelector(`current-mana-${playerId}`),
+    playerLevel: (playerId: string) => new DOMSelector(`player-level-${playerId}`)
   };
 
   displayedElements = {
@@ -130,6 +132,7 @@ export class UiController {
     supplyZone: true,
     mana: true,
     initiativeIndicator: true,
+    playerLevel: true,
     battleLog: true
   };
 
@@ -153,6 +156,7 @@ export class UiController {
   private buildGlobalActionRules() {
     this.globalActionRules = [
       new CommitCardSelectionGlobalAction(this.client),
+      new LevelUpGlobalAction(this.client),
       new PassGlobalAction(this.client)
     ];
   }

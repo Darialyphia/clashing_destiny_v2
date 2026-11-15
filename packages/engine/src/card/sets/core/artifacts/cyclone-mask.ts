@@ -24,6 +24,8 @@ export const cycloneMask: ArtifactBlueprint = {
   rarity: RARITIES.RARE,
   manaCost: 2,
   manaSupply: 3,
+  level: 1,
+  exp: 1,
   durability: 2,
   speed: CARD_SPEED.FAST,
   tags: [],

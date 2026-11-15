@@ -135,7 +135,7 @@ useDoubleTap(root, () => {
 }
 .copies-owned {
   position: absolute;
-  bottom: calc(var(--pixel-scale) * -3px);
+  bottom: calc(var(--pixel-scale) * -10px);
   left: 50%;
   transform: translateX(-50%);
   text-align: center;

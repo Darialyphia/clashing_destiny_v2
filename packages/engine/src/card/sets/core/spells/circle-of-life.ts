@@ -24,6 +24,8 @@ export const circleOfLife: SpellBlueprint<MinionCard> = {
   rarity: RARITIES.EPIC,
   manaCost: 5,
   manaSupply: 3,
+  level: 1,
+  exp: 1,
   speed: CARD_SPEED.FAST,
   tags: [],
   canPlay: (game, card) =>

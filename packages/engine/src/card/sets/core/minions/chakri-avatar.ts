@@ -26,6 +26,8 @@ export const chakriAvatar: MinionBlueprint = {
   rarity: RARITIES.COMMON,
   manaCost: 2,
   manaSupply: 3,
+  level: 1,
+  exp: 1,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 1,

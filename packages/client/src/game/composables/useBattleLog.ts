@@ -251,6 +251,48 @@ export const useBattleLog = () => {
           }
         }
 
+        if (
+          eventName === GAME_EVENTS.CARD_AFTER_CHANGE_LOCATION &&
+          event.from === CARD_LOCATIONS.SUPPLY &&
+          event.to === CARD_LOCATIONS.BANISH_PILE
+        ) {
+          const card = state.value.entities[event.card] as CardViewModel;
+          tokens.push({
+            kind: 'player',
+            player: card.player
+          });
+          tokens.push({
+            kind: 'text',
+            text: `banished from their supply`
+          });
+          tokens.push({
+            kind: 'card',
+            card
+          });
+        }
+
+        if (eventName === GAME_EVENTS.PLAYER_AFTER_GAIN_EXP) {
+          tokens.push({
+            kind: 'player',
+            player: state.value.entities[event.player] as PlayerViewModel
+          });
+          tokens.push({
+            kind: 'text',
+            text: `gained ${event.amount} EXP (${event.total} total).`
+          });
+        }
+
+        if (eventName === GAME_EVENTS.PLAYER_AFTER_LEVEL_UP) {
+          tokens.push({
+            kind: 'player',
+            player: state.value.entities[event.player] as PlayerViewModel
+          });
+          tokens.push({
+            kind: 'text',
+            text: `reached level ${event.newLevel}.`
+          });
+        }
+
         if (eventName === GAME_EVENTS.PLAYER_AFTER_GAIN_VICTORY_POINT) {
           tokens.push({
             kind: 'player',

@@ -19,6 +19,8 @@ export const starsFury: SpellBlueprint = {
   rarity: RARITIES.LEGENDARY,
   manaCost: 4,
   manaSupply: 3,
+  level: 1,
+  exp: 1,
   speed: CARD_SPEED.FAST,
   tags: [],
   shouldHideTargetArrows: true,

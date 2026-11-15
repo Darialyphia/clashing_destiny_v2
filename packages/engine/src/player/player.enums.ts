@@ -8,6 +8,10 @@ export const PLAYER_EVENTS = {
   PLAYER_BEFORE_GAIN_VICTORY_POINT: 'player_before_gain_victory_point',
   PLAYER_AFTER_GAIN_VICTORY_POINT: 'player_after_gain_victory_point',
   PLAYER_BEFORE_ADD_SUPPLY: 'player_before_add_supply',
-  PLAYER_AFTER_ADD_SUPPLY: 'player_after_add_supply'
+  PLAYER_AFTER_ADD_SUPPLY: 'player_after_add_supply',
+  PLAYER_BEFORE_GAIN_EXP: 'player_before_gain_exp',
+  PLAYER_AFTER_GAIN_EXP: 'player_after_gain_exp',
+  PLAYER_BEFORE_LEVEL_UP: 'player_before_level_up',
+  PLAYER_AFTER_LEVEL_UP: 'player_after_level_up'
 } as const;
 export type PlayerEvent = Values<typeof PLAYER_EVENTS>;

@@ -60,7 +60,8 @@ const inputLabels: Record<SerializedInput['type'], string> = {
   selectSpaceOnBoard: 'Select Space On Board',
   surrender: 'Surrender',
   supplyCard: 'Add card to supply',
-  cancelPlayingCard: 'Cancel Playing Card'
+  cancelPlayingCard: 'Cancel Playing Card',
+  levelUp: 'Level Up'
 };
 </script>
 

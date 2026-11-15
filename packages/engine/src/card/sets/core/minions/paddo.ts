@@ -26,6 +26,8 @@ export const paddo: MinionBlueprint = {
   rarity: RARITIES.LEGENDARY,
   manaCost: 6,
   manaSupply: 3,
+  level: 1,
+  exp: 1,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 4,

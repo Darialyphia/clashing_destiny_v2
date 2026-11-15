@@ -23,6 +23,8 @@ export const juxtaposition: SpellBlueprint<MinionCard> = {
   rarity: RARITIES.EPIC,
   manaCost: 2,
   manaSupply: 3,
+  level: 1,
+  exp: 1,
   speed: CARD_SPEED.FAST,
   tags: [],
   shouldHideTargetArrows: true,

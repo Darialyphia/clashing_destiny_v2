@@ -49,6 +49,12 @@ export type CardArt = {
   isFullArt: boolean;
 };
 
+// player level required to play the card, and experience gained when banishing it from the supply
+export type LeveledCardBlueprint = {
+  level: number;
+  exp: number;
+};
+
 export type CardBlueprintBase = {
   id: string;
   name: string;
@@ -128,7 +134,8 @@ export const serializeTargets = (targets: Targets): SerializedTargets => {
   };
 };
 
-export type MinionBlueprint = CardBlueprintBase & {
+export type MinionBlueprint = CardBlueprintBase &
+  LeveledCardBlueprint & {
   kind: Extract<CardKind, typeof CARD_KINDS.MINION>;
   manaCost: number;
   manaSupply: number;
@@ -147,7 +154,8 @@ export type MinionBlueprint = CardBlueprintBase & {
   };
 };
 
-export type SpellBlueprint<T extends AnyCard = AnyCard> = CardBlueprintBase & {
+export type SpellBlueprint<T extends AnyCard = AnyCard> = CardBlueprintBase &
+  LeveledCardBlueprint & {
   kind: Extract<CardKind, typeof CARD_KINDS.SPELL>;
   manaCost: number;
   manaSupply: number;
@@ -161,7 +169,8 @@ export type SpellBlueprint<T extends AnyCard = AnyCard> = CardBlueprintBase & {
   };
 };
 
-export type ArtifactBlueprint = CardBlueprintBase & {
+export type ArtifactBlueprint = CardBlueprintBase &
+  LeveledCardBlueprint & {
   manaCost: number;
   manaSupply: number;
   kind: Extract<CardKind, typeof CARD_KINDS.ARTIFACT>;
@@ -184,7 +193,8 @@ export type LocationBlueprint = CardBlueprintBase & {
 export type SecretBlueprint<
   TEvent extends keyof EventMapWithStarEvent<GameEventMap>,
   T extends AnyCard = AnyCard
-> = CardBlueprintBase & {
+> = CardBlueprintBase &
+  LeveledCardBlueprint & {
   kind: Extract<CardKind, typeof CARD_KINDS.SECRET>;
   manaCost: number;
   manaSupply: number;

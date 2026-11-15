@@ -63,6 +63,8 @@ const sprite = computed(() => {
       kind: blueprint.kind,
       manaCost: masked.manaCost ?? (blueprint as any).manaCost,
       manaSupply: masked.manaSupply ?? (blueprint as any).manaSupply,
+      level: 'level' in blueprint ? blueprint.level : null,
+      exp: 'exp' in blueprint ? blueprint.exp : null,
       rarity: (blueprint as any).rarity,
       atk: masked.atk ?? (blueprint as any).atk,
       hp: masked.hp ?? (blueprint as any).maxHp,

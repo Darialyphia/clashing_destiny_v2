@@ -39,6 +39,7 @@ import { DeclareRetaliationInput } from './inputs/declare-retaliation.input';
 import { ScoreInput } from './inputs/score.input';
 import { SupplyCardInput } from './inputs/supply-card.input';
 import { CancelPlayingCardInput } from './inputs/cancel-playing-card.input';
+import { LevelUpInput } from './inputs/level-up.input';
 
 type GenericInputMap = Record<string, Constructor<Input<DefaultSchema>>>;
 
@@ -72,6 +73,7 @@ const inputMap = validateinputMap({
   declareRetaliation: DeclareRetaliationInput,
   score: ScoreInput,
   supplyCard: SupplyCardInput,
+  levelUp: LevelUpInput,
   cancelPlayingCard: CancelPlayingCardInput
 });
 

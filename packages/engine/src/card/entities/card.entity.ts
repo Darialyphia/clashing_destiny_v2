@@ -55,6 +55,7 @@ export type CardInterceptors = {
   speed: Interceptable<CardSpeed>;
   shouldCreateChainWhenPlayed: Interceptable<boolean, AnyCard>;
   canBeSupplied: Interceptable<boolean>;
+  exp: Interceptable<number>;
 };
 
 export const makeCardInterceptors = (): CardInterceptors => ({
@@ -69,7 +70,8 @@ export const makeCardInterceptors = (): CardInterceptors => ({
   offFactionManaCostIncrease: new Interceptable(),
   speed: new Interceptable(),
   shouldCreateChainWhenPlayed: new Interceptable(),
-  canBeSupplied: new Interceptable()
+  canBeSupplied: new Interceptable(),
+  exp: new Interceptable()
 });
 
 export type SerializedCard = {
@@ -89,6 +91,8 @@ export type SerializedCard = {
   manaSupply: number | null;
   keywords: string[];
   unplayableReason: string | null;
+  level: number | null;
+  exp: number | null;
   isRevealed: boolean;
   position: string | null;
   speed: CardSpeed;
@@ -246,6 +250,26 @@ export abstract class Card<
       const base = this.blueprint.manaSupply;
 
       return Math.max(0, this.interceptors.manaSupply.getValue(base ?? null, {}) ?? 0);
+    }
+    return 0;
+  }
+
+  // player level required to play this card
+  get level(): number {
+    if ('level' in this.blueprint) {
+      return this.blueprint.level;
+    }
+    return 0;
+  }
+
+  get meetsLevelRequirement() {
+    return this.player.level >= this.level;
+  }
+
+  // experience gained when this card is banished from the supply
+  get exp(): number {
+    if ('exp' in this.blueprint) {
+      return Math.max(0, this.interceptors.exp.getValue(this.blueprint.exp, {}));
     }
     return 0;
   }
@@ -471,7 +495,9 @@ export abstract class Card<
     }
 
     return (
-      this.location === CARD_LOCATIONS.HAND && this.canPayManaCost
+      this.location === CARD_LOCATIONS.HAND &&
+      this.meetsLevelRequirement &&
+      this.canPayManaCost
     );
   }
 
@@ -496,6 +522,10 @@ export abstract class Card<
 
     if (this.game.interaction.getState() !== INTERACTION_STATES.IDLE) {
       return 'You cannot play cards from hand right now.';
+    }
+
+    if (!this.meetsLevelRequirement) {
+      return `Requires level ${this.level}.`;
     }
 
     if (!this.canPayManaCost) {
@@ -535,6 +565,8 @@ export abstract class Card<
       manaSupply: 'manaSupply' in this.blueprint ? this.manaSupply : null,
       keywords: this.keywords.map(keyword => keyword.id),
       unplayableReason: this.unplayableReason,
+      level: 'level' in this.blueprint ? this.level : null,
+      exp: 'exp' in this.blueprint ? this.exp : null,
       isRevealed: this.isRevealed,
       position: this.position?.id ?? null,
       speed: this.speed,

@@ -12,6 +12,7 @@ import PassButton from '../PassButton.vue';
 import type { PlayerClockState } from '@/game/composables/useGameSocket';
 import Battlefield from '../Battlefield.vue';
 import SupplyZone from '../SupplyZone.vue';
+import PlayerLevel from '../PlayerLevel.vue';
 
 const { clocks } = defineProps<{
   clocks?: Record<string, PlayerClockState>;
@@ -178,6 +179,9 @@ const opponentHasInitiative = computed(() => {
     <div class="opponent-supply-zone">
       <SupplyZone :player="opponent" />
     </div>
+
+    <PlayerLevel class="my-level" :player="myPlayer" />
+    <PlayerLevel class="opponent-level" :player="opponent" />
   </div>
 </template>
 
@@ -393,6 +397,18 @@ const opponentHasInitiative = computed(() => {
 .opponent-supply-zone {
   position: absolute;
   top: 15px;
+  left: -40px;
+}
+
+/* under / above the supply zones, as experience comes from banishing supplied cards */
+.my-level {
+  position: absolute;
+  bottom: -60px;
+  left: -40px;
+}
+.opponent-level {
+  position: absolute;
+  top: -50px;
   left: -40px;
 }
 

@@ -158,6 +158,8 @@ const onMouseLeave = () => {
           manaCost: overrides.manaCost ?? card.manaCost,
           baseManaCost: overrides.baseManaCost ?? card.baseManaCost,
           manaSupply: overrides.manaSupply ?? card.manaSupply,
+          level: overrides.level ?? card.level,
+          exp: overrides.exp ?? card.exp,
           hp: overrides.hp ?? card.maxHp,
           atk: overrides.atk ?? card.atk,
           durability: overrides.durability ?? card.durability,

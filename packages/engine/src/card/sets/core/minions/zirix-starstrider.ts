@@ -25,6 +25,8 @@ export const zirixStarstrider: MinionBlueprint = {
   rarity: RARITIES.LEGENDARY,
   manaCost: 5,
   manaSupply: 3,
+  level: 1,
+  exp: 1,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 3,

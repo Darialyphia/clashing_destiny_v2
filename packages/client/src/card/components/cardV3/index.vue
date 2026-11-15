@@ -19,6 +19,8 @@ import FoilGoldenGlare from '../foil/FoilGoldenGlare.vue';
 import FoilGlitter from '../foil/FoilGlitter.vue';
 import FoilBrightShine from '../foil/FoilBrightShine.vue';
 import ManaCost from './ManaCost.vue';
+import CardLevel from './CardLevel.vue';
+import CardSupplyExp from './CardSupplyExp.vue';
 import Stats from './Stats.vue';
 import CardName from './CardName.vue';
 import Description from './Description.vue';
@@ -52,6 +54,8 @@ const {
     manaCost?: number | string | null;
     manaSupply?: number | string | null;
     baseManaCost?: number | string | null;
+    level?: number | null;
+    exp?: number | null;
     rarity: Rarity;
     atk?: number | string | null;
     hp?: number | string | null;
@@ -153,7 +157,12 @@ const _animationSequence = computed(() => {
           v-if="isDefined(card.manaCost)"
           :cost="card.manaCost"
           :baseCost="card.baseManaCost ?? card.manaCost"
+        />
+        <CardLevel v-if="isDefined(card.level)" :level="card.level" />
+        <CardSupplyExp
+          v-if="isDefined(card.manaSupply) || isDefined(card.exp)"
           :mana-supply="card.manaSupply"
+          :exp="card.exp"
         />
         <CardArtComponent
           v-if="sprite"

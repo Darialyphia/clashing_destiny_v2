@@ -54,6 +54,32 @@ export class PlayerAddSupplyEvent extends TypedSerializableEvent<
   }
 }
 
+export class PlayerGainExpEvent extends TypedSerializableEvent<
+  { player: Player; amount: number; total: number },
+  { player: string; amount: number; total: number }
+> {
+  serialize() {
+    return {
+      player: this.data.player.id,
+      amount: this.data.amount,
+      total: this.data.total
+    };
+  }
+}
+
+export class PlayerLevelUpEvent extends TypedSerializableEvent<
+  { player: Player; previousLevel: number; newLevel: number },
+  { player: string; previousLevel: number; newLevel: number }
+> {
+  serialize() {
+    return {
+      player: this.data.player.id,
+      previousLevel: this.data.previousLevel,
+      newLevel: this.data.newLevel
+    };
+  }
+}
+
 export type PlayerEventMap = {
   [PLAYER_EVENTS.PLAYER_BEFORE_DRAW]: PlayerDrawEvent;
   [PLAYER_EVENTS.PLAYER_AFTER_DRAW]: PlayerDrawEvent;
@@ -63,4 +89,8 @@ export type PlayerEventMap = {
   [PLAYER_EVENTS.PLAYER_AFTER_GAIN_VICTORY_POINT]: PlayerGainVictoryPointEvent;
   [PLAYER_EVENTS.PLAYER_BEFORE_ADD_SUPPLY]: PlayerAddSupplyEvent;
   [PLAYER_EVENTS.PLAYER_AFTER_ADD_SUPPLY]: PlayerAddSupplyEvent;
+  [PLAYER_EVENTS.PLAYER_BEFORE_GAIN_EXP]: PlayerGainExpEvent;
+  [PLAYER_EVENTS.PLAYER_AFTER_GAIN_EXP]: PlayerGainExpEvent;
+  [PLAYER_EVENTS.PLAYER_BEFORE_LEVEL_UP]: PlayerLevelUpEvent;
+  [PLAYER_EVENTS.PLAYER_AFTER_LEVEL_UP]: PlayerLevelUpEvent;
 };

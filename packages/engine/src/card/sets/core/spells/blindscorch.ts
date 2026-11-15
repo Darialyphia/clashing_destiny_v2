@@ -25,6 +25,8 @@ export const blindscorch: SpellBlueprint<MinionCard> = {
   rarity: RARITIES.COMMON,
   manaCost: 2,
   manaSupply: 3,
+  level: 1,
+  exp: 1,
   speed: CARD_SPEED.FAST,
   tags: [],
   canPlay: (game, card) =>

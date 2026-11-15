@@ -27,6 +27,8 @@ export const bloodrageMask: ArtifactBlueprint = {
   rarity: RARITIES.RARE,
   manaCost: 2,
   manaSupply: 2,
+  level: 1,
+  exp: 1,
   durability: 3,
   speed: CARD_SPEED.FAST,
   tags: [],

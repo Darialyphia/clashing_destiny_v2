@@ -17,6 +17,8 @@ export const decimate: SpellBlueprint = {
   rarity: RARITIES.LEGENDARY,
   manaCost: 7,
   manaSupply: 3,
+  level: 1,
+  exp: 1,
   speed: CARD_SPEED.FAST,
   tags: [],
   shouldHideTargetArrows: true,

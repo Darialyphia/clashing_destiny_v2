@@ -91,6 +91,27 @@ export class PlayerViewModel {
     return this.data.victoryPoints;
   }
 
+  get level() {
+    return this.data.level;
+  }
+
+  get exp() {
+    return this.data.exp;
+  }
+
+  // experience spent to reach the next level, null at max level
+  get expToNextLevel() {
+    return this.data.expToNextLevel;
+  }
+
+  get canLevelUp() {
+    return this.data.canLevelUp;
+  }
+
+  get hasLeveledUpThisTurn() {
+    return this.data.hasLeveledUpThisTurn;
+  }
+
   get supplyZone() {
     return this.data.boardSide.supply.map(cardId => {
       return this.getEntities()[cardId] as CardViewModel;

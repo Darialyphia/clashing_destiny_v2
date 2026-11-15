@@ -19,6 +19,8 @@ export const lionheartBlessing: SpellBlueprint<MinionCard> = {
   rarity: RARITIES.COMMON,
   manaCost: 1,
   manaSupply: 3,
+  level: 1,
+  exp: 1,
   speed: CARD_SPEED.FAST,
   tags: [],
   canPlay: (game, card) => singleAllyMinionTargetRules.canPlay(game, card),

@@ -10,6 +10,7 @@ import type { Ability, AbilityOwner } from '../card/entities/ability.entity';
 import { EntityWithModifiers } from '../modifier/entity-with-modifiers';
 import { cloneDeep } from 'lodash-es';
 import { ManaManagerComponent } from './components/mana-manager.component';
+import { LevelManagerComponent } from './components/level-manager.component';
 import { isMinion } from '../card/card-utils';
 import { match } from 'ts-pattern';
 import { BoardSide, type SerializedBoardSide } from '../board/board-side.entity';
@@ -37,6 +38,11 @@ export type SerializedPlayer = {
   manaRegen: number;
   boardSide: SerializedBoardSide;
   victoryPoints: number;
+  level: number;
+  exp: number;
+  expToNextLevel: number | null;
+  canLevelUp: boolean;
+  hasLeveledUpThisTurn: boolean;
 };
 
 export type PlayerInterceptors = {
@@ -62,6 +68,8 @@ export class Player
   readonly eventTracker: EventTracker;
 
   readonly manaManager = new ManaManagerComponent(this.game, this);
+
+  readonly levelManager = new LevelManagerComponent(this.game, this);
 
   readonly boardSide: BoardSide;
 
@@ -206,6 +214,7 @@ export class Player
 
   async startTurn() {
     this.hasPassedThisTurn = false;
+    this.levelManager.onTurnStart();
 
     for (const card of this.allCardsInPlay) {
       if (card.shouldWakeUpAtTurnStart) {
@@ -261,6 +270,33 @@ export class Player
     );
   }
 
+  get level() {
+    return this.levelManager.level;
+  }
+
+  get exp() {
+    return this.levelManager.exp;
+  }
+
+  get canLevelUp() {
+    return this.levelManager.canLevelUp;
+  }
+
+  async gainExp(amount: number) {
+    await this.levelManager.gainExp(amount);
+  }
+
+  async levelUp() {
+    await this.levelManager.levelUp();
+  }
+
+  // banishes a card from the supply to gain its experience
+  async banishFromSupplyForExp(card: AnyCard) {
+    const exp = card.exp;
+    await card.sendToBanishPile();
+    await this.gainExp(exp);
+  }
+
   async recollectSupply() {
     const supply = Array.from(this.cardManager.supply);
     for (const card of supply) {
@@ -288,7 +324,12 @@ export class Player
       maxMana: this.maxMana,
       manaRegen: this.manaRegen,
       boardSide: this.boardSide.serialize(),
-      victoryPoints: this.victoryPoints
+      victoryPoints: this.victoryPoints,
+      level: this.level,
+      exp: this.exp,
+      expToNextLevel: this.levelManager.expToNextLevel,
+      canLevelUp: this.canLevelUp,
+      hasLeveledUpThisTurn: this.levelManager.hasLeveledUpThisTurn
     };
   }
 }

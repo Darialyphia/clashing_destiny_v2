@@ -17,6 +17,8 @@ export const flutterCrane: MinionBlueprint = {
   rarity: RARITIES.RARE,
   manaCost: 3,
   manaSupply: 2,
+  level: 1,
+  exp: 1,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 1,

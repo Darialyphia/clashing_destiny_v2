@@ -30,6 +30,8 @@ export const skyBurial: SpellBlueprint = {
   rarity: RARITIES.RARE,
   manaCost: 4,
   manaSupply: 3,
+  level: 1,
+  exp: 1,
   speed: CARD_SPEED.FAST,
   tags: [],
   shouldHideTargetArrows: false,

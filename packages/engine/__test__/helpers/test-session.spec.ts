@@ -16,6 +16,8 @@ const testMinion: MinionBlueprint = {
   rarity: RARITIES.COMMON,
   manaCost: 1,
   manaSupply: 0,
+  level: 1,
+  exp: 1,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 1,

@@ -17,6 +17,8 @@ export const manaVortex: SpellBlueprint = {
   rarity: RARITIES.RARE,
   manaCost: 1,
   manaSupply: 2,
+  level: 1,
+  exp: 1,
   speed: CARD_SPEED.FAST,
   tags: [],
   shouldHideTargetArrows: true,

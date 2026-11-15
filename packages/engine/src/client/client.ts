@@ -387,6 +387,15 @@ export class GameClient {
     });
   }
 
+  levelUp() {
+    this.dispatch({
+      type: 'levelUp',
+      payload: {
+        playerId: this.playerId
+      }
+    });
+  }
+
   chooseCards(indices: number[]) {
     this.optimisticStateManager.chooseCards(this.playerId, indices);
     this.dispatch({

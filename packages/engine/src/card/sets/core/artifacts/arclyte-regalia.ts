@@ -21,6 +21,8 @@ export const arclyteRegalia: ArtifactBlueprint = {
   rarity: RARITIES.RARE,
   manaCost: 3,
   manaSupply: 2,
+  level: 1,
+  exp: 1,
   durability: 2,
   speed: CARD_SPEED.FAST,
   tags: [],

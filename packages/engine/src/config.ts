@@ -42,6 +42,11 @@ export type Config = {
   SHOULD_EXHAUST_MINION_ON_RETALIATION: boolean;
 
   SECRET_UPFRONT_COST: number;
+
+  STARTING_PLAYER_LEVEL: number;
+  MAX_PLAYER_LEVEL: number;
+  // experience spent to go from the previous level to this one
+  EXP_TO_REACH_LEVEL: Record<number, number>;
 };
 
 export const defaultConfig: Config = {
@@ -52,11 +57,11 @@ export const defaultConfig: Config = {
   INITIAL_HAND_SIZE: 6,
   MAX_HAND_SIZE: 10,
   SHUFFLE_DECK_ON_GAME_START: true,
-  CARDS_DRAWN_PER_TURN: 6,
-  CARD_DRAW_MODE: 'threshold',
+  CARDS_DRAWN_PER_TURN: 2,
+  CARD_DRAW_MODE: 'fixed',
 
-  CARDS_MULLIGANED_PER_TURN: 2,
-  START_OF_GAME_MULLIGANED_CARDS: 2,
+  CARDS_MULLIGANED_PER_TURN: 1,
+  START_OF_GAME_MULLIGANED_CARDS: 3,
 
   PLAYER_1_CARDS_DRAWN_ON_FIRST_TURN: 0,
   PLAYER_2_CARDS_DRAWN_ON_FIRST_TURN: 0,
@@ -85,5 +90,13 @@ export const defaultConfig: Config = {
   AUTO_RETALIATE: true,
   SHOULD_EXHAUST_MINION_ON_RETALIATION: false,
 
-  SECRET_UPFRONT_COST: 1
+  SECRET_UPFRONT_COST: 1,
+
+  STARTING_PLAYER_LEVEL: 1,
+  MAX_PLAYER_LEVEL: 4,
+  EXP_TO_REACH_LEVEL: {
+    2: 2,
+    3: 3,
+    4: 4
+  }
 };

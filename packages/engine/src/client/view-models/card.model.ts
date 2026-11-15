@@ -225,15 +225,14 @@ export class CardViewModel {
     return null;
   }
 
+  // player level required to play the card, null for cards without a level (locations)
   get level() {
-    if ('level' in this.data) {
-      return this.data.level as number;
-    }
-    if ('minLevel' in this.data) {
-      return this.data.minLevel as number;
-    }
+    return this.data.level;
+  }
 
-    return null;
+  // experience gained when banishing the card from the supply
+  get exp() {
+    return this.data.exp;
   }
 
   get spellpower() {
