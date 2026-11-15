@@ -11,6 +11,7 @@ import { SimpleStatsBuffModifier } from '../../../../modifier/modifiers/simple-s
 import { TogglableModifierMixin } from '../../../../modifier/mixins/togglable.mixin';
 import { VigilantModifier } from '../../../../modifier/modifiers/vigilant.modifier';
 import { CardEffectTriggeredEvent } from '../../../card.events';
+import { FACTION_IDS } from '../../../factions/factions';
 
 export const solarius: MinionBlueprint = {
   id: 'solarius',
@@ -28,6 +29,7 @@ export const solarius: MinionBlueprint = {
   manaSupply: 3,
   level: 1,
   exp: 1,
+  factionId: FACTION_IDS.LYONAR,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 2,

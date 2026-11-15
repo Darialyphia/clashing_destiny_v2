@@ -4,6 +4,7 @@ import { defaultCardArt, noTargets } from '../../../card-utils';
 import { CARD_KINDS, CARD_SETS, CARD_SPEED, RARITIES } from '../../../card.enums';
 import { GAME_EVENTS } from '../../../../game/game.events';
 import { SpellDamage } from '../../../../utils/damage';
+import { FACTION_IDS } from '../../../factions/factions';
 
 export const tutorialHolyImmolation = defineSecretBlueprint({
   id: 'tutorial-holy-immolation',
@@ -20,6 +21,7 @@ export const tutorialHolyImmolation = defineSecretBlueprint({
   manaSupply: 2,
   level: 1,
   exp: 1,
+  factionId: FACTION_IDS.LYONAR,
   speed: CARD_SPEED.FAST,
   tags: [],
   shouldHideTargetArrows: true,

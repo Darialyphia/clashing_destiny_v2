@@ -12,6 +12,7 @@ import { GameEventModifierMixin } from '../../../../modifier/mixins/game-event.m
 import { TogglableModifierMixin } from '../../../../modifier/mixins/togglable.mixin';
 import type { AnyCard } from '../../../entities/card.entity';
 import { MinionInterceptorModifierMixin } from '../../../../modifier/mixins/interceptor.mixin';
+import { FACTION_IDS } from '../../../factions/factions';
 
 const getTotalDamageDealtThisTurn = (card: AnyCard) => {
   const totalDamageDealt = card.player.eventTracker
@@ -52,6 +53,7 @@ export const tuskBoar: MinionBlueprint = {
   manaSupply: 2,
   level: 1,
   exp: 1,
+  factionId: FACTION_IDS.SONGHAI,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 3,

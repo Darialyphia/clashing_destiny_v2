@@ -4,6 +4,7 @@ import { defaultCardArt } from '../../../card-utils';
 import { CARD_SETS, CARD_KINDS, RARITIES, CARD_SPEED } from '../../../card.enums';
 import { SimpleAttackBuffModifier } from '../../../../modifier/modifiers/simple-attack-buff.modifier';
 import { ZealModifier } from '../../../../modifier/modifiers/zeal.modifier';
+import { FACTION_IDS } from '../../../factions/factions';
 
 export const windbladeAdept: MinionBlueprint = {
   id: 'windblade-adept',
@@ -20,6 +21,7 @@ export const windbladeAdept: MinionBlueprint = {
   manaSupply: 2,
   level: 1,
   exp: 1,
+  factionId: FACTION_IDS.LYONAR,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 2,

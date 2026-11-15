@@ -4,6 +4,7 @@ import { defaultCardArt } from '../../src/card/card-utils';
 import { CARD_KINDS, CARD_SETS, CARD_SPEED, RARITIES } from '../../src/card/card.enums';
 import { GAME_PHASES } from '../../src/game/game.enums';
 import { TEST_PLAYER_IDS, TestSession } from './test-session';
+import { FACTION_IDS } from '../../src/card/factions/factions';
 
 const testMinion: MinionBlueprint = {
   id: 'test-session-minion',
@@ -18,6 +19,7 @@ const testMinion: MinionBlueprint = {
   manaSupply: 0,
   level: 1,
   exp: 1,
+  factionId: FACTION_IDS.NEUTRAL,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 1,

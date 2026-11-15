@@ -3,6 +3,7 @@ import type { SpellBlueprint } from '../../../card-blueprint';
 import { anywhereTargetRules, defaultCardArt } from '../../../card-utils';
 import { CARD_KINDS, CARD_SETS, CARD_SPEED, RARITIES } from '../../../card.enums';
 import { SpellDamage } from '../../../../utils/damage';
+import { FACTION_IDS } from '../../../factions/factions';
 
 export const tempest: SpellBlueprint = {
   id: 'tempest',
@@ -19,6 +20,7 @@ export const tempest: SpellBlueprint = {
   manaSupply: 3,
   level: 1,
   exp: 1,
+  factionId: FACTION_IDS.LYONAR,
   speed: CARD_SPEED.FAST,
   tags: [],
   shouldHideTargetArrows: true,

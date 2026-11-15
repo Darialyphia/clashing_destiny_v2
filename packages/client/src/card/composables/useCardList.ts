@@ -13,6 +13,11 @@ import type { Ref, ComputedRef, InjectionKey } from 'vue';
 import { api, type CardId } from '@game/api';
 import { useAuthedQuery } from '@/auth/composables/useAuth';
 import { useUrlSearchParams } from '@vueuse/core';
+import {
+  FACTION_ORDER,
+  isEligibleForDeckFaction,
+  type FactionId
+} from '@game/engine/src/card/factions/factions';
 
 export type CardListContext = {
   isLoading: Ref<boolean>;
@@ -41,6 +46,9 @@ export type CardListContext = {
   manaCostFilter: Ref<{ min: number; max: number } | null>;
 
   foilFilter: Ref<boolean>;
+
+  // set while editing a deck: only the cards that can go in it are listed
+  deckFactionId: Ref<FactionId | null>;
 };
 
 const CardListInjectionKey = Symbol(
@@ -66,6 +74,7 @@ export const provideCardList = () => {
   const manaCostFilter = ref<{ min: number; max: number } | null>(null);
   const includeUnowned = ref(false);
   const foilFilter = ref(true);
+  const deckFactionId = ref<FactionId | null>(null);
 
   const urlParams = useUrlSearchParams<{
     kinds?: string;
@@ -168,6 +177,13 @@ export const provideCardList = () => {
         };
       })
       .filter(({ card, isFoil }) => {
+        if (
+          deckFactionId.value &&
+          !isEligibleForDeckFaction(card, deckFactionId.value)
+        ) {
+          return false;
+        }
+
         if (kindFilter.value.size > 0 && !kindFilter.value.has(card.kind)) {
           return false;
         }
@@ -232,15 +248,19 @@ export const provideCardList = () => {
         return true;
       })
       .sort((a, b) => {
+        // Locations go at the bottom
         if (KIND_ORDER[a.card.kind] !== KIND_ORDER[b.card.kind]) {
           return KIND_ORDER[a.card.kind] - KIND_ORDER[b.card.kind];
         }
-        if (
-          'manaCost' in a.card &&
-          'manaCost' in b.card &&
-          a.card.manaCost !== b.card.manaCost
-        ) {
-          return (a.card.manaCost ?? 0) - (b.card.manaCost ?? 0);
+
+        // then by faction (Neutral last), mana cost and level
+        const [keysA, keysB] = [a.card, b.card].map(card => [
+          'factionId' in card ? FACTION_ORDER[card.factionId] : 0,
+          'manaCost' in card ? card.manaCost : 0,
+          'level' in card ? card.level : 0
+        ]);
+        for (let i = 0; i < keysA.length; i++) {
+          if (keysA[i] !== keysB[i]) return keysA[i] - keysB[i];
         }
 
         return a.card.name
@@ -257,6 +277,7 @@ export const provideCardList = () => {
     textFilter,
     foilFilter,
     getUnownedId,
+    deckFactionId,
 
     hasKindFilter(kind: CardKind) {
       return kindFilter.value.has(kind);

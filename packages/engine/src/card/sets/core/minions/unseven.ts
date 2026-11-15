@@ -7,6 +7,7 @@ import { GameEventModifierMixin } from '../../../../modifier/mixins/game-event.m
 import { GAME_EVENTS } from '../../../../game/game.events';
 import type { MinionCard } from '../../../entities/minion.entity';
 import { AttackerModifier } from '../../../../modifier/modifiers/attacker.modifier';
+import { FACTION_IDS } from '../../../factions/factions';
 
 export const unseven: MinionBlueprint = {
   id: 'unseven',
@@ -24,6 +25,7 @@ export const unseven: MinionBlueprint = {
   manaSupply: 2,
   level: 1,
   exp: 1,
+  factionId: FACTION_IDS.LYONAR,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 2,

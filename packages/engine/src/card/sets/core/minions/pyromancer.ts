@@ -13,6 +13,7 @@ import { BurnModifier } from '../../../../modifier/modifiers/burn.modifier';
 import { TogglableModifierMixin } from '../../../../modifier/mixins/togglable.mixin';
 import { EmpoweredModifier } from '../../../../modifier/modifiers/empowered.modifier';
 import { OnMoveModifier } from '../../../../modifier/modifiers/on-move.modifier';
+import { FACTION_IDS } from '../../../factions/factions';
 
 export const pyromancer: MinionBlueprint = {
   id: 'pyromancer',
@@ -30,6 +31,7 @@ export const pyromancer: MinionBlueprint = {
   manaSupply: 2,
   level: 1,
   exp: 1,
+  factionId: FACTION_IDS.VETRUVIAN,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 2,

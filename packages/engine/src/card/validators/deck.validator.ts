@@ -1,5 +1,6 @@
 import { type Config } from '../../config';
 import type { CardBlueprint } from '../card-blueprint';
+import type { FactionId } from '../factions/factions';
 
 export type DeckViolation = {
   type: string;
@@ -14,6 +15,7 @@ export type ValidatableCard<TMeta> = {
 export type ValidatableDeck<TMeta> = {
   id: string;
   name: string;
+  factionId: FactionId | null;
   isEqual(first: ValidatableCard<TMeta>, second: ValidatableCard<TMeta>): boolean;
   cards: Array<ValidatableCard<TMeta>>;
 };

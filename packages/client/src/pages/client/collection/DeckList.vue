@@ -4,11 +4,15 @@ import { useCollectionPage } from './useCollectionPage';
 import FancyButton from '@/ui/components/FancyButton.vue';
 import { useResponsive } from '@/shared/composables/useResponsive';
 import { useRouter } from 'vue-router';
+import FactionPicker from './FactionPicker.vue';
 const { decks, createDeck, editDeck } = useCollectionPage();
 
 const { isSmallViewport } = useResponsive();
 
 const router = useRouter();
+
+// a deck's faction is chosen once, before any card can be added
+const isFactionPickerOpened = ref(false);
 </script>
 
 <template>
@@ -29,7 +33,11 @@ const router = useRouter();
       :class="!decks?.length && 'mx-auto'"
       text="New Deck"
       :size="isSmallViewport ? 'sm' : 'md'"
-      @click="createDeck"
+      @click="isFactionPickerOpened = true"
+    />
+    <FactionPicker
+      v-model:is-opened="isFactionPickerOpened"
+      @select="createDeck"
     />
     <FancyButton
       v-if="isSmallViewport"

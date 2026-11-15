@@ -7,6 +7,7 @@ import { DEFAULT_DECK_NAME } from '../deck.constants';
 import { Deck, type DeckId } from '../entities/deck.entity';
 import type { DeckMapper } from '../mappers/deck.mapper';
 import { premadeDecks } from '../premadeDecks';
+import type { DeckFactionId } from '@game/engine/src/card/factions/factions';
 
 export class DeckReadRepository {
   static INJECTION_KEY = 'deckReadRepo' as const;
@@ -72,6 +73,7 @@ export class DeckRepository {
     const deckDocId = await this.ctx.db.insert('decks', {
       name: premadeDeck.name,
       ownerId: userId,
+      factionId: premadeDeck.factionId,
       cards
     });
 
@@ -83,10 +85,11 @@ export class DeckRepository {
     return new Deck(deckDoc._id, deckDoc);
   }
 
-  async create(ownerId: UserId) {
+  async create(ownerId: UserId, factionId: DeckFactionId) {
     const deckDocId = await this.ctx.db.insert('decks', {
       name: DEFAULT_DECK_NAME,
       ownerId: ownerId,
+      factionId,
       cards: []
     });
 

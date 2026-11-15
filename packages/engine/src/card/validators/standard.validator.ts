@@ -1,5 +1,6 @@
 import { defaultConfig } from '../../config';
 import { CARD_KINDS, type CardKind } from '../card.enums';
+import { isDeckFactionId, isEligibleForDeckFaction } from '../factions/factions';
 import {
   CardValidationRule,
   DeckValidationRule,
@@ -40,6 +41,36 @@ class InvalidCardcountForKindRule<TMeta> extends DeckValidationRule<TMeta> {
           minCount === maxCount
             ? `Deck must include exactly ${minCount} ${kind} cards.`
             : `Deck must include between ${minCount} and ${maxCount} ${kind} cards.`
+      })
+    });
+  }
+}
+
+class MissingFactionRule<TMeta> extends DeckValidationRule<TMeta> {
+  constructor() {
+    super({
+      rule: deck => isDeckFactionId(deck.factionId),
+      violation: () => ({
+        type: 'missing_faction',
+        reason: 'Deck must have a faction.'
+      })
+    });
+  }
+}
+
+class WrongFactionRule<TMeta> extends CardValidationRule<TMeta> {
+  constructor() {
+    super({
+      // without a deck faction, MissingFactionRule already reports the problem
+      predicate: (card, deck) => isDeckFactionId(deck.factionId),
+      rule: (card, deck, validator) => {
+        const blueprint = validator.cardPool[card.blueprintId];
+        if (!blueprint) return true;
+        return isEligibleForDeckFaction(blueprint, deck.factionId!);
+      },
+      violation: (card, deck, validator) => ({
+        type: 'wrong_faction',
+        reason: `Card ${validator.cardPool[card.blueprintId]?.name} is not part of this deck's faction.`
       })
     });
   }
@@ -86,6 +117,7 @@ export class StandardDeckValidator<TMeta> extends DeckValidator<TMeta> {
       ...options,
       config: defaultConfig,
       deckRules: [
+        new MissingFactionRule(),
         new InvalidDeckSizeRule(),
         new InvalidCardcountForKindRule(
           CARD_KINDS.LOCATION,
@@ -95,6 +127,7 @@ export class StandardDeckValidator<TMeta> extends DeckValidator<TMeta> {
       ],
       cardRules: [
         new UnknownCardRule(),
+        new WrongFactionRule(),
         new TooManyCopiesRule({
           ARTIFACT: defaultConfig.MAX_MAIN_DECK_CARD_COPIES,
           MINION: defaultConfig.MAX_MAIN_DECK_CARD_COPIES,

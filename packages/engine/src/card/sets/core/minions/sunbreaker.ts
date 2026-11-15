@@ -5,6 +5,7 @@ import { CARD_SETS, CARD_KINDS, RARITIES, CARD_SPEED } from '../../../card.enums
 import { ZealModifier } from '../../../../modifier/modifiers/zeal.modifier';
 import { CleaveModifier } from '../../../../modifier/modifiers/cleave.modifier';
 import { OnKillModifier } from '../../../../modifier/modifiers/on-kill.modifier';
+import { FACTION_IDS } from '../../../factions/factions';
 
 export const sunbreaker: MinionBlueprint = {
   id: 'sunbreaker',
@@ -22,6 +23,7 @@ export const sunbreaker: MinionBlueprint = {
   manaSupply: 3,
   level: 1,
   exp: 1,
+  factionId: FACTION_IDS.LYONAR,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 4,

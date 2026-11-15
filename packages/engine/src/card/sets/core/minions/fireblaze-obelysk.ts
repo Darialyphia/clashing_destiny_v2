@@ -13,6 +13,7 @@ import type { MinionCard } from '../../../entities/minion.entity';
 import { OnAttackModifier } from '../../../../modifier/modifiers/on-attack.modifier';
 import { BurnModifier } from '../../../../modifier/modifiers/burn.modifier';
 import { StructureModifier } from '../../../../modifier/modifiers/structure.modifier';
+import { FACTION_IDS } from '../../../factions/factions';
 
 export const fireblazeObelysk: MinionBlueprint = {
   id: 'fireblaze-obelysk',
@@ -30,6 +31,7 @@ export const fireblazeObelysk: MinionBlueprint = {
   manaSupply: 2,
   level: 1,
   exp: 1,
+  factionId: FACTION_IDS.VETRUVIAN,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 0,

@@ -7,8 +7,7 @@ const { deckBuilder, deckEditorOptions } = useCollectionPage();
 const cards = computed(() => {
   if (!deckEditorOptions.value.collapseFoil)
     return deckBuilder.value.mainDeckCards;
-  // group foil ans non foil cards who share the same blueprint id
-  // if a card only has a foil version, change isFoil to false
+
   const groupedCards: Record<string, typeof deckBuilder.value.mainDeckCards> =
     {};
   for (const card of deckBuilder.value.mainDeckCards) {

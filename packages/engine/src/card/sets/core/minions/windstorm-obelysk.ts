@@ -13,6 +13,7 @@ import { CardAuraModifierMixin } from '../../../../modifier/mixins/aura.mixin';
 import type { MinionCard } from '../../../entities/minion.entity';
 import { InstantMoveModifier } from '../../../../modifier/modifiers/instant-move.modifier';
 import { StructureModifier } from '../../../../modifier/modifiers/structure.modifier';
+import { FACTION_IDS } from '../../../factions/factions';
 
 export const windstormObelysk: MinionBlueprint = {
   id: 'windstorm-obelysk',
@@ -30,6 +31,7 @@ export const windstormObelysk: MinionBlueprint = {
   manaSupply: 2,
   level: 1,
   exp: 1,
+  factionId: FACTION_IDS.VETRUVIAN,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 0,

@@ -10,6 +10,7 @@ import { OnMoveModifier } from '../../../../modifier/modifiers/on-move.modifier'
 import { windDervish } from './wind-dervish';
 import type { MinionCard } from '../../../entities/minion.entity';
 import { OnEnterModifier } from '../../../../modifier/modifiers/on-enter.modifier';
+import { FACTION_IDS } from '../../../factions/factions';
 
 export const zirixStarstrider: MinionBlueprint = {
   id: 'zirix-starstrider',
@@ -27,6 +28,7 @@ export const zirixStarstrider: MinionBlueprint = {
   manaSupply: 3,
   level: 1,
   exp: 1,
+  factionId: FACTION_IDS.VETRUVIAN,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 3,

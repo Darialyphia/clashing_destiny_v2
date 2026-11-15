@@ -7,6 +7,7 @@ import { GameEventModifierMixin } from '../../../../modifier/mixins/game-event.m
 import { MinionCard } from '../../../entities/minion.entity';
 import { GAME_EVENTS } from '../../../../game/game.events';
 import { CardEffectTriggeredEvent } from '../../../card.events';
+import { FACTION_IDS } from '../../../factions/factions';
 
 export const fourWindsMagi: MinionBlueprint = {
   id: 'four-winds-magi',
@@ -23,6 +24,7 @@ export const fourWindsMagi: MinionBlueprint = {
   manaSupply: 3,
   level: 1,
   exp: 1,
+  factionId: FACTION_IDS.SONGHAI,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 3,

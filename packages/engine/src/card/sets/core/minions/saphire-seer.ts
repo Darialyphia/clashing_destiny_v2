@@ -9,6 +9,7 @@ import { WhileOnBattlefieldModifier } from '../../../../modifier/modifiers/while
 import type { MinionCard } from '../../../entities/minion.entity';
 import { CardAuraModifierMixin } from '../../../../modifier/mixins/aura.mixin';
 import { SimpleStatsBuffModifier } from '../../../../modifier/modifiers/simple-stats-modifier';
+import { FACTION_IDS } from '../../../factions/factions';
 
 export const saphireSeer: MinionBlueprint = {
   id: 'sapphire-seer',
@@ -26,6 +27,7 @@ export const saphireSeer: MinionBlueprint = {
   manaSupply: 2,
   level: 1,
   exp: 1,
+  factionId: FACTION_IDS.NEUTRAL,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 1,

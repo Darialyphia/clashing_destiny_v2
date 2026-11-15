@@ -6,6 +6,7 @@ import { OnMoveModifier } from '../../../../modifier/modifiers/on-move.modifier'
 import { WhileOnBoardModifier } from '../../../../modifier/modifiers/while-on-board.modifier';
 import { MinionInterceptorModifierMixin } from '../../../../modifier/mixins/interceptor.mixin';
 import { UntilEndOfTurnModifierMixin } from '../../../../modifier/mixins/until-end-of-turn.mixin';
+import { FACTION_IDS } from '../../../factions/factions';
 
 export const fiz: MinionBlueprint = {
   id: 'fiz',
@@ -22,6 +23,7 @@ export const fiz: MinionBlueprint = {
   manaSupply: 2,
   level: 1,
   exp: 1,
+  factionId: FACTION_IDS.LYONAR,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 1,

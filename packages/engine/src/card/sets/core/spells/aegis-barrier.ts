@@ -4,6 +4,7 @@ import { defaultCardArt, singleAllyMinionTargetRules } from '../../../card-utils
 import { CARD_KINDS, CARD_SETS, CARD_SPEED, RARITIES } from '../../../card.enums';
 import type { MinionCard } from '../../../entities/minion.entity';
 import { ShieldModifier } from '../../../../modifier/modifiers/shield.modifier';
+import { FACTION_IDS } from '../../../factions/factions';
 
 export const aegisBarrier: SpellBlueprint<MinionCard> = {
   id: 'aegisBarrier',
@@ -20,6 +21,7 @@ export const aegisBarrier: SpellBlueprint<MinionCard> = {
   manaSupply: 2,
   level: 1,
   exp: 1,
+  factionId: FACTION_IDS.LYONAR,
   speed: CARD_SPEED.FAST,
   tags: [],
   canPlay: (game, card) => singleAllyMinionTargetRules.canPlay(game, card),

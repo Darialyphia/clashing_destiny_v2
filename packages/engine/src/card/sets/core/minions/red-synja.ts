@@ -8,6 +8,7 @@ import { GameEventModifierMixin } from '../../../../modifier/mixins/game-event.m
 import { GAME_EVENTS } from '../../../../game/game.events';
 import type { MinionCard } from '../../../entities/minion.entity';
 import { CardEffectTriggeredEvent } from '../../../card.events';
+import { FACTION_IDS } from '../../../factions/factions';
 
 export const redSynja: MinionBlueprint = {
   id: 'red-synja',
@@ -24,6 +25,7 @@ export const redSynja: MinionBlueprint = {
   manaSupply: 3,
   level: 1,
   exp: 1,
+  factionId: FACTION_IDS.NEUTRAL,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 5,

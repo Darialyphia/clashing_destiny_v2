@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import { CARDS_DICTIONARY } from '@game/engine/src/card/sets';
 import type { DeckValidationResult } from '@game/engine/src/card/validators/deck.validator';
+import type { FactionId } from '@game/engine/src/card/factions/factions';
+import FactionIcon from '@/card/components/FactionIcon.vue';
 
 export type DisplayedDeck = {
   name: string;
+  factionId: FactionId | null;
   cards: { blueprintId: string; copies: number }[];
   isValid: DeckValidationResult;
 };
@@ -28,6 +31,7 @@ const mainDeck = computed(() =>
       }"
       :style="{}"
     >
+      <FactionIcon v-if="deck.factionId" :faction-id="deck.factionId" :size="2" />
       <div class="deck-name">
         {{ deck.name }}
         <div v-if="deck.isValid.result === 'failure'" class="invalid-label">

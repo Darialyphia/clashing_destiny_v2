@@ -235,6 +235,11 @@ export class CardViewModel {
     return this.data.exp;
   }
 
+  // null for cards without a faction (Locations)
+  get factionId() {
+    return this.data.factionId;
+  }
+
   get spellpower() {
     if ('spellPower' in this.data) {
       return this.data.spellPower as number;

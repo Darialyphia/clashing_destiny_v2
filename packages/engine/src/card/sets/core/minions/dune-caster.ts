@@ -6,6 +6,7 @@ import { CARD_SETS, CARD_KINDS, RARITIES, CARD_SPEED } from '../../../card.enums
 import { windDervish } from './wind-dervish';
 import { OnEnterModifier } from '../../../../modifier/modifiers/on-enter.modifier';
 import { SimpleStatsBuffModifier } from '../../../../modifier/modifiers/simple-stats-modifier';
+import { FACTION_IDS } from '../../../factions/factions';
 
 export const duneCaster: MinionBlueprint = {
   id: 'dune-caster',
@@ -22,6 +23,7 @@ export const duneCaster: MinionBlueprint = {
   manaSupply: 2,
   level: 1,
   exp: 1,
+  factionId: FACTION_IDS.VETRUVIAN,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 1,

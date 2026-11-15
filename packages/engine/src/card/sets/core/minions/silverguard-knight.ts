@@ -5,6 +5,7 @@ import { CARD_SETS, CARD_KINDS, RARITIES, CARD_SPEED } from '../../../card.enums
 import { ProtectorModifier } from '../../../../modifier/modifiers/protector.modifier';
 import { ZealModifier } from '../../../../modifier/modifiers/zeal.modifier';
 import { DefenderModifier } from '../../../../modifier/modifiers/defender.modifier';
+import { FACTION_IDS } from '../../../factions/factions';
 
 export const silverGuardKnight: MinionBlueprint = {
   id: 'silverguard-knight',
@@ -21,6 +22,7 @@ export const silverGuardKnight: MinionBlueprint = {
   manaSupply: 3,
   level: 1,
   exp: 1,
+  factionId: FACTION_IDS.LYONAR,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 1,

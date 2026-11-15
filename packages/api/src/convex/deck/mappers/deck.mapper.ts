@@ -9,6 +9,7 @@ export class DeckMapper {
       _id: deck.id,
       name: deck.name,
       ownerId: deck.ownerId,
+      factionId: deck.factionId,
       cards: deck.cards
     };
   }

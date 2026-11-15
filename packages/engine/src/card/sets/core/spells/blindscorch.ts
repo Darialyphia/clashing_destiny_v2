@@ -11,6 +11,7 @@ import { SpellDamage } from '../../../../utils/damage';
 import { BurnModifier } from '../../../../modifier/modifiers/burn.modifier';
 import { SimpleStatsBuffModifier } from '../../../../modifier/modifiers/simple-stats-modifier';
 import { UntilEndOfTurnModifierMixin } from '../../../../modifier/mixins/until-end-of-turn.mixin';
+import { FACTION_IDS } from '../../../factions/factions';
 
 export const blindscorch: SpellBlueprint<MinionCard> = {
   id: 'blindscorch',
@@ -27,6 +28,7 @@ export const blindscorch: SpellBlueprint<MinionCard> = {
   manaSupply: 3,
   level: 1,
   exp: 1,
+  factionId: FACTION_IDS.VETRUVIAN,
   speed: CARD_SPEED.FAST,
   tags: [],
   canPlay: (game, card) =>

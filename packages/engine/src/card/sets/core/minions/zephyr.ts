@@ -6,6 +6,7 @@ import { EmpoweredModifier } from '../../../../modifier/modifiers/empowered.modi
 import { ChannelModifier } from '../../../../modifier/modifiers/channel.modifier';
 import type { MinionCard } from '../../../entities/minion.entity';
 import { SimpleStatsBuffModifier } from '../../../../modifier/modifiers/simple-stats-modifier';
+import { FACTION_IDS } from '../../../factions/factions';
 
 export const zephyr: MinionBlueprint = {
   id: 'zephyr',
@@ -22,6 +23,7 @@ export const zephyr: MinionBlueprint = {
   manaSupply: 3,
   level: 1,
   exp: 1,
+  factionId: FACTION_IDS.VETRUVIAN,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 3,

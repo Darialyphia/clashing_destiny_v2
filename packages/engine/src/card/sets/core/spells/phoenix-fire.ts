@@ -8,6 +8,7 @@ import {
 import { CARD_KINDS, CARD_SETS, CARD_SPEED, RARITIES } from '../../../card.enums';
 import type { MinionCard } from '../../../entities/minion.entity';
 import { SpellDamage } from '../../../../utils/damage';
+import { FACTION_IDS } from '../../../factions/factions';
 
 export const phoenixFire: SpellBlueprint<MinionCard> = {
   id: 'phoenixFire',
@@ -24,6 +25,7 @@ export const phoenixFire: SpellBlueprint<MinionCard> = {
   manaSupply: 3,
   level: 1,
   exp: 1,
+  factionId: FACTION_IDS.SONGHAI,
   speed: CARD_SPEED.FAST,
   tags: [],
   canPlay: (game, card) =>

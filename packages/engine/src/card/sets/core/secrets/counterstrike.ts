@@ -5,6 +5,7 @@ import { CARD_KINDS, CARD_SETS, CARD_SPEED, RARITIES } from '../../../card.enums
 import { SimpleAttackBuffModifier } from '../../../../modifier/modifiers/simple-attack-buff.modifier';
 import { GAME_EVENTS } from '../../../../game/game.events';
 import { UntilEndOfTurnModifierMixin } from '../../../../modifier/mixins/until-end-of-turn.mixin';
+import { FACTION_IDS } from '../../../factions/factions';
 
 export const counterstrike = defineSecretBlueprint({
   id: 'counterstrike',
@@ -21,6 +22,7 @@ export const counterstrike = defineSecretBlueprint({
   manaSupply: 3,
   level: 1,
   exp: 1,
+  factionId: FACTION_IDS.SONGHAI,
   speed: CARD_SPEED.FAST,
   tags: [],
   shouldHideTargetArrows: true,

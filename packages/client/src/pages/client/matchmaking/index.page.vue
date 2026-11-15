@@ -62,6 +62,7 @@ const canJoin = computed(() => {
 const getDisplayedDeck = (deck: UserDeck) => ({
   id: deck.id,
   name: deck.name,
+  factionId: deck.factionId,
   cards: deck.cards,
   isValid: deck.isValid
 });

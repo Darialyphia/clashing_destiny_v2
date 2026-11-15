@@ -9,6 +9,7 @@ import {
 } from './shared/container';
 import { v } from 'convex/values';
 import { DeleteDeckUseCase } from './deck/usecases/deleteDeck.usecase';
+import { DECK_FACTION_VALIDATOR } from './deck/deck.schemas';
 
 export const list = queryWithContainer({
   args: {},
@@ -37,11 +38,13 @@ export const grantPremadeDeck = internalMutationWithContainer({
 });
 
 export const create = mutationWithContainer({
-  args: {},
-  handler: async ctx => {
+  args: {
+    factionId: DECK_FACTION_VALIDATOR
+  },
+  handler: async (ctx, arg) => {
     const usecase = ctx.resolve<CreateDeckUseCase>(CreateDeckUseCase.INJECTION_KEY);
 
-    return usecase.execute();
+    return usecase.execute({ factionId: arg.factionId });
   }
 });
 

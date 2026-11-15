@@ -50,7 +50,7 @@ export type Config = {
 };
 
 export const defaultConfig: Config = {
-  MAX_MAIN_DECK_SIZE: 40,
+  MAX_MAIN_DECK_SIZE: 30,
   MAX_LOCATION_CARDS: 4,
   MAX_MAIN_DECK_CARD_COPIES: 2,
 

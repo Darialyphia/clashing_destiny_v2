@@ -3,6 +3,7 @@ import type { MinionBlueprint } from '../../../card-blueprint';
 import { defaultCardArt } from '../../../card-utils';
 import { CARD_SETS, CARD_KINDS, RARITIES, CARD_SPEED } from '../../../card.enums';
 import { EphemeralModifier } from '../../../../modifier/modifiers/ephemeral.modifier';
+import { FACTION_IDS } from '../../../factions/factions';
 
 export const windDervish: MinionBlueprint = {
   id: 'wind-dervish',
@@ -19,6 +20,7 @@ export const windDervish: MinionBlueprint = {
   manaSupply: 2,
   level: 1,
   exp: 1,
+  factionId: FACTION_IDS.VETRUVIAN,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 2,

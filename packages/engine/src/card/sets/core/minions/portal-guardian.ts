@@ -9,6 +9,7 @@ import { GAME_EVENTS } from '../../../../game/game.events';
 import type { MinionCard } from '../../../entities/minion.entity';
 import { SimpleStatsBuffModifier } from '../../../../modifier/modifiers/simple-stats-modifier';
 import { CardEffectTriggeredEvent } from '../../../card.events';
+import { FACTION_IDS } from '../../../factions/factions';
 
 export const portalGuardian: MinionBlueprint = {
   id: 'portal-guardian',
@@ -25,6 +26,7 @@ export const portalGuardian: MinionBlueprint = {
   manaSupply: 2,
   level: 1,
   exp: 1,
+  factionId: FACTION_IDS.VETRUVIAN,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 0,

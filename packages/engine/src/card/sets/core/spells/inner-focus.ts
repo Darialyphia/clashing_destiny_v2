@@ -3,6 +3,7 @@ import type { SpellBlueprint } from '../../../card-blueprint';
 import { defaultCardArt, singleAllyMinionTargetRules } from '../../../card-utils';
 import { CARD_KINDS, CARD_SETS, CARD_SPEED, RARITIES } from '../../../card.enums';
 import type { MinionCard } from '../../../entities/minion.entity';
+import { FACTION_IDS } from '../../../factions/factions';
 
 export const innerFocus: SpellBlueprint<MinionCard> = {
   id: 'innerFocus',
@@ -19,6 +20,7 @@ export const innerFocus: SpellBlueprint<MinionCard> = {
   manaSupply: 3,
   level: 1,
   exp: 1,
+  factionId: FACTION_IDS.SONGHAI,
   speed: CARD_SPEED.FAST,
   tags: [],
   canPlay: (game, card) => singleAllyMinionTargetRules.canPlay(game, card),

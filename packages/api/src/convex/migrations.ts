@@ -5,6 +5,7 @@ import { CARD_SETS, RARITIES } from '@game/engine/src/card/card.enums';
 import { cardsBySet } from '@game/engine/src/generated/cards';
 import { GIFT_KINDS, GIFT_STATES } from './gift/gift.constants';
 import { BOOSTER_PACK_STATUS } from './card/card.constants';
+import { resolveLegacyDeckFaction } from './deck/deck.utils';
 
 export const migrations = new Migrations(components.migrations, { schema });
 
@@ -132,11 +133,55 @@ export const replaceRuneCardsInUnopenedBoosterPacks = migrations.define({
   }
 });
 
+const BLUEPRINT_FACTIONS = new Map(
+  Object.values(cardsBySet)
+    .flat()
+    .map(card => [card.id, card.factionId])
+);
+
+// Decks now have a faction, see resolveLegacyDeckFaction.
+// Decks without any faction card can't get a meaningful faction, so they are deleted.
+export const setDeckFactions = migrations.define({
+  table: 'decks',
+  migrateOne: async (ctx, deck) => {
+    if (deck.factionId) return;
+
+    const cards = [];
+    for (const entry of deck.cards) {
+      const card = await ctx.db.get(entry.cardId);
+      // entries pointing to a card that no longer exists are dropped
+      if (!card) continue;
+      cards.push({ entry, factionId: BLUEPRINT_FACTIONS.get(card.blueprintId) ?? null });
+    }
+
+    const resolved = resolveLegacyDeckFaction(cards);
+
+    if (!resolved) {
+      // a player queued with this deck would otherwise point to a deck that no longer exists
+      const queueEntries = await ctx.db
+        .query('matchmakingUsers')
+        .filter(q => q.eq(q.field('deckId'), deck._id))
+        .collect();
+      for (const queueEntry of queueEntries) {
+        await ctx.db.delete(queueEntry._id);
+      }
+      await ctx.db.delete(deck._id);
+      return;
+    }
+
+    await ctx.db.patch(deck._id, {
+      factionId: resolved.factionId,
+      cards: resolved.entries
+    });
+  }
+});
+
 export const runAll = migrations.runner([
   internal.migrations.setPremiumCurrency,
   internal.migrations.setDefaultGiftIcon,
   internal.migrations.removeRuneCardsFromDecks,
   internal.migrations.removeRuneCards,
   internal.migrations.removeRuneCardsFromUnclaimedGifts,
-  internal.migrations.replaceRuneCardsInUnopenedBoosterPacks
+  internal.migrations.replaceRuneCardsInUnopenedBoosterPacks,
+  internal.migrations.setDeckFactions
 ]);

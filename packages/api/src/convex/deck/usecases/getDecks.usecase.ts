@@ -1,3 +1,4 @@
+import type { DeckFactionId } from '@game/engine/src/card/factions/factions';
 import { ensureAuthenticated } from '../../auth/auth.utils';
 import type { AuthSession } from '../../auth/entities/session.entity';
 import type { CardId } from '../../card/entities/card.entity';
@@ -9,6 +10,7 @@ import type { DeckReadRepository } from '../repositories/deck.repository';
 export type GetDecksOutput = Array<{
   name: string;
   id: DeckId;
+  factionId: DeckFactionId | null;
   cards: Array<{
     cardId: CardId;
     isFoil: boolean;
@@ -51,6 +53,7 @@ export class GetDecksUseCase implements UseCase<never, GetDecksOutput> {
     return {
       id: deck._id,
       name: deck.name,
+      factionId: deck.factionId ?? null,
       cards
     };
   }

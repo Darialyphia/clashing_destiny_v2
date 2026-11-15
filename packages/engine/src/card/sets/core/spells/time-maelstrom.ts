@@ -4,6 +4,7 @@ import { anywhereTargetRules, defaultCardArt } from '../../../card-utils';
 import { CARD_KINDS, CARD_SETS, CARD_SPEED, RARITIES } from '../../../card.enums';
 import { EphemeralModifier } from '../../../../modifier/modifiers/ephemeral.modifier';
 import { askMandatoryYesNoQuestion } from '../../../card-actions-utils';
+import { FACTION_IDS } from '../../../factions/factions';
 
 export const timeMaelstrom: SpellBlueprint = {
   id: 'time-maelstrom',
@@ -20,6 +21,7 @@ export const timeMaelstrom: SpellBlueprint = {
   manaSupply: 3,
   level: 1,
   exp: 1,
+  factionId: FACTION_IDS.VETRUVIAN,
   speed: CARD_SPEED.FAST,
   tags: [],
   shouldHideTargetArrows: true,

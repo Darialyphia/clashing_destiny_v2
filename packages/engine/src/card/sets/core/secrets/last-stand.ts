@@ -4,6 +4,7 @@ import { defaultCardArt, noTargets } from '../../../card-utils';
 import { CARD_KINDS, CARD_SETS, CARD_SPEED, RARITIES } from '../../../card.enums';
 import { GAME_EVENTS } from '../../../../game/game.events';
 import { DAMAGE_TYPES } from '../../../../utils/damage';
+import { FACTION_IDS } from '../../../factions/factions';
 
 export const lastStand = defineSecretBlueprint({
   id: 'last-stand',
@@ -20,6 +21,7 @@ export const lastStand = defineSecretBlueprint({
   manaSupply: 3,
   level: 1,
   exp: 1,
+  factionId: FACTION_IDS.LYONAR,
   speed: CARD_SPEED.FAST,
   tags: [],
   shouldHideTargetArrows: true,

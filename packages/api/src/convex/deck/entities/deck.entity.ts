@@ -16,6 +16,10 @@ export class Deck extends Entity<DeckId, DeckDoc> {
     return this.data.cards;
   }
 
+  get factionId() {
+    return this.data.factionId;
+  }
+
   get ownerId() {
     return this.data.ownerId;
   }

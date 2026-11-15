@@ -15,6 +15,7 @@ import {
 import type { MinionCard } from '../../../entities/minion.entity';
 import { RemoveOnLeaveBoardModifierMixin } from '../../../../modifier/mixins/remove-on-destroyed';
 import { SimpleStatsBuffModifier } from '../../../../modifier/modifiers/simple-stats-modifier';
+import { FACTION_IDS } from '../../../factions/factions';
 
 export const mistDragonSeal: SpellBlueprint<MinionCard> = {
   id: 'mistDragonSeal',
@@ -31,6 +32,7 @@ export const mistDragonSeal: SpellBlueprint<MinionCard> = {
   manaSupply: 3,
   level: 1,
   exp: 1,
+  factionId: FACTION_IDS.SONGHAI,
   speed: CARD_SPEED.FAST,
   tags: [],
   shouldHideTargetArrows: true,

@@ -8,6 +8,7 @@ import { GameEventModifierMixin } from '../../../../modifier/mixins/game-event.m
 import { GAME_EVENTS } from '../../../../game/game.events';
 import { CombatDamage } from '../../../../utils/damage';
 import type { MinionCard } from '../../../entities/minion.entity';
+import { FACTION_IDS } from '../../../factions/factions';
 
 export const aymaraHealer: MinionBlueprint = {
   id: 'aymara-healer',
@@ -25,6 +26,7 @@ export const aymaraHealer: MinionBlueprint = {
   manaSupply: 3,
   level: 1,
   exp: 1,
+  factionId: FACTION_IDS.VETRUVIAN,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 1,

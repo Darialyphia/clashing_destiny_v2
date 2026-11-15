@@ -20,6 +20,7 @@ import type { Nullable } from '@game/shared';
 import type { GameEventMap } from '../game/game.events';
 import type { EventMapWithStarEvent } from '../utils/typed-emitter';
 import type { SecretCard } from './entities/secret.entity';
+import type { FactionId } from './factions/factions';
 
 export type CardArt = {
   foil: {
@@ -49,10 +50,14 @@ export type CardArt = {
   isFullArt: boolean;
 };
 
-// player level required to play the card, and experience gained when banishing it from the supply
+// fields shared by every card that goes in the main deck (minions, spells, artifacts, secrets)
 export type LeveledCardBlueprint = {
+  // player level required to play the card
   level: number;
+  // experience gained when banishing the card from the supply
   exp: number;
+  // decks can only contain cards of their faction, or Neutral ones
+  factionId: FactionId;
 };
 
 export type CardBlueprintBase = {

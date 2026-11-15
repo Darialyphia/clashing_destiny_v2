@@ -11,6 +11,7 @@ import {
 import { OnMoveModifier } from '../../../../modifier/modifiers/on-move.modifier';
 import { RootedModifier } from '../../../../modifier/modifiers/rooted.modifier';
 import { UntilEndOfTurnModifierMixin } from '../../../../modifier/mixins/until-end-of-turn.mixin';
+import { FACTION_IDS } from '../../../factions/factions';
 
 export const syvrelTheExile: MinionBlueprint = {
   id: 'syvrel-the-exile',
@@ -27,6 +28,7 @@ export const syvrelTheExile: MinionBlueprint = {
   manaSupply: 3,
   level: 1,
   exp: 1,
+  factionId: FACTION_IDS.SONGHAI,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 2,

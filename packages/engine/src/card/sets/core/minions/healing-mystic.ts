@@ -3,6 +3,7 @@ import type { MinionBlueprint } from '../../../card-blueprint';
 import { defaultCardArt, singleMinionTargetRules } from '../../../card-utils';
 import { CARD_SETS, CARD_KINDS, RARITIES, CARD_SPEED } from '../../../card.enums';
 import { OnEnterModifier } from '../../../../modifier/modifiers/on-enter.modifier';
+import { FACTION_IDS } from '../../../factions/factions';
 
 export const healingMystic: MinionBlueprint = {
   id: 'healing-mystic',
@@ -19,6 +20,7 @@ export const healingMystic: MinionBlueprint = {
   manaSupply: 3,
   level: 1,
   exp: 1,
+  factionId: FACTION_IDS.NEUTRAL,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 1,

@@ -3,6 +3,7 @@ import type { SpellBlueprint } from '../../../card-blueprint';
 import { battlefieldTargetingRules, defaultCardArt } from '../../../card-utils';
 import { CARD_KINDS, CARD_SETS, CARD_SPEED, RARITIES } from '../../../card.enums';
 import type { LocationCard } from '../../../entities/location.entity';
+import { FACTION_IDS } from '../../../factions/factions';
 
 export const firestormMantra: SpellBlueprint<LocationCard> = {
   id: 'firestormMantra',
@@ -19,6 +20,7 @@ export const firestormMantra: SpellBlueprint<LocationCard> = {
   manaSupply: 3,
   level: 1,
   exp: 1,
+  factionId: FACTION_IDS.SONGHAI,
   speed: CARD_SPEED.FAST,
   tags: [],
   canPlay: () => true,

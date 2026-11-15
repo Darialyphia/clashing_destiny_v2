@@ -19,14 +19,6 @@ export type DeckBuilderCardMeta = {
   isFoil: boolean;
 };
 
-const KIND_ORDER = {
-  [CARD_KINDS.MINION]: 0,
-  [CARD_KINDS.SPELL]: 0,
-  [CARD_KINDS.ARTIFACT]: 0,
-  [CARD_KINDS.SECRET]: 0,
-  [CARD_KINDS.LOCATION]: 1
-};
-
 export type DeckBuilderDeck = ValidatableDeck<DeckBuilderCardMeta>;
 export class DeckBuilderViewModel {
   /**
@@ -76,6 +68,7 @@ export class DeckBuilderViewModel {
   private _deck: DeckBuilderDeck = {
     id: nanoid(4),
     name: 'New Deck',
+    factionId: null,
     cards: [],
     isEqual: (first, second) => first.meta.cardId === second.meta.cardId
   };
@@ -145,6 +138,10 @@ export class DeckBuilderViewModel {
     return this._deck;
   }
 
+  get factionId() {
+    return this._deck.factionId;
+  }
+
   get size() {
     return this._deck.cards.reduce((acc, card) => acc + card.copies, 0);
   }
@@ -161,10 +158,6 @@ export class DeckBuilderViewModel {
         };
       })
       .sort((a, b) => {
-        if (KIND_ORDER[a.blueprint.kind] !== KIND_ORDER[b.blueprint.kind]) {
-          return KIND_ORDER[a.blueprint.kind] - KIND_ORDER[b.blueprint.kind];
-        }
-
         if (
           'manaCost' in a.blueprint &&
           'manaCost' in b.blueprint &&
@@ -236,6 +229,7 @@ export class DeckBuilderViewModel {
     this._deck = {
       id: nanoid(4),
       name: 'New Deck',
+      factionId: null,
       isEqual: (first, second) => first.meta.cardId === second.meta.cardId,
       cards: []
     };

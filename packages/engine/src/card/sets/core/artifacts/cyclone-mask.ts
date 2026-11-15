@@ -12,6 +12,7 @@ import { SimpleAttackBuffModifier } from '../../../../modifier/modifiers/simple-
 import { EquippedModifier } from '../../../../modifier/modifiers/equip.modifier';
 import { OnMoveModifier } from '../../../../modifier/modifiers/on-move.modifier';
 import { askMandatoryYesNoQuestion } from '../../../card-actions-utils';
+import { FACTION_IDS } from '../../../factions/factions';
 
 export const cycloneMask: ArtifactBlueprint = {
   id: 'cycloneMask',
@@ -26,6 +27,7 @@ export const cycloneMask: ArtifactBlueprint = {
   manaSupply: 3,
   level: 1,
   exp: 1,
+  factionId: FACTION_IDS.SONGHAI,
   durability: 2,
   speed: CARD_SPEED.FAST,
   tags: [],

@@ -13,6 +13,7 @@ import { ZealModifier } from '../../../../modifier/modifiers/zeal.modifier';
 import { UntilEndOfTurnModifierMixin } from '../../../../modifier/mixins/until-end-of-turn.mixin';
 import { Modifier } from '../../../../modifier/modifier.entity';
 import type { Player } from '../../../../player/player.entity';
+import { FACTION_IDS } from '../../../factions/factions';
 
 export const dynastyStandard: ArtifactBlueprint = {
   id: 'dynasty-standard',
@@ -27,6 +28,7 @@ export const dynastyStandard: ArtifactBlueprint = {
   manaSupply: 2,
   level: 1,
   exp: 1,
+  factionId: FACTION_IDS.LYONAR,
   durability: 2,
   speed: CARD_SPEED.FAST,
   tags: [],

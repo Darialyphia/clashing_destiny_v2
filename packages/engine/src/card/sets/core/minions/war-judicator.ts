@@ -4,6 +4,7 @@ import { defaultCardArt } from '../../../card-utils';
 import { CARD_SETS, CARD_KINDS, RARITIES, CARD_SPEED } from '../../../card.enums';
 import { ZealModifier } from '../../../../modifier/modifiers/zeal.modifier';
 import { SimpleSupplyModifier } from '../../../../modifier/modifiers/simple-supply-modifier';
+import { FACTION_IDS } from '../../../factions/factions';
 
 export const warJudicator: MinionBlueprint = {
   id: 'war-judicator',
@@ -20,6 +21,7 @@ export const warJudicator: MinionBlueprint = {
   manaSupply: 3,
   level: 1,
   exp: 1,
+  factionId: FACTION_IDS.LYONAR,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 2,

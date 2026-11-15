@@ -9,6 +9,7 @@ import { GAME_EVENTS } from '../../../../game/game.events';
 import type { MinionCard } from '../../../entities/minion.entity';
 import { WhileOnBoardModifier } from '../../../../modifier/modifiers/while-on-board.modifier';
 import { CardEffectTriggeredEvent } from '../../../card.events';
+import { FACTION_IDS } from '../../../factions/factions';
 
 export const kaleosXaan: MinionBlueprint = {
   id: 'kaleos-xaan',
@@ -26,6 +27,7 @@ export const kaleosXaan: MinionBlueprint = {
   manaSupply: 2,
   level: 1,
   exp: 1,
+  factionId: FACTION_IDS.SONGHAI,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 5,

@@ -4,6 +4,7 @@ import { useCollectionPage } from './useCollectionPage';
 import { Icon } from '@iconify/vue';
 import UiModal from '@/ui/components/UiModal.vue';
 import DeckPoster from '@/card/components/DeckPoster.vue';
+import FactionIcon from '@/card/components/FactionIcon.vue';
 
 const { deckBuilder } = useCollectionPage();
 const isPosterOpened = ref(false);
@@ -27,6 +28,11 @@ const isPosterOpened = ref(false);
         :name="deckBuilder.deck.name"
       />
     </UiModal>
+    <FactionIcon
+      v-if="deckBuilder.factionId"
+      :faction-id="deckBuilder.factionId"
+      :size="3"
+    />
     <UiTextInput
       v-model="deckBuilder.deck.name"
       class="flex-1"

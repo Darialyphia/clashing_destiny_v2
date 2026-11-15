@@ -10,6 +10,7 @@ import { CARD_KINDS, CARD_SETS, CARD_SPEED, RARITIES } from '../../../card.enums
 import type { MinionCard } from '../../../entities/minion.entity';
 import { SpellDamage } from '../../../../utils/damage';
 import { ZealModifier } from '../../../../modifier/modifiers/zeal.modifier';
+import { FACTION_IDS } from '../../../factions/factions';
 
 export const circleOfLife: SpellBlueprint<MinionCard> = {
   id: 'circleOfLife',
@@ -26,6 +27,7 @@ export const circleOfLife: SpellBlueprint<MinionCard> = {
   manaSupply: 3,
   level: 1,
   exp: 1,
+  factionId: FACTION_IDS.LYONAR,
   speed: CARD_SPEED.FAST,
   tags: [],
   canPlay: (game, card) =>

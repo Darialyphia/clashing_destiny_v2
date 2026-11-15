@@ -17,6 +17,7 @@ import {
 import { GAME_EVENTS } from '../../../../game/game.events';
 import { BackstabModifier } from '../../../../modifier/modifiers/backstab.modifier';
 import { UntilEndOfTurnModifierMixin } from '../../../../modifier/mixins/until-end-of-turn.mixin';
+import { FACTION_IDS } from '../../../factions/factions';
 
 export const obscuringBlow = defineSecretBlueprint({
   id: 'obscuring-blow',
@@ -33,6 +34,7 @@ export const obscuringBlow = defineSecretBlueprint({
   manaSupply: 3,
   level: 1,
   exp: 1,
+  factionId: FACTION_IDS.SONGHAI,
   speed: CARD_SPEED.FAST,
   tags: [],
   shouldHideTargetArrows: true,

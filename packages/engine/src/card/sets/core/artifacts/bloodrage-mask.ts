@@ -15,6 +15,7 @@ import { GAME_EVENTS } from '../../../../game/game.events';
 import { WhileOnBattlefieldModifier } from '../../../../modifier/modifiers/while-on-board.modifier';
 import { isDefined } from '@game/shared';
 import { AbilityDamage } from '../../../../utils/damage';
+import { FACTION_IDS } from '../../../factions/factions';
 
 export const bloodrageMask: ArtifactBlueprint = {
   id: 'bloodrageMask',
@@ -29,6 +30,7 @@ export const bloodrageMask: ArtifactBlueprint = {
   manaSupply: 2,
   level: 1,
   exp: 1,
+  factionId: FACTION_IDS.SONGHAI,
   durability: 3,
   speed: CARD_SPEED.FAST,
   tags: [],

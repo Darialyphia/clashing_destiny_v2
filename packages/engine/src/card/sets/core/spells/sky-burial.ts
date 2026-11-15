@@ -16,6 +16,7 @@ import {
 import { GAME_EVENTS } from '../../../../game/game.events';
 import type { CardAfterDestroyEvent } from '../../../card.events';
 import type { MinionCard } from '../../../entities/minion.entity';
+import { FACTION_IDS } from '../../../factions/factions';
 
 export const skyBurial: SpellBlueprint = {
   id: 'sky-burial',
@@ -32,6 +33,7 @@ export const skyBurial: SpellBlueprint = {
   manaSupply: 3,
   level: 1,
   exp: 1,
+  factionId: FACTION_IDS.LYONAR,
   speed: CARD_SPEED.FAST,
   tags: [],
   shouldHideTargetArrows: false,

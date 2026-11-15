@@ -4,6 +4,7 @@ import { defaultCardArt } from '../../../card-utils';
 import { CARD_SETS, CARD_KINDS, RARITIES, CARD_SPEED } from '../../../card.enums';
 import { discardFromHand } from '../../../card-actions-utils';
 import { OnMoveModifier } from '../../../../modifier/modifiers/on-move.modifier';
+import { FACTION_IDS } from '../../../factions/factions';
 
 export const rythmweaver: MinionBlueprint = {
   id: 'rythmweaver',
@@ -20,6 +21,7 @@ export const rythmweaver: MinionBlueprint = {
   manaSupply: 3,
   level: 1,
   exp: 1,
+  factionId: FACTION_IDS.SONGHAI,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 2,

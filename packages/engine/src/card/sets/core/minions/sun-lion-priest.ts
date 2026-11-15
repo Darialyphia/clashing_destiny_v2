@@ -7,6 +7,7 @@ import { WhileOnBattlefieldModifier } from '../../../../modifier/modifiers/while
 import { GameEventModifierMixin } from '../../../../modifier/mixins/game-event.mixin';
 import { MinionCard } from '../../../entities/minion.entity';
 import { CardEffectTriggeredEvent } from '../../../card.events';
+import { FACTION_IDS } from '../../../factions/factions';
 
 export const sunlionPriest: MinionBlueprint = {
   id: 'sun-lion-priest',
@@ -23,6 +24,7 @@ export const sunlionPriest: MinionBlueprint = {
   manaSupply: 3,
   level: 1,
   exp: 1,
+  factionId: FACTION_IDS.LYONAR,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 3,

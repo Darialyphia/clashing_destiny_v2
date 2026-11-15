@@ -23,6 +23,7 @@ import type { CardBlueprint } from '@game/engine/src/card/card-blueprint';
 import { useResponsive } from '@/shared/composables/useResponsive';
 import { useRouteQuery } from '@vueuse/router';
 import { useSoundEffect } from '@/shared/composables/useSoundEffect';
+import type { DeckFactionId } from '@game/engine/src/card/factions/factions';
 
 export type CollectionContext = CardListContext & {
   viewMode: Ref<'expanded' | 'compact'>;
@@ -35,7 +36,7 @@ export type CollectionContext = CardListContext & {
   removeCardFromDeck: (cardId: string) => void;
   playCardAddDeniedSound: () => void;
   decks: Ref<UserDeck[]>;
-  createDeck: () => void;
+  createDeck: (factionId: DeckFactionId) => void;
   editDeck: (id: DeckId) => void;
   stopEditingDeck: () => void;
   saveDeck: () => void;
@@ -75,7 +76,8 @@ export const provideCollectionPage = () => {
     manaCostFilter,
     includeUnowned,
     foilFilter,
-    getUnownedId
+    getUnownedId,
+    deckFactionId
   } = provideCardList();
 
   const { data: decks, isLoading: isLoadingDecks } = useDecks();
@@ -95,6 +97,9 @@ export const provideCollectionPage = () => {
   watch(
     selectedDeck,
     newDeck => {
+      // while editing a deck, the card list only shows the cards that can go in it
+      deckFactionId.value = newDeck?.factionId ?? null;
+
       if (!newDeck) {
         deckBuilder.value.reset();
         return;
@@ -102,6 +107,7 @@ export const provideCollectionPage = () => {
       deckBuilder.value.loadDeck({
         name: newDeck.name,
         id: newDeck.id,
+        factionId: newDeck.factionId,
         isEqual(first, second) {
           return first.meta.cardId === second.meta.cardId;
         },
@@ -219,6 +225,7 @@ export const provideCollectionPage = () => {
     clearRarityFilter,
     manaCostFilter,
     textFilter,
+    deckFactionId,
     viewMode,
     isEditingDeck,
     isSaving: isSavingDeck,
@@ -237,7 +244,7 @@ export const provideCollectionPage = () => {
     },
     decks,
     cardScale: ref([isSmallViewport ? 1 : 2]),
-    createDeck: () => createDeck({}),
+    createDeck: factionId => createDeck({ factionId }),
     editDeck: id => {
       selectedDeckId.value = id;
     },

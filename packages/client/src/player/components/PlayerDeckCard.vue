@@ -18,10 +18,12 @@ import FancyButton from '@/ui/components/FancyButton.vue';
 import BlueprintSmallCard from '@/card/components/BlueprintSmallCard.vue';
 import type { CardBlueprint } from '@game/engine/src/card/card-blueprint';
 import ManaCurveChart from './ManaCurveChart.vue';
+import type { FactionId } from '@game/engine/src/card/factions/factions';
 
 export type DisplayedDeck = {
   id: string;
   name: string;
+  factionId: FactionId | null;
   cards: {
     blueprintId: string;
     copies: number;
@@ -89,6 +91,7 @@ watch(
     deckBuilder.loadDeck({
       name: newDeck.name,
       id: newDeck.id,
+      factionId: newDeck.factionId,
       isEqual(first, second) {
         return first.meta.cardId === second.meta.cardId;
       },

@@ -9,6 +9,7 @@ import { GAME_EVENTS } from '../../../../game/game.events';
 import { WhileOnBattlefieldModifier } from '../../../../modifier/modifiers/while-on-board.modifier';
 import { SimpleCommandmentBuffModifier } from '../../../../modifier/modifiers/simple-commandment-modifier';
 import { MinionInterceptorModifierMixin } from '../../../../modifier/mixins/interceptor.mixin';
+import { FACTION_IDS } from '../../../factions/factions';
 
 export const arclyteRegalia: ArtifactBlueprint = {
   id: 'arclyte-regalia',
@@ -23,6 +24,7 @@ export const arclyteRegalia: ArtifactBlueprint = {
   manaSupply: 2,
   level: 1,
   exp: 1,
+  factionId: FACTION_IDS.LYONAR,
   durability: 2,
   speed: CARD_SPEED.FAST,
   tags: [],

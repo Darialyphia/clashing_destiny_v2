@@ -5,6 +5,7 @@ import dedent from 'dedent';
 import { cardIdByShortId, cardShortIds } from '../generated/cards';
 import { isDefined } from '@game/shared';
 import type { CardKind } from '../card/card.enums';
+import type { FactionId } from '../card/factions/factions';
 
 const generateCardsFile = () => {
   const cards = Object.fromEntries(
@@ -19,7 +20,13 @@ const generateCardsFile = () => {
   //generate a dictionary of cards by set id, with only id / collectable / rarity fields
   const cardsBySet: Record<
     string,
-    { id: string; collectable: boolean; rarity: string; kind: CardKind }[]
+    {
+      id: string;
+      collectable: boolean;
+      rarity: string;
+      kind: CardKind;
+      factionId: FactionId | null;
+    }[]
   > = {};
 
   for (const [setId, set] of Object.entries(CARD_SET_DICTIONARY)) {
@@ -27,7 +34,8 @@ const generateCardsFile = () => {
       id: card.id,
       collectable: card.collectable,
       rarity: card.rarity,
-      kind: card.kind
+      kind: card.kind,
+      factionId: 'factionId' in card ? card.factionId : null
     }));
   }
   let maxShortId = Math.max(...Object.values(cardShortIds)) ?? 1;
@@ -56,12 +64,13 @@ const generateCardsFile = () => {
      *  Because referencing the full card dictionary seems to cause some circular dependency issues with convex
      */
   import type { Rarity, CardKind } from '../card/card.enums';
+  import type { FactionId } from '../card/factions/factions';
 
   export const cards = ${JSON.stringify(cards, null, 2)} as const;
 
   export const collectableCards = ${JSON.stringify(collectableCards, null, 2)} as const;
 
-  type CardSet = Array<{id: string; collectable: boolean; rarity: Rarity, kind: CardKind}>;
+  type CardSet = Array<{id: string; collectable: boolean; rarity: Rarity, kind: CardKind, factionId: FactionId | null}>;
   export const cardsBySet: Record<string, CardSet> = ${JSON.stringify(cardsBySet, null, 2)};
 
   export const cardShortIds: Record<string, number> = ${JSON.stringify(updatedCardShortIds, null, 2)} as const;

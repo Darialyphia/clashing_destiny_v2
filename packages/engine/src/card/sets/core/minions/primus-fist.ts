@@ -4,6 +4,7 @@ import { defaultCardArt, isMinion } from '../../../card-utils';
 import { CARD_SETS, CARD_KINDS, RARITIES, CARD_SPEED } from '../../../card.enums';
 import { OnEnterModifier } from '../../../../modifier/modifiers/on-enter.modifier';
 import { SimpleAttackBuffModifier } from '../../../../modifier/modifiers/simple-attack-buff.modifier';
+import { FACTION_IDS } from '../../../factions/factions';
 
 export const primusFist: MinionBlueprint = {
   id: 'primus-fist',
@@ -20,6 +21,7 @@ export const primusFist: MinionBlueprint = {
   manaSupply: 3,
   level: 1,
   exp: 1,
+  factionId: FACTION_IDS.NEUTRAL,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 2,

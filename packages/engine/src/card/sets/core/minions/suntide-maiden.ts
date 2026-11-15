@@ -4,6 +4,7 @@ import { defaultCardArt, isMinion } from '../../../card-utils';
 import { CARD_SETS, CARD_KINDS, RARITIES, CARD_SPEED } from '../../../card.enums';
 import { ZealModifier } from '../../../../modifier/modifiers/zeal.modifier';
 import { isDefined } from '@game/shared';
+import { FACTION_IDS } from '../../../factions/factions';
 
 export const suntideMaiden: MinionBlueprint = {
   id: 'suntide-maiden',
@@ -20,6 +21,7 @@ export const suntideMaiden: MinionBlueprint = {
   manaSupply: 2,
   level: 1,
   exp: 1,
+  factionId: FACTION_IDS.LYONAR,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 2,

@@ -11,6 +11,7 @@ import { EmpoweredModifier } from '../../../../modifier/modifiers/empowered.modi
 import { SimpleStatsBuffModifier } from '../../../../modifier/modifiers/simple-stats-modifier';
 import { TogglableModifierMixin } from '../../../../modifier/mixins/togglable.mixin';
 import { IntimidateModifier } from '../../../../modifier/modifiers/intimidate.modifier';
+import { FACTION_IDS } from '../../../factions/factions';
 
 export const chakriAvatar: MinionBlueprint = {
   id: 'chakri-avatar',
@@ -28,6 +29,7 @@ export const chakriAvatar: MinionBlueprint = {
   manaSupply: 3,
   level: 1,
   exp: 1,
+  factionId: FACTION_IDS.SONGHAI,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 1,

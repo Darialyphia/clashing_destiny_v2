@@ -3,6 +3,7 @@ import type { MinionBlueprint } from '../../../card-blueprint';
 import { defaultCardArt } from '../../../card-utils';
 import { CARD_SETS, CARD_KINDS, RARITIES, CARD_SPEED } from '../../../card.enums';
 import { BackstabModifier } from '../../../../modifier/modifiers/backstab.modifier';
+import { FACTION_IDS } from '../../../factions/factions';
 
 export const kaidoAssassin: MinionBlueprint = {
   id: 'kaido-assassin',
@@ -19,6 +20,7 @@ export const kaidoAssassin: MinionBlueprint = {
   manaSupply: 3,
   level: 1,
   exp: 1,
+  factionId: FACTION_IDS.SONGHAI,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 2,

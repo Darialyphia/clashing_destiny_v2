@@ -4,6 +4,7 @@ import { defaultCardArt, isMinion } from '../../../card-utils';
 import { CARD_SETS, CARD_KINDS, RARITIES, CARD_SPEED } from '../../../card.enums';
 import { OnMoveModifier } from '../../../../modifier/modifiers/on-move.modifier';
 import { AbilityDamage } from '../../../../utils/damage';
+import { FACTION_IDS } from '../../../factions/factions';
 
 export const dancingBlades: MinionBlueprint = {
   id: 'dancing-blades',
@@ -20,6 +21,7 @@ export const dancingBlades: MinionBlueprint = {
   manaSupply: 3,
   level: 1,
   exp: 1,
+  factionId: FACTION_IDS.NEUTRAL,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 3,

@@ -8,6 +8,7 @@ import {
 } from '../../../card-utils';
 import { CARD_KINDS, CARD_SETS, CARD_SPEED, RARITIES } from '../../../card.enums';
 import type { MinionCard } from '../../../entities/minion.entity';
+import { FACTION_IDS } from '../../../factions/factions';
 
 export const wither: SpellBlueprint<MinionCard> = {
   id: 'wither',
@@ -24,6 +25,7 @@ export const wither: SpellBlueprint<MinionCard> = {
   manaSupply: 3,
   level: 1,
   exp: 1,
+  factionId: FACTION_IDS.VETRUVIAN,
   speed: CARD_SPEED.FAST,
   tags: [],
   canPlay: (game, card) =>

@@ -5,6 +5,7 @@ import { CARD_SETS, CARD_KINDS, RARITIES, CARD_SPEED } from '../../../card.enums
 import { ChannelModifier } from '../../../../modifier/modifiers/channel.modifier';
 import { SimpleManacostModifier } from '../../../../modifier/modifiers/simple-manacost-modifier';
 import { SimpleSupplyModifier } from '../../../../modifier/modifiers/simple-supply-modifier';
+import { FACTION_IDS } from '../../../factions/factions';
 
 export const soulArbiter: MinionBlueprint = {
   id: 'soul-arbiter',
@@ -21,6 +22,7 @@ export const soulArbiter: MinionBlueprint = {
   manaSupply: 3,
   level: 1,
   exp: 1,
+  factionId: FACTION_IDS.VETRUVIAN,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 3,

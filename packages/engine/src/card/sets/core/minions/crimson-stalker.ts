@@ -13,6 +13,7 @@ import { TogglableModifierMixin } from '../../../../modifier/mixins/togglable.mi
 import { IntimidateModifier } from '../../../../modifier/modifiers/intimidate.modifier';
 import { askMandatoryYesNoQuestion } from '../../../card-actions-utils';
 import { StealthModifier } from '../../../../modifier/modifiers/stealth.modifier';
+import { FACTION_IDS } from '../../../factions/factions';
 
 export const crimsonStalker: MinionBlueprint = {
   id: 'crimson-stalker',
@@ -30,6 +31,7 @@ export const crimsonStalker: MinionBlueprint = {
   manaSupply: 3,
   level: 1,
   exp: 1,
+  factionId: FACTION_IDS.SONGHAI,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 3,

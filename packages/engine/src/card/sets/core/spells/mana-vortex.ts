@@ -3,6 +3,7 @@ import type { SpellBlueprint } from '../../../card-blueprint';
 import { anywhereTargetRules, defaultCardArt, isSpell } from '../../../card-utils';
 import { CARD_KINDS, CARD_SETS, CARD_SPEED, RARITIES } from '../../../card.enums';
 import { SimpleManacostModifier } from '../../../../modifier/modifiers/simple-manacost-modifier';
+import { FACTION_IDS } from '../../../factions/factions';
 
 export const manaVortex: SpellBlueprint = {
   id: 'manaVortex',
@@ -19,6 +20,7 @@ export const manaVortex: SpellBlueprint = {
   manaSupply: 2,
   level: 1,
   exp: 1,
+  factionId: FACTION_IDS.SONGHAI,
   speed: CARD_SPEED.FAST,
   tags: [],
   shouldHideTargetArrows: true,

@@ -11,6 +11,7 @@ import {
 import { IntimidateModifier } from '../../../../modifier/modifiers/intimidate.modifier';
 import { OnScoreModifier } from '../../../../modifier/modifiers/on-score.modifier';
 import { AbilityDamage } from '../../../../utils/damage';
+import { FACTION_IDS } from '../../../factions/factions';
 
 export const paddo: MinionBlueprint = {
   id: 'paddo',
@@ -28,6 +29,7 @@ export const paddo: MinionBlueprint = {
   manaSupply: 3,
   level: 1,
   exp: 1,
+  factionId: FACTION_IDS.NEUTRAL,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 4,

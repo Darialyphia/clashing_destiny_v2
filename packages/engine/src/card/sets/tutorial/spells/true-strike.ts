@@ -8,6 +8,7 @@ import {
 import { CARD_KINDS, CARD_SETS, CARD_SPEED, RARITIES } from '../../../card.enums';
 import type { MinionCard } from '../../../entities/minion.entity';
 import { SpellDamage } from '../../../../utils/damage';
+import { FACTION_IDS } from '../../../factions/factions';
 
 export const tutorialTrueStrike: SpellBlueprint<MinionCard> = {
   id: 'tutorial-true-strike',
@@ -24,6 +25,7 @@ export const tutorialTrueStrike: SpellBlueprint<MinionCard> = {
   manaSupply: 2,
   level: 1,
   exp: 1,
+  factionId: FACTION_IDS.LYONAR,
   speed: CARD_SPEED.SLOW,
   tags: [],
   canPlay: (game, card) => singleEnemyMinionTargetRules.canPlay(game, card),

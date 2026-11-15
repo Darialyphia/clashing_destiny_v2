@@ -9,6 +9,7 @@ import {
 import { CARD_KINDS, CARD_SETS, CARD_SPEED, RARITIES } from '../../../card.enums';
 import type { MinionCard } from '../../../entities/minion.entity';
 import { BurnModifier } from '../../../../modifier/modifiers/burn.modifier';
+import { FACTION_IDS } from '../../../factions/factions';
 
 export const corpseCombustion: SpellBlueprint<MinionCard> = {
   id: 'corpseCombustion',
@@ -25,6 +26,7 @@ export const corpseCombustion: SpellBlueprint<MinionCard> = {
   manaSupply: 3,
   level: 1,
   exp: 1,
+  factionId: FACTION_IDS.VETRUVIAN,
   speed: CARD_SPEED.FAST,
   tags: [],
   canPlay: (game, card) =>

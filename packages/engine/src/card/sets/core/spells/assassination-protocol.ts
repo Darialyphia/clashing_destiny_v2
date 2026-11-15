@@ -10,6 +10,7 @@ import type { MinionCard } from '../../../entities/minion.entity';
 import { StealthModifier } from '../../../../modifier/modifiers/stealth.modifier';
 import { UntilEndOfTurnModifierMixin } from '../../../../modifier/mixins/until-end-of-turn.mixin';
 import { BackstabModifier } from '../../../../modifier/modifiers/backstab.modifier';
+import { FACTION_IDS } from '../../../factions/factions';
 
 export const assassinationProtocol: SpellBlueprint<MinionCard> = {
   id: 'assassinationProtocol',
@@ -26,6 +27,7 @@ export const assassinationProtocol: SpellBlueprint<MinionCard> = {
   manaSupply: 3,
   level: 1,
   exp: 1,
+  factionId: FACTION_IDS.SONGHAI,
   speed: CARD_SPEED.FAST,
   tags: [],
   canPlay: (game, card) =>

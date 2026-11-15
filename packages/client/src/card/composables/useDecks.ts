@@ -23,6 +23,7 @@ export const useDecks = () => {
         isValid: validator.validate({
           name: deck.name,
           id: deck.id,
+          factionId: deck.factionId,
           cards: deck.cards.map(c => ({
             blueprintId: c.blueprintId,
             copies: c.copies,

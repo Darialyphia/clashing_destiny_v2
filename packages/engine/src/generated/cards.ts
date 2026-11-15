@@ -4,6 +4,7 @@
    *  Because referencing the full card dictionary seems to cause some circular dependency issues with convex
    */
 import type { Rarity, CardKind } from '../card/card.enums';
+import type { FactionId } from '../card/factions/factions';
 
 export const cards = {
 "crowds-favor": "crowds-favor",
@@ -230,614 +231,715 @@ export const collectableCards = {
 "celandine-embassy": "celandine-embassy"
 } as const;
 
-type CardSet = Array<{id: string; collectable: boolean; rarity: Rarity, kind: CardKind}>;
+type CardSet = Array<{id: string; collectable: boolean; rarity: Rarity, kind: CardKind, factionId: FactionId | null}>;
 export const cardsBySet: Record<string, CardSet> = {
 "CORE": [
   {
     "id": "crowds-favor",
     "collectable": true,
     "rarity": "common",
-    "kind": "LOCATION"
+    "kind": "LOCATION",
+    "factionId": null
   },
   {
     "id": "day-of-conquest",
     "collectable": true,
     "rarity": "common",
-    "kind": "LOCATION"
+    "kind": "LOCATION",
+    "factionId": null
   },
   {
     "id": "day-of-fortitude",
     "collectable": true,
     "rarity": "common",
-    "kind": "LOCATION"
+    "kind": "LOCATION",
+    "factionId": null
   },
   {
     "id": "restrain-the-beast",
     "collectable": true,
     "rarity": "common",
-    "kind": "LOCATION"
+    "kind": "LOCATION",
+    "factionId": null
   },
   {
     "id": "ashes-of-pain",
     "collectable": true,
     "rarity": "common",
-    "kind": "LOCATION"
+    "kind": "LOCATION",
+    "factionId": null
   },
   {
     "id": "fleeting-thought",
     "collectable": true,
     "rarity": "common",
-    "kind": "LOCATION"
+    "kind": "LOCATION",
+    "factionId": null
   },
   {
     "id": "ignite-the-sky",
     "collectable": true,
     "rarity": "common",
-    "kind": "LOCATION"
+    "kind": "LOCATION",
+    "factionId": null
   },
   {
     "id": "kaleos-xaan",
     "collectable": true,
     "rarity": "legendary",
-    "kind": "MINION"
+    "kind": "MINION",
+    "factionId": "SONGHAI"
   },
   {
     "id": "flamewreath",
     "collectable": true,
     "rarity": "rare",
-    "kind": "MINION"
+    "kind": "MINION",
+    "factionId": "SONGHAI"
   },
   {
     "id": "rythmweaver",
     "collectable": true,
     "rarity": "common",
-    "kind": "MINION"
+    "kind": "MINION",
+    "factionId": "SONGHAI"
   },
   {
     "id": "four-winds-magi",
     "collectable": true,
     "rarity": "rare",
-    "kind": "MINION"
+    "kind": "MINION",
+    "factionId": "SONGHAI"
   },
   {
     "id": "ghostLightning",
     "collectable": true,
     "rarity": "common",
-    "kind": "SPELL"
+    "kind": "SPELL",
+    "factionId": "SONGHAI"
   },
   {
     "id": "gorehorn",
     "collectable": true,
     "rarity": "common",
-    "kind": "MINION"
+    "kind": "MINION",
+    "factionId": "SONGHAI"
   },
   {
     "id": "chakri-avatar",
     "collectable": true,
     "rarity": "common",
-    "kind": "MINION"
+    "kind": "MINION",
+    "factionId": "SONGHAI"
   },
   {
     "id": "flutter-crane",
     "collectable": true,
     "rarity": "rare",
-    "kind": "MINION"
+    "kind": "MINION",
+    "factionId": "SONGHAI"
   },
   {
     "id": "mistDragonSeal",
     "collectable": true,
     "rarity": "common",
-    "kind": "SPELL"
+    "kind": "SPELL",
+    "factionId": "SONGHAI"
   },
   {
     "id": "phoenixFire",
     "collectable": true,
     "rarity": "common",
-    "kind": "SPELL"
+    "kind": "SPELL",
+    "factionId": "SONGHAI"
   },
   {
     "id": "innerFocus",
     "collectable": true,
     "rarity": "common",
-    "kind": "SPELL"
+    "kind": "SPELL",
+    "factionId": "SONGHAI"
   },
   {
     "id": "kaido-assassin",
     "collectable": true,
     "rarity": "common",
-    "kind": "MINION"
+    "kind": "MINION",
+    "factionId": "SONGHAI"
   },
   {
     "id": "keshrai-fanblade",
     "collectable": true,
     "rarity": "common",
-    "kind": "MINION"
+    "kind": "MINION",
+    "factionId": "SONGHAI"
   },
   {
     "id": "tusk-boar",
     "collectable": true,
     "rarity": "legendary",
-    "kind": "MINION"
+    "kind": "MINION",
+    "factionId": "SONGHAI"
   },
   {
     "id": "assassinationProtocol",
     "collectable": true,
     "rarity": "rare",
-    "kind": "SPELL"
+    "kind": "SPELL",
+    "factionId": "SONGHAI"
   },
   {
     "id": "eightGates",
     "collectable": true,
     "rarity": "epic",
-    "kind": "SPELL"
+    "kind": "SPELL",
+    "factionId": "SONGHAI"
   },
   {
     "id": "firestormMantra",
     "collectable": true,
     "rarity": "epic",
-    "kind": "SPELL"
+    "kind": "SPELL",
+    "factionId": "SONGHAI"
   },
   {
     "id": "syvrel-the-exile",
     "collectable": true,
     "rarity": "rare",
-    "kind": "MINION"
+    "kind": "MINION",
+    "factionId": "SONGHAI"
   },
   {
     "id": "austerity",
     "collectable": true,
     "rarity": "common",
-    "kind": "LOCATION"
+    "kind": "LOCATION",
+    "factionId": null
   },
   {
     "id": "counterstrike",
     "collectable": true,
     "rarity": "common",
-    "kind": "SECRET"
+    "kind": "SECRET",
+    "factionId": "SONGHAI"
   },
   {
     "id": "dagger-kiri",
     "collectable": true,
     "rarity": "common",
-    "kind": "MINION"
+    "kind": "MINION",
+    "factionId": "SONGHAI"
   },
   {
     "id": "the-amber-pass",
     "collectable": true,
     "rarity": "common",
-    "kind": "LOCATION"
+    "kind": "LOCATION",
+    "factionId": null
   },
   {
     "id": "obscuring-blow",
     "collectable": true,
     "rarity": "common",
-    "kind": "SECRET"
+    "kind": "SECRET",
+    "factionId": "SONGHAI"
   },
   {
     "id": "cycloneMask",
     "collectable": true,
     "rarity": "rare",
-    "kind": "ARTIFACT"
+    "kind": "ARTIFACT",
+    "factionId": "SONGHAI"
   },
   {
     "id": "bloodrageMask",
     "collectable": true,
     "rarity": "rare",
-    "kind": "ARTIFACT"
+    "kind": "ARTIFACT",
+    "factionId": "SONGHAI"
   },
   {
     "id": "healing-mystic",
     "collectable": true,
     "rarity": "common",
-    "kind": "MINION"
+    "kind": "MINION",
+    "factionId": "NEUTRAL"
   },
   {
     "id": "dancing-blades",
     "collectable": true,
     "rarity": "rare",
-    "kind": "MINION"
+    "kind": "MINION",
+    "factionId": "NEUTRAL"
   },
   {
     "id": "silverguard-knight",
     "collectable": true,
     "rarity": "common",
-    "kind": "MINION"
+    "kind": "MINION",
+    "factionId": "LYONAR"
   },
   {
     "id": "windblade-adept",
     "collectable": true,
     "rarity": "common",
-    "kind": "MINION"
+    "kind": "MINION",
+    "factionId": "LYONAR"
   },
   {
     "id": "azurite-lion",
     "collectable": true,
     "rarity": "common",
-    "kind": "MINION"
+    "kind": "MINION",
+    "factionId": "LYONAR"
   },
   {
     "id": "ironcliffe-guardian",
     "collectable": true,
     "rarity": "rare",
-    "kind": "MINION"
+    "kind": "MINION",
+    "factionId": "LYONAR"
   },
   {
     "id": "primus-fist",
     "collectable": true,
     "rarity": "common",
-    "kind": "MINION"
+    "kind": "MINION",
+    "factionId": "NEUTRAL"
   },
   {
     "id": "primus-shieldmaster",
     "collectable": true,
     "rarity": "common",
-    "kind": "MINION"
+    "kind": "MINION",
+    "factionId": "NEUTRAL"
   },
   {
     "id": "martyrdom",
     "collectable": true,
     "rarity": "common",
-    "kind": "SPELL"
+    "kind": "SPELL",
+    "factionId": "LYONAR"
   },
   {
     "id": "trueStrike",
     "collectable": true,
     "rarity": "common",
-    "kind": "SPELL"
+    "kind": "SPELL",
+    "factionId": "LYONAR"
   },
   {
     "id": "tempest",
     "collectable": true,
     "rarity": "rare",
-    "kind": "SPELL"
+    "kind": "SPELL",
+    "factionId": "LYONAR"
   },
   {
     "id": "sun-lion-priest",
     "collectable": true,
     "rarity": "epic",
-    "kind": "MINION"
+    "kind": "MINION",
+    "factionId": "LYONAR"
   },
   {
     "id": "suntide-maiden",
     "collectable": true,
     "rarity": "common",
-    "kind": "MINION"
+    "kind": "MINION",
+    "factionId": "LYONAR"
   },
   {
     "id": "war-judicator",
     "collectable": true,
     "rarity": "rare",
-    "kind": "MINION"
+    "kind": "MINION",
+    "factionId": "LYONAR"
   },
   {
     "id": "manaVortex",
     "collectable": true,
     "rarity": "rare",
-    "kind": "SPELL"
+    "kind": "SPELL",
+    "factionId": "SONGHAI"
   },
   {
     "id": "backstep",
     "collectable": true,
     "rarity": "common",
-    "kind": "SPELL"
+    "kind": "SPELL",
+    "factionId": "SONGHAI"
   },
   {
     "id": "juxtaposition",
     "collectable": true,
     "rarity": "epic",
-    "kind": "SPELL"
+    "kind": "SPELL",
+    "factionId": "SONGHAI"
   },
   {
     "id": "argeon-highmane",
     "collectable": true,
     "rarity": "legendary",
-    "kind": "MINION"
+    "kind": "MINION",
+    "factionId": "LYONAR"
   },
   {
     "id": "solarius",
     "collectable": true,
     "rarity": "epic",
-    "kind": "MINION"
+    "kind": "MINION",
+    "factionId": "LYONAR"
   },
   {
     "id": "augury",
     "collectable": true,
     "rarity": "common",
-    "kind": "SPELL"
+    "kind": "SPELL",
+    "factionId": "LYONAR"
   },
   {
     "id": "aegisBarrier",
     "collectable": true,
     "rarity": "common",
-    "kind": "SPELL"
+    "kind": "SPELL",
+    "factionId": "LYONAR"
   },
   {
     "id": "sunbreaker",
     "collectable": true,
     "rarity": "epic",
-    "kind": "MINION"
+    "kind": "MINION",
+    "factionId": "LYONAR"
   },
   {
     "id": "scintilla",
     "collectable": true,
     "rarity": "common",
-    "kind": "MINION"
+    "kind": "MINION",
+    "factionId": "LYONAR"
   },
   {
     "id": "fiz",
     "collectable": true,
     "rarity": "rare",
-    "kind": "MINION"
+    "kind": "MINION",
+    "factionId": "LYONAR"
   },
   {
     "id": "sky-burial",
     "collectable": true,
     "rarity": "rare",
-    "kind": "SPELL"
+    "kind": "SPELL",
+    "factionId": "LYONAR"
   },
   {
     "id": "songweaver",
     "collectable": true,
     "rarity": "common",
-    "kind": "MINION"
+    "kind": "MINION",
+    "factionId": "NEUTRAL"
   },
   {
     "id": "last-stand",
     "collectable": true,
     "rarity": "common",
-    "kind": "SECRET"
+    "kind": "SECRET",
+    "factionId": "LYONAR"
   },
   {
     "id": "holy-immolation",
     "collectable": true,
     "rarity": "epic",
-    "kind": "SECRET"
+    "kind": "SECRET",
+    "factionId": "LYONAR"
   },
   {
     "id": "arclyte-regalia",
     "collectable": true,
     "rarity": "rare",
-    "kind": "ARTIFACT"
+    "kind": "ARTIFACT",
+    "factionId": "LYONAR"
   },
   {
     "id": "mistWalking",
     "collectable": true,
     "rarity": "common",
-    "kind": "SPELL"
+    "kind": "SPELL",
+    "factionId": "SONGHAI"
   },
   {
     "id": "dynasty-standard",
     "collectable": true,
     "rarity": "rare",
-    "kind": "ARTIFACT"
+    "kind": "ARTIFACT",
+    "factionId": "LYONAR"
   },
   {
     "id": "decimate",
     "collectable": true,
     "rarity": "legendary",
-    "kind": "SPELL"
+    "kind": "SPELL",
+    "factionId": "LYONAR"
   },
   {
     "id": "steadfastVigil",
     "collectable": true,
     "rarity": "common",
-    "kind": "SPELL"
+    "kind": "SPELL",
+    "factionId": "LYONAR"
   },
   {
     "id": "circleOfLife",
     "collectable": true,
     "rarity": "epic",
-    "kind": "SPELL"
+    "kind": "SPELL",
+    "factionId": "LYONAR"
   },
   {
     "id": "lionheartBlessing",
     "collectable": true,
     "rarity": "common",
-    "kind": "SPELL"
+    "kind": "SPELL",
+    "factionId": "LYONAR"
   },
   {
     "id": "crimson-stalker",
     "collectable": true,
     "rarity": "common",
-    "kind": "MINION"
+    "kind": "MINION",
+    "factionId": "SONGHAI"
   },
   {
     "id": "unseven",
     "collectable": true,
     "rarity": "common",
-    "kind": "MINION"
+    "kind": "MINION",
+    "factionId": "LYONAR"
   },
   {
     "id": "wind-dervish",
     "collectable": false,
     "rarity": "token",
-    "kind": "MINION"
+    "kind": "MINION",
+    "factionId": "VETRUVIAN"
   },
   {
     "id": "ethereal-obelysk",
     "collectable": true,
     "rarity": "common",
-    "kind": "MINION"
+    "kind": "MINION",
+    "factionId": "VETRUVIAN"
   },
   {
     "id": "dune-caster",
     "collectable": true,
     "rarity": "common",
-    "kind": "MINION"
+    "kind": "MINION",
+    "factionId": "VETRUVIAN"
   },
   {
     "id": "aymara-healer",
     "collectable": true,
     "rarity": "epic",
-    "kind": "MINION"
+    "kind": "MINION",
+    "factionId": "VETRUVIAN"
   },
   {
     "id": "fireblaze-obelysk",
     "collectable": true,
     "rarity": "rare",
-    "kind": "MINION"
+    "kind": "MINION",
+    "factionId": "VETRUVIAN"
   },
   {
     "id": "pyromancer",
     "collectable": true,
     "rarity": "common",
-    "kind": "MINION"
+    "kind": "MINION",
+    "factionId": "VETRUVIAN"
   },
   {
     "id": "zirix-starstrider",
     "collectable": true,
     "rarity": "legendary",
-    "kind": "MINION"
+    "kind": "MINION",
+    "factionId": "VETRUVIAN"
   },
   {
     "id": "incinera",
     "collectable": true,
     "rarity": "rare",
-    "kind": "MINION"
+    "kind": "MINION",
+    "factionId": "VETRUVIAN"
   },
   {
     "id": "soul-arbiter",
     "collectable": true,
     "rarity": "rare",
-    "kind": "MINION"
+    "kind": "MINION",
+    "factionId": "VETRUVIAN"
   },
   {
     "id": "time-maelstrom",
     "collectable": true,
     "rarity": "legendary",
-    "kind": "SPELL"
+    "kind": "SPELL",
+    "factionId": "VETRUVIAN"
   },
   {
     "id": "blindscorch",
     "collectable": true,
     "rarity": "common",
-    "kind": "SPELL"
+    "kind": "SPELL",
+    "factionId": "VETRUVIAN"
   },
   {
     "id": "corpseCombustion",
     "collectable": true,
     "rarity": "rare",
-    "kind": "SPELL"
+    "kind": "SPELL",
+    "factionId": "VETRUVIAN"
   },
   {
     "id": "stars-fury",
     "collectable": true,
     "rarity": "legendary",
-    "kind": "SPELL"
+    "kind": "SPELL",
+    "factionId": "VETRUVIAN"
   },
   {
     "id": "windstorm-obelysk",
     "collectable": true,
     "rarity": "rare",
-    "kind": "MINION"
+    "kind": "MINION",
+    "factionId": "VETRUVIAN"
   },
   {
     "id": "zephyr",
     "collectable": true,
     "rarity": "common",
-    "kind": "MINION"
+    "kind": "MINION",
+    "factionId": "VETRUVIAN"
   },
   {
     "id": "chronomancer",
     "collectable": true,
     "rarity": "common",
-    "kind": "MINION"
+    "kind": "MINION",
+    "factionId": "VETRUVIAN"
   },
   {
     "id": "red-synja",
     "collectable": true,
     "rarity": "legendary",
-    "kind": "MINION"
+    "kind": "MINION",
+    "factionId": "NEUTRAL"
   },
   {
     "id": "sworn-defender",
     "collectable": true,
     "rarity": "rare",
-    "kind": "MINION"
+    "kind": "MINION",
+    "factionId": "NEUTRAL"
   },
   {
     "id": "paddo",
     "collectable": true,
     "rarity": "legendary",
-    "kind": "MINION"
+    "kind": "MINION",
+    "factionId": "NEUTRAL"
   },
   {
     "id": "sapphire-seer",
     "collectable": true,
     "rarity": "common",
-    "kind": "MINION"
+    "kind": "MINION",
+    "factionId": "NEUTRAL"
   },
   {
     "id": "portal-guardian",
     "collectable": true,
     "rarity": "epic",
-    "kind": "MINION"
+    "kind": "MINION",
+    "factionId": "VETRUVIAN"
   },
   {
     "id": "wither",
     "collectable": true,
     "rarity": "common",
-    "kind": "SPELL"
+    "kind": "SPELL",
+    "factionId": "VETRUVIAN"
   },
   {
     "id": "agenors-pass",
     "collectable": true,
     "rarity": "common",
-    "kind": "LOCATION"
+    "kind": "LOCATION",
+    "factionId": null
   },
   {
     "id": "whistling-woods",
     "collectable": true,
     "rarity": "common",
-    "kind": "LOCATION"
+    "kind": "LOCATION",
+    "factionId": null
   },
   {
     "id": "windcliffe-stronghold",
     "collectable": true,
     "rarity": "common",
-    "kind": "LOCATION"
+    "kind": "LOCATION",
+    "factionId": null
   },
   {
     "id": "xaan-undercity",
     "collectable": true,
     "rarity": "common",
-    "kind": "LOCATION"
+    "kind": "LOCATION",
+    "factionId": null
   },
   {
     "id": "rashas-tomb",
     "collectable": true,
     "rarity": "common",
-    "kind": "LOCATION"
+    "kind": "LOCATION",
+    "factionId": null
   },
   {
     "id": "the-ostracon",
     "collectable": true,
     "rarity": "common",
-    "kind": "LOCATION"
+    "kind": "LOCATION",
+    "factionId": null
   },
   {
     "id": "the-lost-ruins",
     "collectable": true,
     "rarity": "common",
-    "kind": "LOCATION"
+    "kind": "LOCATION",
+    "factionId": null
   },
   {
     "id": "crystal-caverns",
     "collectable": true,
     "rarity": "common",
-    "kind": "LOCATION"
+    "kind": "LOCATION",
+    "factionId": null
   },
   {
     "id": "obsidian-woods",
     "collectable": true,
     "rarity": "common",
-    "kind": "LOCATION"
+    "kind": "LOCATION",
+    "factionId": null
   },
   {
     "id": "celandine-embassy",
     "collectable": true,
     "rarity": "common",
-    "kind": "LOCATION"
+    "kind": "LOCATION",
+    "factionId": null
   }
 ],
 "TUTORIAL": [
@@ -845,109 +947,127 @@ export const cardsBySet: Record<string, CardSet> = {
     "id": "bloodbound-invader",
     "collectable": false,
     "rarity": "token",
-    "kind": "MINION"
+    "kind": "MINION",
+    "factionId": "NEUTRAL"
   },
   {
     "id": "tutorial-windblade-adept",
     "collectable": false,
     "rarity": "token",
-    "kind": "MINION"
+    "kind": "MINION",
+    "factionId": "LYONAR"
   },
   {
     "id": "tutorial-silverguard-outpost",
     "collectable": false,
     "rarity": "rare",
-    "kind": "LOCATION"
+    "kind": "LOCATION",
+    "factionId": null
   },
   {
     "id": "tutorial-silverguard-knight",
     "collectable": false,
     "rarity": "token",
-    "kind": "MINION"
+    "kind": "MINION",
+    "factionId": "LYONAR"
   },
   {
     "id": "bloodbound-executor",
     "collectable": false,
     "rarity": "token",
-    "kind": "MINION"
+    "kind": "MINION",
+    "factionId": "NEUTRAL"
   },
   {
     "id": "bloodbound-shaman",
     "collectable": false,
     "rarity": "token",
-    "kind": "MINION"
+    "kind": "MINION",
+    "factionId": "NEUTRAL"
   },
   {
     "id": "tutorial-suntide-maiden",
     "collectable": false,
     "rarity": "token",
-    "kind": "MINION"
+    "kind": "MINION",
+    "factionId": "LYONAR"
   },
   {
     "id": "tutorial-lionheart-blessing",
     "collectable": false,
     "rarity": "token",
-    "kind": "SPELL"
+    "kind": "SPELL",
+    "factionId": "LYONAR"
   },
   {
     "id": "tutorial-true-strike",
     "collectable": false,
     "rarity": "token",
-    "kind": "SPELL"
+    "kind": "SPELL",
+    "factionId": "LYONAR"
   },
   {
     "id": "tutorial-sunstone-templar",
     "collectable": false,
     "rarity": "token",
-    "kind": "MINION"
+    "kind": "MINION",
+    "factionId": "LYONAR"
   },
   {
     "id": "tutorial-arclyte-regalia",
     "collectable": false,
     "rarity": "token",
-    "kind": "ARTIFACT"
+    "kind": "ARTIFACT",
+    "factionId": "LYONAR"
   },
   {
     "id": "tutorial-holy-immolation",
     "collectable": false,
     "rarity": "token",
-    "kind": "SECRET"
+    "kind": "SECRET",
+    "factionId": "LYONAR"
   },
   {
     "id": "tutorial-azurite-lion",
     "collectable": false,
     "rarity": "token",
-    "kind": "MINION"
+    "kind": "MINION",
+    "factionId": "LYONAR"
   },
   {
     "id": "tutorial-ironcliffe-guardian",
     "collectable": false,
     "rarity": "token",
-    "kind": "MINION"
+    "kind": "MINION",
+    "factionId": "LYONAR"
   },
   {
     "id": "tutorial-sunbreaker",
     "collectable": false,
     "rarity": "token",
-    "kind": "MINION"
+    "kind": "MINION",
+    "factionId": "LYONAR"
   },
   {
     "id": "tutorial-bloodsun-arena",
     "collectable": false,
     "rarity": "token",
-    "kind": "LOCATION"
+    "kind": "LOCATION",
+    "factionId": null
   },
   {
     "id": "tutorial-mistveil-marsh",
     "collectable": false,
     "rarity": "token",
-    "kind": "LOCATION"
+    "kind": "LOCATION",
+    "factionId": null
   },
   {
     "id": "tutorial-moonlit-pass",
     "collectable": false,
     "rarity": "token",
-    "kind": "LOCATION"
+    "kind": "LOCATION",
+    "factionId": null
   }
 ]
 };

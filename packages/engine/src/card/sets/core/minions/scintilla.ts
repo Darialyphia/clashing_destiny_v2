@@ -6,6 +6,7 @@ import { EmpoweredModifier } from '../../../../modifier/modifiers/empowered.modi
 import { TogglableModifierMixin } from '../../../../modifier/mixins/togglable.mixin';
 import { SimpleStatsBuffModifier } from '../../../../modifier/modifiers/simple-stats-modifier';
 import { InstantMoveModifier } from '../../../../modifier/modifiers/instant-move.modifier';
+import { FACTION_IDS } from '../../../factions/factions';
 
 export const scintilla: MinionBlueprint = {
   id: 'scintilla',
@@ -22,6 +23,7 @@ export const scintilla: MinionBlueprint = {
   manaSupply: 3,
   level: 1,
   exp: 1,
+  factionId: FACTION_IDS.LYONAR,
   speed: CARD_SPEED.SLOW,
   tags: [],
   atk: 3,

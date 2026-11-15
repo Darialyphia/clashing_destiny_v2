@@ -34,6 +34,7 @@ import { COMBAT_STEPS, EFFECT_TYPE, INTERACTION_STATES } from '../../game/game.e
 import { nanoid } from 'nanoid';
 import type { BoardSpace } from '../../board/board-space.entity';
 import { GAME_EVENTS } from '../../game/game.events';
+import type { FactionId } from '../factions/factions';
 
 export type CardOptions<T extends CardBlueprint = CardBlueprint> = {
   id: string;
@@ -92,6 +93,7 @@ export type SerializedCard = {
   keywords: string[];
   unplayableReason: string | null;
   level: number | null;
+  factionId: FactionId | null;
   exp: number | null;
   isRevealed: boolean;
   position: string | null;
@@ -255,6 +257,14 @@ export abstract class Card<
   }
 
   // player level required to play this card
+  // null for cards without a faction (Locations)
+  get factionId(): FactionId | null {
+    if ('factionId' in this.blueprint) {
+      return this.blueprint.factionId;
+    }
+    return null;
+  }
+
   get level(): number {
     if ('level' in this.blueprint) {
       return this.blueprint.level;
@@ -566,6 +576,7 @@ export abstract class Card<
       keywords: this.keywords.map(keyword => keyword.id),
       unplayableReason: this.unplayableReason,
       level: 'level' in this.blueprint ? this.level : null,
+      factionId: this.factionId,
       exp: 'exp' in this.blueprint ? this.exp : null,
       isRevealed: this.isRevealed,
       position: this.position?.id ?? null,

@@ -5,6 +5,7 @@ import { CARD_KINDS, CARD_SETS, CARD_SPEED, RARITIES } from '../../../card.enums
 import { isDefined } from '@game/shared';
 import { windDervish } from '../minions/wind-dervish';
 import type { MinionCard } from '../../../entities/minion.entity';
+import { FACTION_IDS } from '../../../factions/factions';
 
 export const starsFury: SpellBlueprint = {
   id: 'stars-fury',
@@ -21,6 +22,7 @@ export const starsFury: SpellBlueprint = {
   manaSupply: 3,
   level: 1,
   exp: 1,
+  factionId: FACTION_IDS.VETRUVIAN,
   speed: CARD_SPEED.FAST,
   tags: [],
   shouldHideTargetArrows: true,
