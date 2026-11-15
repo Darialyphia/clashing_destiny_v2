@@ -11,7 +11,7 @@ export const steadfastVigil: SpellBlueprint<MinionCard> = {
   id: 'steadfastVigil',
   name: 'Steadfast Vigil',
   description: dedent /*html*/ `
-  Give an ally minion +0/+0/+2 and <rt-keyword>Vigilant</rt-keyword>.
+  Give an ally minion +0/+0/+1 and <rt-keyword>Vigilant</rt-keyword>.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -45,7 +45,7 @@ export const steadfastVigil: SpellBlueprint<MinionCard> = {
       new SimpleStatsBuffModifier('steadfast-vigil', game, card, {
         atk: 0,
         cmd: 0,
-        hp: 2
+        hp: 1
       })
     );
 

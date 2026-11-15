@@ -49,3 +49,14 @@ export class LocationToggleModifierMixin<
     );
   }
 }
+
+export class LevelTogglableModifierMixin<
+  T extends AnyCard
+> extends TogglableModifierMixin<T> {
+  constructor(
+    game: Game,
+    private level: number
+  ) {
+    super(game, () => this.modifier.target.player.level >= this.level);
+  }
+}

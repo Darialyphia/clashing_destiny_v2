@@ -58,7 +58,7 @@ const isDisabled = computed(() => {
   );
   border: solid calc(0.5px * var(--pixel-scale)) hsl(var(--yellow-9-hsl) / 0.6);
   color: white;
-  font-size: 0.95em;
+  font-size: 0.9em;
   padding-inline: calc(4px * var(--pixel-scale));
   border-radius: var(--radius-pill);
   font-family: var(--font-system-ui);

@@ -28,6 +28,7 @@ import Location from './shared/components/RichText/Location.vue';
 import Dynamic from './shared/components/RichText/Dynamic.vue';
 import Exhaust from './shared/components/RichText/Exhaust.vue';
 import Timing from './shared/components/RichText/Timing.vue';
+import LevelBonus from './shared/components/RichText/LevelBonus.vue';
 
 gsap.install(window);
 gsap.registerPlugin(MotionPathPlugin);
@@ -71,6 +72,7 @@ app.component('rt-location', Location);
 app.component('rt-dynamic', Dynamic);
 app.component('rt-exhaust', Exhaust);
 app.component('rt-timing', Timing);
+app.component('rt-level-bonus', LevelBonus);
 app.mount('#app');
 
 if (import.meta.hot) {

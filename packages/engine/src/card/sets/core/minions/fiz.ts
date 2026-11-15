@@ -7,12 +7,15 @@ import { WhileOnBoardModifier } from '../../../../modifier/modifiers/while-on-bo
 import { MinionInterceptorModifierMixin } from '../../../../modifier/mixins/interceptor.mixin';
 import { UntilEndOfTurnModifierMixin } from '../../../../modifier/mixins/until-end-of-turn.mixin';
 import { FACTION_IDS } from '../../../factions/factions';
+import { OnScoreModifier } from '../../../../modifier/modifiers/on-score.modifier';
+import { LevelTogglableModifierMixin } from '../../../../modifier/mixins/togglable.mixin';
 
 export const fiz: MinionBlueprint = {
   id: 'fiz',
   name: 'Fiz',
   description: dedent /*html*/ `
   <rt-trigger>On Engage</rt-trigger>: I gain "Cannot be attacked" this turn.
+  <rt-level-bonus level="3"></rt-level-bonus><rt-trigger>On Score</rt-trigger>: Move me to your base.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -49,6 +52,19 @@ export const fiz: MinionBlueprint = {
             })
           );
         }
+      })
+    );
+
+    await card.modifiers.add(
+      new OnScoreModifier(game, card, {
+        async handler() {
+          const emptySpaceInBase = card.player.boardSide.base.find(
+            space => space.isEmpty
+          );
+          if (!emptySpaceInBase) return;
+          await card.moveToSpace(emptySpaceInBase);
+        },
+        mixins: [new LevelTogglableModifierMixin(game, 3)]
       })
     );
   },

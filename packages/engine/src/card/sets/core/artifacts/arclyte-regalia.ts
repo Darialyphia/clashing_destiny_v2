@@ -4,8 +4,6 @@ import { defaultCardArt, singleAllyMinionTargetRules } from '../../../card-utils
 import { CARD_KINDS, CARD_SETS, CARD_SPEED, RARITIES } from '../../../card.enums';
 import type { MinionCard } from '../../../entities/minion.entity';
 import { EquippedModifier } from '../../../../modifier/modifiers/equip.modifier';
-import { GameEventModifierMixin } from '../../../../modifier/mixins/game-event.mixin';
-import { GAME_EVENTS } from '../../../../game/game.events';
 import { WhileOnBattlefieldModifier } from '../../../../modifier/modifiers/while-on-board.modifier';
 import { SimpleCommandmentBuffModifier } from '../../../../modifier/modifiers/simple-commandment-modifier';
 import { MinionInterceptorModifierMixin } from '../../../../modifier/mixins/interceptor.mixin';
@@ -22,7 +20,7 @@ export const arclyteRegalia: ArtifactBlueprint = {
   rarity: RARITIES.RARE,
   manaCost: 3,
   manaSupply: 2,
-  level: 1,
+  level: 2,
   exp: 1,
   factionId: FACTION_IDS.LYONAR,
   durability: 2,
