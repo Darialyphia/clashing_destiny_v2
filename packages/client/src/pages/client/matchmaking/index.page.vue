@@ -72,39 +72,42 @@ const getDisplayedDeck = (deck: UserDeck) => ({
     <BackButton class="absolute top-10 left-8" :to="{ name: 'SelectMode' }" />
 
     <main class="container">
-      <PageTitle title="Matchmaking" />
+      <div>
+        <PageTitle title="Matchmaking" />
+      </div>
 
       <div class="matchmaking-content">
-        <section v-if="isInMatchmaking" class="surface quiz-section">
-          <CardQuiz />
-        </section>
+        <Transition mode="out-in">
+          <section v-if="isInMatchmaking" class="surface quiz-section">
+            <CardQuiz />
+          </section>
+          <section v-else style="height: 100%; overflow: hidden">
+            <div v-if="isLoadingDecks" class="loading-state">
+              Loading decks...
+            </div>
 
-        <section v-else>
-          <div v-if="isLoadingDecks" class="loading-state">
-            Loading decks...
-          </div>
+            <div v-else-if="!decks?.length" class="surface empty-state">
+              No decks available. Create a deck first!
+            </div>
 
-          <div v-else-if="!decks?.length" class="surface empty-state">
-            No decks available. Create a deck first!
-          </div>
-
-          <ul v-else class="grid grid-cols-3 gap-3 mb-4">
-            <li
-              v-for="deck in decks"
-              :key="deck.id"
-              class="deck-option"
-              :class="{ selected: selectedDeckId === deck.id }"
-              @click="
-                () => {
-                  if (deck.isValid.result === 'failure') return;
-                  selectedDeckId = deck.id;
-                }
-              "
-            >
-              <PlayerDeckCard :deck="getDisplayedDeck(deck)" />
-            </li>
-          </ul>
-        </section>
+            <ul v-else class="decks-list fancy-scrollbar">
+              <li
+                v-for="deck in decks"
+                :key="deck.id"
+                class="deck-option"
+                :class="{ selected: selectedDeckId === deck.id }"
+                @click="
+                  () => {
+                    if (deck.isValid.result === 'failure') return;
+                    selectedDeckId = deck.id;
+                  }
+                "
+              >
+                <PlayerDeckCard :deck="getDisplayedDeck(deck)" />
+              </li>
+            </ul>
+          </section>
+        </Transition>
 
         <footer>
           <FancyButton
@@ -142,26 +145,29 @@ const getDisplayedDeck = (deck: UserDeck) => ({
   min-height: 100vh;
   background: url('@/assets/backgrounds/main-menu-overlay.png');
   background-size: 100% 100%;
+  display: grid;
+  align-items: center;
 }
 
 .container {
   max-width: var(--size-lg);
   margin: 0 auto;
-  padding: var(--size-6);
   container-type: inline-size;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  height: 90dvh;
   justify-content: center;
   align-items: center;
-  height: 100dvh;
 }
 
 .matchmaking-content {
   display: grid;
   grid-template-columns: 1fr;
-  grid-template-rows: auto auto;
+  grid-template-rows: 1fr auto;
   gap: var(--size-6);
   align-items: start;
+  height: 100%;
+  overflow: hidden;
 }
 
 footer {
@@ -186,6 +192,16 @@ footer {
     --selected-deck-angle: 360deg;
   }
 }
+
+.decks-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--size-3);
+  margin-bottom: var(--size-4);
+  max-height: 100%;
+  overflow-y: auto;
+}
+
 .deck-option {
   position: relative;
   cursor: pointer;
@@ -223,6 +239,7 @@ footer {
 
 .quiz-section {
   width: min(52rem, 100cqi);
+  align-self: center;
 }
 
 .matchmaking-card .loading-state,
@@ -231,5 +248,16 @@ footer {
   padding: var(--size-8);
   color: #a8a8a8;
   font-size: var(--font-size-2);
+}
+
+.v-enter-active,
+.v-leave-active {
+  transition: all 0.3s var(--ease-3);
+}
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
+  translate: 0 -10px;
+  scale: 0.5;
 }
 </style>
