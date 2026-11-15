@@ -403,13 +403,13 @@ const opponentHasInitiative = computed(() => {
 /* under / above the supply zones, as experience comes from banishing supplied cards */
 .my-level {
   position: absolute;
-  bottom: -60px;
-  left: -40px;
+  bottom: -80px;
+  left: -65px;
 }
 .opponent-level {
   position: absolute;
-  top: -50px;
-  left: -40px;
+  top: -70px;
+  left: -65px;
 }
 
 .secret-zone {

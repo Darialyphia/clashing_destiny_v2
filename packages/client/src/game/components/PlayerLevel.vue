@@ -16,7 +16,9 @@ const progress = computed(() => {
 });
 
 const expLabel = computed(() =>
-  player.expToNextLevel === null ? 'MAX' : `${player.exp}/${player.expToNextLevel} EXP`
+  player.expToNextLevel === null
+    ? 'MAX'
+    : `${player.exp}/${player.expToNextLevel} EXP`
 );
 
 // only the local player gets the button, the engine decides when it's displayed and enabled
@@ -33,14 +35,7 @@ const levelUpAction = computed(() => {
     :id="ui.DOMSelectors.playerLevel(player.id).id"
   >
     <div class="level-badge" :title="`Level ${player.level}`">
-      <span class="label">LV</span>
-      <span
-        class="value dual-text"
-        :data-text="player.level"
-        style="--dual-text-stroke-offset-y: -3px"
-      >
-        {{ player.level }}
-      </span>
+      <div class="level-star" v-for="i in player.level" :key="i" />
     </div>
 
     <div class="exp">
@@ -64,33 +59,21 @@ const levelUpAction = computed(() => {
 
 <style scoped lang="postcss">
 .player-level {
-  display: flex;
-  align-items: center;
+  display: grid;
+  grid-template-rows: auto auto;
   gap: var(--size-2);
 }
 
 .level-badge {
-  width: 48px;
-  height: 48px;
-  display: grid;
-  place-items: center;
-  align-content: center;
-  line-height: 1;
-  background: #2a1f3d;
-  border: solid 3px #d9a441;
-  box-shadow:
-    inset 0 0 0 2px #000,
-    0 0 0 2px #000;
-  .label {
-    font-size: 11px;
-    font-weight: var(--font-weight-7);
-    color: #d9a441;
-    letter-spacing: 0.1em;
-  }
-  .value {
-    font-size: 24px;
-    font-weight: var(--font-weight-9);
-  }
+  display: flex;
+  gap: var(--size-1);
+}
+
+.level-star {
+  width: 39px;
+  aspect-ratio: 1;
+  background: url('@/assets/ui/card-level-filled.png') no-repeat center center;
+  background-size: cover;
 }
 
 .exp {
