@@ -2,9 +2,9 @@
 import { isDefined } from '@game/shared';
 
 const {} = defineProps<{
-  atk: number | null;
-  hp: number | null;
-  commandment: number | null;
+  atk: number | string | null;
+  hp: number | string | null;
+  commandment: number | string | null;
   durability: number | null;
 }>();
 </script>

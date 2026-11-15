@@ -6,14 +6,27 @@ import { isFunction } from '@game/shared';
 import { provideRichTextContext } from '@/game/composables/useRichText';
 import { sprites } from '@/assets';
 
+type MaskableCardField =
+  | 'name'
+  | 'manaCost'
+  | 'manaSupply'
+  | 'atk'
+  | 'hp'
+  | 'commandment';
+
 const {
   blueprint,
   foilOverrides = {},
-  isTiltEnabled = true
+  isTiltEnabled = true,
+  masked = {},
+  isArtHidden = false
 } = defineProps<{
   blueprint: CardBlueprint;
   foilOverrides?: Partial<CardBlueprint['art'][string]['foil']>;
   isTiltEnabled?: boolean;
+  // replaces the displayed value of some fields, e.g. with "?"
+  masked?: Partial<Record<MaskableCardField, string>>;
+  isArtHidden?: boolean;
 }>();
 
 const mergedFoilOptions = computed(() => ({
@@ -26,6 +39,7 @@ provideRichTextContext({
 });
 
 const sprite = computed(() => {
+  if (isArtHidden) return null;
   return sprites[`cards/${blueprint.art.default.sprite}`];
 });
 </script>
@@ -35,7 +49,7 @@ const sprite = computed(() => {
     v-if="blueprint"
     :card="{
       id: blueprint.id,
-      name: blueprint.name,
+      name: masked.name ?? blueprint.name,
       description: isFunction(blueprint.description)
         ? blueprint.description()
         : blueprint.description,
@@ -47,11 +61,11 @@ const sprite = computed(() => {
         isFullArt: blueprint.art.default.isFullArt
       },
       kind: blueprint.kind,
-      manaCost: (blueprint as any).manaCost,
-      manaSupply: (blueprint as any).manaSupply,
+      manaCost: masked.manaCost ?? (blueprint as any).manaCost,
+      manaSupply: masked.manaSupply ?? (blueprint as any).manaSupply,
       rarity: (blueprint as any).rarity,
-      atk: (blueprint as any).atk,
-      hp: (blueprint as any).maxHp,
+      atk: masked.atk ?? (blueprint as any).atk,
+      hp: masked.hp ?? (blueprint as any).maxHp,
       might:
         (blueprint as any).stats?.might ??
         (blueprint as any).statRequirements?.might ??
@@ -70,7 +84,7 @@ const sprite = computed(() => {
       tags: blueprint.tags,
       affinities: blueprint.affinities,
       speed: (blueprint as any).speed,
-      commandment: (blueprint as any).commandment
+      commandment: masked.commandment ?? (blueprint as any).commandment
     }"
     :is-tilt-enabled="isTiltEnabled"
     :sprite="sprite"

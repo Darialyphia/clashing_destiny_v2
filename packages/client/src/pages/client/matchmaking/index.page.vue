@@ -12,6 +12,7 @@ import MatchmakingTimer from '@/matchmaking/components/MatchmakingTimer.vue';
 import PlayerDeckCard from '@/player/components/PlayerDeckCard.vue';
 import PageTitle from '@/shared/components/PageTitle.vue';
 import BackButton from '@/shared/components/BackButton.vue';
+import CardQuiz from '@/matchmaking/components/CardQuiz.vue';
 
 definePage({
   name: 'Matchmaking',
@@ -74,7 +75,11 @@ const getDisplayedDeck = (deck: UserDeck) => ({
       <PageTitle title="Matchmaking" />
 
       <div class="matchmaking-content">
-        <section>
+        <section v-if="isInMatchmaking" class="surface quiz-section">
+          <CardQuiz />
+        </section>
+
+        <section v-else>
           <div v-if="isLoadingDecks" class="loading-state">
             Loading decks...
           </div>
@@ -214,6 +219,10 @@ footer {
       z-index: -1;
     }
   }
+}
+
+.quiz-section {
+  width: min(52rem, 100cqi);
 }
 
 .matchmaking-card .loading-state,

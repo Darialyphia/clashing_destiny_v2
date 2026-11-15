@@ -2,9 +2,9 @@
 import { isDefined } from '@game/shared';
 
 const { cost, baseCost, manaSupply } = defineProps<{
-  cost: number;
-  baseCost: number;
-  manaSupply?: number | null;
+  cost: number | string;
+  baseCost: number | string;
+  manaSupply?: number | string | null;
 }>();
 
 const costStatus = computed(() => {

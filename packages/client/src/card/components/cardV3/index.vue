@@ -51,12 +51,12 @@ const {
     description: string;
     art: CardArt;
     kind: CardKind;
-    manaCost?: number | null;
-    manaSupply?: number | null;
-    baseManaCost?: number | null;
+    manaCost?: number | string | null;
+    manaSupply?: number | string | null;
+    baseManaCost?: number | string | null;
     rarity: Rarity;
-    atk?: number | null;
-    hp?: number | null;
+    atk?: number | string | null;
+    hp?: number | string | null;
     might?: number | null;
     focus?: number | null;
     wisdom?: number | null;
@@ -66,7 +66,7 @@ const {
     tags?: string[];
     affinities: Affinity[];
     speed?: CardSpeed;
-    commandment?: number | null;
+    commandment?: number | string | null;
   };
   sprite: Nullable<SpriteData>;
   isFoil?: boolean;
