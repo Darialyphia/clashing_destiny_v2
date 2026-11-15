@@ -11,7 +11,8 @@ export type QuizField =
   | 'manaSupply'
   | 'atk'
   | 'hp'
-  | 'commandment';
+  | 'commandment'
+  | 'silhouette';
 
 export type QuizChoice = {
   id: string;
@@ -36,7 +37,13 @@ const PROMPTS: Record<QuizField, string> = {
   manaSupply: 'How much mana does this card give when supplied?',
   atk: 'How much attack does this minion have?',
   hp: 'How much health does this minion have?',
-  commandment: 'How much influence does this minion have?'
+  commandment: 'How much influence does this minion have?',
+  silhouette: "Who's that minion?"
+};
+
+// how likely a question type is to be picked compared to the others
+const FIELD_WEIGHTS: Partial<Record<QuizField, number>> = {
+  silhouette: 3
 };
 
 // the minimum value a stat can have, used to keep the wrong answers plausible
@@ -71,8 +78,10 @@ const getAvailableFields = (bp: CardBlueprint, pool: CardBlueprint[]) => {
   const fields: QuizField[] = [];
 
   if (new Set(sameKind.map(c => c.name)).size >= 3) fields.push('name');
-  if (new Set(sameKind.map(c => c.art.default.sprite)).size >= 3)
+  if (new Set(sameKind.map(c => c.art.default.sprite)).size >= 3) {
     fields.push('art');
+    if (bp.kind === CARD_KINDS.MINION) fields.push('silhouette');
+  }
 
   (Object.keys(NUMERIC_FIELDS) as NumericField[]).forEach(field => {
     if (getNumericValue(bp, field) === null) return;
@@ -101,18 +110,23 @@ const makeNumericChoices = (value: number, field: NumericField) => {
 const makeCardChoices = (
   bp: CardBlueprint,
   pool: CardBlueprint[],
-  field: 'name' | 'art'
+  field: 'name' | 'art' | 'silhouette'
 ) => {
-  const getKey = (c: CardBlueprint) =>
-    field === 'name' ? c.name : c.art.default.sprite;
+  // a wrong answer can't share what the player is shown or picks from,
+  // e.g. two minions with the same sprite would make a silhouette ambiguous
+  const getKeys = (c: CardBlueprint) =>
+    field === 'name'
+      ? [`name:${c.name}`]
+      : [`name:${c.name}`, `sprite:${c.art.default.sprite}`];
 
-  const seen = new Set([getKey(bp)]);
+  const seen = new Set(getKeys(bp));
   const wrong: CardBlueprint[] = [];
   for (const candidate of shuffle(
     pool.filter(other => other.kind === bp.kind)
   )) {
-    if (seen.has(getKey(candidate))) continue;
-    seen.add(getKey(candidate));
+    const keys = getKeys(candidate);
+    if (keys.some(key => seen.has(key))) continue;
+    keys.forEach(key => seen.add(key));
     wrong.push(candidate);
     if (wrong.length === 2) break;
   }
@@ -122,6 +136,13 @@ const makeCardChoices = (
     label: c.name,
     blueprint: field === 'art' ? c : undefined
   }));
+};
+
+const pickField = (fields: QuizField[]) => {
+  const weighted = fields.flatMap(field =>
+    Array.from({ length: FIELD_WEIGHTS[field] ?? 1 }, () => field)
+  );
+  return sample(weighted)!;
 };
 
 export const createCardQuiz = () => {
@@ -135,9 +156,9 @@ export const createCardQuiz = () => {
     recentIds.push(blueprint.id);
     if (recentIds.length > Math.min(15, pool.length - 1)) recentIds.shift();
 
-    const field = sample(getAvailableFields(blueprint, pool))!;
+    const field = pickField(getAvailableFields(blueprint, pool));
     const choices =
-      field === 'name' || field === 'art'
+      field === 'name' || field === 'art' || field === 'silhouette'
         ? makeCardChoices(blueprint, pool, field)
         : makeNumericChoices(getNumericValue(blueprint, field)!, field);
 

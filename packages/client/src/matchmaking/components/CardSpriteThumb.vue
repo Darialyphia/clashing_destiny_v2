@@ -5,10 +5,16 @@ import type { CardBlueprint } from '@game/engine/src/card/card-blueprint';
 import { CARD_KINDS } from '@game/engine/src/card/card.enums';
 import { ANIMATIONS_NAMES } from '@game/engine/src/game/game.enums';
 
-const { blueprint, size = 128 } = defineProps<{
+const {
+  blueprint,
+  size = 128,
+  isSilhouette = false
+} = defineProps<{
   blueprint: CardBlueprint;
   // size of the square tile, in px
   size?: number;
+  // renders the sprite all black, turning it off fades the colors back in
+  isSilhouette?: boolean;
 }>();
 
 const sprite = computed(
@@ -42,7 +48,7 @@ const { bgPosition, activeFrameRect, imageBg } = useSprite({
 <template>
   <div
     class="card-sprite-thumb"
-    :class="{ 'is-minion': isMinion }"
+    :class="{ 'is-minion': isMinion, 'is-silhouette': isSilhouette }"
     :style="{
       '--pixel-scale': spriteScale,
       '--tile-size': `${size}px`,
@@ -85,5 +91,10 @@ const { bgPosition, activeFrameRect, imageBg } = useSprite({
   background-size: var(--background-width) var(--background-height);
   image-rendering: pixelated;
   pointer-events: none;
+  transition: filter 0.6s var(--ease-out-3);
+
+  .is-silhouette & {
+    filter: brightness(0);
+  }
 }
 </style>

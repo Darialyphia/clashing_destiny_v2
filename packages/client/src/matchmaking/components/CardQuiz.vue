@@ -23,10 +23,13 @@ const answeredCount = ref(0);
 const isAnswered = computed(() => selectedId.value !== null);
 const isCorrect = computed(() => selectedId.value === question.value.answerId);
 const isArtQuestion = computed(() => question.value.field === 'art');
+const isSilhouetteQuestion = computed(
+  () => question.value.field === 'silhouette'
+);
 
 const masked = computed(() => {
   const { field } = question.value;
-  if (isAnswered.value || field === 'art') return {};
+  if (isAnswered.value || field === 'art' || field === 'silhouette') return {};
   return { [field]: field === 'name' ? '???' : '?' };
 });
 
@@ -108,7 +111,20 @@ useEventListener('keydown', (e: KeyboardEvent) => {
           :class="{ 'is-answered': isAnswered }"
           @click="isAnswered && next()"
         >
+          <div v-if="isSilhouetteQuestion" class="silhouette-stage">
+            <div class="silhouette-rays" />
+            <CardSpriteThumb
+              class="silhouette-sprite"
+              :blueprint="question.blueprint"
+              :size="240"
+              :is-silhouette="!isAnswered"
+            />
+            <p class="silhouette-name" :class="{ 'is-revealed': isAnswered }">
+              {{ isAnswered ? question.blueprint.name : '???' }}
+            </p>
+          </div>
           <BlueprintCard
+            v-else
             :blueprint="question.blueprint"
             :masked="masked"
             :is-art-hidden="isArtQuestion && !isAnswered"
@@ -229,6 +245,74 @@ useEventListener('keydown', (e: KeyboardEvent) => {
   50% {
     opacity: 0.6;
     scale: 0.95;
+  }
+}
+
+/* same footprint as a card, so the layout doesn't jump between questions */
+.silhouette-stage {
+  position: relative;
+  width: calc(var(--card-v3-width) * var(--pixel-scale));
+  height: calc(var(--card-v3-height) * var(--pixel-scale));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--size-3);
+  overflow: hidden;
+  border: 2px solid #5e4a2a;
+  border-radius: var(--radius-3);
+  background: radial-gradient(
+    circle at 50% 42%,
+    #fff3c4 0%,
+    #f2c14e 22%,
+    #c0602a 48%,
+    #2a1430 78%
+  );
+}
+
+.silhouette-rays {
+  position: absolute;
+  inset: -50%;
+  background: repeating-conic-gradient(
+    from 0deg at 50% 50%,
+    hsl(45 100% 90% / 0.25) 0deg 10deg,
+    transparent 10deg 20deg
+  );
+  mask-image: radial-gradient(circle, black 15%, transparent 55%);
+  animation: silhouette-rays-spin 40s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes silhouette-rays-spin {
+  to {
+    rotate: 1turn;
+  }
+}
+
+.silhouette-sprite {
+  position: relative;
+}
+
+.silhouette-name {
+  position: relative;
+  font-size: var(--font-size-3);
+  font-weight: var(--font-weight-8);
+  color: #fcfcfc;
+  text-shadow:
+    0 2px 0 black,
+    0 0 8px black;
+  text-align: center;
+  padding-inline: var(--size-3);
+
+  &.is-revealed {
+    animation: silhouette-name-pop 0.4s var(--ease-elastic-out-2, ease-out);
+  }
+}
+
+@keyframes silhouette-name-pop {
+  from {
+    scale: 0.6;
+    opacity: 0;
   }
 }
 
@@ -387,6 +471,8 @@ useEventListener('keydown', (e: KeyboardEvent) => {
     transform: none;
   }
   .hidden-art,
+  .silhouette-rays,
+  .silhouette-name.is-revealed,
   .choice.wrong {
     animation: none;
   }
