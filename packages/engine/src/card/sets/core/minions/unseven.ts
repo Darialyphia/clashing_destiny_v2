@@ -1,13 +1,7 @@
 import dedent from 'dedent';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import { defaultCardArt } from '../../../card-utils';
-import {
-  CARD_SETS,
-  CARD_KINDS,
-  RARITIES,
-  CARD_SPEED,
-  AFFINITIES
-} from '../../../card.enums';
+import { CARD_SETS, CARD_KINDS, RARITIES, CARD_SPEED } from '../../../card.enums';
 import { WhileOnBoardModifier } from '../../../../modifier/modifiers/while-on-board.modifier';
 import { GameEventModifierMixin } from '../../../../modifier/mixins/game-event.mixin';
 import { GAME_EVENTS } from '../../../../game/game.events';
@@ -32,7 +26,6 @@ export const unseven: MinionBlueprint = {
   tags: [],
   atk: 2,
   maxHp: 4,
-  affinities: [AFFINITIES.LIGHT, AFFINITIES.NEUTRAL],
   commandment: 2,
   canPlay: () => true,
   abilities: [],

@@ -6,7 +6,6 @@ import {
   CARD_KINDS,
   RARITIES,
   CARD_SPEED,
-  AFFINITIES,
   CARD_LOCATIONS
 } from '../../../card.enums';
 import { ProtectorModifier } from '../../../../modifier/modifiers/protector.modifier';
@@ -28,7 +27,6 @@ export const swornDefender: MinionBlueprint = {
   art: defaultCardArt('minions/sworn-defender'),
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.RARE,
-  affinities: [AFFINITIES.NEUTRAL, AFFINITIES.NEUTRAL],
   manaCost: 3,
   manaSupply: 3,
   speed: CARD_SPEED.SLOW,

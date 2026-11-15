@@ -31,13 +31,11 @@ Each player uses a Main Deck and a Destiny deck.
 
 - 4 different Destiny cards
 
-For both decks, cards must share an **Affinity** with your hero, or have the Neutral affinity.
-
 ## 4. Card Types
 
 ### Heroes
 
-Each deck has one Hero Card. It defines which affinities you are able to use in your deck. There are 7 affinities: fire, water, air, earth, light, dark and Arcane. A card can have Neutral Afifnity and can be used in any deck.
+Each deck has one Hero Card.
 
 Heroes also have an ability, wether it's a passive trigger or activated ability. they are revealed at the start of the game and placed on the side.
 
@@ -69,22 +67,16 @@ Destiny Card posess symmetrical effects that modify the rules and behavior of a 
 
 ## 5. Resource System
 
-The game uses 2 resources: Mana and Runes
+The game uses one resource: Mana.
 
 ### Mana
 
 Each player gains 5 mana at the start of each turn. They use this mana to play cards according to a card's Mana cost.
 Unspent mana carries over between turn. However, a player can never have more than 8 mana at any given time.
 
-### Runes
-
-There are 4 kinds of runes: Might (red), Wisdom (blue), Focus (green) and Resonance (yellow).
-Some cards may require to consume some runes: if you don't have the necessary runes, you cannot play the card.
-In addition, most cards will bonuses if you possess certain runes, such as mana cost reduction, better stats, additional effects, etc.
-
 ### Resource Action
 
-Once per turn, you can perform a Resource action: you will either gain one rune of your choice, or draw an additional card.
+Once per turn, you can perform a Resource action to draw an additional card.
 
 You can perform your resource action whenever you have the initiative and the game is in a neutral state (no ongoing actions or effect chain).
 

@@ -7,7 +7,6 @@ import { CARD_KINDS, CARD_LOCATIONS, type CardLocation } from '../card.enums';
 import { GAME_EVENTS } from '../../game/game.events';
 import { PlayerDrawEvent } from '../../player/player.events';
 import type { LocationCard } from '../entities/location.entity';
-import type { RuneCard } from '../entities/rune.entity';
 import { GAME_PHASES } from '../../game/game.enums';
 
 export type CardManagerComponentOptions = {
@@ -23,15 +22,11 @@ export class CardManagerComponent {
 
   readonly locationDeck: Deck<LocationCard>;
 
-  readonly runeDeck: Deck<RuneCard>;
-
   readonly hand: AnyCard[] = [];
 
   readonly discardPile = new Set<AnyCard>();
 
   readonly banishPile = new Set<AnyCard>();
-
-  readonly runeZone = new Set<RuneCard>();
 
   readonly reserve = new Set<AnyCard>();
 
@@ -45,7 +40,6 @@ export class CardManagerComponent {
     this.game = game;
     this.mainDeck = new Deck(this.game, player);
     this.locationDeck = new Deck(this.game, player);
-    this.runeDeck = new Deck(this.game, player);
   }
 
   private async buildCards<T extends AnyCard>(
@@ -63,17 +57,15 @@ export class CardManagerComponent {
   async init() {
     const cards = await this.buildCards<AnyCard>(this.options.deck);
     this.mainDeck.populate(
-      cards.filter(c => c.kind !== CARD_KINDS.LOCATION && c.kind !== CARD_KINDS.RUNE)
+      cards.filter(c => c.kind !== CARD_KINDS.LOCATION)
     );
     this.locationDeck.populate(
       cards.filter(c => c.kind === CARD_KINDS.LOCATION) as LocationCard[]
     );
-    this.runeDeck.populate(cards.filter(c => c.kind === CARD_KINDS.RUNE) as RuneCard[]);
 
     if (this.options.shouldShuffleDeck) {
       this.mainDeck.shuffle();
       this.locationDeck.shuffle();
-      this.runeDeck.shuffle();
     }
 
     this.hand.push(...this.mainDeck.draw(this.game.config.INITIAL_HAND_SIZE));
@@ -131,12 +123,6 @@ export class CardManagerComponent {
     const locationDeckCard = this.locationDeck.cards.find(card => card.id === id);
     if (locationDeckCard)
       return { card: locationDeckCard, location: CARD_LOCATIONS.LOCATION_DECK };
-
-    const runeDeckCard = this.runeDeck.cards.find(card => card.id === id);
-    if (runeDeckCard) return { card: runeDeckCard, location: CARD_LOCATIONS.RUNE_DECK };
-
-    const runeZoneCard = [...this.runeZone].find(card => card.id === id);
-    if (runeZoneCard) return { card: runeZoneCard, location: CARD_LOCATIONS.RUNE_ZONE };
 
     const reserveCard = [...this.reserve].find(card => card.id === id);
     if (reserveCard) return { card: reserveCard, location: CARD_LOCATIONS.RESERVE };
@@ -226,10 +212,6 @@ export class CardManagerComponent {
     return cards;
   }
 
-  removeFromRuneZone(card: RuneCard) {
-    this.runeZone.delete(card);
-  }
-
   removeFromHand(card: AnyCard) {
     const index = this.hand.findIndex(handCard => handCard.equals(card));
     if (index === -1) return;
@@ -282,10 +264,6 @@ export class CardManagerComponent {
       return;
     }
     this.hand.push(card);
-  }
-
-  placeInRuneZone(card: RuneCard) {
-    this.runeZone.add(card);
   }
 
   sendToReserve(card: AnyCard) {

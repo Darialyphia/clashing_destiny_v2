@@ -1,13 +1,7 @@
 import dedent from 'dedent';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import { defaultCardArt, isSpell } from '../../../card-utils';
-import {
-  CARD_SETS,
-  CARD_KINDS,
-  RARITIES,
-  AFFINITIES,
-  CARD_SPEED
-} from '../../../card.enums';
+import { CARD_SETS, CARD_KINDS, RARITIES, CARD_SPEED } from '../../../card.enums';
 import { WhileOnBattlefieldModifier } from '../../../../modifier/modifiers/while-on-board.modifier';
 import { GameEventModifierMixin } from '../../../../modifier/mixins/game-event.mixin';
 import { MinionCard } from '../../../entities/minion.entity';
@@ -25,7 +19,6 @@ export const fourWindsMagi: MinionBlueprint = {
   art: defaultCardArt('minions/four-winds-magi'),
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.RARE,
-  affinities: [AFFINITIES.FIRE, AFFINITIES.FIRE],
   manaCost: 4,
   manaSupply: 3,
   speed: CARD_SPEED.SLOW,

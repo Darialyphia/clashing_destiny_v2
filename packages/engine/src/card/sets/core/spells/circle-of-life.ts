@@ -6,13 +6,7 @@ import {
   singleEnemyMinionTargetRules,
   singleEnemyTargetRules
 } from '../../../card-utils';
-import {
-  AFFINITIES,
-  CARD_KINDS,
-  CARD_SETS,
-  CARD_SPEED,
-  RARITIES
-} from '../../../card.enums';
+import { CARD_KINDS, CARD_SETS, CARD_SPEED, RARITIES } from '../../../card.enums';
 import type { MinionCard } from '../../../entities/minion.entity';
 import { SpellDamage } from '../../../../utils/damage';
 import { ZealModifier } from '../../../../modifier/modifiers/zeal.modifier';
@@ -28,7 +22,6 @@ export const circleOfLife: SpellBlueprint<MinionCard> = {
   art: defaultCardArt('spells/circle-of-life'),
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.EPIC,
-  affinities: [AFFINITIES.LIGHT, AFFINITIES.LIGHT, AFFINITIES.LIGHT],
   manaCost: 5,
   manaSupply: 3,
   speed: CARD_SPEED.FAST,

@@ -1,13 +1,7 @@
 import dedent from 'dedent';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import { defaultCardArt } from '../../../card-utils';
-import {
-  CARD_SETS,
-  CARD_KINDS,
-  RARITIES,
-  CARD_SPEED,
-  AFFINITIES
-} from '../../../card.enums';
+import { CARD_SETS, CARD_KINDS, RARITIES, CARD_SPEED } from '../../../card.enums';
 import { ProtectorModifier } from '../../../../modifier/modifiers/protector.modifier';
 import { VigilantModifier } from '../../../../modifier/modifiers/vigilant.modifier';
 
@@ -22,7 +16,6 @@ export const ironcliffeGuardian: MinionBlueprint = {
   art: defaultCardArt('minions/ironcliffe-guardian'),
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.RARE,
-  affinities: [AFFINITIES.LIGHT, AFFINITIES.LIGHT, AFFINITIES.NEUTRAL],
   manaCost: 6,
   manaSupply: 3,
   speed: CARD_SPEED.SLOW,

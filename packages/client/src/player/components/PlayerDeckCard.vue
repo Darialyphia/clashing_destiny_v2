@@ -1,10 +1,6 @@
 <script setup lang="ts">
 import { keyBy } from 'lodash-es';
-import {
-  AFFINITIES,
-  CARD_KINDS,
-  type Affinity
-} from '@game/engine/src/card/card.enums';
+import { CARD_KINDS } from '@game/engine/src/card/card.enums';
 import {
   CARD_SET_DICTIONARY,
   CARDS_DICTIONARY
@@ -14,7 +10,6 @@ import { sprites } from '@/assets';
 import { useSprite } from '@/shared/composables/useSprite';
 import { match } from 'ts-pattern';
 import { ANIMATIONS_NAMES } from '@game/engine/src/game/game.enums';
-import { assets } from '@/assets';
 import UiDrawer from '@/ui/components/UiDrawer.vue';
 import { StandardDeckValidator } from '@game/engine/src/card/validators/standard.validator';
 import { DeckBuilderViewModel } from '@/card/deck-builder.model';
@@ -50,28 +45,10 @@ const violations = computed(() =>
   deck.isValid.result === 'failure' ? deck.isValid.violations : []
 );
 
-const affinities = computed(() => {
-  const result: Affinity[] = [];
-  for (const aff of Object.values(AFFINITIES)) {
-    if (aff === AFFINITIES.NEUTRAL) continue;
-    const max = Math.max(
-      ...mainDeck.value.map(
-        item => item.blueprint.affinities.filter(a => a === aff).length
-      )
-    );
-
-    result.push(...Array.from({ length: max }, () => aff));
-  }
-
-  return result;
-});
-
 const mostExpensiveCard = computed(() =>
   mainDeck.value.reduce((acc, current) => {
     if (current.blueprint.kind === CARD_KINDS.LOCATION) return acc;
-    if (current.blueprint.kind === CARD_KINDS.RUNE) return acc;
     if (acc.blueprint.kind === CARD_KINDS.LOCATION) return current;
-    if (acc.blueprint.kind === CARD_KINDS.RUNE) return current;
     if (current.blueprint.manaCost > acc.blueprint.manaCost) return current;
     return acc;
   }, mainDeck.value[0])
@@ -189,15 +166,6 @@ const route = useRoute();
       >
         {{ deck.name }}
       </div>
-      <div class="affinities">
-        <img
-          v-for="aff in affinities"
-          :key="aff"
-          :src="assets[`ui/card/v3/affinity-${aff.toLocaleLowerCase()}`].path"
-          :alt="aff"
-          class="affinity"
-        />
-      </div>
     </button>
 
     <button
@@ -229,17 +197,6 @@ const route = useRoute();
               style="--dual-text-stroke-offset-y: 2px"
             >
               {{ deck.name }}
-            </div>
-            <div class="affinities">
-              <img
-                v-for="aff in affinities"
-                :key="aff"
-                :src="
-                  assets[`ui/card/v3/affinity-${aff.toLocaleLowerCase()}`].path
-                "
-                :alt="aff"
-                class="affinity"
-              />
             </div>
           </header>
 
@@ -342,14 +299,6 @@ const route = useRoute();
   color: var(--red-5);
 }
 
-.affinity {
-  width: 26px;
-  aspect-ratio: 1 / 1;
-  @screen lt-lg {
-    width: 13px;
-  }
-}
-
 .art {
   position: absolute;
   left: 50%;
@@ -361,7 +310,6 @@ const route = useRoute();
   pointer-events: none;
 
   &.spell,
-  &.rune,
   &.secret,
   &.artifact {
     translate: 0 calc(var(--pixel-scale) * -15px);
@@ -380,15 +328,6 @@ const route = useRoute();
   background-repeat: no-repeat;
   background-size: var(--background-width) var(--background-height);
   pointer-events: none;
-}
-
-.affinities {
-  display: flex;
-  gap: var(--size-2);
-  position: absolute;
-  bottom: 28px;
-  left: 50%;
-  transform: translateX(-50%);
 }
 
 .details-toggle {
@@ -419,13 +358,6 @@ const route = useRoute();
       #111 70%,
       transparent
     );
-
-    .affinities {
-      position: absolute;
-      left: 50%;
-      bottom: 0;
-      translate: 0 50%;
-    }
   }
 
   footer {
@@ -453,7 +385,6 @@ const route = useRoute();
   bottom: -120px;
 
   &.spell &,
-  &.rune &,
   &.artifact & {
     translate: 0 0;
   }

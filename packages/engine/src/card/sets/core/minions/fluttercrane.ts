@@ -1,13 +1,7 @@
 import dedent from 'dedent';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import { defaultCardArt, isSpell } from '../../../card-utils';
-import {
-  CARD_SETS,
-  CARD_KINDS,
-  RARITIES,
-  AFFINITIES,
-  CARD_SPEED
-} from '../../../card.enums';
+import { CARD_SETS, CARD_KINDS, RARITIES, CARD_SPEED } from '../../../card.enums';
 import { OnMoveModifier } from '../../../../modifier/modifiers/on-move.modifier';
 
 export const flutterCrane: MinionBlueprint = {
@@ -21,7 +15,6 @@ export const flutterCrane: MinionBlueprint = {
   art: defaultCardArt('minions/fluttercrane'),
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.RARE,
-  affinities: [AFFINITIES.FIRE, AFFINITIES.NEUTRAL],
   manaCost: 3,
   manaSupply: 2,
   speed: CARD_SPEED.SLOW,

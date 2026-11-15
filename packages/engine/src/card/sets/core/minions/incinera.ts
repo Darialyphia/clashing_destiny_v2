@@ -1,13 +1,7 @@
 import dedent from 'dedent';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import { defaultCardArt, isMinion } from '../../../card-utils';
-import {
-  CARD_SETS,
-  CARD_KINDS,
-  RARITIES,
-  CARD_SPEED,
-  AFFINITIES
-} from '../../../card.enums';
+import { CARD_SETS, CARD_KINDS, RARITIES, CARD_SPEED } from '../../../card.enums';
 import { FlankingModifier } from '../../../../modifier/modifiers/flanking.modifier';
 import { OnMoveModifier } from '../../../../modifier/modifiers/on-move.modifier';
 import { isDefined } from '@game/shared';
@@ -32,7 +26,6 @@ export const incinera: MinionBlueprint = {
   tags: [],
   atk: 4,
   maxHp: 4,
-  affinities: [AFFINITIES.AIR, AFFINITIES.AIR],
   commandment: 2,
   canPlay: () => true,
   abilities: [],

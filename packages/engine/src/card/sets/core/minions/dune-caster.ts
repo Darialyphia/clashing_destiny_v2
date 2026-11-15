@@ -2,13 +2,7 @@ import dedent from 'dedent';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import { defaultCardArt, singleAllyMinionTargetRules } from '../../../card-utils';
 import { EphemeralModifier } from '../../../../modifier/modifiers/ephemeral.modifier';
-import {
-  CARD_SETS,
-  CARD_KINDS,
-  RARITIES,
-  CARD_SPEED,
-  AFFINITIES
-} from '../../../card.enums';
+import { CARD_SETS, CARD_KINDS, RARITIES, CARD_SPEED } from '../../../card.enums';
 import { windDervish } from './wind-dervish';
 import { OnEnterModifier } from '../../../../modifier/modifiers/on-enter.modifier';
 import { SimpleStatsBuffModifier } from '../../../../modifier/modifiers/simple-stats-modifier';
@@ -30,7 +24,6 @@ export const duneCaster: MinionBlueprint = {
   tags: [],
   atk: 1,
   maxHp: 2,
-  affinities: [AFFINITIES.AIR],
   commandment: 1,
   canPlay: () => true,
   abilities: [],

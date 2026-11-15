@@ -1,13 +1,7 @@
 import dedent from 'dedent';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import { defaultCardArt, isMinion } from '../../../card-utils';
-import {
-  CARD_SETS,
-  CARD_KINDS,
-  RARITIES,
-  CARD_SPEED,
-  AFFINITIES
-} from '../../../card.enums';
+import { CARD_SETS, CARD_KINDS, RARITIES, CARD_SPEED } from '../../../card.enums';
 import { AbilityDamage } from '../../../../utils/damage';
 import { WhileOnBattlefieldModifier } from '../../../../modifier/modifiers/while-on-board.modifier';
 import { GameEventModifierMixin } from '../../../../modifier/mixins/game-event.mixin';
@@ -26,12 +20,6 @@ export const redSynja: MinionBlueprint = {
   art: defaultCardArt('minions/red-synja'),
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.LEGENDARY,
-  affinities: [
-    AFFINITIES.NEUTRAL,
-    AFFINITIES.NEUTRAL,
-    AFFINITIES.NEUTRAL,
-    AFFINITIES.NEUTRAL
-  ],
   manaCost: 6,
   manaSupply: 3,
   speed: CARD_SPEED.SLOW,

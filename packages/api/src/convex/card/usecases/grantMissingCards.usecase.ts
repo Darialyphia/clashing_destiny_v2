@@ -30,8 +30,7 @@ export class GrantMissingCardsUseCase
       SPELL: 2,
       ARTIFACT: 2,
       SECRET: 2,
-      LOCATION: 1,
-      RUNE: 10
+      LOCATION: 1
     };
     const cardsToGift: Array<{ blueprintId: string; copies: number }> = [];
 

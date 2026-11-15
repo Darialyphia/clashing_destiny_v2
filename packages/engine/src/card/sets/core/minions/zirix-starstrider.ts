@@ -5,13 +5,7 @@ import {
   emptyBoardSpaceTargetRules,
   singleAllyMinionTargetRules
 } from '../../../card-utils';
-import {
-  CARD_SETS,
-  CARD_KINDS,
-  RARITIES,
-  CARD_SPEED,
-  AFFINITIES
-} from '../../../card.enums';
+import { CARD_SETS, CARD_KINDS, RARITIES, CARD_SPEED } from '../../../card.enums';
 import { OnMoveModifier } from '../../../../modifier/modifiers/on-move.modifier';
 import { windDervish } from './wind-dervish';
 import type { MinionCard } from '../../../entities/minion.entity';
@@ -35,7 +29,6 @@ export const zirixStarstrider: MinionBlueprint = {
   tags: [],
   atk: 3,
   maxHp: 6,
-  affinities: [AFFINITIES.AIR, AFFINITIES.AIR, AFFINITIES.AIR],
   commandment: 2,
   canPlay: () => true,
   abilities: [],

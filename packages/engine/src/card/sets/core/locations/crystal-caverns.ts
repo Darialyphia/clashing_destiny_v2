@@ -1,13 +1,7 @@
 import dedent from 'dedent';
 import type { LocationBlueprint } from '../../../card-blueprint';
 import { defaultCardArt, isMinion } from '../../../card-utils';
-import {
-  CARD_SETS,
-  CARD_KINDS,
-  RARITIES,
-  AFFINITIES,
-  CARD_SPEED
-} from '../../../card.enums';
+import { CARD_SETS, CARD_KINDS, RARITIES, CARD_SPEED } from '../../../card.enums';
 import { CardAuraModifierMixin } from '../../../../modifier/mixins/aura.mixin';
 import type { LocationCard } from '../../../entities/location.entity';
 import type { MinionCard } from '../../../entities/minion.entity';
@@ -29,7 +23,6 @@ export const crystalCaverns: LocationBlueprint = {
   rarity: RARITIES.COMMON,
   art: defaultCardArt('placeholder'),
   speed: CARD_SPEED.SLOW,
-  affinities: [AFFINITIES.NEUTRAL],
   tags: [],
   async onInit(game, card) {
     // A destroyed minion is sent to the discard pile before CARD_AFTER_DESTROY is emitted,

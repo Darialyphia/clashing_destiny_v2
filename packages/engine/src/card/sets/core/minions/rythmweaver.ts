@@ -1,13 +1,7 @@
 import dedent from 'dedent';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import { defaultCardArt } from '../../../card-utils';
-import {
-  CARD_SETS,
-  CARD_KINDS,
-  RARITIES,
-  CARD_SPEED,
-  AFFINITIES
-} from '../../../card.enums';
+import { CARD_SETS, CARD_KINDS, RARITIES, CARD_SPEED } from '../../../card.enums';
 import { discardFromHand } from '../../../card-actions-utils';
 import { OnMoveModifier } from '../../../../modifier/modifiers/on-move.modifier';
 
@@ -22,7 +16,6 @@ export const rythmweaver: MinionBlueprint = {
   art: defaultCardArt('minions/rythmweaver'),
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.COMMON,
-  affinities: [AFFINITIES.FIRE],
   manaCost: 1,
   manaSupply: 3,
   speed: CARD_SPEED.SLOW,

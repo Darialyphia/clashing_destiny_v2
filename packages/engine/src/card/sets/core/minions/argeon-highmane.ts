@@ -1,13 +1,7 @@
 import dedent from 'dedent';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import { defaultCardArt } from '../../../card-utils';
-import {
-  CARD_SETS,
-  CARD_KINDS,
-  RARITIES,
-  CARD_SPEED,
-  AFFINITIES
-} from '../../../card.enums';
+import { CARD_SETS, CARD_KINDS, RARITIES, CARD_SPEED } from '../../../card.enums';
 import { ShieldModifier } from '../../../../modifier/modifiers/shield.modifier';
 import { WhileOnBattlefieldModifier } from '../../../../modifier/modifiers/while-on-board.modifier';
 import { CardAuraModifierMixin } from '../../../../modifier/mixins/aura.mixin';
@@ -32,7 +26,6 @@ export const argeonHighmane: MinionBlueprint = {
   tags: [],
   atk: 3,
   maxHp: 6,
-  affinities: [AFFINITIES.LIGHT, AFFINITIES.LIGHT, AFFINITIES.LIGHT],
   commandment: 2,
   canPlay: () => true,
   abilities: [],

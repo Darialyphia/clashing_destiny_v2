@@ -38,7 +38,6 @@ const animationSequence = computed(() => {
       CARD_KINDS.SPELL,
       CARD_KINDS.ARTIFACT,
       CARD_KINDS.LOCATION,
-      CARD_KINDS.RUNE,
       CARD_KINDS.SECRET,
       () => [ANIMATIONS_NAMES.DEFAULT]
     )
@@ -176,7 +175,6 @@ const { bgPosition, activeFrameRect, imageBg } = useSprite({
   }
 
   &.spell,
-  &.rune,
   &.secret {
     transform: translateX(-50%) translateY(calc(5px));
   }

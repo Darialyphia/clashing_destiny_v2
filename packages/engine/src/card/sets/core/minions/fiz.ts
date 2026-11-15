@@ -1,27 +1,17 @@
 import dedent from 'dedent';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import { defaultCardArt } from '../../../card-utils';
-import {
-  CARD_SETS,
-  CARD_KINDS,
-  RARITIES,
-  CARD_SPEED,
-  AFFINITIES
-} from '../../../card.enums';
+import { CARD_SETS, CARD_KINDS, RARITIES, CARD_SPEED } from '../../../card.enums';
 import { OnMoveModifier } from '../../../../modifier/modifiers/on-move.modifier';
 import { WhileOnBoardModifier } from '../../../../modifier/modifiers/while-on-board.modifier';
 import { MinionInterceptorModifierMixin } from '../../../../modifier/mixins/interceptor.mixin';
 import { UntilEndOfTurnModifierMixin } from '../../../../modifier/mixins/until-end-of-turn.mixin';
-import { OnScoreModifier } from '../../../../modifier/modifiers/on-score.modifier';
-import { AffinitiesTogglableModifierMixin } from '../../../../modifier/mixins/togglable.mixin';
 
 export const fiz: MinionBlueprint = {
   id: 'fiz',
   name: 'Fiz',
   description: dedent /*html*/ `
   <rt-trigger>On Engage</rt-trigger>: I gain "Cannot be attacked" this turn.
-  <rt-affinity affinities="Lyonar,Lyonar"></rt-affinity>
-  <rt-trigger>On Score</rt-trigger>: Move me to your base.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -34,7 +24,6 @@ export const fiz: MinionBlueprint = {
   tags: [],
   atk: 1,
   maxHp: 1,
-  affinities: [AFFINITIES.LIGHT],
   commandment: 1,
   canPlay: () => true,
   abilities: [],
@@ -56,21 +45,6 @@ export const fiz: MinionBlueprint = {
             })
           );
         }
-      })
-    );
-
-    await card.modifiers.add(
-      new OnScoreModifier(game, card, {
-        async handler() {
-          const emptySpaceInBase = card.player.boardSide.base.find(
-            space => space.isEmpty
-          );
-          if (!emptySpaceInBase) return;
-          await card.moveToSpace(emptySpaceInBase);
-        },
-        mixins: [
-          new AffinitiesTogglableModifierMixin(game, [AFFINITIES.LIGHT, AFFINITIES.LIGHT])
-        ]
       })
     );
   },

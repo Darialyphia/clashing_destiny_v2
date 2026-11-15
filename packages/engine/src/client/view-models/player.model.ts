@@ -91,12 +91,6 @@ export class PlayerViewModel {
     return this.data.victoryPoints;
   }
 
-  get runeZone() {
-    return this.data.runeZone.map(cardId => {
-      return this.getEntities()[cardId] as CardViewModel;
-    });
-  }
-
   get supplyZone() {
     return this.data.boardSide.supply.map(cardId => {
       return this.getEntities()[cardId] as CardViewModel;
@@ -138,10 +132,6 @@ export class PlayerViewModel {
         card.cardId === cardId ? { ...card, ...data } : card
       )
     });
-  }
-
-  get affinities() {
-    return this.data.affinities;
   }
 
   get base() {

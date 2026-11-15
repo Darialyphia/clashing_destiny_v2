@@ -5,13 +5,7 @@ import {
   singleEnemyMinionTargetRules,
   singleEnemyTargetRules
 } from '../../../card-utils';
-import {
-  AFFINITIES,
-  CARD_KINDS,
-  CARD_SETS,
-  CARD_SPEED,
-  RARITIES
-} from '../../../card.enums';
+import { CARD_KINDS, CARD_SETS, CARD_SPEED, RARITIES } from '../../../card.enums';
 import type { MinionCard } from '../../../entities/minion.entity';
 import { SpellDamage } from '../../../../utils/damage';
 
@@ -26,7 +20,6 @@ export const phoenixFire: SpellBlueprint<MinionCard> = {
   art: defaultCardArt('spells/phoenix-fire'),
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.COMMON,
-  affinities: [AFFINITIES.FIRE],
   manaCost: 2,
   manaSupply: 3,
   speed: CARD_SPEED.FAST,

@@ -1,13 +1,7 @@
 import dedent from 'dedent';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import { defaultCardArt, singleMinionTargetRules } from '../../../card-utils';
-import {
-  CARD_SETS,
-  CARD_KINDS,
-  RARITIES,
-  CARD_SPEED,
-  AFFINITIES
-} from '../../../card.enums';
+import { CARD_SETS, CARD_KINDS, RARITIES, CARD_SPEED } from '../../../card.enums';
 import { OnEnterModifier } from '../../../../modifier/modifiers/on-enter.modifier';
 import { EmpoweredModifier } from '../../../../modifier/modifiers/empowered.modifier';
 
@@ -22,7 +16,6 @@ export const songweaver: MinionBlueprint = {
   art: defaultCardArt('minions/songweaver'),
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.COMMON,
-  affinities: [AFFINITIES.NEUTRAL],
   manaCost: 3,
   manaSupply: 3,
   speed: CARD_SPEED.SLOW,

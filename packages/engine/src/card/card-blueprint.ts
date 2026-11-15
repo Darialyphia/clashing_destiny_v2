@@ -5,7 +5,6 @@ import type {
   CardSetId,
   Rarity,
   Tag,
-  Affinity,
   CardSpeed
 } from './card.enums';
 import { type AnyCard } from './entities/card.entity';
@@ -18,7 +17,6 @@ import type { BoardSpace } from '../board/board-space.entity';
 import type { LocationCard } from './entities/location.entity';
 import type { Effect } from '../game/effect-chain';
 import type { Nullable } from '@game/shared';
-import type { RuneCard } from './entities/rune.entity';
 import type { GameEventMap } from '../game/game.events';
 import type { EventMapWithStarEvent } from '../utils/typed-emitter';
 import type { SecretCard } from './entities/secret.entity';
@@ -64,7 +62,6 @@ export type CardBlueprintBase = {
   speed: CardSpeed;
   // eslint-disable-next-line @typescript-eslint/ban-types
   tags: (Tag | (string & {}))[];
-  affinities: Affinity[];
   shouldHideTargetArrows?: boolean;
 };
 
@@ -184,12 +181,6 @@ export type LocationBlueprint = CardBlueprintBase & {
   onPlay: (game: Game, card: LocationCard) => Promise<void>;
 };
 
-export type RuneBlueprint = CardBlueprintBase & {
-  kind: Extract<CardKind, typeof CARD_KINDS.RUNE>;
-  onInit: (game: Game, card: RuneCard) => Promise<void>;
-  onPlay: (game: Game, card: RuneCard) => Promise<void>;
-};
-
 export type SecretBlueprint<
   TEvent extends keyof EventMapWithStarEvent<GameEventMap>,
   T extends AnyCard = AnyCard
@@ -230,5 +221,4 @@ export type CardBlueprint =
   | MinionBlueprint
   | ArtifactBlueprint
   | LocationBlueprint
-  | RuneBlueprint
   | SecretBlueprint<any, any>;

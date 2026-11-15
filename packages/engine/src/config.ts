@@ -1,7 +1,6 @@
 export type Config = {
   MAX_MAIN_DECK_SIZE: number;
   MAX_LOCATION_CARDS: number;
-  MAX_RUNE_CARDS: number;
   MAX_MAIN_DECK_CARD_COPIES: number;
 
   INITIAL_HAND_SIZE: number;
@@ -36,7 +35,6 @@ export type Config = {
   SHOULD_CREATE_CHAIN_ON_SCORE: boolean;
   SHOULD_ROTATE_LOCATIONS: boolean;
   SHOULD_PAY_MANA: boolean;
-  SHOULD_CHECK_AFFINITIES: boolean;
 
   EFFECT_CHAIN: boolean;
 
@@ -50,7 +48,6 @@ export const defaultConfig: Config = {
   MAX_MAIN_DECK_SIZE: 40,
   MAX_LOCATION_CARDS: 4,
   MAX_MAIN_DECK_CARD_COPIES: 2,
-  MAX_RUNE_CARDS: 10,
 
   INITIAL_HAND_SIZE: 6,
   MAX_HAND_SIZE: 10,
@@ -82,7 +79,6 @@ export const defaultConfig: Config = {
   SHOULD_CREATE_CHAIN_ON_SCORE: false,
   SHOULD_ROTATE_LOCATIONS: true,
   SHOULD_PAY_MANA: true,
-  SHOULD_CHECK_AFFINITIES: true,
 
   EFFECT_CHAIN: false,
 

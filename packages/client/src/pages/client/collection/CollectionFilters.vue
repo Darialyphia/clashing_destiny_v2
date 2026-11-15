@@ -1,10 +1,8 @@
 <script setup lang="ts">
 import {
   CARD_KINDS,
-  AFFINITIES,
   RARITIES,
   type CardKind,
-  type Affinity,
   type Rarity
 } from '@game/engine/src/card/card.enums';
 import { uppercaseFirstLetter } from '@game/shared';
@@ -35,10 +33,7 @@ const {
   cardScale,
   hasRarityFilter,
   toggleRarityFilter,
-  clearRarityFilter,
-  hasAffinityFilter,
-  toggleAffinityFilter,
-  clearAffinityFilter
+  clearRarityFilter
 } = useCollectionPage();
 
 const activeFilterCount = computed(() => {
@@ -46,12 +41,6 @@ const activeFilterCount = computed(() => {
   if (manaCostFilter.value !== null) count++;
   for (const kind of Object.values(CARD_KINDS)) {
     if (hasKindFilter(kind)) {
-      count++;
-      break;
-    }
-  }
-  for (const affinity of Object.values(AFFINITIES)) {
-    if (hasAffinityFilter(affinity)) {
       count++;
       break;
     }
@@ -68,7 +57,6 @@ const activeFilterCount = computed(() => {
 const clearAllFilters = () => {
   clearKindFilter();
   clearRarityFilter();
-  clearAffinityFilter();
   manaCostFilter.value = null;
 };
 const isFiltersOpen = ref(false);
@@ -84,13 +72,6 @@ const cardKinds: Array<{
   label: uppercaseFirstLetter(kind),
   color: 'white'
 }));
-
-const affinities: Array<{ id: Affinity; img: string; label: string }> =
-  Object.values(AFFINITIES).map(affinity => ({
-    id: affinity,
-    img: assets[`ui/card/v3/affinity-${affinity.toLocaleLowerCase()}`].path,
-    label: uppercaseFirstLetter(affinity.toLocaleLowerCase())
-  }));
 
 const rarities: Array<{ id: Rarity; img: string; label: string }> =
   Object.values(RARITIES)
@@ -221,29 +202,6 @@ const toggleMinManaCostFilter = (cost: number) => {
               >
                 6+
               </button>
-            </div>
-          </section>
-
-          <section class="filter-section">
-            <h4 class="filter-title">Affinity</h4>
-            <div class="affinity-filter">
-              <UiSimpleTooltip
-                v-for="affinity in affinities"
-                :key="affinity.id"
-                side="top"
-                use-portal
-              >
-                <template #trigger>
-                  <button
-                    :class="{ active: hasAffinityFilter(affinity.id) }"
-                    :aria-label="affinity.label"
-                    @click="toggleAffinityFilter(affinity.id)"
-                  >
-                    <img :src="affinity.img" :alt="affinity.label" />
-                  </button>
-                </template>
-                {{ affinity.label }}
-              </UiSimpleTooltip>
             </div>
           </section>
 
@@ -383,7 +341,6 @@ const toggleMinManaCostFilter = (cost: number) => {
 }
 
 .kind-filter,
-.affinity-filter,
 .rarity-filter {
   display: flex;
   flex-wrap: wrap;
@@ -422,15 +379,6 @@ const toggleMinManaCostFilter = (cost: number) => {
   & > img {
     width: 32px;
     height: 32px;
-  }
-}
-
-.affinity-filter button {
-  padding: 0;
-  border-radius: var(--radius-pill);
-  & > img {
-    width: 44px;
-    height: 44px;
   }
 }
 

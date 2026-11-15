@@ -10,7 +10,6 @@ import { useWindowSize } from '@vueuse/core';
 import { config } from '@/utils/config';
 import type { PlayerClockState } from '../composables/useGameSocket';
 import Battlefield from './Battlefield.vue';
-import RuneZone from './RuneZone.vue';
 
 const { clocks } = defineProps<{
   clocks?: Record<string, PlayerClockState>;
@@ -132,14 +131,6 @@ const pointsPerColumn = computed(() =>
           />
         </div>
       </div> -->
-
-      <div class="my-rune-zone">
-        <RuneZone :player="myPlayer" />
-      </div>
-
-      <div class="opponent-rune-zone">
-        <RuneZone :player="opponent" />
-      </div>
     </div>
 
     <div id="card-actions-portal" class="absolute"></div>
@@ -388,18 +379,6 @@ const pointsPerColumn = computed(() =>
   &:not(.active) {
     opacity: 0;
   }
-}
-
-.my-rune-zone {
-  position: absolute;
-  bottom: 10px;
-  right: -320px;
-}
-
-.opponent-rune-zone {
-  position: absolute;
-  top: 25px;
-  right: -320px;
 }
 
 .secret-zone {

@@ -139,8 +139,7 @@ export const locationsTutorial: TutorialMission = {
               // turn 2 draws
               ['tutorial-windblade-adept', 10],
               // left Location on turn 1, then on turn 3
-              ['tutorial-moonlit-pass', 2],
-              ['light-affinity', 10]
+              ['tutorial-moonlit-pass', 2]
             ])
           }
         },
@@ -159,8 +158,7 @@ export const locationsTutorial: TutorialMission = {
               ['bloodbound-invader', 10],
               // right Location on turn 1, then left Location on turn 2
               ['tutorial-bloodsun-arena', 1],
-              ['tutorial-mistveil-marsh', 1],
-              ['fire-affinity', 10]
+              ['tutorial-mistveil-marsh', 1]
             ])
           }
         }

@@ -5,13 +5,7 @@ import {
   emptyBoardSpaceTargetRules,
   singleAllyMinionTargetRules
 } from '../../../card-utils';
-import {
-  AFFINITIES,
-  CARD_KINDS,
-  CARD_SETS,
-  CARD_SPEED,
-  RARITIES
-} from '../../../card.enums';
+import { CARD_KINDS, CARD_SETS, CARD_SPEED, RARITIES } from '../../../card.enums';
 import type { MinionCard } from '../../../entities/minion.entity';
 import { InstantModifier } from '../../../../modifier/modifiers/instant.modifier';
 
@@ -27,7 +21,6 @@ export const mistWalking: SpellBlueprint<MinionCard> = {
   art: defaultCardArt('spells/mist-walking'),
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.COMMON,
-  affinities: [AFFINITIES.FIRE, AFFINITIES.FIRE],
   manaCost: 1,
   manaSupply: 3,
   speed: CARD_SPEED.FAST,

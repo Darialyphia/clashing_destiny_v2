@@ -2,13 +2,7 @@ import dedent from 'dedent';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import { GAME_EVENTS } from '../../../../game/game.events';
 import { defaultCardArt } from '../../../card-utils';
-import {
-  CARD_SETS,
-  CARD_KINDS,
-  RARITIES,
-  CARD_SPEED,
-  AFFINITIES
-} from '../../../card.enums';
+import { CARD_SETS, CARD_KINDS, RARITIES, CARD_SPEED } from '../../../card.enums';
 import { WhileOnBattlefieldModifier } from '../../../../modifier/modifiers/while-on-board.modifier';
 import { GameEventModifierMixin } from '../../../../modifier/mixins/game-event.mixin';
 import { MinionCard } from '../../../entities/minion.entity';
@@ -25,7 +19,6 @@ export const sunlionPriest: MinionBlueprint = {
   art: defaultCardArt('minions/war-exorcist'),
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.EPIC,
-  affinities: [AFFINITIES.LIGHT, AFFINITIES.LIGHT, AFFINITIES.NEUTRAL],
   manaCost: 5,
   manaSupply: 3,
   speed: CARD_SPEED.SLOW,

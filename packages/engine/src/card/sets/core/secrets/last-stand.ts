@@ -1,13 +1,7 @@
 import dedent from 'dedent';
 import { defineSecretBlueprint } from '../../../card-blueprint';
 import { defaultCardArt, noTargets } from '../../../card-utils';
-import {
-  AFFINITIES,
-  CARD_KINDS,
-  CARD_SETS,
-  CARD_SPEED,
-  RARITIES
-} from '../../../card.enums';
+import { CARD_KINDS, CARD_SETS, CARD_SPEED, RARITIES } from '../../../card.enums';
 import { GAME_EVENTS } from '../../../../game/game.events';
 import { DAMAGE_TYPES } from '../../../../utils/damage';
 
@@ -22,7 +16,6 @@ export const lastStand = defineSecretBlueprint({
   art: defaultCardArt('secrets/last-stand'),
   kind: CARD_KINDS.SECRET,
   rarity: RARITIES.COMMON,
-  affinities: [AFFINITIES.LIGHT, AFFINITIES.LIGHT],
   manaCost: 3,
   manaSupply: 3,
   speed: CARD_SPEED.FAST,

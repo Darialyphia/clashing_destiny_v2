@@ -15,7 +15,6 @@ import { match } from 'ts-pattern';
 import { BoardSide, type SerializedBoardSide } from '../board/board-side.entity';
 import { GAME_EVENTS } from '../game/game.events';
 import { PlayerAddSupplyEvent, PlayerGainVictoryPointEvent } from './player.events';
-import type { Affinity } from '../card/card.enums';
 
 export type PlayerOptions = {
   id: string;
@@ -38,8 +37,6 @@ export type SerializedPlayer = {
   manaRegen: number;
   boardSide: SerializedBoardSide;
   victoryPoints: number;
-  runeZone: string[];
-  affinities: Affinity[];
 };
 
 export type PlayerInterceptors = {
@@ -291,11 +288,7 @@ export class Player
       maxMana: this.maxMana,
       manaRegen: this.manaRegen,
       boardSide: this.boardSide.serialize(),
-      victoryPoints: this.victoryPoints,
-      runeZone: Array.from(this.cardManager.runeZone).map(card => card.id),
-      affinities: Array.from(this.cardManager.runeZone)
-        .map(card => card.affinities)
-        .flat()
+      victoryPoints: this.victoryPoints
     };
   }
 }

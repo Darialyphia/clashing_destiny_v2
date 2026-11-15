@@ -1,13 +1,7 @@
 import dedent from 'dedent';
 import type { SpellBlueprint } from '../../../card-blueprint';
 import { anywhereTargetRules, defaultCardArt, isSpell } from '../../../card-utils';
-import {
-  AFFINITIES,
-  CARD_KINDS,
-  CARD_SETS,
-  CARD_SPEED,
-  RARITIES
-} from '../../../card.enums';
+import { CARD_KINDS, CARD_SETS, CARD_SPEED, RARITIES } from '../../../card.enums';
 import { SimpleManacostModifier } from '../../../../modifier/modifiers/simple-manacost-modifier';
 
 export const manaVortex: SpellBlueprint = {
@@ -21,7 +15,6 @@ export const manaVortex: SpellBlueprint = {
   art: defaultCardArt('spells/mana-vortex'),
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.RARE,
-  affinities: [AFFINITIES.FIRE],
   manaCost: 1,
   manaSupply: 2,
   speed: CARD_SPEED.FAST,

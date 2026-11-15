@@ -1,13 +1,7 @@
 import { afterEach, describe, expect, it } from 'vitest';
 import type { MinionBlueprint } from '../../src/card/card-blueprint';
 import { defaultCardArt } from '../../src/card/card-utils';
-import {
-  AFFINITIES,
-  CARD_KINDS,
-  CARD_SETS,
-  CARD_SPEED,
-  RARITIES
-} from '../../src/card/card.enums';
+import { CARD_KINDS, CARD_SETS, CARD_SPEED, RARITIES } from '../../src/card/card.enums';
 import { GAME_PHASES } from '../../src/game/game.enums';
 import { TEST_PLAYER_IDS, TestSession } from './test-session';
 
@@ -20,7 +14,6 @@ const testMinion: MinionBlueprint = {
   art: defaultCardArt('minions/test-session-minion'),
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.COMMON,
-  affinities: [AFFINITIES.NEUTRAL],
   manaCost: 1,
   manaSupply: 0,
   speed: CARD_SPEED.SLOW,

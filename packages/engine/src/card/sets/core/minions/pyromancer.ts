@@ -6,7 +6,6 @@ import {
   CARD_KINDS,
   RARITIES,
   CARD_SPEED,
-  AFFINITIES,
   CARD_LOCATIONS
 } from '../../../card.enums';
 import { ChannelModifier } from '../../../../modifier/modifiers/channel.modifier';
@@ -33,7 +32,6 @@ export const pyromancer: MinionBlueprint = {
   tags: [],
   atk: 2,
   maxHp: 2,
-  affinities: [AFFINITIES.AIR],
   commandment: 1,
   canPlay: () => true,
   abilities: [],

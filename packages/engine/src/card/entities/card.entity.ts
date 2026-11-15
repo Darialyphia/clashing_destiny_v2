@@ -10,10 +10,8 @@ import {
   CARD_LOCATIONS,
   type CardLocation,
   CARD_KINDS,
-  type Affinity,
   type CardSpeed,
-  CARD_SPEED,
-  AFFINITIES
+  CARD_SPEED
 } from '../card.enums';
 import {
   CardAddToHandevent,
@@ -92,7 +90,6 @@ export type SerializedCard = {
   keywords: string[];
   unplayableReason: string | null;
   isRevealed: boolean;
-  affinities: Affinity[];
   position: string | null;
   speed: CardSpeed;
   isFoil: boolean;
@@ -178,10 +175,6 @@ export abstract class Card<
     return this._isRevealed;
   }
 
-  get affinities() {
-    return this.blueprint.affinities;
-  }
-
   get canBeSupplied() {
     return this.interceptors.canBeSupplied.getValue(true, {});
   }
@@ -235,38 +228,6 @@ export abstract class Card<
     return 0;
   }
 
-  get fulfillsAffinities() {
-    if (!this.game.config.SHOULD_CHECK_AFFINITIES) return true;
-
-    const available = Object.fromEntries(
-      Object.values(AFFINITIES).map(affinity => [affinity, 0])
-    ) as Record<Affinity, number>;
-    this.player.cardManager.runeZone.forEach(card => {
-      card.affinities.forEach(affinity => {
-        available[affinity]++;
-      });
-    });
-    const nonNeutralCost = this.affinities.filter(
-      affinity => affinity !== AFFINITIES.NEUTRAL
-    );
-    const neutralCost = this.affinities.filter(
-      affinity => affinity === AFFINITIES.NEUTRAL
-    );
-
-    // try to pay non neutral cost first
-    for (const rune of nonNeutralCost) {
-      if (available[rune] > 0) {
-        available[rune]--;
-      } else {
-        return false;
-      }
-    }
-
-    const remaining = Object.values(available).reduce((sum, count) => sum + count, 0);
-
-    return remaining >= neutralCost.length;
-  }
-
   get canPayManaCost() {
     if (!this.game.config.SHOULD_PAY_MANA) return true;
     return this.player.mana >= this.manaCost;
@@ -311,9 +272,6 @@ export abstract class Card<
         }
       )
       .with(CARD_KINDS.LOCATION, async () => {
-        await this.sendToBanishPile();
-      })
-      .with(CARD_KINDS.RUNE, async () => {
         await this.sendToBanishPile();
       })
       .exhaustive();
@@ -419,12 +377,6 @@ export abstract class Card<
           this.player.boardSide.remove(this);
         }
       )
-      .with(CARD_LOCATIONS.RUNE_ZONE, () => {
-        this.player.cardManager.removeFromRuneZone(this as any);
-      })
-      .with(CARD_LOCATIONS.RUNE_DECK, () => {
-        this.player.cardManager.runeDeck.pluck(this as any);
-      })
       .with(CARD_LOCATIONS.RESERVE, () => {
         this.player.cardManager.removeFromReserve(this);
       })
@@ -453,27 +405,15 @@ export abstract class Card<
   }
 
   async sendToTopOfDeck() {
-    if (this.kind === CARD_KINDS.RUNE) {
-      await this.changeLocation(CARD_LOCATIONS.RUNE_DECK, () =>
-        this.player.cardManager.runeDeck.addToTop(this as any)
-      );
-    } else {
-      await this.changeLocation(CARD_LOCATIONS.MAIN_DECK, () =>
-        this.player.cardManager.mainDeck.addToTop(this)
-      );
-    }
+    await this.changeLocation(CARD_LOCATIONS.MAIN_DECK, () =>
+      this.player.cardManager.mainDeck.addToTop(this)
+    );
   }
 
   async sendToBottomOfDeck() {
-    if (this.kind === CARD_KINDS.RUNE) {
-      await this.changeLocation(CARD_LOCATIONS.RUNE_DECK, () =>
-        this.player.cardManager.runeDeck.addToBottom(this as any)
-      );
-    } else {
-      await this.changeLocation(CARD_LOCATIONS.MAIN_DECK, () =>
-        this.player.cardManager.mainDeck.addToBottom(this)
-      );
-    }
+    await this.changeLocation(CARD_LOCATIONS.MAIN_DECK, () =>
+      this.player.cardManager.mainDeck.addToBottom(this)
+    );
   }
 
   async shuffleIntoDeck() {
@@ -531,9 +471,7 @@ export abstract class Card<
     }
 
     return (
-      this.location === CARD_LOCATIONS.HAND &&
-      this.canPayManaCost &&
-      this.fulfillsAffinities
+      this.location === CARD_LOCATIONS.HAND && this.canPayManaCost
     );
   }
 
@@ -562,10 +500,6 @@ export abstract class Card<
 
     if (!this.canPayManaCost) {
       return 'Cannot pay mana cost.';
-    }
-
-    if (!this.fulfillsAffinities) {
-      return 'You do not have the required affinities to play this card.';
     }
 
     return 'You cannot play this card';
@@ -602,7 +536,6 @@ export abstract class Card<
       keywords: this.keywords.map(keyword => keyword.id),
       unplayableReason: this.unplayableReason,
       isRevealed: this.isRevealed,
-      affinities: this.affinities,
       position: this.position?.id ?? null,
       speed: this.speed,
       canBeSupplied: this.canBeSupplied

@@ -82,7 +82,6 @@ const sprite = computed(() => {
       abilities: (blueprint as any).abilities?.map(formatAbilityText),
       subKind: (blueprint as any).subKind,
       tags: blueprint.tags,
-      affinities: blueprint.affinities,
       speed: (blueprint as any).speed,
       commandment: masked.commandment ?? (blueprint as any).commandment
     }"

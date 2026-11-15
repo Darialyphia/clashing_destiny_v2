@@ -1,13 +1,7 @@
 import dedent from 'dedent';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import { defaultCardArt } from '../../../card-utils';
-import {
-  CARD_SETS,
-  CARD_KINDS,
-  RARITIES,
-  CARD_SPEED,
-  AFFINITIES
-} from '../../../card.enums';
+import { CARD_SETS, CARD_KINDS, RARITIES, CARD_SPEED } from '../../../card.enums';
 
 export const bloodboundInvader: MinionBlueprint = {
   id: 'bloodbound-invader',
@@ -24,7 +18,6 @@ export const bloodboundInvader: MinionBlueprint = {
   tags: [],
   atk: 1,
   maxHp: 2,
-  affinities: [AFFINITIES.NEUTRAL],
   commandment: 2,
   canPlay: () => true,
   abilities: [],

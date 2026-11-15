@@ -1,13 +1,7 @@
 import dedent from 'dedent';
 import type { SpellBlueprint } from '../../../card-blueprint';
 import { defaultCardArt, singleAllyMinionTargetRules } from '../../../card-utils';
-import {
-  AFFINITIES,
-  CARD_KINDS,
-  CARD_SETS,
-  CARD_SPEED,
-  RARITIES
-} from '../../../card.enums';
+import { CARD_KINDS, CARD_SETS, CARD_SPEED, RARITIES } from '../../../card.enums';
 import type { MinionCard } from '../../../entities/minion.entity';
 import { SimpleAttackBuffModifier } from '../../../../modifier/modifiers/simple-attack-buff.modifier';
 import { RemoveOnLeaveBoardModifierMixin } from '../../../../modifier/mixins/remove-on-destroyed';
@@ -24,7 +18,6 @@ export const eightGates: SpellBlueprint<MinionCard> = {
   art: defaultCardArt('spells/eight-gates'),
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.EPIC,
-  affinities: [AFFINITIES.FIRE, AFFINITIES.FIRE, AFFINITIES.FIRE],
   manaCost: 3,
   manaSupply: 3,
   speed: CARD_SPEED.FAST,

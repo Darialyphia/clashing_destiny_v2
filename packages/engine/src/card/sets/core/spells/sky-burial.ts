@@ -7,7 +7,6 @@ import {
   isMinion
 } from '../../../card-utils';
 import {
-  AFFINITIES,
   CARD_KINDS,
   CARD_LOCATIONS,
   CARD_SETS,
@@ -29,7 +28,6 @@ export const skyBurial: SpellBlueprint = {
   art: defaultCardArt('spells/sky-burial'),
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.RARE,
-  affinities: [AFFINITIES.LIGHT, AFFINITIES.LIGHT, AFFINITIES.LIGHT],
   manaCost: 4,
   manaSupply: 3,
   speed: CARD_SPEED.FAST,

@@ -1,13 +1,7 @@
 import dedent from 'dedent';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import { defaultCardArt } from '../../../card-utils';
-import {
-  CARD_SETS,
-  CARD_KINDS,
-  RARITIES,
-  CARD_SPEED,
-  AFFINITIES
-} from '../../../card.enums';
+import { CARD_SETS, CARD_KINDS, RARITIES, CARD_SPEED } from '../../../card.enums';
 import { ZealModifier } from '../../../../modifier/modifiers/zeal.modifier';
 import { CleaveModifier } from '../../../../modifier/modifiers/cleave.modifier';
 import { OnKillModifier } from '../../../../modifier/modifiers/on-kill.modifier';
@@ -24,7 +18,6 @@ export const sunbreaker: MinionBlueprint = {
   art: defaultCardArt('minions/sunbreaker'),
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.EPIC,
-  affinities: [AFFINITIES.LIGHT, AFFINITIES.LIGHT, AFFINITIES.NEUTRAL],
   manaCost: 6,
   manaSupply: 3,
   speed: CARD_SPEED.SLOW,

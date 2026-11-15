@@ -69,11 +69,11 @@ const searchTerms: Record<string, string> = {
   'how-to-win':
     'win victory points highest influence board reset end turn tie tied',
   decks:
-    'decks main deck destiny deck copies hero units spells artifacts neutral affinity deckbuilding 40 cards 3 copies one hero',
+    'decks main deck destiny deck copies hero units spells artifacts deckbuilding 40 cards 3 copies one hero',
   'card-types':
-    'card types heroes affinities fire water air earth light dark arcane abilities passive active units exhausted commandment attack health stats spells one-time effects discard artifacts durability banished destinies possess symmetrical effects cycle on board',
+    'card types heroes abilities passive active units exhausted commandment attack health stats spells one-time effects discard artifacts durability banished destinies possess symmetrical effects cycle on board',
   'resource-system':
-    'resource system mana runes might red wisdom blue focus green resonance yellow resource action pass initiative draw card cost reduction',
+    'resource system mana resource action pass initiative draw card cost reduction',
   'board-structure':
     'board structure deck hand destiny pile base slots battlefields discard banishment slots safe area units play space slots',
   setup: 'setup starting hand draw cards mulligan prepare first turn procedure',
@@ -418,7 +418,7 @@ onUnmounted(() => {
         </h2>
         <div class="space-y-4 text-slate-300 text-sm leading-relaxed">
           <p>
-            Each player uses a Main Deck, an Affinity Deck and a Location Deck.
+            Each player uses a Main Deck and a Location Deck.
           </p>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
@@ -452,36 +452,6 @@ onUnmounted(() => {
               </ul>
             </div>
 
-            <!-- Affinity Deck Box -->
-            <div class="border border-slate-800 bg-slate-950/50 p-4 rounded-lg">
-              <h3
-                class="text-2 font-bold text-[#efef9f] mb-3 flex items-center gap-1.5 border-b border-slate-800 pb-1.5"
-              >
-                <span class="i-mdi-star text-[#d7ad42]" />
-                Affinity Deck
-              </h3>
-              <ul class="space-y-2 text-1 text-slate-300">
-                <li class="flex items-start gap-2">
-                  <span
-                    class="i-mdi-arrow-right text-[#d7ad42] mt-0.5 shrink-0"
-                  />
-                  Contains 10 cards tied to one of the game's 6 factions.
-                </li>
-                <li class="flex items-start gap-2">
-                  <span
-                    class="i-mdi-arrow-right text-[#d7ad42] mt-0.5 shrink-0"
-                  />
-                  you play one affinity at the start of each turn
-                </li>
-                <li class="flex items-start gap-2">
-                  <span
-                    class="i-mdi-arrow-right text-[#d7ad42] mt-0.5 shrink-0"
-                  />
-                  Cards from your main deck require some affinities on the board
-                  to be played.
-                </li>
-              </ul>
-            </div>
             <!-- Destiny Deck Box -->
             <div class="border border-slate-800 bg-slate-950/50 p-4 rounded-lg">
               <h3
@@ -694,8 +664,6 @@ onUnmounted(() => {
           <p>
             The game relies on
             <span class="game-term mana">Mana</span>
-            and
-            <span class="game-term rune">Affinities</span>
             .
           </p>
 
@@ -719,27 +687,6 @@ onUnmounted(() => {
               <p class="text-sm text-slate-400">
                 At the start of the next turn, you recollect cards in your
                 Supply to your hand.
-              </p>
-            </div>
-
-            <div
-              class="border-l-2 border-emerald-500 bg-emerald-950/5 p-3 rounded-r"
-            >
-              <h4
-                class="font-bold text-emerald-400 text-sm mb-2 flex items-center gap-1.5"
-              >
-                <span class="i-mdi-rhombus-split" />
-                Runes
-              </h4>
-              <p class="text-sm mb-2">
-                Affinities allow you to play stronger cards, but are not spent
-                when you do so: they strictly act as a threshold requirement.
-              </p>
-
-              <p class="text-sm mt-2">
-                At the start of each turn, both players look at the top two
-                cards of their Affinity deck and choose one to put in play; the
-                other one goes back to the bottom of the Affinity deck.
               </p>
             </div>
           </div>
@@ -1033,7 +980,7 @@ onUnmounted(() => {
                 Players gain
                 <span class="game-term mana">Mana</span>
                 equal to the
-                <span class="game-term rune">Mana Supply</span>
+                <span class="game-term supply">Mana Supply</span>
                 of all cards in their hand.
               </li>
             </ul>
@@ -1938,7 +1885,7 @@ blockquote {
   background: rgba(56, 189, 248, 0.12);
   border: 1px solid rgba(56, 189, 248, 0.25);
 }
-.game-term.rune {
+.game-term.supply {
   color: #34d399;
   background: rgba(52, 211, 153, 0.12);
   border: 1px solid rgba(52, 211, 153, 0.25);
@@ -1958,37 +1905,6 @@ blockquote {
   color: #fca5a5;
   background: rgba(252, 165, 165, 0.12);
   border: 1px solid rgba(252, 165, 165, 0.25);
-}
-
-.rune-term {
-  font-weight: 700;
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: var(--size-2) var(--size-3);
-  border-radius: 4px;
-  font-size: var(--font-size-1);
-  background: rgba(0, 0, 0, 0.3);
-  img {
-    width: 34px;
-    height: 36px;
-  }
-}
-.rune-term.might {
-  color: #f87171;
-  border: 1px solid rgba(248, 113, 113, 0.3);
-}
-.rune-term.wisdom {
-  color: #60a5fa;
-  border: 1px solid rgba(96, 165, 250, 0.3);
-}
-.rune-term.focus {
-  color: #4ade80;
-  border: 1px solid rgba(74, 222, 128, 0.3);
-}
-.rune-term.resonance {
-  color: #fbbf24;
-  border: 1px solid rgba(251, 191, 36, 0.3);
 }
 
 .stat-term {
@@ -2056,17 +1972,5 @@ blockquote {
   &::-webkit-scrollbar-track {
     background: var(--scrollbar-background);
   }
-}
-
-.affinity {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--size-1);
-  padding: var(--size-1) var(--size-2);
-  border-radius: var(--radius-2);
-  font-size: var(--font-size-1);
-  font-weight: 500;
-  min-width: var(--size-9);
 }
 </style>

@@ -5,7 +5,6 @@ import {
   CARD_SETS,
   CARD_KINDS,
   RARITIES,
-  AFFINITIES,
   CARD_SPEED,
   CARD_LOCATIONS
 } from '../../../card.enums';
@@ -24,7 +23,6 @@ export const syvrelTheExile: MinionBlueprint = {
   art: defaultCardArt('minions/syvrel-the-exile'),
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.RARE,
-  affinities: [AFFINITIES.FIRE, AFFINITIES.NEUTRAL],
   manaCost: 3,
   manaSupply: 3,
   speed: CARD_SPEED.SLOW,

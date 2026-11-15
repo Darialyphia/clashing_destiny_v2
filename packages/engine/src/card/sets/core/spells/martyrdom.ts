@@ -1,13 +1,7 @@
 import dedent from 'dedent';
 import type { SpellBlueprint } from '../../../card-blueprint';
 import { defaultCardArt, singleAllyMinionTargetRules } from '../../../card-utils';
-import {
-  AFFINITIES,
-  CARD_KINDS,
-  CARD_SETS,
-  CARD_SPEED,
-  RARITIES
-} from '../../../card.enums';
+import { CARD_KINDS, CARD_SETS, CARD_SPEED, RARITIES } from '../../../card.enums';
 import type { MinionCard } from '../../../entities/minion.entity';
 
 export const martyrdom: SpellBlueprint<MinionCard> = {
@@ -21,7 +15,6 @@ export const martyrdom: SpellBlueprint<MinionCard> = {
   art: defaultCardArt('spells/martyrdom'),
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.COMMON,
-  affinities: [AFFINITIES.LIGHT],
   manaCost: 2,
   manaSupply: 3,
   speed: CARD_SPEED.FAST,

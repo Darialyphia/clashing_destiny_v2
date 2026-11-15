@@ -1,13 +1,7 @@
 import dedent from 'dedent';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import { defaultCardArt } from '../../../card-utils';
-import {
-  CARD_SETS,
-  CARD_KINDS,
-  RARITIES,
-  CARD_SPEED,
-  AFFINITIES
-} from '../../../card.enums';
+import { CARD_SETS, CARD_KINDS, RARITIES, CARD_SPEED } from '../../../card.enums';
 import { OverwhelmModifier } from '../../../../modifier/modifiers/overwhelm.modifier';
 
 export const tutorialSunbreaker: MinionBlueprint = {
@@ -27,7 +21,6 @@ export const tutorialSunbreaker: MinionBlueprint = {
   tags: [],
   atk: 3,
   maxHp: 4,
-  affinities: [AFFINITIES.LIGHT],
   commandment: 1,
   canPlay: () => true,
   abilities: [],

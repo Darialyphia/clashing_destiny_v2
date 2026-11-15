@@ -1,13 +1,7 @@
 import dedent from 'dedent';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import { defaultCardArt, isMinion } from '../../../card-utils';
-import {
-  CARD_SETS,
-  CARD_KINDS,
-  RARITIES,
-  CARD_SPEED,
-  AFFINITIES
-} from '../../../card.enums';
+import { CARD_SETS, CARD_KINDS, RARITIES, CARD_SPEED } from '../../../card.enums';
 import { OnEnterModifier } from '../../../../modifier/modifiers/on-enter.modifier';
 import { SimpleAttackBuffModifier } from '../../../../modifier/modifiers/simple-attack-buff.modifier';
 import { ShieldModifier } from '../../../../modifier/modifiers/shield.modifier';
@@ -28,7 +22,6 @@ export const saphireSeer: MinionBlueprint = {
   art: defaultCardArt('minions/sapphire-seer'),
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.COMMON,
-  affinities: [AFFINITIES.NEUTRAL, AFFINITIES.NEUTRAL],
   manaCost: 3,
   manaSupply: 2,
   speed: CARD_SPEED.SLOW,

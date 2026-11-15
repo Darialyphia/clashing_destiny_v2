@@ -1,8 +1,6 @@
 <script setup lang="ts">
-import { AFFINITIES, type Affinity } from '@game/engine/src/card/card.enums';
 import { CARDS_DICTIONARY } from '@game/engine/src/card/sets';
 import type { DeckValidationResult } from '@game/engine/src/card/validators/deck.validator';
-import { assets } from '@/assets';
 
 export type DisplayedDeck = {
   name: string;
@@ -19,22 +17,6 @@ const mainDeck = computed(() =>
     blueprint: CARDS_DICTIONARY[card.blueprintId]
   }))
 );
-
-const affinities = computed(() => {
-  const result: Affinity[] = [];
-  for (const aff of Object.values(AFFINITIES)) {
-    if (aff === AFFINITIES.NEUTRAL) continue;
-    const max = Math.max(
-      ...mainDeck.value.map(
-        item => item.blueprint.affinities.filter(a => a === aff).length
-      )
-    );
-
-    result.push(...Array.from({ length: max }, () => aff));
-  }
-
-  return result;
-});
 </script>
 
 <template>
@@ -51,15 +33,6 @@ const affinities = computed(() => {
         <div v-if="deck.isValid.result === 'failure'" class="invalid-label">
           Invalid Deck
         </div>
-      </div>
-      <div class="flex gap-2">
-        <img
-          v-for="aff in affinities"
-          :key="aff"
-          :src="assets[`ui/card/v3/affinity-${aff.toLocaleLowerCase()}`].path"
-          :alt="aff"
-          class="affinity"
-        />
       </div>
     </button>
   </div>
@@ -138,13 +111,5 @@ const affinities = computed(() => {
 .invalid-label {
   color: var(--red-6);
   font-weight: var(--font-weight-7);
-}
-
-.affinity {
-  width: 26px;
-  aspect-ratio: 1 / 1;
-  @screen lt-lg {
-    width: 13px;
-  }
 }
 </style>

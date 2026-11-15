@@ -1,13 +1,7 @@
 import dedent from 'dedent';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import { defaultCardArt } from '../../../card-utils';
-import {
-  CARD_SETS,
-  CARD_KINDS,
-  RARITIES,
-  CARD_SPEED,
-  AFFINITIES
-} from '../../../card.enums';
+import { CARD_SETS, CARD_KINDS, RARITIES, CARD_SPEED } from '../../../card.enums';
 import { VigilantModifier } from '../../../../modifier/modifiers/vigilant.modifier';
 import { WhileOnBaseModifier } from '../../../../modifier/modifiers/while-on-board.modifier';
 import { GameEventModifierMixin } from '../../../../modifier/mixins/game-event.mixin';
@@ -33,7 +27,6 @@ export const portalGuardian: MinionBlueprint = {
   tags: [],
   atk: 0,
   maxHp: 5,
-  affinities: [AFFINITIES.AIR, AFFINITIES.AIR],
   commandment: 0,
   canPlay: () => true,
   abilities: [],

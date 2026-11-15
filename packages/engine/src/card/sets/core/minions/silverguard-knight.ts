@@ -1,13 +1,7 @@
 import dedent from 'dedent';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import { defaultCardArt } from '../../../card-utils';
-import {
-  CARD_SETS,
-  CARD_KINDS,
-  RARITIES,
-  CARD_SPEED,
-  AFFINITIES
-} from '../../../card.enums';
+import { CARD_SETS, CARD_KINDS, RARITIES, CARD_SPEED } from '../../../card.enums';
 import { ProtectorModifier } from '../../../../modifier/modifiers/protector.modifier';
 import { ZealModifier } from '../../../../modifier/modifiers/zeal.modifier';
 import { DefenderModifier } from '../../../../modifier/modifiers/defender.modifier';
@@ -23,7 +17,6 @@ export const silverGuardKnight: MinionBlueprint = {
   art: defaultCardArt('minions/silverguard-knight'),
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.COMMON,
-  affinities: [AFFINITIES.LIGHT],
   manaCost: 2,
   manaSupply: 3,
   speed: CARD_SPEED.SLOW,

@@ -6,13 +6,7 @@ import {
   singleEnemyMinionTargetRules,
   singleEnemyTargetRules
 } from '../../../card-utils';
-import {
-  AFFINITIES,
-  CARD_KINDS,
-  CARD_SETS,
-  CARD_SPEED,
-  RARITIES
-} from '../../../card.enums';
+import { CARD_KINDS, CARD_SETS, CARD_SPEED, RARITIES } from '../../../card.enums';
 import type { MinionCard } from '../../../entities/minion.entity';
 import { BurnModifier } from '../../../../modifier/modifiers/burn.modifier';
 
@@ -27,7 +21,6 @@ export const corpseCombustion: SpellBlueprint<MinionCard> = {
   art: defaultCardArt('spells/corpse-combustion'),
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.RARE,
-  affinities: [AFFINITIES.AIR, AFFINITIES.AIR],
   manaCost: 4,
   manaSupply: 3,
   speed: CARD_SPEED.FAST,

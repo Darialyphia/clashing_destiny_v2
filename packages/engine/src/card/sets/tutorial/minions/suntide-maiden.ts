@@ -1,13 +1,7 @@
 import dedent from 'dedent';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import { defaultCardArt } from '../../../card-utils';
-import {
-  CARD_SETS,
-  CARD_KINDS,
-  RARITIES,
-  CARD_SPEED,
-  AFFINITIES
-} from '../../../card.enums';
+import { CARD_SETS, CARD_KINDS, RARITIES, CARD_SPEED } from '../../../card.enums';
 
 export const tutorialSuntideMaiden: MinionBlueprint = {
   id: 'tutorial-suntide-maiden',
@@ -24,7 +18,6 @@ export const tutorialSuntideMaiden: MinionBlueprint = {
   tags: [],
   atk: 3,
   maxHp: 5,
-  affinities: [AFFINITIES.LIGHT, AFFINITIES.LIGHT],
   commandment: 3,
   canPlay: () => true,
   abilities: [],

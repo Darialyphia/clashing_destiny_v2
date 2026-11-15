@@ -10,7 +10,6 @@ import BoardSpace from '../BoardSpace/index.vue';
 import BoardCard from '../BoardCard/index.vue';
 import PassButton from '../PassButton.vue';
 import Battlefield from '../Battlefield.vue';
-import RuneZone from '../RuneZone.vue';
 import SupplyZone from '../SupplyZone.vue';
 
 const { hasSupply = true } = defineProps<{
@@ -126,14 +125,6 @@ const opponentHasInitiative = computed(() => {
           :class="{ empty: myPlayer.victoryPoints < point }"
         />
       </div>
-    </div>
-
-    <div class="my-rune-zone">
-      <RuneZone :player="myPlayer" />
-    </div>
-
-    <div class="opponent-rune-zone">
-      <RuneZone :player="opponent" />
     </div>
 
     <div class="my-supply-zone">
@@ -281,18 +272,6 @@ const opponentHasInitiative = computed(() => {
   &:not(.active) {
     opacity: 0;
   }
-}
-
-.my-rune-zone {
-  position: absolute;
-  bottom: 10px;
-  right: 0px;
-}
-
-.opponent-rune-zone {
-  position: absolute;
-  top: 10px;
-  right: 0px;
 }
 
 .my-supply-zone {

@@ -1,30 +1,20 @@
 import dedent from 'dedent';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import { defaultCardArt } from '../../../card-utils';
-import {
-  CARD_SETS,
-  CARD_KINDS,
-  RARITIES,
-  CARD_SPEED,
-  AFFINITIES
-} from '../../../card.enums';
+import { CARD_SETS, CARD_KINDS, RARITIES, CARD_SPEED } from '../../../card.enums';
 import { OverwhelmModifier } from '../../../../modifier/modifiers/overwhelm.modifier';
-import { SimpleStatsBuffModifier } from '../../../../modifier/modifiers/simple-stats-modifier';
-import { AffinitiesTogglableModifierMixin } from '../../../../modifier/mixins/togglable.mixin';
 
 export const gorehorn: MinionBlueprint = {
   id: 'gorehorn',
   name: 'Gorehorn',
   description: dedent /*html*/ `
   <rt-keyword>Overwhelm</rt-keyword>.
-  <rt-affinity affinities="Songhai,Songhai,Songhai"></rt-affinity> I have +0/+1/+1.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
   art: defaultCardArt('minions/gorehorn'),
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.COMMON,
-  affinities: [AFFINITIES.FIRE],
   manaCost: 3,
   manaSupply: 3,
   speed: CARD_SPEED.SLOW,
@@ -36,20 +26,6 @@ export const gorehorn: MinionBlueprint = {
   abilities: [],
   async onInit(game, card) {
     await card.modifiers.add(new OverwhelmModifier(game, card));
-    await card.modifiers.add(
-      new SimpleStatsBuffModifier('gorehorn-self-buff', game, card, {
-        atk: 1,
-        hp: 1,
-        cmd: 0,
-        mixins: [
-          new AffinitiesTogglableModifierMixin(game, [
-            AFFINITIES.FIRE,
-            AFFINITIES.FIRE,
-            AFFINITIES.FIRE
-          ])
-        ]
-      })
-    );
   },
   async onPlay() {},
   aiHints: {

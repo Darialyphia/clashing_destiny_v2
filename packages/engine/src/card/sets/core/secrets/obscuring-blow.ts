@@ -8,7 +8,6 @@ import {
   singleAllyMinionTargetRules
 } from '../../../card-utils';
 import {
-  AFFINITIES,
   CARD_KINDS,
   CARD_LOCATIONS,
   CARD_SETS,
@@ -30,7 +29,6 @@ export const obscuringBlow = defineSecretBlueprint({
   art: defaultCardArt('secrets/obscuring-blow'),
   kind: CARD_KINDS.SECRET,
   rarity: RARITIES.COMMON,
-  affinities: [AFFINITIES.FIRE],
   manaCost: 2,
   manaSupply: 3,
   speed: CARD_SPEED.FAST,

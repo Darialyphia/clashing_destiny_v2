@@ -1,13 +1,7 @@
 import dedent from 'dedent';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import { defaultCardArt } from '../../../card-utils';
-import {
-  CARD_SETS,
-  CARD_KINDS,
-  RARITIES,
-  CARD_SPEED,
-  AFFINITIES
-} from '../../../card.enums';
+import { CARD_SETS, CARD_KINDS, RARITIES, CARD_SPEED } from '../../../card.enums';
 import { FlankingModifier } from '../../../../modifier/modifiers/flanking.modifier';
 
 export const tutorialAzuriteLion: MinionBlueprint = {
@@ -27,7 +21,6 @@ export const tutorialAzuriteLion: MinionBlueprint = {
   tags: [],
   atk: 2,
   maxHp: 4,
-  affinities: [AFFINITIES.LIGHT],
   commandment: 2,
   canPlay: () => true,
   abilities: [],

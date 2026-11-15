@@ -1,13 +1,7 @@
 import dedent from 'dedent';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import { defaultCardArt, singleMinionTargetRules } from '../../../card-utils';
-import {
-  CARD_SETS,
-  CARD_KINDS,
-  RARITIES,
-  CARD_SPEED,
-  AFFINITIES
-} from '../../../card.enums';
+import { CARD_SETS, CARD_KINDS, RARITIES, CARD_SPEED } from '../../../card.enums';
 import { EmpoweredModifier } from '../../../../modifier/modifiers/empowered.modifier';
 import { TogglableModifierMixin } from '../../../../modifier/mixins/togglable.mixin';
 import { SimpleStatsBuffModifier } from '../../../../modifier/modifiers/simple-stats-modifier';
@@ -30,7 +24,6 @@ export const scintilla: MinionBlueprint = {
   tags: [],
   atk: 3,
   maxHp: 3,
-  affinities: [AFFINITIES.LIGHT, AFFINITIES.NEUTRAL],
   commandment: 2,
   canPlay: () => true,
   abilities: [

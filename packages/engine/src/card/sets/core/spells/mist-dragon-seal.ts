@@ -6,7 +6,6 @@ import {
   singleAllyMinionTargetRules
 } from '../../../card-utils';
 import {
-  AFFINITIES,
   CARD_KINDS,
   CARD_LOCATIONS,
   CARD_SETS,
@@ -28,7 +27,6 @@ export const mistDragonSeal: SpellBlueprint<MinionCard> = {
   art: defaultCardArt('spells/mist-dragon-seal'),
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.COMMON,
-  affinities: [AFFINITIES.FIRE, AFFINITIES.NEUTRAL],
   manaCost: 2,
   manaSupply: 3,
   speed: CARD_SPEED.FAST,

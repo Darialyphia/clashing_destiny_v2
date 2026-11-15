@@ -1,13 +1,7 @@
 import dedent from 'dedent';
 import type { SpellBlueprint } from '../../../card-blueprint';
 import { defaultCardArt, singleAllyMinionTargetRules } from '../../../card-utils';
-import {
-  AFFINITIES,
-  CARD_KINDS,
-  CARD_SETS,
-  CARD_SPEED,
-  RARITIES
-} from '../../../card.enums';
+import { CARD_KINDS, CARD_SETS, CARD_SPEED, RARITIES } from '../../../card.enums';
 import type { MinionCard } from '../../../entities/minion.entity';
 import { SimpleStatsBuffModifier } from '../../../../modifier/modifiers/simple-stats-modifier';
 
@@ -22,7 +16,6 @@ export const tutorialLionheartBlessing: SpellBlueprint<MinionCard> = {
   art: defaultCardArt('spells/lionheart-blessing'),
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.TOKEN,
-  affinities: [AFFINITIES.LIGHT],
   manaCost: 1,
   manaSupply: 2,
   speed: CARD_SPEED.SLOW,

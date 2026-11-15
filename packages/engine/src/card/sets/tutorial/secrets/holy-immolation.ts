@@ -1,13 +1,7 @@
 import dedent from 'dedent';
 import { defineSecretBlueprint } from '../../../card-blueprint';
 import { defaultCardArt, noTargets } from '../../../card-utils';
-import {
-  AFFINITIES,
-  CARD_KINDS,
-  CARD_SETS,
-  CARD_SPEED,
-  RARITIES
-} from '../../../card.enums';
+import { CARD_KINDS, CARD_SETS, CARD_SPEED, RARITIES } from '../../../card.enums';
 import { GAME_EVENTS } from '../../../../game/game.events';
 import { SpellDamage } from '../../../../utils/damage';
 
@@ -22,7 +16,6 @@ export const tutorialHolyImmolation = defineSecretBlueprint({
   art: defaultCardArt('secrets/holy-immolation'),
   kind: CARD_KINDS.SECRET,
   rarity: RARITIES.TOKEN,
-  affinities: [AFFINITIES.LIGHT],
   manaCost: 2,
   manaSupply: 2,
   speed: CARD_SPEED.FAST,

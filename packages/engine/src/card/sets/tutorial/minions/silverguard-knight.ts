@@ -1,13 +1,7 @@
 import dedent from 'dedent';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import { defaultCardArt } from '../../../card-utils';
-import {
-  CARD_SETS,
-  CARD_KINDS,
-  RARITIES,
-  CARD_SPEED,
-  AFFINITIES
-} from '../../../card.enums';
+import { CARD_SETS, CARD_KINDS, RARITIES, CARD_SPEED } from '../../../card.enums';
 
 export const tutorialSilverguardKnight: MinionBlueprint = {
   id: 'tutorial-silverguard-knight',
@@ -25,7 +19,6 @@ export const tutorialSilverguardKnight: MinionBlueprint = {
   atk: 1,
   maxHp: 3,
   commandment: 3,
-  affinities: [AFFINITIES.LIGHT],
   canPlay: () => true,
   abilities: [],
   async onInit() {},

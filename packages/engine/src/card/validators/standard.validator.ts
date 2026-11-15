@@ -91,11 +91,6 @@ export class StandardDeckValidator<TMeta> extends DeckValidator<TMeta> {
           CARD_KINDS.LOCATION,
           defaultConfig.MAX_LOCATION_CARDS,
           defaultConfig.MAX_LOCATION_CARDS
-        ),
-        new InvalidCardcountForKindRule(
-          CARD_KINDS.RUNE,
-          defaultConfig.MAX_RUNE_CARDS,
-          defaultConfig.MAX_RUNE_CARDS
         )
       ],
       cardRules: [
@@ -105,7 +100,6 @@ export class StandardDeckValidator<TMeta> extends DeckValidator<TMeta> {
           MINION: defaultConfig.MAX_MAIN_DECK_CARD_COPIES,
           SPELL: defaultConfig.MAX_MAIN_DECK_CARD_COPIES,
           LOCATION: 1,
-          RUNE: defaultConfig.MAX_RUNE_CARDS,
           SECRET: defaultConfig.MAX_MAIN_DECK_CARD_COPIES
         })
       ]

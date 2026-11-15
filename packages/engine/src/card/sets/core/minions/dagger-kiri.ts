@@ -1,13 +1,7 @@
 import dedent from 'dedent';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import { defaultCardArt } from '../../../card-utils';
-import {
-  CARD_SETS,
-  CARD_KINDS,
-  RARITIES,
-  CARD_SPEED,
-  AFFINITIES
-} from '../../../card.enums';
+import { CARD_SETS, CARD_KINDS, RARITIES, CARD_SPEED } from '../../../card.enums';
 import { DoubleAttackModifier } from '../../../../modifier/modifiers/double-attack.modifier';
 
 export const daggerKiri: MinionBlueprint = {
@@ -21,7 +15,6 @@ export const daggerKiri: MinionBlueprint = {
   art: defaultCardArt('minions/dagger-kiri'),
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.COMMON,
-  affinities: [AFFINITIES.FIRE, AFFINITIES.NEUTRAL, AFFINITIES.NEUTRAL],
   manaCost: 3,
   manaSupply: 3,
   speed: CARD_SPEED.SLOW,

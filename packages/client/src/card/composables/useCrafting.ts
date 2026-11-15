@@ -10,11 +10,9 @@ import {
 } from '@game/api';
 import {
   FOIL_UPGRADE_COST_PER_RARITY,
-  MIN_COPIES_OWNED_TO_ALLOW_AFFINITY_FOIL_UPGRADE,
   MIN_COPIES_OWNED_TO_ALLOW_FOIL_UPGRADE
 } from '@game/api/src/convex/card/card.constants';
 import type { CardBlueprint } from '@game/engine/src/card/card-blueprint';
-import { CARD_KINDS } from '@game/engine/src/card/card.enums';
 
 export const useCrafting = (
   card: Ref<{
@@ -101,10 +99,7 @@ export const useCrafting = (
   const canUpgrade = computed(
     () =>
       !card.value.isFoil &&
-      card.value.copiesOwned >=
-        (card.value.card.kind === CARD_KINDS.RUNE
-          ? MIN_COPIES_OWNED_TO_ALLOW_AFFINITY_FOIL_UPGRADE
-          : MIN_COPIES_OWNED_TO_ALLOW_FOIL_UPGRADE)
+      card.value.copiesOwned >= MIN_COPIES_OWNED_TO_ALLOW_FOIL_UPGRADE
   );
   const { mutate: upgrade, isLoading: isUpgrading } = useAuthedMutation(
     api.cards.upgradeCardToFoil,

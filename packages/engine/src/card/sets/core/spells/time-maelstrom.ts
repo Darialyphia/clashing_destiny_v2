@@ -1,13 +1,7 @@
 import dedent from 'dedent';
 import type { SpellBlueprint } from '../../../card-blueprint';
 import { anywhereTargetRules, defaultCardArt } from '../../../card-utils';
-import {
-  AFFINITIES,
-  CARD_KINDS,
-  CARD_SETS,
-  CARD_SPEED,
-  RARITIES
-} from '../../../card.enums';
+import { CARD_KINDS, CARD_SETS, CARD_SPEED, RARITIES } from '../../../card.enums';
 import { EphemeralModifier } from '../../../../modifier/modifiers/ephemeral.modifier';
 import { askMandatoryYesNoQuestion } from '../../../card-actions-utils';
 
@@ -22,7 +16,6 @@ export const timeMaelstrom: SpellBlueprint = {
   art: defaultCardArt('spells/time-maelstrom'),
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.LEGENDARY,
-  affinities: [AFFINITIES.AIR, AFFINITIES.AIR, AFFINITIES.AIR],
   manaCost: 4,
   manaSupply: 3,
   speed: CARD_SPEED.FAST,

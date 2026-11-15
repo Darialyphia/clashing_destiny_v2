@@ -67,10 +67,9 @@ const getNumericValue = (bp: CardBlueprint, field: NumericField) => {
   return typeof value === 'number' ? value : null;
 };
 
-// runes are left out: there are only a few and they are named after their art
 const getPool = () =>
   CARD_SET_DICTIONARY[CARD_SETS.CORE].cards.filter(
-    bp => bp.collectable && bp.kind !== CARD_KINDS.RUNE && !!getSprite(bp)
+    bp => bp.collectable && !!getSprite(bp)
   );
 
 const getAvailableFields = (bp: CardBlueprint, pool: CardBlueprint[]) => {

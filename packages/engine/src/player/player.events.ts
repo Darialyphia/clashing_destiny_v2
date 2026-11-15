@@ -1,8 +1,8 @@
 import type { BetterExtract } from '@game/shared';
-import type { Affinity, CardLocation } from '../card/card.enums';
+import type { CardLocation } from '../card/card.enums';
 import { TypedSerializableEvent } from '../utils/typed-emitter';
 import type { Player } from './player.entity';
-import type { PLAYER_EVENTS, Rune } from './player.enums';
+import type { PLAYER_EVENTS } from './player.enums';
 import type { AnyCard, SerializedCard } from '../card/entities/card.entity';
 
 export class PlayerDrawEvent extends TypedSerializableEvent<
@@ -25,19 +25,6 @@ export class PlayerManaChangeEvent extends TypedSerializableEvent<
     return {
       player: this.data.player.id,
       amount: this.data.amount
-    };
-  }
-}
-
-export class PlayerRuneChangeEvent extends TypedSerializableEvent<
-  { player: Player; gainedRunes: Affinity[]; lostRunes: Affinity[] },
-  { player: string; gainedRunes: Affinity[]; lostRunes: Affinity[] }
-> {
-  serialize() {
-    return {
-      player: this.data.player.id,
-      gainedRunes: this.data.gainedRunes,
-      lostRunes: this.data.lostRunes
     };
   }
 }
@@ -72,8 +59,6 @@ export type PlayerEventMap = {
   [PLAYER_EVENTS.PLAYER_AFTER_DRAW]: PlayerDrawEvent;
   [PLAYER_EVENTS.PLAYER_BEFORE_MANA_CHANGE]: PlayerManaChangeEvent;
   [PLAYER_EVENTS.PLAYER_AFTER_MANA_CHANGE]: PlayerManaChangeEvent;
-  [PLAYER_EVENTS.PLAYER_BEFORE_RUNE_CHANGE]: PlayerRuneChangeEvent;
-  [PLAYER_EVENTS.PLAYER_AFTER_RUNE_CHANGE]: PlayerRuneChangeEvent;
   [PLAYER_EVENTS.PLAYER_BEFORE_GAIN_VICTORY_POINT]: PlayerGainVictoryPointEvent;
   [PLAYER_EVENTS.PLAYER_AFTER_GAIN_VICTORY_POINT]: PlayerGainVictoryPointEvent;
   [PLAYER_EVENTS.PLAYER_BEFORE_ADD_SUPPLY]: PlayerAddSupplyEvent;

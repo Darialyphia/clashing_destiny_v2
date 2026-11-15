@@ -2,7 +2,6 @@
 import {
   type CardKind,
   type Rarity,
-  type Affinity,
   type CardSpeed,
   CARD_KINDS,
   RARITIES
@@ -21,7 +20,6 @@ import FoilGlitter from '../foil/FoilGlitter.vue';
 import FoilBrightShine from '../foil/FoilBrightShine.vue';
 import ManaCost from './ManaCost.vue';
 import Stats from './Stats.vue';
-import AffinityFlags from './AffinityFlags.vue';
 import CardName from './CardName.vue';
 import Description from './Description.vue';
 import CardArtComponent from './CardArt.vue';
@@ -64,7 +62,6 @@ const {
     abilities?: string[];
     subKind?: string | null;
     tags?: string[];
-    affinities: Affinity[];
     speed?: CardSpeed;
     commandment?: number | string | null;
   };
@@ -94,14 +91,6 @@ const frontBg = computed(() => {
     ? assets[`ui/card/v3/card-front-foil`].css
     : assets[`ui/card/v3/card-front`].css;
 });
-const tint = computed(() => {
-  return `linear-gradient(to right in oklch, ${card.affinities
-    .map(affinity => {
-      return `var(--tint-${affinity.toLocaleLowerCase()})`;
-    })
-    .join(', ')})`;
-});
-
 const kindBg = computed(() => {
   return assets[`ui/card/kind-${card.kind.toLowerCase()}`].css;
 });
@@ -133,9 +122,7 @@ const _animationSequence = computed(() => {
     .with(CARD_KINDS.SPELL, CARD_KINDS.ARTIFACT, CARD_KINDS.SECRET, () =>
       isHovered.value ? [ANIMATIONS_NAMES.ACTIVE] : [ANIMATIONS_NAMES.DEFAULT]
     )
-    .with(CARD_KINDS.LOCATION, CARD_KINDS.RUNE, () => [
-      ANIMATIONS_NAMES.DEFAULT
-    ])
+    .with(CARD_KINDS.LOCATION, () => [ANIMATIONS_NAMES.DEFAULT])
     .exhaustive();
 });
 </script>
@@ -161,16 +148,12 @@ const _animationSequence = computed(() => {
       ]"
       :data-flip-id="`card_${card.id}`"
     >
-      <div class="card-front" :style="{ '--tint': tint }">
+      <div class="card-front">
         <ManaCost
           v-if="isDefined(card.manaCost)"
           :cost="card.manaCost"
           :baseCost="card.baseManaCost ?? card.manaCost"
           :mana-supply="card.manaSupply"
-        />
-        <AffinityFlags
-          :affinities="card.affinities"
-          v-if="card.kind !== CARD_KINDS.LOCATION"
         />
         <CardArtComponent
           v-if="sprite"
@@ -319,7 +302,6 @@ const _animationSequence = computed(() => {
     content: '';
     position: absolute;
     inset: 0;
-    /* background: var(--tint); */
     mix-blend-mode: color-dodge;
     opacity: 0.2;
     mask-size: cover;

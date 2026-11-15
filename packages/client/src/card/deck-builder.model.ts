@@ -24,8 +24,7 @@ const KIND_ORDER = {
   [CARD_KINDS.SPELL]: 0,
   [CARD_KINDS.ARTIFACT]: 0,
   [CARD_KINDS.SECRET]: 0,
-  [CARD_KINDS.LOCATION]: 1,
-  [CARD_KINDS.RUNE]: 2
+  [CARD_KINDS.LOCATION]: 1
 };
 
 export type DeckBuilderDeck = ValidatableDeck<DeckBuilderCardMeta>;

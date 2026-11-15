@@ -13,8 +13,6 @@ export const cards = {
 "ashes-of-pain": "ashes-of-pain",
 "fleeting-thought": "fleeting-thought",
 "ignite-the-sky": "ignite-the-sky",
-"light-affinity": "light-affinity",
-"fire-affinity": "fire-affinity",
 "kaleos-xaan": "kaleos-xaan",
 "flamewreath": "flamewreath",
 "rythmweaver": "rythmweaver",
@@ -79,7 +77,6 @@ export const cards = {
 "unseven": "unseven",
 "wind-dervish": "wind-dervish",
 "ethereal-obelysk": "ethereal-obelysk",
-"air-affinity": "air-affinity",
 "dune-caster": "dune-caster",
 "aymara-healer": "aymara-healer",
 "fireblaze-obelysk": "fireblaze-obelysk",
@@ -138,8 +135,6 @@ export const collectableCards = {
 "ashes-of-pain": "ashes-of-pain",
 "fleeting-thought": "fleeting-thought",
 "ignite-the-sky": "ignite-the-sky",
-"light-affinity": "light-affinity",
-"fire-affinity": "fire-affinity",
 "kaleos-xaan": "kaleos-xaan",
 "flamewreath": "flamewreath",
 "rythmweaver": "rythmweaver",
@@ -203,7 +198,6 @@ export const collectableCards = {
 "crimson-stalker": "crimson-stalker",
 "unseven": "unseven",
 "ethereal-obelysk": "ethereal-obelysk",
-"air-affinity": "air-affinity",
 "dune-caster": "dune-caster",
 "aymara-healer": "aymara-healer",
 "fireblaze-obelysk": "fireblaze-obelysk",
@@ -280,18 +274,6 @@ export const cardsBySet: Record<string, CardSet> = {
     "collectable": true,
     "rarity": "common",
     "kind": "LOCATION"
-  },
-  {
-    "id": "light-affinity",
-    "collectable": true,
-    "rarity": "common",
-    "kind": "RUNE"
-  },
-  {
-    "id": "fire-affinity",
-    "collectable": true,
-    "rarity": "common",
-    "kind": "RUNE"
   },
   {
     "id": "kaleos-xaan",
@@ -678,12 +660,6 @@ export const cardsBySet: Record<string, CardSet> = {
     "kind": "MINION"
   },
   {
-    "id": "air-affinity",
-    "collectable": true,
-    "rarity": "common",
-    "kind": "RUNE"
-  },
-  {
     "id": "dune-caster",
     "collectable": true,
     "rarity": "common",
@@ -984,8 +960,6 @@ export const cardShortIds: Record<string, number> = {
 "ashes-of-pain": 5,
 "fleeting-thought": 7,
 "ignite-the-sky": 8,
-"light-affinity": 9,
-"fire-affinity": 10,
 "kaleos-xaan": 11,
 "flamewreath": 12,
 "rythmweaver": 13,
@@ -1050,7 +1024,6 @@ export const cardShortIds: Record<string, number> = {
 "unseven": 73,
 "wind-dervish": 74,
 "ethereal-obelysk": 75,
-"air-affinity": 76,
 "dune-caster": 77,
 "aymara-healer": 78,
 "fireblaze-obelysk": 79,
@@ -1109,8 +1082,6 @@ export const cardIdByShortId: Record<number, string> = {
 "5": "ashes-of-pain",
 "7": "fleeting-thought",
 "8": "ignite-the-sky",
-"9": "light-affinity",
-"10": "fire-affinity",
 "11": "kaleos-xaan",
 "12": "flamewreath",
 "13": "rythmweaver",
@@ -1175,7 +1146,6 @@ export const cardIdByShortId: Record<number, string> = {
 "73": "unseven",
 "74": "wind-dervish",
 "75": "ethereal-obelysk",
-"76": "air-affinity",
 "77": "dune-caster",
 "78": "aymara-healer",
 "79": "fireblaze-obelysk",

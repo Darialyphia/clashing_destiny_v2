@@ -1,13 +1,7 @@
 import dedent from 'dedent';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import { defaultCardArt } from '../../../card-utils';
-import {
-  CARD_SETS,
-  CARD_KINDS,
-  RARITIES,
-  CARD_SPEED,
-  AFFINITIES
-} from '../../../card.enums';
+import { CARD_SETS, CARD_KINDS, RARITIES, CARD_SPEED } from '../../../card.enums';
 import { FlankingModifier } from '../../../../modifier/modifiers/flanking.modifier';
 
 export const azuriteLion: MinionBlueprint = {
@@ -21,7 +15,6 @@ export const azuriteLion: MinionBlueprint = {
   art: defaultCardArt('minions/azurite-lion'),
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.COMMON,
-  affinities: [AFFINITIES.LIGHT],
   manaCost: 3,
   manaSupply: 3,
   speed: CARD_SPEED.SLOW,

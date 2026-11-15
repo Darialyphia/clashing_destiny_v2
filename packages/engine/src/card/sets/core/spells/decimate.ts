@@ -1,13 +1,7 @@
 import dedent from 'dedent';
 import type { SpellBlueprint } from '../../../card-blueprint';
 import { anywhereTargetRules, defaultCardArt, isMinion } from '../../../card-utils';
-import {
-  AFFINITIES,
-  CARD_KINDS,
-  CARD_SETS,
-  CARD_SPEED,
-  RARITIES
-} from '../../../card.enums';
+import { CARD_KINDS, CARD_SETS, CARD_SPEED, RARITIES } from '../../../card.enums';
 import { SpellDamage } from '../../../../utils/damage';
 
 export const decimate: SpellBlueprint = {
@@ -21,7 +15,6 @@ export const decimate: SpellBlueprint = {
   art: defaultCardArt('spells/decimate'),
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.LEGENDARY,
-  affinities: [AFFINITIES.LIGHT, AFFINITIES.LIGHT],
   manaCost: 7,
   manaSupply: 3,
   speed: CARD_SPEED.FAST,

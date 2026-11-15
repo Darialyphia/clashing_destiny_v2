@@ -1,13 +1,7 @@
 import dedent from 'dedent';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import { defaultCardArt } from '../../../card-utils';
-import {
-  CARD_SETS,
-  CARD_KINDS,
-  RARITIES,
-  CARD_SPEED,
-  AFFINITIES
-} from '../../../card.enums';
+import { CARD_SETS, CARD_KINDS, RARITIES, CARD_SPEED } from '../../../card.enums';
 import { ProtectorModifier } from '../../../../modifier/modifiers/protector.modifier';
 
 export const primusShieldmaster: MinionBlueprint = {
@@ -21,7 +15,6 @@ export const primusShieldmaster: MinionBlueprint = {
   art: defaultCardArt('minions/primus-shieldmaster'),
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.COMMON,
-  affinities: [AFFINITIES.NEUTRAL],
   manaCost: 5,
   manaSupply: 3,
   speed: CARD_SPEED.SLOW,

@@ -5,13 +5,7 @@ import {
   emptyBoardSpaceTargetRules,
   singleAllyMinionTargetRules
 } from '../../../card-utils';
-import {
-  AFFINITIES,
-  CARD_KINDS,
-  CARD_SETS,
-  CARD_SPEED,
-  RARITIES
-} from '../../../card.enums';
+import { CARD_KINDS, CARD_SETS, CARD_SPEED, RARITIES } from '../../../card.enums';
 import type { MinionCard } from '../../../entities/minion.entity';
 import { StealthModifier } from '../../../../modifier/modifiers/stealth.modifier';
 import { UntilEndOfTurnModifierMixin } from '../../../../modifier/mixins/until-end-of-turn.mixin';
@@ -28,7 +22,6 @@ export const assassinationProtocol: SpellBlueprint<MinionCard> = {
   art: defaultCardArt('spells/assassination-protocol'),
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.RARE,
-  affinities: [AFFINITIES.FIRE],
   manaCost: 2,
   manaSupply: 3,
   speed: CARD_SPEED.FAST,

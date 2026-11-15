@@ -37,7 +37,6 @@ export const CARD_KINDS = {
   SPELL: 'SPELL',
   ARTIFACT: 'ARTIFACT',
   LOCATION: 'LOCATION',
-  RUNE: 'RUNE',
   SECRET: 'SECRET'
 } as const;
 export type CardKind = Values<typeof CARD_KINDS>;
@@ -96,8 +95,6 @@ export const CARD_LOCATIONS = {
   HAND: 'hand',
   MAIN_DECK: 'mainDeck',
   LOCATION_DECK: 'locationDeck',
-  RUNE_DECK: 'runeDeck',
-  RUNE_ZONE: 'runeZone',
   DISCARD_PILE: 'discardPile',
   BANISH_PILE: 'banishPile',
   BASE: 'base',
@@ -108,13 +105,3 @@ export const CARD_LOCATIONS = {
 } as const;
 export type CardLocation = Values<typeof CARD_LOCATIONS>;
 
-export const AFFINITIES = {
-  FIRE: 'Songhai',
-  WATER: 'Vanar',
-  EARTH: 'Magmar',
-  AIR: 'Vetruvian',
-  LIGHT: 'Lyonar',
-  DARK: 'Abyssian',
-  NEUTRAL: 'Neutral'
-} as const;
-export type Affinity = Values<typeof AFFINITIES>;

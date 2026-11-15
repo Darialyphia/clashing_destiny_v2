@@ -1,13 +1,7 @@
 import dedent from 'dedent';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import { defaultCardArt, isSpell } from '../../../card-utils';
-import {
-  CARD_SETS,
-  CARD_KINDS,
-  RARITIES,
-  AFFINITIES,
-  CARD_SPEED
-} from '../../../card.enums';
+import { CARD_SETS, CARD_KINDS, RARITIES, CARD_SPEED } from '../../../card.enums';
 import { OnEnterModifier } from '../../../../modifier/modifiers/on-enter.modifier';
 import { Modifier } from '../../../../modifier/modifier.entity';
 import { CardAuraModifierMixin } from '../../../../modifier/mixins/aura.mixin';
@@ -26,7 +20,6 @@ export const keshraiFanblade: MinionBlueprint = {
   art: defaultCardArt('minions/keshrai-fanblade'),
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.COMMON,
-  affinities: [AFFINITIES.FIRE, AFFINITIES.NEUTRAL],
   manaCost: 4,
   manaSupply: 2,
   speed: CARD_SPEED.SLOW,

@@ -1,13 +1,7 @@
 import dedent from 'dedent';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import { defaultCardArt } from '../../../card-utils';
-import {
-  CARD_SETS,
-  CARD_KINDS,
-  RARITIES,
-  CARD_SPEED,
-  AFFINITIES
-} from '../../../card.enums';
+import { CARD_SETS, CARD_KINDS, RARITIES, CARD_SPEED } from '../../../card.enums';
 import { SimpleAttackBuffModifier } from '../../../../modifier/modifiers/simple-attack-buff.modifier';
 import { ZealModifier } from '../../../../modifier/modifiers/zeal.modifier';
 
@@ -28,7 +22,6 @@ export const windbladeAdept: MinionBlueprint = {
   tags: [],
   atk: 2,
   maxHp: 3,
-  affinities: [AFFINITIES.LIGHT],
   commandment: 2,
   canPlay: () => true,
   abilities: [],

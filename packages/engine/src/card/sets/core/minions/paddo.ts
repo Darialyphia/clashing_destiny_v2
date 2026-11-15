@@ -6,7 +6,6 @@ import {
   CARD_KINDS,
   RARITIES,
   CARD_SPEED,
-  AFFINITIES,
   CARD_LOCATIONS
 } from '../../../card.enums';
 import { IntimidateModifier } from '../../../../modifier/modifiers/intimidate.modifier';
@@ -25,12 +24,6 @@ export const paddo: MinionBlueprint = {
   art: defaultCardArt('minions/paddo'),
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.LEGENDARY,
-  affinities: [
-    AFFINITIES.NEUTRAL,
-    AFFINITIES.NEUTRAL,
-    AFFINITIES.NEUTRAL,
-    AFFINITIES.NEUTRAL
-  ],
   manaCost: 6,
   manaSupply: 3,
   speed: CARD_SPEED.SLOW,

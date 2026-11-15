@@ -1,13 +1,7 @@
 import dedent from 'dedent';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import { defaultCardArt } from '../../../card-utils';
-import {
-  CARD_SETS,
-  CARD_KINDS,
-  RARITIES,
-  CARD_SPEED,
-  AFFINITIES
-} from '../../../card.enums';
+import { CARD_SETS, CARD_KINDS, RARITIES, CARD_SPEED } from '../../../card.enums';
 import { OnEnterModifier } from '../../../../modifier/modifiers/on-enter.modifier';
 import { FleetingModifier } from '../../../../modifier/modifiers/fleeting.modifier';
 import type { AnyCard } from '../../../entities/card.entity';
@@ -29,7 +23,6 @@ export const chronomancer: MinionBlueprint = {
   tags: [],
   atk: 2,
   maxHp: 3,
-  affinities: [AFFINITIES.AIR, AFFINITIES.AIR],
   commandment: 2,
   canPlay: () => true,
   abilities: [],

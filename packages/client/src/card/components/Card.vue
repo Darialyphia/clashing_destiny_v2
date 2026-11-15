@@ -3,7 +3,6 @@ import {
   RARITIES,
   type CardKind,
   type Rarity,
-  type Affinity,
   type CardSpeed
 } from '@game/engine/src/card/card.enums';
 import { isDefined, uppercaseFirstLetter } from '@game/shared';
@@ -48,7 +47,6 @@ const {
     abilities?: string[];
     subKind?: string | null;
     tags?: string[];
-    affinities: Affinity[];
     speed?: CardSpeed;
   };
   isFoil?: boolean;
@@ -186,24 +184,6 @@ const kindBg = computed(() => {
   return assets[`ui/card/kind-${card.kind.toLowerCase()}`].css;
 });
 
-const affinities = computed(() => {
-  const affinities = card.affinities.filter(isDefined);
-
-  return affinities.map(affinity => {
-    return {
-      affinity,
-      bg: assets[`ui/card/affinity-${affinity.toLocaleLowerCase()}`].css
-    };
-  });
-});
-
-const tint = computed(() => {
-  return `linear-gradient(135deg in oklch, ${card.affinities
-    .map(affinity => {
-      return `var(--tint-${affinity.toLocaleLowerCase()})`;
-    })
-    .join(', ')})`;
-});
 </script>
 
 <template>
@@ -219,7 +199,7 @@ const tint = computed(() => {
       :class="[card.kind.toLocaleLowerCase(), isAnimated && 'animated']"
       :data-flip-id="`card_${card.id}`"
     >
-      <div class="card-front" :style="{ '--tint': tint }">
+      <div class="card-front">
         <div ref="name-box" v-if="showText" class="name">
           <div>
             {{ card.name }}
@@ -271,16 +251,6 @@ const tint = computed(() => {
               {{ card.commandment }}
             </div>
           </div>
-        </div>
-
-        <div class="top-right">
-          <div
-            v-for="(affinity, index) in affinities"
-            :key="index"
-            class="affinity parallax"
-            :data-label="affinity.affinity"
-            :style="{ '--bg': affinity.bg }"
-          />
         </div>
 
         <div class="rarity" />
@@ -451,19 +421,6 @@ const tint = computed(() => {
 
   --glare-mask: url('@/assets/ui/card/card_front.png');
   --foil-mask: url('@/assets/ui/card/masks/default.png');
-
-  &::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: var(--tint);
-    mix-blend-mode: overlay;
-    opacity: 1;
-    mask-size: cover;
-    z-index: -1;
-    pointer-events: none;
-    mask-image: url('@/assets/ui/card/card_front.png');
-  }
 }
 
 .card.animated:has(.foil) .parallax {
@@ -668,22 +625,6 @@ const tint = computed(() => {
     position: relative;
     font-weight: var(--font-weight-7);
   }
-}
-
-.top-right {
-  position: absolute;
-  top: calc(2px * var(--pixel-scale));
-  right: calc(3px * var(--pixel-scale));
-  display: grid;
-  gap: calc(4px * var(--pixel-scale));
-}
-
-.affinity {
-  width: calc(30px * var(--pixel-scale));
-  aspect-ratio: 1;
-  background: var(--bg);
-  background-size: cover;
-  position: relative;
 }
 
 .buffed {

@@ -6,13 +6,7 @@ import {
   singleEnemyMinionTargetRules,
   singleEnemyTargetRules
 } from '../../../card-utils';
-import {
-  AFFINITIES,
-  CARD_KINDS,
-  CARD_SETS,
-  CARD_SPEED,
-  RARITIES
-} from '../../../card.enums';
+import { CARD_KINDS, CARD_SETS, CARD_SPEED, RARITIES } from '../../../card.enums';
 import type { MinionCard } from '../../../entities/minion.entity';
 
 export const wither: SpellBlueprint<MinionCard> = {
@@ -26,7 +20,6 @@ export const wither: SpellBlueprint<MinionCard> = {
   art: defaultCardArt('spells/wither'),
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.COMMON,
-  affinities: [AFFINITIES.AIR, AFFINITIES.AIR, AFFINITIES.NEUTRAL],
   manaCost: 3,
   manaSupply: 3,
   speed: CARD_SPEED.FAST,

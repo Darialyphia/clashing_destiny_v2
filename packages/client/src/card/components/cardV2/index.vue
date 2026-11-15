@@ -2,7 +2,6 @@
 import {
   type CardKind,
   type Rarity,
-  type Affinity,
   type CardSpeed,
   CARD_KINDS
 } from '@game/engine/src/card/card.enums';
@@ -20,7 +19,6 @@ import type { CardArt } from '@game/engine/src/card/card-blueprint';
 import FoilBrightShine from '../foil/FoilBrightShine.vue';
 import ManaCost from './ManaCost.vue';
 import Stats from './Stats.vue';
-import AffinityFlags from './AffinityFlags.vue';
 import CardName from './CardName.vue';
 import Description from './Description.vue';
 import CardArtComponent from './CardArt.vue';
@@ -59,7 +57,6 @@ const {
     abilities?: string[];
     subKind?: string | null;
     tags?: string[];
-    affinities: Affinity[];
     speed?: CardSpeed;
     commandment?: number | null;
   };
@@ -76,14 +73,6 @@ const { pointerStyle, angle, onMousemove, onMouseleave, onMouseEnter } =
     maxAngle: maxTiltAngle,
     isEnabled: computed(() => isTiltEnabled && isFoil)
   });
-
-const tint = computed(() => {
-  return `linear-gradient(to right in oklch, ${card.affinities
-    .map(affinity => {
-      return `var(--tint-${affinity.toLocaleLowerCase()})`;
-    })
-    .join(', ')})`;
-});
 
 const kindBg = computed(() => {
   return assets[`ui/card/kind-${card.kind.toLowerCase()}`].css;
@@ -111,7 +100,7 @@ const artMainImage = computed(() => {
       ]"
       :data-flip-id="`card_${card.id}`"
     >
-      <div class="card-front" :style="{ '--tint': tint }">
+      <div class="card-front">
         <CardArtComponent :art="card.art" />
         <template v-if="isFoil">
           <FoilRain v-if="card.art.foil.rain" />
@@ -137,9 +126,6 @@ const artMainImage = computed(() => {
           :mana-supply="card.manaSupply"
         />
         <CardRarity :rarity="card.rarity" />
-        <div class="flags">
-          <AffinityFlags :affinities="card.affinities" />
-        </div>
         <CardName :name="card.name" />
 
         <div class="tags parallax">
@@ -262,7 +248,6 @@ const artMainImage = computed(() => {
     content: '';
     position: absolute;
     inset: 0;
-    /* background: var(--tint); */
     mix-blend-mode: color-dodge;
     opacity: 0.2;
     mask-size: cover;
@@ -355,13 +340,5 @@ const artMainImage = computed(() => {
   text-shadow: 0 0 0.75rem black;
   -webkit-text-stroke: 2px black;
   paint-order: stroke fill;
-}
-
-.flags {
-  position: absolute;
-  top: 0;
-  right: calc(5px * var(--pixel-scale));
-  display: flex;
-  gap: calc(4px * var(--pixel-scale));
 }
 </style>

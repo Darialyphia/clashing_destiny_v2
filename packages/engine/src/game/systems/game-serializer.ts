@@ -28,7 +28,6 @@ import type { SerializedEffectChain } from '../effect-chain';
 import type { SerializedScoringState } from './scoring.system';
 import type { SerializedArtifactCard } from '../../card/entities/artifact.entity';
 import type { SerializedSecretCard } from '../../card/entities/secret.entity';
-import type { SerializedRuneCard } from '../../card/entities/rune.entity';
 import type { SerializedLocationCard } from '../../card/entities/location.entity';
 
 export type SerializedEntity =
@@ -37,7 +36,6 @@ export type SerializedEntity =
   | SerializedArtifactCard
   | SerializedLocationCard
   | SerializedSecretCard
-  | SerializedRuneCard
   | SerializedPlayer
   | SerializedModifier
   | SerializedAbility
@@ -264,8 +262,7 @@ export class GameSerializer {
         card.location === CARD_LOCATIONS.LEFT_BATTLEFIELD ||
         card.location === CARD_LOCATIONS.RIGHT_BATTLEFIELD ||
         card.location === CARD_LOCATIONS.DISCARD_PILE ||
-        card.location === CARD_LOCATIONS.SUPPLY ||
-        card.location === CARD_LOCATIONS.RUNE_ZONE
+        card.location === CARD_LOCATIONS.SUPPLY
       ) {
         return;
       }

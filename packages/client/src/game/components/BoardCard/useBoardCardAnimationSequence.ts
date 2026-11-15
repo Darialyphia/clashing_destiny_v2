@@ -77,7 +77,6 @@ export const useBoardCardAnimationSequence = (card: CardViewModel) => {
       .with(
         CARD_KINDS.SPELL,
         CARD_KINDS.LOCATION,
-        CARD_KINDS.RUNE,
         CARD_KINDS.SECRET,
         () => [ANIMATIONS_NAMES.DEFAULT]
       )

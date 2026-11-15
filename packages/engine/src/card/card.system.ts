@@ -8,7 +8,6 @@ import type {
   SpellBlueprint,
   ArtifactBlueprint,
   LocationBlueprint,
-  RuneBlueprint,
   SecretBlueprint
 } from './card-blueprint';
 import { SpellCard } from './entities/spell.entity';
@@ -18,7 +17,6 @@ import { CARD_KINDS, CARD_LOCATIONS, type CardKind } from './card.enums';
 import { GAME_EVENTS } from '../game/game.events';
 import { ArtifactCard } from './entities/artifact.entity';
 import { LocationCard } from './entities/location.entity';
-import { RuneCard } from './entities/rune.entity';
 import { SecretCard } from './entities/secret.entity';
 
 export type CardSystemOptions = {
@@ -108,14 +106,6 @@ export class CardSystem extends System<CardSystemOptions> {
             id,
             blueprint
           } as CardOptions<LocationBlueprint>)
-      )
-      .with(
-        CARD_KINDS.RUNE,
-        () =>
-          new RuneCard(this.game, player, {
-            id,
-            blueprint
-          } as CardOptions<RuneBlueprint>)
       )
       .with(
         CARD_KINDS.SECRET,

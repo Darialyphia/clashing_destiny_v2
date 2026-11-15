@@ -47,10 +47,6 @@ const mainDeckCount = computed(() => {
         <span>{{ getCountByKind(CARD_KINDS.LOCATION) }}</span>
         Locations
       </div>
-      <div>
-        <span>{{ getCountByKind(CARD_KINDS.RUNE) }}</span>
-        Affinities
-      </div>
     </div>
   </div>
 </template>
@@ -58,7 +54,7 @@ const mainDeckCount = computed(() => {
 <style scoped lang="postcss">
 .kind-counts {
   display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: var(--size-2);
   justify-items: center;
   font-size: var(--font-size-00);

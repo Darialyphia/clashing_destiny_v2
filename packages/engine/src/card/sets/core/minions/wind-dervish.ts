@@ -1,13 +1,7 @@
 import dedent from 'dedent';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import { defaultCardArt } from '../../../card-utils';
-import {
-  CARD_SETS,
-  CARD_KINDS,
-  RARITIES,
-  CARD_SPEED,
-  AFFINITIES
-} from '../../../card.enums';
+import { CARD_SETS, CARD_KINDS, RARITIES, CARD_SPEED } from '../../../card.enums';
 import { EphemeralModifier } from '../../../../modifier/modifiers/ephemeral.modifier';
 
 export const windDervish: MinionBlueprint = {
@@ -27,7 +21,6 @@ export const windDervish: MinionBlueprint = {
   tags: [],
   atk: 2,
   maxHp: 1,
-  affinities: [AFFINITIES.AIR],
   commandment: 1,
   canPlay: () => true,
   abilities: [],

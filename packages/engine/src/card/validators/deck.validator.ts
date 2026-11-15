@@ -91,10 +91,7 @@ export type DeckValidatorOptions<TMeta> = {
   cardPool: Record<string, CardBlueprint>;
   config: Pick<
     Config,
-    | 'MAX_MAIN_DECK_SIZE'
-    | 'MAX_LOCATION_CARDS'
-    | 'MAX_RUNE_CARDS'
-    | 'MAX_MAIN_DECK_CARD_COPIES'
+    'MAX_MAIN_DECK_SIZE' | 'MAX_LOCATION_CARDS' | 'MAX_MAIN_DECK_CARD_COPIES'
   >;
   deckRules: Array<DeckValidationRule<TMeta>>;
   cardRules: Array<CardValidationRule<TMeta>>;
@@ -119,7 +116,7 @@ export class DeckValidator<TMeta> implements DeckValidator<TMeta> {
   }
 
   get size(): number {
-    return this.mainDeckMaxSize + this.locationDeckMaxSize + this.runeDeckMaxSize;
+    return this.mainDeckMaxSize + this.locationDeckMaxSize;
   }
 
   get mainDeckMaxSize(): number {
@@ -128,10 +125,6 @@ export class DeckValidator<TMeta> implements DeckValidator<TMeta> {
 
   get locationDeckMaxSize(): number {
     return this.config.MAX_LOCATION_CARDS;
-  }
-
-  get runeDeckMaxSize(): number {
-    return this.config.MAX_RUNE_CARDS;
   }
 
   getSize(cards: Array<{ copies: number }>) {

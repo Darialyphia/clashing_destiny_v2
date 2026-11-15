@@ -49,7 +49,6 @@ const animationSequence = computed(() => {
       CARD_KINDS.ARTIFACT,
       CARD_KINDS.SECRET,
       CARD_KINDS.LOCATION,
-      CARD_KINDS.RUNE,
       () => [ANIMATIONS_NAMES.DEFAULT]
     )
     .exhaustive();
@@ -198,13 +197,6 @@ const { activeFrameRect, bgPosition, imageBg } = useSprite({
   z-index: 1;
 }
 
-.affinity {
-  width: 13px;
-  aspect-ratio: 1;
-  background: var(--bg);
-  background-size: cover;
-}
-
 .art {
   position: absolute;
   width: calc(var(--pixel-scale) * var(--width));
@@ -215,7 +207,6 @@ const { activeFrameRect, bgPosition, imageBg } = useSprite({
   scale: -1 1;
   opacity: 0.75;
   .spell &,
-  .rune &,
   .artifact & {
     translate: 0 0;
   }

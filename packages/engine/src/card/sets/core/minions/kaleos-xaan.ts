@@ -1,13 +1,7 @@
 import dedent from 'dedent';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import { defaultCardArt, isSpell } from '../../../card-utils';
-import {
-  CARD_SETS,
-  CARD_KINDS,
-  RARITIES,
-  CARD_SPEED,
-  AFFINITIES
-} from '../../../card.enums';
+import { CARD_SETS, CARD_KINDS, RARITIES, CARD_SPEED } from '../../../card.enums';
 import { StealthModifier } from '../../../../modifier/modifiers/stealth.modifier';
 import { FlankingModifier } from '../../../../modifier/modifiers/flanking.modifier';
 import { GameEventModifierMixin } from '../../../../modifier/mixins/game-event.mixin';
@@ -28,7 +22,6 @@ export const kaleosXaan: MinionBlueprint = {
   art: defaultCardArt('minions/kaleos-xaan'),
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.LEGENDARY,
-  affinities: [AFFINITIES.FIRE, AFFINITIES.FIRE, AFFINITIES.FIRE],
   manaCost: 5,
   manaSupply: 2,
   speed: CARD_SPEED.SLOW,

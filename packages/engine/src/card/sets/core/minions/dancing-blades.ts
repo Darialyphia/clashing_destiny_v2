@@ -1,13 +1,7 @@
 import dedent from 'dedent';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import { defaultCardArt, isMinion } from '../../../card-utils';
-import {
-  CARD_SETS,
-  CARD_KINDS,
-  RARITIES,
-  CARD_SPEED,
-  AFFINITIES
-} from '../../../card.enums';
+import { CARD_SETS, CARD_KINDS, RARITIES, CARD_SPEED } from '../../../card.enums';
 import { OnMoveModifier } from '../../../../modifier/modifiers/on-move.modifier';
 import { AbilityDamage } from '../../../../utils/damage';
 
@@ -22,7 +16,6 @@ export const dancingBlades: MinionBlueprint = {
   art: defaultCardArt('minions/dancing-blades'),
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.RARE,
-  affinities: [AFFINITIES.NEUTRAL, AFFINITIES.NEUTRAL, AFFINITIES.NEUTRAL],
   manaCost: 5,
   manaSupply: 3,
   speed: CARD_SPEED.SLOW,

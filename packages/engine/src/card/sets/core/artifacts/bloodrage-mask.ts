@@ -6,13 +6,7 @@ import {
   isSpell,
   singleAllyMinionTargetRules
 } from '../../../card-utils';
-import {
-  AFFINITIES,
-  CARD_KINDS,
-  CARD_SETS,
-  CARD_SPEED,
-  RARITIES
-} from '../../../card.enums';
+import { CARD_KINDS, CARD_SETS, CARD_SPEED, RARITIES } from '../../../card.enums';
 import type { MinionCard } from '../../../entities/minion.entity';
 import { SimpleAttackBuffModifier } from '../../../../modifier/modifiers/simple-attack-buff.modifier';
 import { EquippedModifier } from '../../../../modifier/modifiers/equip.modifier';
@@ -31,7 +25,6 @@ export const bloodrageMask: ArtifactBlueprint = {
   art: defaultCardArt('artifacts/bloodrage-mask'),
   kind: CARD_KINDS.ARTIFACT,
   rarity: RARITIES.RARE,
-  affinities: [AFFINITIES.FIRE, AFFINITIES.NEUTRAL],
   manaCost: 2,
   manaSupply: 2,
   durability: 3,

@@ -2,10 +2,8 @@ import { useSafeInject } from '@/shared/composables/useSafeInject';
 import type { CardBlueprint } from '@game/engine/src/card/card-blueprint';
 import { KEYWORDS } from '@game/engine/src/card/card-keywords';
 import {
-  AFFINITIES,
   CARD_KINDS,
   RARITIES,
-  type Affinity,
   type CardKind,
   type Rarity
 } from '@game/engine/src/card/card.enums';
@@ -40,10 +38,6 @@ export type CardListContext = {
   toggleRarityFilter(rarity: Rarity): void;
   clearRarityFilter(): void;
 
-  hasAffinityFilter(affinity: Affinity): boolean;
-  toggleAffinityFilter(affinity: Affinity): void;
-  clearAffinityFilter(): void;
-
   manaCostFilter: Ref<{ min: number; max: number } | null>;
 
   foilFilter: Ref<boolean>;
@@ -64,23 +58,11 @@ export const provideCardList = () => {
     [CARD_KINDS.SPELL]: 0,
     [CARD_KINDS.ARTIFACT]: 0,
     [CARD_KINDS.LOCATION]: 1,
-    [CARD_KINDS.RUNE]: 2,
     [CARD_KINDS.SECRET]: 0
-  };
-
-  const AFFINITY_ORDER = {
-    [AFFINITIES.FIRE]: 1,
-    [AFFINITIES.WATER]: 2,
-    [AFFINITIES.AIR]: 3,
-    [AFFINITIES.EARTH]: 4,
-    [AFFINITIES.LIGHT]: 5,
-    [AFFINITIES.DARK]: 6,
-    [AFFINITIES.NEUTRAL]: 7
   };
 
   const kindFilter = ref(new Set<CardKind>());
   const rarityFilter = ref(new Set<Rarity>());
-  const affinityFilter = ref(new Set<Affinity>());
   const manaCostFilter = ref<{ min: number; max: number } | null>(null);
   const includeUnowned = ref(false);
   const foilFilter = ref(true);
@@ -88,7 +70,6 @@ export const provideCardList = () => {
   const urlParams = useUrlSearchParams<{
     kinds?: string;
     rarities?: string;
-    affinities?: string;
     manaMin?: string;
     manaMax?: string;
     includeUnowned?: string;
@@ -114,10 +95,6 @@ export const provideCardList = () => {
       urlParams.rarities,
       Object.values(RARITIES)
     );
-    affinityFilter.value = parseFilterSet(
-      urlParams.affinities,
-      Object.values(AFFINITIES)
-    );
 
     const min = Number(urlParams.manaMin);
     const max =
@@ -132,7 +109,6 @@ export const provideCardList = () => {
   const syncFiltersToUrl = () => {
     urlParams.kinds = [...kindFilter.value].join(',') || undefined;
     urlParams.rarities = [...rarityFilter.value].join(',') || undefined;
-    urlParams.affinities = [...affinityFilter.value].join(',') || undefined;
     urlParams.manaMin = manaCostFilter.value?.min.toString();
     urlParams.manaMax =
       manaCostFilter.value?.max === Infinity
@@ -147,7 +123,6 @@ export const provideCardList = () => {
     [
       kindFilter,
       rarityFilter,
-      affinityFilter,
       manaCostFilter,
       includeUnowned,
       foilFilter
@@ -202,22 +177,6 @@ export const provideCardList = () => {
           !rarityFilter.value.has(card.rarity)
         ) {
           return false;
-        }
-
-        if (affinityFilter.value.size > 0) {
-          if (
-            affinityFilter.value.size === 1 &&
-            affinityFilter.value.has(AFFINITIES.NEUTRAL)
-          ) {
-            const isMatch = card.affinities.every(
-              affinity => affinity === AFFINITIES.NEUTRAL
-            );
-            if (!isMatch) return false;
-          }
-          const isMatch = card.affinities.some(affinity => {
-            return affinityFilter.value.has(affinity);
-          });
-          if (!isMatch) return false;
         }
 
         if (manaCostFilter.value !== null) {
@@ -283,14 +242,6 @@ export const provideCardList = () => {
         ) {
           return (a.card.manaCost ?? 0) - (b.card.manaCost ?? 0);
         }
-        const affinityA = a.card.affinities?.[0];
-        const affinityB = b.card.affinities?.[0];
-        if (affinityA !== affinityB) {
-          return (
-            (AFFINITY_ORDER[affinityA] ?? -1) -
-            (AFFINITY_ORDER[affinityB] ?? -1)
-          );
-        }
 
         return a.card.name
           .toLocaleLowerCase()
@@ -333,20 +284,6 @@ export const provideCardList = () => {
     },
     clearRarityFilter: () => {
       rarityFilter.value.clear();
-    },
-
-    hasAffinityFilter(affinity: Affinity) {
-      return affinityFilter.value.has(affinity);
-    },
-    toggleAffinityFilter(affinity: Affinity) {
-      if (affinityFilter.value.has(affinity)) {
-        affinityFilter.value.delete(affinity);
-      } else {
-        affinityFilter.value.add(affinity);
-      }
-    },
-    clearAffinityFilter: () => {
-      affinityFilter.value.clear();
     },
 
     manaCostFilter

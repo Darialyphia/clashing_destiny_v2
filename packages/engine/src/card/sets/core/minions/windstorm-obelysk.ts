@@ -5,13 +5,7 @@ import {
   emptyBoardSpaceTargetRules,
   isMinion
 } from '../../../card-utils';
-import {
-  CARD_SETS,
-  CARD_KINDS,
-  RARITIES,
-  CARD_SPEED,
-  AFFINITIES
-} from '../../../card.enums';
+import { CARD_SETS, CARD_KINDS, RARITIES, CARD_SPEED } from '../../../card.enums';
 import { SpawnModifier } from '../../../../modifier/modifiers/spawn.modifier';
 import { windDervish } from './wind-dervish';
 import { WhileOnBoardModifier } from '../../../../modifier/modifiers/while-on-board.modifier';
@@ -38,7 +32,6 @@ export const windstormObelysk: MinionBlueprint = {
   tags: [],
   atk: 0,
   maxHp: 2,
-  affinities: [AFFINITIES.AIR, AFFINITIES.AIR],
   commandment: 1,
   canPlay: () => true,
   abilities: [

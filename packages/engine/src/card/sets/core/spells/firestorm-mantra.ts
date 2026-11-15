@@ -1,13 +1,7 @@
 import dedent from 'dedent';
 import type { SpellBlueprint } from '../../../card-blueprint';
 import { battlefieldTargetingRules, defaultCardArt } from '../../../card-utils';
-import {
-  AFFINITIES,
-  CARD_KINDS,
-  CARD_SETS,
-  CARD_SPEED,
-  RARITIES
-} from '../../../card.enums';
+import { CARD_KINDS, CARD_SETS, CARD_SPEED, RARITIES } from '../../../card.enums';
 import type { LocationCard } from '../../../entities/location.entity';
 
 export const firestormMantra: SpellBlueprint<LocationCard> = {
@@ -21,7 +15,6 @@ export const firestormMantra: SpellBlueprint<LocationCard> = {
   art: defaultCardArt('spells/firestorm-mantra'),
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.EPIC,
-  affinities: [AFFINITIES.FIRE, AFFINITIES.FIRE, AFFINITIES.FIRE],
   manaCost: 2,
   manaSupply: 3,
   speed: CARD_SPEED.FAST,

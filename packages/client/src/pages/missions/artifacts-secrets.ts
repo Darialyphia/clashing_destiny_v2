@@ -80,8 +80,7 @@ export const artifactsSecretsTutorial: TutorialMission = {
               ['tutorial-arclyte-regalia', 1],
               ['tutorial-silverguard-knight', 1],
               ['tutorial-windblade-adept', 10],
-              ['tutorial-silverguard-outpost', 1],
-              ['light-affinity', 10]
+              ['tutorial-silverguard-outpost', 1]
             ])
           }
         },
@@ -100,8 +99,7 @@ export const artifactsSecretsTutorial: TutorialMission = {
               // turn 2 draws
               ['bloodbound-shaman', 1],
               ['bloodbound-invader', 10],
-              ['tutorial-silverguard-outpost', 1],
-              ['fire-affinity', 10]
+              ['tutorial-silverguard-outpost', 1]
             ])
           }
         }

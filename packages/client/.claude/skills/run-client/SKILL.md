@@ -86,7 +86,7 @@ Things you need to write scripts:
 - **Card ids** are deterministic, `<blueprintId>-<n>` (e.g. `bloodbound-shaman-7`). **Space ids** look like `p1-base-0`.
 - **Selectors** (from `DOMSelectors` in `packages/engine/src/client/controllers/ui-controller.ts`): card in hand `#hand-p1 [id="<cardId>"]`, card on board `#board [id="<cardId>"]`, board space `#board-space-<spaceId>`, supply zone `#supply-zone-p1`, tutorial text box `.text-box`. Card ids contain dashes, so use `[id="..."]` rather than `#id`.
 - **Engine state names**: phases `main_phase`, `play_card_phase`, `game_end`; interactions `idle`, `select_space_on_board`, `selecting_cards_on_board`, `choosing_cards`.
-- **Inputs**: playing a card is `declarePlayCard {id}`, then `supplyCard {}` (in `play_card_phase`) or `selectSpaceOnBoard {id}`, then `selectCardOnBoard {cardId}` for targets. Also `move {cardId, zone, index}` (zones `left_battlefield`, `right_battlefield`), `score {minionId}`, `pass {}`, `chooseCards {indices}` (affinity choice), `declareUseCardAbility {cardId, abilityId}`.
+- **Inputs**: playing a card is `declarePlayCard {id}`, then `supplyCard {}` (in `play_card_phase`) or `selectSpaceOnBoard {id}`, then `selectCardOnBoard {cardId}` for targets. Also `move {cardId, zone, index}` (zones `left_battlefield`, `right_battlefield`), `score {minionId}`, `pass {}`, `chooseCards {indices}` (mulligan and other card choices), `declareUseCardAbility {cardId, abilityId}`.
 
 A real UI step, verified: supply by drag, play a minion by drag, pick its On Enter target by click.
 

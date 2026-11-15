@@ -7,7 +7,6 @@ import {
   singleAllyMinionTargetRules
 } from '../../../card-utils';
 import {
-  AFFINITIES,
   CARD_KINDS,
   CARD_LOCATIONS,
   CARD_SETS,
@@ -28,7 +27,6 @@ export const backstep: SpellBlueprint<MinionCard> = {
   art: defaultCardArt('spells/backstep'),
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.COMMON,
-  affinities: [AFFINITIES.FIRE],
   manaCost: 1,
   manaSupply: 3,
   speed: CARD_SPEED.FAST,

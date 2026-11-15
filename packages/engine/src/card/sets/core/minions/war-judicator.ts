@@ -1,13 +1,7 @@
 import dedent from 'dedent';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import { defaultCardArt } from '../../../card-utils';
-import {
-  CARD_SETS,
-  CARD_KINDS,
-  RARITIES,
-  CARD_SPEED,
-  AFFINITIES
-} from '../../../card.enums';
+import { CARD_SETS, CARD_KINDS, RARITIES, CARD_SPEED } from '../../../card.enums';
 import { ZealModifier } from '../../../../modifier/modifiers/zeal.modifier';
 import { SimpleSupplyModifier } from '../../../../modifier/modifiers/simple-supply-modifier';
 
@@ -28,7 +22,6 @@ export const warJudicator: MinionBlueprint = {
   tags: [],
   atk: 2,
   maxHp: 6,
-  affinities: [AFFINITIES.LIGHT, AFFINITIES.LIGHT],
   commandment: 2,
   canPlay: () => true,
   abilities: [],

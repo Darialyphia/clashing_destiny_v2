@@ -75,7 +75,6 @@ const { activeFrameRect, bgPosition, imageBg } = useSprite({
   pointer-events: none;
 
   &.spell,
-  &.rune,
   &.secret,
   &.artifact {
     translate: 0 calc(var(--pixel-scale) * -15px);

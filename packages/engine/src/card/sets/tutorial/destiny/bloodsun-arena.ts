@@ -2,13 +2,7 @@ import dedent from 'dedent';
 import { isDefined } from '@game/shared';
 import type { LocationBlueprint } from '../../../card-blueprint';
 import { defaultCardArt } from '../../../card-utils';
-import {
-  CARD_SETS,
-  CARD_KINDS,
-  RARITIES,
-  AFFINITIES,
-  CARD_SPEED
-} from '../../../card.enums';
+import { CARD_SETS, CARD_KINDS, RARITIES, CARD_SPEED } from '../../../card.enums';
 import { CardAuraModifierMixin } from '../../../../modifier/mixins/aura.mixin';
 import type { LocationCard } from '../../../entities/location.entity';
 import { WhileOnBattlefieldModifier } from '../../../../modifier/modifiers/while-on-board.modifier';
@@ -26,7 +20,6 @@ export const tutorialBloodsunArena: LocationBlueprint = {
   rarity: RARITIES.TOKEN,
   art: defaultCardArt('locations/xenkai-arena'),
   speed: CARD_SPEED.SLOW,
-  affinities: [AFFINITIES.NEUTRAL],
   tags: [],
   async onInit(game, card) {
     await card.modifiers.add(

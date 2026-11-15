@@ -2,13 +2,7 @@ import dedent from 'dedent';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import { defaultCardArt } from '../../../card-utils';
 import { InstantMoveModifier } from '../../../../modifier/modifiers/instant-move.modifier';
-import {
-  CARD_SETS,
-  CARD_KINDS,
-  RARITIES,
-  CARD_SPEED,
-  AFFINITIES
-} from '../../../card.enums';
+import { CARD_SETS, CARD_KINDS, RARITIES, CARD_SPEED } from '../../../card.enums';
 import { OverwhelmModifier } from '../../../../modifier/modifiers/overwhelm.modifier';
 import { GAME_EVENTS } from '../../../../game/game.events';
 import { CardAfterTakeDamageEvent } from '../../../card.events';
@@ -54,7 +48,6 @@ export const tuskBoar: MinionBlueprint = {
   art: defaultCardArt('minions/tusk-boar'),
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.LEGENDARY,
-  affinities: [AFFINITIES.FIRE, AFFINITIES.FIRE],
   manaCost: 3,
   manaSupply: 2,
   speed: CARD_SPEED.SLOW,

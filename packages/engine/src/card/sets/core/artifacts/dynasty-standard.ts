@@ -5,13 +5,7 @@ import {
   defaultCardArt,
   singleAllyMinionTargetRules
 } from '../../../card-utils';
-import {
-  AFFINITIES,
-  CARD_KINDS,
-  CARD_SETS,
-  CARD_SPEED,
-  RARITIES
-} from '../../../card.enums';
+import { CARD_KINDS, CARD_SETS, CARD_SPEED, RARITIES } from '../../../card.enums';
 import type { LocationCard } from '../../../entities/location.entity';
 import { CardAuraModifierMixin } from '../../../../modifier/mixins/aura.mixin';
 import { SimpleStatsBuffModifier } from '../../../../modifier/modifiers/simple-stats-modifier';
@@ -29,7 +23,6 @@ export const dynastyStandard: ArtifactBlueprint = {
   art: defaultCardArt('artifacts/dynasty-standard'),
   kind: CARD_KINDS.ARTIFACT,
   rarity: RARITIES.RARE,
-  affinities: [AFFINITIES.LIGHT, AFFINITIES.LIGHT],
   manaCost: 3,
   manaSupply: 2,
   durability: 2,

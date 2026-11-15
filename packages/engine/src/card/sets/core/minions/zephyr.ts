@@ -1,13 +1,7 @@
 import dedent from 'dedent';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import { defaultCardArt, singleAllyMinionTargetRules } from '../../../card-utils';
-import {
-  CARD_SETS,
-  CARD_KINDS,
-  RARITIES,
-  CARD_SPEED,
-  AFFINITIES
-} from '../../../card.enums';
+import { CARD_SETS, CARD_KINDS, RARITIES, CARD_SPEED } from '../../../card.enums';
 import { EmpoweredModifier } from '../../../../modifier/modifiers/empowered.modifier';
 import { ChannelModifier } from '../../../../modifier/modifiers/channel.modifier';
 import type { MinionCard } from '../../../entities/minion.entity';
@@ -30,7 +24,6 @@ export const zephyr: MinionBlueprint = {
   tags: [],
   atk: 3,
   maxHp: 3,
-  affinities: [AFFINITIES.AIR, AFFINITIES.NEUTRAL],
   commandment: 2,
   canPlay: () => true,
   abilities: [

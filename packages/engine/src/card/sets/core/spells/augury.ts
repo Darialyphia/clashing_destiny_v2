@@ -1,13 +1,7 @@
 import dedent from 'dedent';
 import type { SpellBlueprint } from '../../../card-blueprint';
 import { defaultCardArt, singleBattlefield } from '../../../card-utils';
-import {
-  AFFINITIES,
-  CARD_KINDS,
-  CARD_SETS,
-  CARD_SPEED,
-  RARITIES
-} from '../../../card.enums';
+import { CARD_KINDS, CARD_SETS, CARD_SPEED, RARITIES } from '../../../card.enums';
 import type { LocationCard } from '../../../entities/location.entity';
 
 export const augury: SpellBlueprint<LocationCard> = {
@@ -21,7 +15,6 @@ export const augury: SpellBlueprint<LocationCard> = {
   art: defaultCardArt('spells/augury'),
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.COMMON,
-  affinities: [AFFINITIES.LIGHT, AFFINITIES.LIGHT],
   manaCost: 2,
   manaSupply: 3,
   speed: CARD_SPEED.FAST,

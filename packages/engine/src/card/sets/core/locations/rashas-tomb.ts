@@ -1,13 +1,7 @@
 import dedent from 'dedent';
 import type { LocationBlueprint } from '../../../card-blueprint';
 import { defaultCardArt, isSpell } from '../../../card-utils';
-import {
-  CARD_SETS,
-  CARD_KINDS,
-  RARITIES,
-  AFFINITIES,
-  CARD_SPEED
-} from '../../../card.enums';
+import { CARD_SETS, CARD_KINDS, RARITIES, CARD_SPEED } from '../../../card.enums';
 import type { LocationCard } from '../../../entities/location.entity';
 import type { MinionCard } from '../../../entities/minion.entity';
 import { WhileOnBattlefieldModifier } from '../../../../modifier/modifiers/while-on-board.modifier';
@@ -28,7 +22,6 @@ export const rashasTomb: LocationBlueprint = {
   rarity: RARITIES.COMMON,
   art: defaultCardArt('placeholder'),
   speed: CARD_SPEED.SLOW,
-  affinities: [AFFINITIES.NEUTRAL],
   tags: [],
   async onInit(game, card) {
     await card.modifiers.add(

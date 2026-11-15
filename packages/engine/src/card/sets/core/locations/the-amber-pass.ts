@@ -2,13 +2,7 @@ import dedent from 'dedent';
 import type { LocationBlueprint } from '../../../card-blueprint';
 import type { SecretCard } from '../../../entities/secret.entity';
 import { defaultCardArt, isSecret } from '../../../card-utils';
-import {
-  CARD_SETS,
-  CARD_KINDS,
-  RARITIES,
-  AFFINITIES,
-  CARD_SPEED
-} from '../../../card.enums';
+import { CARD_SETS, CARD_KINDS, RARITIES, CARD_SPEED } from '../../../card.enums';
 import { WhileOnBoardModifier } from '../../../../modifier/modifiers/while-on-board.modifier';
 import { GameEventModifierMixin } from '../../../../modifier/mixins/game-event.mixin';
 import { GAME_EVENTS } from '../../../../game/game.events';
@@ -26,7 +20,6 @@ export const theAmberPass: LocationBlueprint = {
   rarity: RARITIES.COMMON,
   art: defaultCardArt('locations/amber-pass'),
   speed: CARD_SPEED.SLOW,
-  affinities: [AFFINITIES.NEUTRAL],
   tags: [],
   async onInit(game, card) {
     await card.modifiers.add(

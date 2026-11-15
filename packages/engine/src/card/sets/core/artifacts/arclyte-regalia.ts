@@ -1,13 +1,7 @@
 import dedent from 'dedent';
 import type { ArtifactBlueprint } from '../../../card-blueprint';
 import { defaultCardArt, singleAllyMinionTargetRules } from '../../../card-utils';
-import {
-  AFFINITIES,
-  CARD_KINDS,
-  CARD_SETS,
-  CARD_SPEED,
-  RARITIES
-} from '../../../card.enums';
+import { CARD_KINDS, CARD_SETS, CARD_SPEED, RARITIES } from '../../../card.enums';
 import type { MinionCard } from '../../../entities/minion.entity';
 import { EquippedModifier } from '../../../../modifier/modifiers/equip.modifier';
 import { GameEventModifierMixin } from '../../../../modifier/mixins/game-event.mixin';
@@ -25,7 +19,6 @@ export const arclyteRegalia: ArtifactBlueprint = {
   art: defaultCardArt('artifacts/arclyte-regalia'),
   kind: CARD_KINDS.ARTIFACT,
   rarity: RARITIES.RARE,
-  affinities: [AFFINITIES.LIGHT, AFFINITIES.LIGHT],
   manaCost: 3,
   manaSupply: 2,
   durability: 2,

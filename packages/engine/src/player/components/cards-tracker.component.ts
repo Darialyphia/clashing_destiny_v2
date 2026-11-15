@@ -52,10 +52,7 @@ export class CardTrackerComponent {
     for (let turn = this.game.turnSystem.elapsedTurns; turn >= 0; turn--) {
       const turnCards = this.cardsPlayedByGameTurn.get(turn);
       const lastCard = turnCards?.at(-1);
-      if (
-        lastCard?.card.kind !== CARD_KINDS.LOCATION &&
-        lastCard?.card.kind !== CARD_KINDS.RUNE
-      ) {
+      if (lastCard?.card.kind !== CARD_KINDS.LOCATION) {
         if (lastCard) return lastCard;
       }
     }

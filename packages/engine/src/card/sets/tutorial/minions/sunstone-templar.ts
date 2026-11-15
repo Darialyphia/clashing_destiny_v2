@@ -1,13 +1,7 @@
 import dedent from 'dedent';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import { defaultCardArt, singleEnemyMinionTargetRules } from '../../../card-utils';
-import {
-  CARD_SETS,
-  CARD_KINDS,
-  RARITIES,
-  CARD_SPEED,
-  AFFINITIES
-} from '../../../card.enums';
+import { CARD_SETS, CARD_KINDS, RARITIES, CARD_SPEED } from '../../../card.enums';
 import { OnEnterModifier } from '../../../../modifier/modifiers/on-enter.modifier';
 import { AbilityDamage } from '../../../../utils/damage';
 
@@ -29,7 +23,6 @@ export const tutorialSunstoneTemplar: MinionBlueprint = {
   atk: 1,
   maxHp: 3,
   commandment: 2,
-  affinities: [AFFINITIES.LIGHT],
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {

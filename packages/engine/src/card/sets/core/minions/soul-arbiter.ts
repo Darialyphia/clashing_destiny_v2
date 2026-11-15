@@ -1,13 +1,7 @@
 import dedent from 'dedent';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import { defaultCardArt } from '../../../card-utils';
-import {
-  CARD_SETS,
-  CARD_KINDS,
-  RARITIES,
-  CARD_SPEED,
-  AFFINITIES
-} from '../../../card.enums';
+import { CARD_SETS, CARD_KINDS, RARITIES, CARD_SPEED } from '../../../card.enums';
 import { ChannelModifier } from '../../../../modifier/modifiers/channel.modifier';
 import { SimpleManacostModifier } from '../../../../modifier/modifiers/simple-manacost-modifier';
 import { SimpleSupplyModifier } from '../../../../modifier/modifiers/simple-supply-modifier';
@@ -29,7 +23,6 @@ export const soulArbiter: MinionBlueprint = {
   tags: [],
   atk: 3,
   maxHp: 3,
-  affinities: [AFFINITIES.AIR, AFFINITIES.AIR],
   commandment: 2,
   canPlay: () => true,
   abilities: [],

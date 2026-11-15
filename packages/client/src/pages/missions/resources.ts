@@ -167,8 +167,7 @@ export const resourcesTutorial: TutorialMission = {
               ['tutorial-silverguard-knight', 1],
               ['tutorial-lionheart-blessing', 1],
               ['tutorial-windblade-adept', 10],
-              ['tutorial-silverguard-outpost', 1],
-              ['light-affinity', 10]
+              ['tutorial-silverguard-outpost', 1]
             ])
           }
         },
@@ -185,8 +184,7 @@ export const resourcesTutorial: TutorialMission = {
               ['bloodbound-shaman', 1],
               ['bloodbound-executor', 1],
               ['bloodbound-invader', 10],
-              ['tutorial-silverguard-outpost', 1],
-              ['fire-affinity', 10]
+              ['tutorial-silverguard-outpost', 1]
             ])
           }
         }
@@ -217,7 +215,6 @@ export const resourcesTutorial: TutorialMission = {
         meta: {},
         async setup(ctx) {
           ctx.client.ui.displayedElements.battleLog = false;
-          ctx.client.ui.displayedElements.affinities = false;
 
           // auto select affinity for both players
           const interactionCtx =
@@ -444,14 +441,13 @@ export const resourcesTutorial: TutorialMission = {
             bottom: '45%',
             canManuallyAdvance: true,
             async onEnter(ctx) {
-              ctx.client.ui.displayedElements.affinities = true;
               const p1Id = ctx.client.state.players[0];
               const p1 = ctx.client.state.entities[p1Id] as PlayerViewModel;
               const card = p1.hand[1];
               ctx.client.ui.highlightedCard = card;
               await waitFor(100);
               ctx.client.ui.highlightedElement =
-                ctx.client.ui.DOMSelectors.highlightedCardAffinities().element;
+                ctx.client.ui.DOMSelectors.highlightedCard.element;
             }
           },
           {
@@ -460,10 +456,7 @@ export const resourcesTutorial: TutorialMission = {
             bottom: '45%',
             canManuallyAdvance: true,
             onEnter(ctx) {
-              ctx.client.ui.highlightedElement =
-                ctx.client.ui.DOMSelectors.runeZone(
-                  ctx.game.playerSystem.player1.id
-                ).element;
+              ctx.client.ui.highlightedElement = null;
             }
           },
           {

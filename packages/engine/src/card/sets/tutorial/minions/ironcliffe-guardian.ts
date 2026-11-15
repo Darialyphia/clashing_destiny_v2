@@ -1,13 +1,7 @@
 import dedent from 'dedent';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import { defaultCardArt } from '../../../card-utils';
-import {
-  CARD_SETS,
-  CARD_KINDS,
-  RARITIES,
-  CARD_SPEED,
-  AFFINITIES
-} from '../../../card.enums';
+import { CARD_SETS, CARD_KINDS, RARITIES, CARD_SPEED } from '../../../card.enums';
 import { ProtectorModifier } from '../../../../modifier/modifiers/protector.modifier';
 
 export const tutorialIroncliffeGuardian: MinionBlueprint = {
@@ -27,7 +21,6 @@ export const tutorialIroncliffeGuardian: MinionBlueprint = {
   tags: [],
   atk: 1,
   maxHp: 7,
-  affinities: [AFFINITIES.LIGHT],
   commandment: 1,
   canPlay: () => true,
   abilities: [],

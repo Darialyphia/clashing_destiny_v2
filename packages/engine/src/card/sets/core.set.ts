@@ -7,8 +7,6 @@ import { restrainTheBeast } from './core/locations/restrain-the-beast';
 import { ashesOfPain } from './core/locations/ashes-of-pain';
 import { alcuinLibrary } from './core/locations/alcuin-library';
 import { igniteTheSky } from './core/locations/ignite-the-sky';
-import { lightAffinity } from './core/runes/light-affinity';
-import { fireAffinity } from './core/runes/fire-affinity';
 import { kaleosXaan } from './core/minions/kaleos-xaan';
 import { flamewreath } from './core/minions/flamewreath';
 import { rythmweaver } from './core/minions/rythmweaver';
@@ -73,7 +71,6 @@ import { crimsonStalker } from './core/minions/crimson-stalker';
 import { unseven } from './core/minions/unseven';
 import { windDervish } from './core/minions/wind-dervish';
 import { etherealObelysk } from './core/minions/ethereal-obelysk';
-import { airAffinity } from './core/runes/air-affinity';
 import { duneCaster } from './core/minions/dune-caster';
 import { aymaraHealer } from './core/minions/aymara-healer';
 import { fireblazeObelysk } from './core/minions/fireblaze-obelysk';
@@ -116,8 +113,6 @@ export const coreSet: CardSet = {
     ashesOfPain,
     alcuinLibrary,
     igniteTheSky,
-    lightAffinity,
-    fireAffinity,
     kaleosXaan,
     flamewreath,
     rythmweaver,
@@ -182,7 +177,6 @@ export const coreSet: CardSet = {
     unseven,
     windDervish,
     etherealObelysk,
-    airAffinity,
     duneCaster,
     aymaraHealer,
     fireblazeObelysk,

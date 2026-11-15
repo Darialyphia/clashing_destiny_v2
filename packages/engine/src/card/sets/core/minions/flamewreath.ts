@@ -1,13 +1,7 @@
 import dedent from 'dedent';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import { defaultCardArt, isMinion } from '../../../card-utils';
-import {
-  CARD_SETS,
-  CARD_KINDS,
-  RARITIES,
-  AFFINITIES,
-  CARD_SPEED
-} from '../../../card.enums';
+import { CARD_SETS, CARD_KINDS, RARITIES, CARD_SPEED } from '../../../card.enums';
 import { isDefined } from '@game/shared';
 import { OnMoveModifier } from '../../../../modifier/modifiers/on-move.modifier';
 import { FlankingModifier } from '../../../../modifier/modifiers/flanking.modifier';
@@ -25,7 +19,6 @@ export const flamewreath: MinionBlueprint = {
   art: defaultCardArt('minions/flamewreath'),
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.RARE,
-  affinities: [AFFINITIES.FIRE, AFFINITIES.FIRE],
   manaCost: 4,
   manaSupply: 2,
   speed: CARD_SPEED.SLOW,
