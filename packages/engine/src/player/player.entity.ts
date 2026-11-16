@@ -260,7 +260,9 @@ export class Player
     );
 
     await card.removeFromCurrentLocation();
-    await card.reveal();
+    if (this.game.config.SHOULD_REVEAL_SUPPLIED_CARDS) {
+      await card.reveal();
+    }
     await this.cardManager.sendToSupply(card);
     await this.manaManager.gain(card.manaSupply);
 

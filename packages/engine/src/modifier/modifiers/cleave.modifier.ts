@@ -27,7 +27,7 @@ export class CleaveModifier extends Modifier<MinionCard> {
         new GameEventModifierMixin(game, {
           eventName: GAME_EVENTS.CARD_AFTER_DEAL_COMBAT_DAMAGE,
           filter: event => event.data.card.equals(this.target),
-          handler: async () => {
+          handler: async event => {
             const amount = isFunction(options.amount) ? options.amount() : options.amount;
             if (amount === 0) return;
 
@@ -38,7 +38,7 @@ export class CleaveModifier extends Modifier<MinionCard> {
               .map(space => space.card)
               .filter(isDefined)
               .filter(isMinion)
-              .filter(c => !c.equals(this.target))
+              .filter(c => !c.equals(event.data.target))
               .filter(c => c.isAlive);
 
             if (targets.length === 0) return;

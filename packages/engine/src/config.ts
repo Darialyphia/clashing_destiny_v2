@@ -35,6 +35,7 @@ export type Config = {
   SHOULD_CREATE_CHAIN_ON_SCORE: boolean;
   SHOULD_ROTATE_LOCATIONS: boolean;
   SHOULD_PAY_MANA: boolean;
+  SHOULD_REVEAL_SUPPLIED_CARDS: boolean;
   CAN_BANISH_FROM_SUPPLY_FOR_EXP: boolean;
 
   EFFECT_CHAIN: boolean;
@@ -59,7 +60,7 @@ export const defaultConfig: Config = {
   INITIAL_HAND_SIZE: 6,
   MAX_HAND_SIZE: 10,
   SHUFFLE_DECK_ON_GAME_START: true,
-  CARDS_DRAWN_PER_TURN: 2,
+  CARDS_DRAWN_PER_TURN: 6,
   CARD_DRAW_MODE: 'threshold',
 
   CARDS_MULLIGANED_PER_TURN: 2,
@@ -86,6 +87,7 @@ export const defaultConfig: Config = {
   SHOULD_CREATE_CHAIN_ON_SCORE: false,
   SHOULD_ROTATE_LOCATIONS: true,
   SHOULD_PAY_MANA: true,
+  SHOULD_REVEAL_SUPPLIED_CARDS: false,
   CAN_BANISH_FROM_SUPPLY_FOR_EXP: false,
 
   EFFECT_CHAIN: false,
