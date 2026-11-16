@@ -80,7 +80,6 @@ export class LevelManagerComponent {
   }
 
   async levelUp() {
-    assert(this.canLevelUp, new CannotLevelUpError());
     const cost = this.expToNextLevel!;
     const event = new PlayerLevelUpEvent({
       player: this.player,

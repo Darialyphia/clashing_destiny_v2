@@ -1,7 +1,6 @@
 import dedent from 'dedent';
 import type { SpellBlueprint } from '../../../card-blueprint';
 import {
-  anywhereTargetRules,
   defaultCardArt,
   emptyBoardSpaceTargetRules,
   isMinion
@@ -29,9 +28,9 @@ export const skyBurial: SpellBlueprint = {
   art: defaultCardArt('spells/sky-burial'),
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.RARE,
-  manaCost: 4,
-  manaSupply: 3,
-  level: 1,
+  manaCost: 3,
+  manaSupply: 2,
+  level: 3,
   exp: 1,
   factionId: FACTION_IDS.LYONAR,
   speed: CARD_SPEED.FAST,

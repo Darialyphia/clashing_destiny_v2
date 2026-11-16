@@ -24,9 +24,9 @@ export const dynastyStandard: ArtifactBlueprint = {
   art: defaultCardArt('artifacts/dynasty-standard'),
   kind: CARD_KINDS.ARTIFACT,
   rarity: RARITIES.RARE,
-  manaCost: 3,
+  manaCost: 2,
   manaSupply: 2,
-  level: 1,
+  level: 3,
   exp: 1,
   factionId: FACTION_IDS.LYONAR,
   durability: 2,
@@ -38,7 +38,7 @@ export const dynastyStandard: ArtifactBlueprint = {
       id: 'dynasty-standard-ability',
       label: 'Equip',
       description: dedent /*html*/ `
-      Give allies at a battlefield: "<rt-keyword>Zeal 2</rt-keyword>: I have +0/+2/+0. This loses 1 durability."
+      This turn, allies at a battlefield have +0/+2/+0. This loses 1 durability."
       `,
       manaCost: 1,
       canUse: (game, card) => singleAllyMinionTargetRules.canPlay(game, card),
@@ -65,16 +65,10 @@ export const dynastyStandard: ArtifactBlueprint = {
                 },
                 getModifiers() {
                   return [
-                    new ZealModifier('dynasty-standard-zeal', game, card, {
-                      amount: 2,
-                      zealedModifiers: [
-                        new SimpleStatsBuffModifier(
-                          'dynasty-standard-attack-buff',
-                          game,
-                          card,
-                          { atk: 2, cmd: 0, hp: 0 }
-                        )
-                      ]
+                    new SimpleStatsBuffModifier('dynasty-standard-buff', game, card, {
+                      atk: 2,
+                      cmd: 0,
+                      hp: 0
                     })
                   ];
                 }

@@ -21,7 +21,7 @@ export const backstep: SpellBlueprint<MinionCard> = {
   id: 'backstep',
   name: 'Backstep',
   description: dedent /*html*/ `
-  Choose an ally minion at a battlefield. It deals 1 damage to the minion in front of it then moves to your base.
+  An ally minion at a battlefield deals 1 damage in front of it, thenn moves to your base.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -29,7 +29,7 @@ export const backstep: SpellBlueprint<MinionCard> = {
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.COMMON,
   manaCost: 1,
-  manaSupply: 3,
+  manaSupply: 2,
   level: 1,
   exp: 1,
   factionId: FACTION_IDS.SONGHAI,

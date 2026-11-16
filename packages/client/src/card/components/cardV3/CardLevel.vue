@@ -14,8 +14,8 @@ const { level } = defineProps<{
 /* one star per level, right of the mana cost */
 .card-level {
   position: absolute;
-  top: calc(8px * var(--pixel-scale));
-  left: calc(29px * var(--pixel-scale));
+  top: calc(2px * var(--pixel-scale));
+  left: calc(32px * var(--pixel-scale));
   z-index: 0;
   display: flex;
   gap: calc(1px * var(--pixel-scale));

@@ -100,6 +100,7 @@ export type SerializedCard = {
   speed: CardSpeed;
   isFoil: boolean;
   canBeSupplied: boolean;
+  faction: FactionId | null;
 };
 
 export abstract class Card<
@@ -256,8 +257,6 @@ export abstract class Card<
     return 0;
   }
 
-  // player level required to play this card
-  // null for cards without a faction (Locations)
   get factionId(): FactionId | null {
     if ('factionId' in this.blueprint) {
       return this.blueprint.factionId;
@@ -581,7 +580,8 @@ export abstract class Card<
       isRevealed: this.isRevealed,
       position: this.position?.id ?? null,
       speed: this.speed,
-      canBeSupplied: this.canBeSupplied
+      canBeSupplied: this.canBeSupplied,
+      faction: this.factionId
     };
   }
 

@@ -18,7 +18,7 @@ export const lastStand = defineSecretBlueprint({
   kind: CARD_KINDS.SECRET,
   rarity: RARITIES.COMMON,
   manaCost: 2,
-  manaSupply: 3,
+  manaSupply: 2,
   level: 2,
   exp: 1,
   factionId: FACTION_IDS.LYONAR,

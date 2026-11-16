@@ -169,9 +169,7 @@ const onMouseLeave = () => {
           subKind: overrides.subKind ?? card.subKind,
           speed: overrides.speed ?? card.speed,
           commandment: overrides.commandment ?? card.commandment,
-          might: overrides.might ?? card.stats?.might,
-          focus: overrides.focus ?? card.stats?.focus,
-          wisdom: overrides.wisdom ?? card.stats?.wisdom
+          faction: overrides.faction ?? card.faction
         }"
         :is-foil="card.isFoil"
         class="game-card big"

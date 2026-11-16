@@ -9,16 +9,16 @@ export const decimate: SpellBlueprint = {
   id: 'decimate',
   name: 'Decimate',
   description: dedent /*html*/ `
-  Deal damage to all minions at a battlefield equal to your highest battlefield influence.
+  Deal damage to all minions at a battlefield equal to the sum of your influence on both battlefields.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
   art: defaultCardArt('spells/decimate'),
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.LEGENDARY,
-  manaCost: 7,
-  manaSupply: 3,
-  level: 1,
+  manaCost: 4,
+  manaSupply: 2,
+  level: 4,
   exp: 1,
   factionId: FACTION_IDS.LYONAR,
   speed: CARD_SPEED.FAST,
@@ -29,10 +29,9 @@ export const decimate: SpellBlueprint = {
     anywhereTargetRules.getTargets({ game, card, canCancel: true }),
   async onInit() {},
   async onPlay(game, card) {
-    const damageToDeal = Math.max(
-      card.player.boardSide.leftBattlefield.commandmentScore,
-      card.player.boardSide.rightBattlefield.commandmentScore
-    );
+    const damageToDeal =
+      card.player.boardSide.leftBattlefield.commandmentScore +
+      card.player.boardSide.rightBattlefield.commandmentScore;
 
     const targets = game.cardSystem.cards
       .filter(isMinion)

@@ -132,8 +132,7 @@ export const KEYWORDS = {
   INTIMIDATE: {
     id: 'intimidate',
     name: 'Intimidate X',
-    description:
-      'This minion cannot be attacked by minions that cost X or less.',
+    description: 'This minion cannot be attacked by minions with level X or less.',
     aliases: [/intimidate [0-9]+/]
   },
   MILL: {

@@ -43,7 +43,7 @@ const {} = defineProps<{
   flex-direction: column;
   gap: calc(2px * var(--pixel-scale));
   position: absolute;
-  bottom: calc(94px * var(--pixel-scale));
+  bottom: calc(90px * var(--pixel-scale));
   right: calc(2px * var(--pixel-scale));
 }
 

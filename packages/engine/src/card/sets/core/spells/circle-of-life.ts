@@ -2,21 +2,19 @@ import dedent from 'dedent';
 import type { SpellBlueprint } from '../../../card-blueprint';
 import {
   defaultCardArt,
-  isMinion,
   singleEnemyMinionTargetRules,
   singleEnemyTargetRules
 } from '../../../card-utils';
 import { CARD_KINDS, CARD_SETS, CARD_SPEED, RARITIES } from '../../../card.enums';
 import type { MinionCard } from '../../../entities/minion.entity';
 import { SpellDamage } from '../../../../utils/damage';
-import { ZealModifier } from '../../../../modifier/modifiers/zeal.modifier';
 import { FACTION_IDS } from '../../../factions/factions';
 
 export const circleOfLife: SpellBlueprint<MinionCard> = {
   id: 'circleOfLife',
   name: 'Circle of Life',
   description: dedent /*html*/ `
-  Deal 3 damage to an enemy minion at a battlefield. Gain 3 influence on that battlefield.
+  Deal 3 damage to an enemy minion at a battlefield. Gain 3 influence here.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -24,8 +22,8 @@ export const circleOfLife: SpellBlueprint<MinionCard> = {
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.EPIC,
   manaCost: 5,
-  manaSupply: 3,
-  level: 1,
+  manaSupply: 2,
+  level: 4,
   exp: 1,
   factionId: FACTION_IDS.LYONAR,
   speed: CARD_SPEED.FAST,

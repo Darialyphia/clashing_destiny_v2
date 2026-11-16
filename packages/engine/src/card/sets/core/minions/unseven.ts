@@ -8,22 +8,22 @@ import { GAME_EVENTS } from '../../../../game/game.events';
 import type { MinionCard } from '../../../entities/minion.entity';
 import { AttackerModifier } from '../../../../modifier/modifiers/attacker.modifier';
 import { FACTION_IDS } from '../../../factions/factions';
+import { TogglableModifierMixin } from '../../../../modifier/mixins/togglable.mixin';
 
 export const unseven: MinionBlueprint = {
   id: 'unseven',
   name: 'Unseven',
   description: dedent /*html*/ `
-  <rt-keyword>Attacker 2</rt-keyword>.
-  <rt-timing>End of Turn</rt-timing>If I am in base or at a battlefield where you have less influence than your opponent, return me to your hand.
+  I have <rt-keyword>Attacker 2</rt-keyword> while at a battlefield where you have more influence than your opponent.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
   art: defaultCardArt('minions/unseven'),
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.COMMON,
-  manaCost: 3,
+  manaCost: 2,
   manaSupply: 2,
-  level: 1,
+  level: 3,
   exp: 1,
   factionId: FACTION_IDS.LYONAR,
   speed: CARD_SPEED.SLOW,
@@ -34,23 +34,17 @@ export const unseven: MinionBlueprint = {
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {
-    await card.modifiers.add(new AttackerModifier(game, card, { amount: 2 }));
     await card.modifiers.add(
-      new WhileOnBoardModifier<MinionCard>('unseven', game, card, {
+      new AttackerModifier(game, card, {
+        amount: 2,
         mixins: [
-          new GameEventModifierMixin(game, {
-            eventName: GAME_EVENTS.TURN_END,
-            filter: () => {
-              if (!card.isOnBattlefield) return true;
-              return (
-                card.battlefield!.commandmentScore <
+          new TogglableModifierMixin(
+            game,
+            () =>
+              card.isOnBattlefield &&
+              card.battlefield!.commandmentScore >
                 card.battlefield!.opponentCommandmentScore
-              );
-            },
-            async handler() {
-              await card.addToHand();
-            }
-          })
+          )
         ]
       })
     );

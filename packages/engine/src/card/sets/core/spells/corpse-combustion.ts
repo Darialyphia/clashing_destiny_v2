@@ -23,7 +23,7 @@ export const corpseCombustion: SpellBlueprint<MinionCard> = {
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.RARE,
   manaCost: 4,
-  manaSupply: 3,
+  manaSupply: 2,
   level: 1,
   exp: 1,
   factionId: FACTION_IDS.VETRUVIAN,

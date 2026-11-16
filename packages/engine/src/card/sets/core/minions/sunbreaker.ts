@@ -2,7 +2,6 @@ import dedent from 'dedent';
 import type { MinionBlueprint } from '../../../card-blueprint';
 import { defaultCardArt } from '../../../card-utils';
 import { CARD_SETS, CARD_KINDS, RARITIES, CARD_SPEED } from '../../../card.enums';
-import { ZealModifier } from '../../../../modifier/modifiers/zeal.modifier';
 import { CleaveModifier } from '../../../../modifier/modifiers/cleave.modifier';
 import { OnKillModifier } from '../../../../modifier/modifiers/on-kill.modifier';
 import { FACTION_IDS } from '../../../factions/factions';
@@ -11,7 +10,7 @@ export const sunbreaker: MinionBlueprint = {
   id: 'sunbreaker',
   name: 'Sunbreaker',
   description: dedent /*html*/ `
-  <rt-keyword>Zeal 3</rt-keyword>: <rt-keyword>Cleave 3</rt-keyword>.
+  <rt-keyword>Cleave 3</rt-keyword>.
   <rt-trigger>On Kill</rt-trigger> Gain 1 influence on this battlefield.
   `,
   collectable: true,
@@ -19,25 +18,20 @@ export const sunbreaker: MinionBlueprint = {
   art: defaultCardArt('minions/sunbreaker'),
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.EPIC,
-  manaCost: 6,
-  manaSupply: 3,
-  level: 1,
+  manaCost: 4,
+  manaSupply: 2,
+  level: 4,
   exp: 1,
   factionId: FACTION_IDS.LYONAR,
   speed: CARD_SPEED.SLOW,
   tags: [],
-  atk: 4,
+  atk: 5,
   maxHp: 5,
   commandment: 2,
   canPlay: () => true,
   abilities: [],
   async onInit(game, card) {
-    await card.modifiers.add(
-      new ZealModifier('sunbreaker-zeal', game, card, {
-        amount: 3,
-        zealedModifiers: [new CleaveModifier(game, card, { amount: 3 })]
-      })
-    );
+    await card.modifiers.add(new CleaveModifier(game, card, { amount: 3 }));
 
     await card.modifiers.add(
       new OnKillModifier(game, card, {

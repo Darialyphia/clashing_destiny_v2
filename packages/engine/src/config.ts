@@ -35,6 +35,7 @@ export type Config = {
   SHOULD_CREATE_CHAIN_ON_SCORE: boolean;
   SHOULD_ROTATE_LOCATIONS: boolean;
   SHOULD_PAY_MANA: boolean;
+  CAN_BANISH_FROM_SUPPLY_FOR_EXP: boolean;
 
   EFFECT_CHAIN: boolean;
 
@@ -45,8 +46,9 @@ export type Config = {
 
   STARTING_PLAYER_LEVEL: number;
   MAX_PLAYER_LEVEL: number;
-  // experience spent to go from the previous level to this one
+  EXP_GAINED_PER_TURN: number;
   EXP_TO_REACH_LEVEL: Record<number, number>;
+  AUTO_LEVEL_UP: boolean;
 };
 
 export const defaultConfig: Config = {
@@ -58,10 +60,10 @@ export const defaultConfig: Config = {
   MAX_HAND_SIZE: 10,
   SHUFFLE_DECK_ON_GAME_START: true,
   CARDS_DRAWN_PER_TURN: 2,
-  CARD_DRAW_MODE: 'fixed',
+  CARD_DRAW_MODE: 'threshold',
 
-  CARDS_MULLIGANED_PER_TURN: 1,
-  START_OF_GAME_MULLIGANED_CARDS: 3,
+  CARDS_MULLIGANED_PER_TURN: 2,
+  START_OF_GAME_MULLIGANED_CARDS: 2,
 
   PLAYER_1_CARDS_DRAWN_ON_FIRST_TURN: 0,
   PLAYER_2_CARDS_DRAWN_ON_FIRST_TURN: 0,
@@ -84,6 +86,7 @@ export const defaultConfig: Config = {
   SHOULD_CREATE_CHAIN_ON_SCORE: false,
   SHOULD_ROTATE_LOCATIONS: true,
   SHOULD_PAY_MANA: true,
+  CAN_BANISH_FROM_SUPPLY_FOR_EXP: false,
 
   EFFECT_CHAIN: false,
 
@@ -93,10 +96,13 @@ export const defaultConfig: Config = {
   SECRET_UPFRONT_COST: 1,
 
   STARTING_PLAYER_LEVEL: 1,
-  MAX_PLAYER_LEVEL: 4,
+  MAX_PLAYER_LEVEL: 5,
+  EXP_GAINED_PER_TURN: 1,
   EXP_TO_REACH_LEVEL: {
-    2: 2,
-    3: 3,
-    4: 4
-  }
+    2: 1,
+    3: 1,
+    4: 1,
+    5: 1
+  },
+  AUTO_LEVEL_UP: true
 };

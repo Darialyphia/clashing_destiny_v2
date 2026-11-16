@@ -12,22 +12,22 @@ import { TogglableModifierMixin } from '../../../../modifier/mixins/togglable.mi
 import { VigilantModifier } from '../../../../modifier/modifiers/vigilant.modifier';
 import { CardEffectTriggeredEvent } from '../../../card.events';
 import { FACTION_IDS } from '../../../factions/factions';
+import { CardAuraModifierMixin } from '../../../../modifier/mixins/aura.mixin';
 
 export const solarius: MinionBlueprint = {
   id: 'solarius',
   name: 'Solarius',
   description: dedent /*html*/ `
   When you win at a battlefield with at least 3 more points than your opponent, <rt-keyword>Empower</rt-keyword> me.
-  While I am <rt-keyword>Empowered</rt-keyword>, I have +2/+2/+2 and <rt-keyword>Vigilant</rt-keyword>.
-  `,
+  While I am <rt-keyword>Empowered</rt-keyword>, I have +2/+2/+3.`,
   collectable: true,
   setId: CARD_SETS.CORE,
   art: defaultCardArt('minions/solarius'),
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.EPIC,
   manaCost: 3,
-  manaSupply: 3,
-  level: 1,
+  manaSupply: 2,
+  level: 3,
   exp: 1,
   factionId: FACTION_IDS.LYONAR,
   speed: CARD_SPEED.SLOW,
@@ -69,15 +69,7 @@ export const solarius: MinionBlueprint = {
       new SimpleStatsBuffModifier('solarius-stats-buff', game, card, {
         atk: 2,
         cmd: 2,
-        hp: 2,
-        mixins: [
-          new TogglableModifierMixin(game, () => card.modifiers.has(EmpoweredModifier))
-        ]
-      })
-    );
-
-    await card.modifiers.add(
-      new VigilantModifier(game, card, {
+        hp: 3,
         mixins: [
           new TogglableModifierMixin(game, () => card.modifiers.has(EmpoweredModifier))
         ]

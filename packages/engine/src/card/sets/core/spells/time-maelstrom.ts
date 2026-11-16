@@ -18,7 +18,7 @@ export const timeMaelstrom: SpellBlueprint = {
   kind: CARD_KINDS.SPELL,
   rarity: RARITIES.LEGENDARY,
   manaCost: 4,
-  manaSupply: 3,
+  manaSupply: 2,
   level: 1,
   exp: 1,
   factionId: FACTION_IDS.VETRUVIAN,

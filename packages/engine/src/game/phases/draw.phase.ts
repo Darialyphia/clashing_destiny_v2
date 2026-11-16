@@ -61,9 +61,8 @@ export class DrawPhase implements GamePhaseController, Serializable<EmptyObject>
     }
   }
 
-  // each player may banish one card from their supply to gain its experience
   private async banishSupplyCardForExp() {
-    // still offered at max level: experience will have other uses later in the game
+    if (!this.game.config.CAN_BANISH_FROM_SUPPLY_FOR_EXP) return;
     const players = this.game.playerSystem.players.filter(
       player => player.cardManager.supply.size > 0
     );
@@ -152,6 +151,15 @@ export class DrawPhase implements GamePhaseController, Serializable<EmptyObject>
     await rightLocation.play();
   }
 
+  private async gainExpForTurn() {
+    for (const player of this.game.playerSystem.players) {
+      await player.gainExp(this.game.config.EXP_GAINED_PER_TURN);
+      if (this.game.config.AUTO_LEVEL_UP && player.levelManager.hasEnoughExpToLevelUp) {
+        await player.levelManager.levelUp();
+      }
+    }
+  }
+
   async onEnter() {
     await this.game.turnSystem.startTurn();
 
@@ -177,6 +185,7 @@ export class DrawPhase implements GamePhaseController, Serializable<EmptyObject>
     } else {
       await this.rotateLocationCards();
       await this.banishSupplyCardForExp();
+      await this.gainExpForTurn();
       await this.recollectSupply();
       if (this.game.config.CARDS_MULLIGANED_PER_TURN > 0) {
         await this.mulligan(this.game.config.CARDS_MULLIGANED_PER_TURN, false);

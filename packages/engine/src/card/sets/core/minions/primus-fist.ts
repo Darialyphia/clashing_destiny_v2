@@ -18,7 +18,7 @@ export const primusFist: MinionBlueprint = {
   kind: CARD_KINDS.MINION,
   rarity: RARITIES.COMMON,
   manaCost: 2,
-  manaSupply: 3,
+  manaSupply: 2,
   level: 1,
   exp: 1,
   factionId: FACTION_IDS.NEUTRAL,

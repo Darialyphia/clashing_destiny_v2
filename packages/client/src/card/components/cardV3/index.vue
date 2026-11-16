@@ -6,6 +6,7 @@ import {
   CARD_KINDS,
   RARITIES
 } from '@game/engine/src/card/card.enums';
+import type { FactionId } from '@game/engine/src/card/factions/factions';
 import { isDefined, type Nullable } from '@game/shared';
 import CardGlare from '../CardGlare.vue';
 import { useCardTilt } from '../../composables/useCardtilt';
@@ -20,7 +21,6 @@ import FoilGlitter from '../foil/FoilGlitter.vue';
 import FoilBrightShine from '../foil/FoilBrightShine.vue';
 import ManaCost from './ManaCost.vue';
 import CardLevel from './CardLevel.vue';
-import CardSupplyExp from './CardSupplyExp.vue';
 import Stats from './Stats.vue';
 import CardName from './CardName.vue';
 import Description from './Description.vue';
@@ -35,6 +35,7 @@ import FoilEmboss from '../foil/FoilEmboss.vue';
 import { match } from 'ts-pattern';
 import { ANIMATIONS_NAMES } from '@game/engine/src/game/game.enums.js';
 import FoilBluespark from '../foil/FoilBluespark.vue';
+import FactionCrest from './FactionCrest.vue';
 
 const {
   card,
@@ -59,11 +60,9 @@ const {
     rarity: Rarity;
     atk?: number | string | null;
     hp?: number | string | null;
-    might?: number | null;
-    focus?: number | null;
-    wisdom?: number | null;
     durability?: number | null;
     abilities?: string[];
+    faction?: FactionId | null;
     subKind?: string | null;
     tags?: string[];
     speed?: CardSpeed;
@@ -157,13 +156,15 @@ const _animationSequence = computed(() => {
           v-if="isDefined(card.manaCost)"
           :cost="card.manaCost"
           :baseCost="card.baseManaCost ?? card.manaCost"
+          :mana-supply="card.manaSupply"
         />
         <CardLevel v-if="isDefined(card.level)" :level="card.level" />
-        <CardSupplyExp
+        <!-- <CardSupplyExp
           v-if="isDefined(card.manaSupply) || isDefined(card.exp)"
           :mana-supply="card.manaSupply"
           :exp="card.exp"
-        />
+        /> -->
+        <FactionCrest v-if="isDefined(card.faction)" :faction="card.faction" />
         <CardArtComponent
           v-if="sprite"
           class="card-art"
@@ -216,9 +217,6 @@ const _animationSequence = computed(() => {
           :hp="card.hp ?? null"
           :durability="card.durability ?? null"
           :commandment="card.commandment ?? null"
-          :might="card.might ?? null"
-          :focus="card.focus ?? null"
-          :wisdom="card.wisdom ?? null"
         />
 
         <CardGlare />

@@ -17,6 +17,7 @@ import type { SerializedArtifactCard } from '../../card/entities/artifact.entity
 import { SelectCardOnBoardAction } from '../actions/select-card-on-board';
 import { AttackAction } from '../actions/attack';
 import { DeclareRetaliationAction } from '../actions/retaliate';
+import type { FactionId } from '../../card/factions/factions';
 
 type CardData = SerializedSpellCard | SerializedMinionCard | SerializedArtifactCard;
 
@@ -73,6 +74,13 @@ export class CardViewModel {
 
   get description() {
     return this.data.description;
+  }
+
+  get faction() {
+    if ('faction' in this.data) {
+      return this.data.faction as FactionId | null;
+    }
+    return null;
   }
 
   get art() {
