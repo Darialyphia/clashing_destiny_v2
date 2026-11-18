@@ -9,7 +9,7 @@ export const firestormMantra: SpellBlueprint<LocationCard> = {
   id: 'firestormMantra',
   name: 'Firestorm Mantra',
   description: dedent /*html*/ `
-  Steal influence on a battlefield equal to the amount of spells you played this turn.
+  Steal influence on a battlefield equal to the amount of spells you played this turn + 1.
   `,
   collectable: true,
   setId: CARD_SETS.CORE,
@@ -18,7 +18,7 @@ export const firestormMantra: SpellBlueprint<LocationCard> = {
   rarity: RARITIES.EPIC,
   manaCost: 2,
   manaSupply: 2,
-  level: 1,
+  level: 3,
   exp: 1,
   factionId: FACTION_IDS.SONGHAI,
   speed: CARD_SPEED.FAST,
@@ -36,9 +36,8 @@ export const firestormMantra: SpellBlueprint<LocationCard> = {
   async onPlay(game, card, targets) {
     const target = targets.cards[0];
     if (!target) return;
-    const amountToSteal = card.player.cardTracker.getCardsPlayedThisTurnOfKind(
-      CARD_KINDS.SPELL
-    ).length;
+    const amountToSteal =
+      card.player.cardTracker.getCardsPlayedThisTurnOfKind(CARD_KINDS.SPELL).length + 1;
     if (target.isAlly(card)) {
       await target.battlefield?.gainScore(amountToSteal);
       await target.battlefield?.opponentBattlefield.loseScore(amountToSteal);

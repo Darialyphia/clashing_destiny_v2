@@ -19,7 +19,7 @@ export const ghostLightning: SpellBlueprint = {
   rarity: RARITIES.COMMON,
   manaCost: 1,
   manaSupply: 2,
-  level: 1,
+  level: 2,
   exp: 1,
   factionId: FACTION_IDS.SONGHAI,
   speed: CARD_SPEED.FAST,

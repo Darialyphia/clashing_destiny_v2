@@ -30,7 +30,7 @@ export const mistDragonSeal: SpellBlueprint<MinionCard> = {
   rarity: RARITIES.COMMON,
   manaCost: 2,
   manaSupply: 2,
-  level: 1,
+  level: 2,
   exp: 1,
   factionId: FACTION_IDS.SONGHAI,
   speed: CARD_SPEED.FAST,

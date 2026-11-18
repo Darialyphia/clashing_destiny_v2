@@ -158,7 +158,6 @@ const _animationSequence = computed(() => {
           :baseCost="card.baseManaCost ?? card.manaCost"
           :mana-supply="card.manaSupply"
         />
-        <CardLevel v-if="isDefined(card.level)" :level="card.level" />
         <!-- <CardSupplyExp
           v-if="isDefined(card.manaSupply) || isDefined(card.exp)"
           :mana-supply="card.manaSupply"
@@ -189,6 +188,7 @@ const _animationSequence = computed(() => {
           <FoilCRT v-if="card.art.foil.crt" />
           <FoilBluespark v-if="card.art.foil.blueSpark" />
         </template>
+        <CardLevel v-if="isDefined(card.level)" :level="card.level" />
 
         <CardRarity :rarity="card.rarity" />
 

@@ -28,7 +28,7 @@ export const bloodrageMask: ArtifactBlueprint = {
   rarity: RARITIES.RARE,
   manaCost: 2,
   manaSupply: 2,
-  level: 1,
+  level: 2,
   exp: 1,
   factionId: FACTION_IDS.SONGHAI,
   durability: 3,
@@ -42,7 +42,7 @@ export const bloodrageMask: ArtifactBlueprint = {
       description: dedent /*html*/ `
       <rt-keyword>Equip</rt-keyword>: Give the equipped minion +0/+2/+0 and "<rt-location locations="battlefield"></rt-location> When you play a Spell, deal 1 damage to all minions here."
       `,
-      manaCost: 3,
+      manaCost: 2,
       canUse: (game, card) => singleAllyMinionTargetRules.canPlay(game, card),
       getTargets: (game, card) =>
         singleAllyMinionTargetRules.getTargets({

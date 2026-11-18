@@ -25,7 +25,7 @@ export const cycloneMask: ArtifactBlueprint = {
   rarity: RARITIES.RARE,
   manaCost: 2,
   manaSupply: 2,
-  level: 1,
+  level: 2,
   exp: 1,
   factionId: FACTION_IDS.SONGHAI,
   durability: 2,

@@ -3,8 +3,7 @@ import type { SpellBlueprint } from '../../../card-blueprint';
 import {
   defaultCardArt,
   minionTargetRules,
-  singleAllyMinionTargetRules,
-  singleMinionTargetRules
+  singleAllyMinionTargetRules
 } from '../../../card-utils';
 import { CARD_KINDS, CARD_SETS, CARD_SPEED, RARITIES } from '../../../card.enums';
 import type { MinionCard } from '../../../entities/minion.entity';
@@ -24,7 +23,7 @@ export const juxtaposition: SpellBlueprint<MinionCard> = {
   rarity: RARITIES.EPIC,
   manaCost: 2,
   manaSupply: 2,
-  level: 1,
+  level: 2,
   exp: 1,
   factionId: FACTION_IDS.SONGHAI,
   speed: CARD_SPEED.FAST,
