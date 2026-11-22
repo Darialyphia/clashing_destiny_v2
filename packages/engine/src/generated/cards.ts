@@ -108,6 +108,11 @@ export const cards = {
 "crystal-caverns": "crystal-caverns",
 "obsidian-woods": "obsidian-woods",
 "celandine-embassy": "celandine-embassy",
+"quicksand": "quicksand",
+"ember-censer": "ember-censer",
+"cinder-ifrit": "cinder-ifrit",
+"dominion-obelysk": "dominion-obelysk",
+"borrowed-time": "borrowed-time",
 "bloodbound-invader": "bloodbound-invader",
 "tutorial-windblade-adept": "tutorial-windblade-adept",
 "tutorial-silverguard-outpost": "tutorial-silverguard-outpost",
@@ -228,7 +233,12 @@ export const collectableCards = {
 "the-lost-ruins": "the-lost-ruins",
 "crystal-caverns": "crystal-caverns",
 "obsidian-woods": "obsidian-woods",
-"celandine-embassy": "celandine-embassy"
+"celandine-embassy": "celandine-embassy",
+"quicksand": "quicksand",
+"ember-censer": "ember-censer",
+"cinder-ifrit": "cinder-ifrit",
+"dominion-obelysk": "dominion-obelysk",
+"borrowed-time": "borrowed-time"
 } as const;
 
 type CardSet = Array<{id: string; collectable: boolean; rarity: Rarity, kind: CardKind, factionId: FactionId | null}>;
@@ -940,6 +950,41 @@ export const cardsBySet: Record<string, CardSet> = {
     "rarity": "common",
     "kind": "LOCATION",
     "factionId": null
+  },
+  {
+    "id": "quicksand",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "SECRET",
+    "factionId": "VETRUVIAN"
+  },
+  {
+    "id": "ember-censer",
+    "collectable": true,
+    "rarity": "rare",
+    "kind": "ARTIFACT",
+    "factionId": "VETRUVIAN"
+  },
+  {
+    "id": "cinder-ifrit",
+    "collectable": true,
+    "rarity": "epic",
+    "kind": "MINION",
+    "factionId": "VETRUVIAN"
+  },
+  {
+    "id": "dominion-obelysk",
+    "collectable": true,
+    "rarity": "rare",
+    "kind": "MINION",
+    "factionId": "VETRUVIAN"
+  },
+  {
+    "id": "borrowed-time",
+    "collectable": true,
+    "rarity": "common",
+    "kind": "SPELL",
+    "factionId": "VETRUVIAN"
   }
 ],
 "TUTORIAL": [
@@ -1174,6 +1219,11 @@ export const cardShortIds: Record<string, number> = {
 "crystal-caverns": 123,
 "obsidian-woods": 124,
 "celandine-embassy": 125,
+"quicksand": 126,
+"ember-censer": 127,
+"cinder-ifrit": 128,
+"dominion-obelysk": 129,
+"borrowed-time": 130,
 "bloodbound-invader": 92,
 "tutorial-windblade-adept": 93,
 "tutorial-silverguard-outpost": 94,
@@ -1313,5 +1363,10 @@ export const cardIdByShortId: Record<number, string> = {
 "122": "the-lost-ruins",
 "123": "crystal-caverns",
 "124": "obsidian-woods",
-"125": "celandine-embassy"
+"125": "celandine-embassy",
+"126": "quicksand",
+"127": "ember-censer",
+"128": "cinder-ifrit",
+"129": "dominion-obelysk",
+"130": "borrowed-time"
 } as const;

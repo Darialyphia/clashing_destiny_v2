@@ -101,6 +101,11 @@ import { theLostRuins } from './core/locations/the-lost-ruins';
 import { crystalCaverns } from './core/locations/crystal-caverns';
 import { obsidianWoods } from './core/locations/obsidian-woods';
 import { celandineEmbassy } from './core/locations/celandine-embassy';
+import { quicksand } from './core/secrets/quicksand';
+import { emberCenser } from './core/artifacts/ember-censer';
+import { cinderIfrit } from './core/minions/cinder-ifrit';
+import { dominionObelysk } from './core/minions/dominion-obelysk';
+import { borrowedTime } from './core/spells/borrowed-time';
 
 export const coreSet: CardSet = {
   id: CARD_SETS.CORE,
@@ -206,6 +211,11 @@ export const coreSet: CardSet = {
     theLostRuins,
     crystalCaverns,
     obsidianWoods,
-    celandineEmbassy
+    celandineEmbassy,
+    quicksand,
+    emberCenser,
+    cinderIfrit,
+    dominionObelysk,
+    borrowedTime
   ]
 };

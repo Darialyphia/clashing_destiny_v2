@@ -57,7 +57,6 @@ export class Room {
 
   private hasStarted = false;
 
-  // listeners registered for each socket, removed when the socket leaves the room
   private socketCleanups = new Map<IoSocket, Array<() => void>>();
 
   constructor(
@@ -320,10 +319,8 @@ export class Room {
     const canSpectate = this.options.game.players.every(
       p => p.userId !== socket.data.user.id
     );
-    if (!canSpectate) {
-      console.log('User is a player, cannot spectate');
-      return;
-    }
+    if (!canSpectate) return;
+
     await socket.join(this.id);
     this.spectators.add(socket);
 

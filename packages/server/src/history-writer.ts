@@ -29,7 +29,6 @@ export class HistoryWriter {
     return this.inFlight ?? Promise.resolve();
   }
 
-  // stops accepting new histories, and resolves once the pending one has been written
   close() {
     this.closed = true;
     return this.flush();
