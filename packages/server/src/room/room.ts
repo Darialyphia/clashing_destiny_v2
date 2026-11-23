@@ -1,12 +1,16 @@
 import { GAME_STATUS, type GameId, type GameStatus } from '@game/api';
 import { Game, type GameOptions } from '@game/engine/src/game/game';
-import type { Ioserver, IoSocket } from './io';
+import type { Ioserver, IoSocket } from '../io';
 import { TypedEventEmitter } from '@game/engine/src/utils/typed-emitter';
 import type { EmptyObject } from '@game/shared';
 import type { SerializedInput } from '@game/engine/src/input/input-system';
 import { GAME_EVENTS } from '@game/engine/src/game/game.events';
 import { consoleLogger } from '@game/engine/src/utils/logger';
-import { ClockManager, CLOCK_MANAGER_EVENTS, type ClockState } from './clock-manager';
+import type { ClockState } from './clock-manager';
+import { TurnTimers } from './turn-timers';
+import { SocketDisposables } from './socket-disposables';
+import { RoomMembership, type RoomMemberType } from './room-membership';
+import { attachInputRelay, attachViewer, type SnapshotViewer } from './snapshot-stream';
 
 export type RoomOptions = {
   game: {
@@ -35,21 +39,16 @@ type RoomEventMap = {
   [ROOM_EVENTS.CLOCK_TICK]: ClockState;
 };
 
-type RoomPlayer = {
-  userId: string;
-  socket: IoSocket;
-};
-
 const PLAYER_ACTION_CLOCK_TIME = 60 * 1000;
 
 export class Room {
   private engine: Game;
 
-  private clockManager: ClockManager;
-  private players = new Map<string, RoomPlayer>();
-  private activePlayerIds = new Set<string>();
+  private turnTimers: TurnTimers;
 
-  private spectators = new Set<IoSocket>();
+  private disposables = new SocketDisposables();
+
+  private membership: RoomMembership;
 
   private emitter = new TypedEventEmitter<RoomEventMap>('parallel');
 
@@ -57,20 +56,26 @@ export class Room {
 
   private hasStarted = false;
 
-  private socketCleanups = new Map<IoSocket, Array<() => void>>();
+  // set once the engine is initialized: from then on, every member receives the game snapshots
+  private isLive = false;
+
+  private streamingSockets = new Set<IoSocket>();
 
   constructor(
     readonly id: string,
     private io: Ioserver,
     private options: RoomOptions
   ) {
+    const playerIds = this.options.game.players.map(p => p.userId);
+
     this.engine = new Game(this.options.initialState);
     this.engine.logger.addLogger(consoleLogger);
-    this.clockManager = new ClockManager({
-      playerIds: this.options.game.players.map(p => p.userId),
+    this.turnTimers = new TurnTimers(this.engine, {
+      playerIds,
       clockTime: PLAYER_ACTION_CLOCK_TIME,
       disabled: this.options.game.options.disableTurnTimers
     });
+    this.membership = new RoomMembership(this.id, playerIds, this.disposables);
   }
 
   get disableTurnTimers() {
@@ -89,55 +94,11 @@ export class Room {
     return this.emitter.once.bind(this.emitter);
   }
 
-  async shutdown() {
-    await this.engine.shutdown();
-    this.clockManager.shutdown();
-
-    for (const socket of [...this.socketCleanups.keys()]) {
-      this.cleanupSocket(socket);
-    }
-
-    this.io.in(this.id).disconnectSockets();
-  }
-
-  private addSocketCleanup(socket: IoSocket, cleanup: () => void) {
-    if (!this.socketCleanups.has(socket)) {
-      this.socketCleanups.set(socket, []);
-    }
-    this.socketCleanups.get(socket)!.push(cleanup);
-  }
-
-  private cleanupSocket(socket: IoSocket) {
-    this.socketCleanups.get(socket)?.forEach(cleanup => cleanup());
-    this.socketCleanups.delete(socket);
-  }
-
   initializeEngine() {
     if (!this.engineInitPromise) {
       this.engineInitPromise = this.engine.initialize();
     }
     return this.engineInitPromise;
-  }
-
-  private syncActivePlayerClocks(resetSecondary = false) {
-    const nextActivePlayerIds = new Set(
-      this.engine.activePlayers.map(player => player.id)
-    );
-
-    for (const playerId of this.activePlayerIds) {
-      if (!nextActivePlayerIds.has(playerId)) {
-        this.clockManager.stopClockForPlayer(playerId);
-      }
-    }
-
-    for (const playerId of nextActivePlayerIds) {
-      if (resetSecondary && !this.activePlayerIds.has(playerId)) {
-        this.clockManager.resetSecondaryClockForPlayer(playerId);
-      }
-      this.clockManager.startClockForPlayer(playerId);
-    }
-
-    this.activePlayerIds = nextActivePlayerIds;
   }
 
   async start() {
@@ -148,6 +109,56 @@ export class Room {
     await this.initializeEngine();
     console.log('[ROOM] engine initialized ', this.id);
 
+    this.forwardEngineEvents();
+
+    this.isLive = true;
+    this.membership.members.forEach(({ socket, type }) => {
+      this.startStreaming(socket, type);
+    });
+
+    this.turnTimers.onTick(async clockState => {
+      await this.emitter.emit(ROOM_EVENTS.CLOCK_TICK, clockState);
+    });
+    this.turnTimers.start();
+  }
+
+  async shutdown() {
+    await this.engine.shutdown();
+    this.turnTimers.shutdown();
+    this.disposables.disposeAll();
+    this.io.in(this.id).disconnectSockets();
+  }
+
+  async join(socket: IoSocket, type: RoomMemberType) {
+    const hasJoined =
+      type === 'player'
+        ? await this.membership.addPlayer(socket)
+        : await this.membership.addSpectator(socket);
+    if (!hasJoined) return;
+
+    if (this.isLive) {
+      this.startStreaming(socket, type);
+    }
+
+    const isReady =
+      type === 'player' &&
+      this.membership.isFull &&
+      this.options.game.status === GAME_STATUS.WAITING_FOR_PLAYERS;
+
+    if (isReady) {
+      await this.emitter.emit(ROOM_EVENTS.ALL_PLAYERS_JOINED, {});
+    }
+  }
+
+  async leave(socket: IoSocket) {
+    await this.membership.remove(socket);
+  }
+
+  updateStatus(status: GameStatus) {
+    this.options.game.status = status;
+  }
+
+  private forwardEngineEvents() {
     this.engine.on(GAME_EVENTS.INPUT_END, async () => {
       await this.emitter.emit(ROOM_EVENTS.INPUT_END, this.engine.inputSystem.serialize());
     });
@@ -156,186 +167,33 @@ export class Room {
       const winnerId = event.data.winners.length > 1 ? null : event.data.winners[0].id;
       await this.emitter.emit(ROOM_EVENTS.GAME_OVER, { winnerId });
     });
-
-    this.players.forEach(player => {
-      this.handlePlayerSubscription(player.socket);
-    });
-
-    this.spectators.forEach(spectatorSocket => {
-      this.handleSpectatorSubscription(spectatorSocket);
-    });
-
-    this.initializeClocks();
-    this.syncActivePlayerClocks();
   }
 
-  private initializeClocks() {
-    this.clockManager.initialize();
+  private startStreaming(socket: IoSocket, type: RoomMemberType) {
+    // a socket joining while the room goes live can be reached both by start() and join()
+    if (this.streamingSockets.has(socket)) return;
+    // the socket may have disconnected while join() was waiting
+    if (!this.membership.has(socket)) return;
 
-    this.clockManager.on(CLOCK_MANAGER_EVENTS.TICK, async clockState => {
-      await this.emitter.emit(ROOM_EVENTS.CLOCK_TICK, clockState);
-    });
-
-    this.clockManager.on(CLOCK_MANAGER_EVENTS.TIMEOUT, async ({ playerId }) => {
-      await this.engine.inputSystem.dispatch({
-        type: 'interactionTimeout',
-        payload: { playerId }
-      });
-    });
-
-    this.engine.onActivePlayerChange(() => {
-      this.syncActivePlayerClocks(true);
-    });
-
-    this.engine.on(GAME_EVENTS.TURN_INITATIVE_CHANGE, event => {
-      this.clockManager.addInitiativeChangeBonus(event.data.oldInitiativePlayer.id);
-    });
-
-    this.engine.on(GAME_EVENTS.TURN_START, () => {
-      this.clockManager.resetAllClocks();
-      this.syncActivePlayerClocks();
-    });
-  }
-
-  private handleSpectatorSubscription(spectatorSocket: IoSocket) {
-    const state = this.engine.snapshotSystem.getLatestOmniscientSnapshot();
-    spectatorSocket.emit('gameInitialState', {
-      snapshot: state,
-      history: this.engine.inputSystem.serialize()
-    });
-    this.addSocketCleanup(
-      spectatorSocket,
-      this.engine.subscribeOmniscient(snapshot => {
-        spectatorSocket.emit('gameSnapshot', snapshot);
-      })
+    this.streamingSockets.add(socket);
+    this.disposables.add(socket, () => this.streamingSockets.delete(socket));
+    this.disposables.add(
+      socket,
+      attachViewer(this.engine, socket, this.viewerFor(socket, type))
     );
-  }
 
-  private handlePlayerSubscription(playerSocket: IoSocket) {
-    if (this.teachingMode) {
-      const state = this.engine.snapshotSystem.getLatestOmniscientSnapshot();
-      playerSocket.emit('gameInitialState', {
-        snapshot: state,
-        history: this.engine.inputSystem.serialize()
-      });
-
-      this.addSocketCleanup(
-        playerSocket,
-        this.engine.subscribeOmniscient(snapshot => {
-          playerSocket.emit('gameSnapshot', snapshot);
-        })
-      );
-    } else {
-      const state = this.engine.snapshotSystem.getLatestSnapshotForPlayer(
-        playerSocket.data.user.id
-      );
-      playerSocket.emit('gameInitialState', {
-        snapshot: state,
-        history: this.engine.inputSystem.serialize()
-      });
-
-      this.addSocketCleanup(
-        playerSocket,
-        this.engine.subscribeForPlayer(playerSocket.data.user.id, snapshot => {
-          playerSocket.emit('gameSnapshot', snapshot);
-        })
+    if (type === 'player') {
+      this.disposables.add(
+        socket,
+        attachInputRelay(this.engine, this.turnTimers, socket, socket.data.user.id)
       );
     }
-
-    const onInput = async (input: SerializedInput) => {
-      this.clockManager.recordPlayerInput(playerSocket.data.user.id);
-      input.payload.playerId = playerSocket.data.user.id; // Ensure playerId is set correctly to prevent cheating
-      await this.engine.inputSystem.dispatch(input);
-    };
-    playerSocket.on('gameInput', onInput);
-    this.addSocketCleanup(playerSocket, () => playerSocket.off('gameInput', onInput));
   }
 
-  async join(socket: IoSocket, type: 'spectator' | 'player') {
-    if (type === 'spectator') {
-      await this.joinAsSpectator(socket);
-    } else {
-      await this.joinAsPlayer(socket);
+  private viewerFor(socket: IoSocket, type: RoomMemberType): SnapshotViewer {
+    if (type === 'spectator' || this.teachingMode) {
+      return { kind: 'omniscient' };
     }
-  }
-
-  async leave(socket: IoSocket) {
-    // a reconnected player may already have replaced this socket
-    if (this.players.get(socket.data.user.id)?.socket === socket) {
-      this.players.delete(socket.data.user.id);
-    }
-    this.spectators.delete(socket);
-    this.cleanupSocket(socket);
-    await socket.leave(this.id);
-  }
-
-  private async joinAsPlayer(socket: IoSocket) {
-    const canPlay = this.options.game.players.some(p => p.userId === socket.data.user.id);
-    if (!canPlay) {
-      console.error('Room is full, cannot join as player');
-      return;
-    }
-
-    const previousSocket = this.players.get(socket.data.user.id)?.socket;
-    if (previousSocket === socket) return;
-    // the player reconnected before the server noticed their previous socket was gone
-    if (previousSocket) {
-      await this.leave(previousSocket);
-    }
-
-    if (this.players.size >= this.options.game.players.length) {
-      console.error('Room is full, cannot join as player');
-      return;
-    }
-
-    await socket.join(this.id);
-    const roomPlayer = {
-      userId: socket.data.user.id,
-      socket
-    };
-
-    this.players.set(socket.data.user.id, roomPlayer);
-
-    const onDisconnect = async () => {
-      await this.leave(socket);
-    };
-    socket.on('disconnect', onDisconnect);
-    this.addSocketCleanup(socket, () => socket.off('disconnect', onDisconnect));
-
-    if (this.options.game.status === GAME_STATUS.ONGOING) {
-      this.handlePlayerSubscription(socket);
-    }
-
-    const isReady =
-      this.players.size === this.options.game.players.length &&
-      this.options.game.status === GAME_STATUS.WAITING_FOR_PLAYERS;
-
-    if (isReady) {
-      await this.emitter.emit('allPlayersJoined', {});
-    }
-  }
-
-  private async joinAsSpectator(socket: IoSocket) {
-    const canSpectate = this.options.game.players.every(
-      p => p.userId !== socket.data.user.id
-    );
-    if (!canSpectate) return;
-
-    await socket.join(this.id);
-    this.spectators.add(socket);
-
-    const onDisconnect = async () => {
-      await this.leave(socket);
-    };
-    socket.on('disconnect', onDisconnect);
-    this.addSocketCleanup(socket, () => socket.off('disconnect', onDisconnect));
-
-    if (this.options.game.status === GAME_STATUS.ONGOING) {
-      this.handleSpectatorSubscription(socket);
-    }
-  }
-
-  updateStatus(status: GameStatus) {
-    this.options.game.status = status;
+    return { kind: 'player', playerId: socket.data.user.id };
   }
 }

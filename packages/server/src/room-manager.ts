@@ -1,5 +1,5 @@
 import type { Ioserver } from './io';
-import { Room, ROOM_EVENTS, type RoomOptions } from './room';
+import { Room, ROOM_EVENTS, type RoomOptions } from './room/room';
 import type { ConvexHttpClient } from 'convex/browser';
 import { api, type GameId, type UserId } from '@game/api';
 import type { Redis } from '@upstash/redis';

@@ -85,8 +85,6 @@ export class Modifier<T extends ModifierTarget>
 
   protected _target!: T;
 
-  private _isApplied = false;
-
   readonly infos: {
     name?: string | (() => string);
     description?: string | (() => string);
@@ -99,6 +97,8 @@ export class Modifier<T extends ModifierTarget>
   protected _stacks = 1;
 
   private _isUnique: boolean;
+
+  private _isApplied = false;
 
   private _prevEnabled = true;
 

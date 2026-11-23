@@ -7,7 +7,7 @@ import type {
 } from '@game/engine/src/game/systems/game-snapshot.system';
 import type { SerializedInput } from '@game/engine/src/input/input-system';
 import type { HttpServer } from './http';
-import type { ClockState } from './clock-manager';
+import type { ClockState } from './room/clock-manager';
 
 type SocketData = {
   user: any;

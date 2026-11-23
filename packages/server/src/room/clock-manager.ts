@@ -34,7 +34,6 @@ export type ClockManagerOptions = {
   secondaryClockTime?: number;
   penaltyClockTime?: number;
   initiativeChangeBonusTime?: number;
-  disabled: boolean;
 };
 
 const DEFAULT_CLOCK_TIME = 45 * 1000;
@@ -57,7 +56,6 @@ export class ClockManager {
   private secondaryClockTime: number;
   private penaltyClockTime: number;
   private initiativeChangeBonusTime: number;
-  private disabled: boolean;
 
   constructor(private options: ClockManagerOptions) {
     this.clockTime = options.clockTime ?? DEFAULT_CLOCK_TIME;
@@ -65,20 +63,13 @@ export class ClockManager {
     this.penaltyClockTime = options.penaltyClockTime ?? DEFAULT_PENALTY_CLOCK_TIME;
     this.initiativeChangeBonusTime =
       options.initiativeChangeBonusTime ?? DEFAULT_INITIATIVE_CHANGE_BONUS_TIME;
-    this.disabled = options.disabled;
   }
 
   get on() {
     return this.emitter.on.bind(this.emitter);
   }
 
-  get once() {
-    return this.emitter.once.bind(this.emitter);
-  }
-
   initialize() {
-    if (this.disabled) return;
-
     for (const playerId of this.options.playerIds) {
       this.playerClocks.set(playerId, this.createPlayerClocks(playerId));
     }
@@ -93,7 +84,6 @@ export class ClockManager {
   }
 
   startClockForPlayer(playerId: string) {
-    if (this.disabled) return;
     const clocks = this.playerClocks.get(playerId);
     if (!clocks) return;
 
@@ -105,52 +95,27 @@ export class ClockManager {
   }
 
   stopClockForPlayer(playerId: string) {
-    if (this.disabled) return;
     const clocks = this.playerClocks.get(playerId);
     clocks?.primary.stop();
     clocks?.secondary.stop();
   }
 
-  resetClockForPlayer(playerId: string) {
-    if (this.disabled) return;
-    const clocks = this.playerClocks.get(playerId);
-    clocks?.primary.reset();
-    clocks?.secondary.reset();
-  }
-
   resetAllClocks() {
-    if (this.disabled) return;
     this.playerClocks.forEach(clocks => {
       clocks.primary.reset();
       clocks.secondary.reset();
     });
   }
 
-  startAllClocks() {
-    if (this.disabled) return;
-    this.playerClocks.forEach((_, playerId) => this.startClockForPlayer(playerId));
-  }
-
-  stopAllClocks() {
-    if (this.disabled) return;
-    this.playerClocks.forEach(clocks => {
-      clocks.primary.stop();
-      clocks.secondary.stop();
-    });
-  }
-
   resetSecondaryClockForPlayer(playerId: string) {
-    if (this.disabled) return;
     this.playerClocks.get(playerId)?.secondary.reset();
   }
 
   addInitiativeChangeBonus(playerId: string) {
-    if (this.disabled) return;
     this.playerClocks.get(playerId)?.primary.addTime(this.initiativeChangeBonusTime);
   }
 
   recordPlayerInput(playerId: string) {
-    if (this.disabled) return;
     const clocks = this.playerClocks.get(playerId);
     if (!clocks) return;
 
